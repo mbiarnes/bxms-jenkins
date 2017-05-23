@@ -1,11 +1,14 @@
 job('sample-job') {
-    scm {
-        git('https://github.com/kiegroup/drools')
+
+    description('This is sample job')
+
+    label('master')
+
+    wrappers {
+        preBuildCleanup()
     }
-    triggers {
-        scm('H/15 * * * *')
-    }
+
     steps {
-        maven('clean')
+        shell('echo "Hello!"')
     }
 }
