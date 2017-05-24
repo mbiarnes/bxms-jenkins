@@ -1,6 +1,6 @@
 job('sample-job') {
 
-    description('This is sample job')
+    description('This is sample job.')
 
     label('master')
 
