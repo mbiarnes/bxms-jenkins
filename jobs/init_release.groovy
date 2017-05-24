@@ -1,4 +1,4 @@
-job('sample-init-release') {
+job('sample-init_release') {
 
     description('This is release initialization job.')
 
