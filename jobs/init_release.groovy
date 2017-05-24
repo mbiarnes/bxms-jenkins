@@ -2,10 +2,13 @@ job('sample-init_release') {
 
     description('This is release initialization job.')
 
-    enviornamentVariables {
-        propertiesFile('${HOME}/brms-64-jenkins-ci.properties')
-        keepBuildVariables(true)
+    preBuildSteps {
+        enviornamentVariables {
+            propertiesFile('${HOME}/brms-64-jenkins-ci.properties')
+            keepBuildVariables(true)
+        }
     }
+
 
     label('pvt-static')
 
@@ -26,6 +29,7 @@ job('sample-init_release') {
             testDescription('${product_name} ${product_version} ${release_milestone} Release')
             assignee('mw-prod-ci')
         }
+    }
 
     steps {
         shell('echo "Hello!"')
@@ -35,7 +39,5 @@ job('sample-init_release') {
             workflowActionName('To Do')
             comment('Comment')
         }
-    }
-
     }
 }
