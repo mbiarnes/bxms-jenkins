@@ -24,21 +24,7 @@ job('sample-init-release') {
         }
     }
 
-    publishers {
-        createJiraIssue {
-            projectKey('IPBRPMS')
-            testDescription('${product_name} ${product_version} ${release_milestone} Release')
-            assignee('mw-prod-ci')
-        }
-    }
-
     steps {
         shell('echo "Hello!"')
-
-        progressJiraIssues {
-            jqlSearch('Summary ~ "${product_name} ${product_version} ${release_milestone} Release"')
-            workflowActionName('To Do')
-            comment('Comment')
-        }
     }
 }
