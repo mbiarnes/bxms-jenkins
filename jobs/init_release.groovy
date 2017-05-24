@@ -16,7 +16,10 @@ job('sample-init-release') {
 
     scm {
         git {
-            url('https://code.engineering.redhat.com/gerrit/integration-platform-config.git/')
+            remote {
+                name('origin')
+                url('https://code.engineering.redhat.com/gerrit/integration-platform-config.git/')
+            }
             branch('master')
         }
     }
