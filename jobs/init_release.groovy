@@ -1,4 +1,4 @@
-job('sample-init_release') {
+job('sample-init-release') {
 
     description('This is release initialization job.')
 
@@ -10,32 +10,32 @@ job('sample-init_release') {
 
     label('pvt-static')
 
-//    wrappers {
-//        preBuildCleanup()
-//    }
-//
-//    scm {
-//        git {
-//            url('https://code.engineering.redhat.com/gerrit/integration-platform-config.git/')
-//            branch('master')
-//        }
-//    }
-//
-//    publishers {
-//        createJiraIssue {
-//            projectKey('IPBRPMS')
-//            testDescription('${product_name} ${product_version} ${release_milestone} Release')
-//            assignee('mw-prod-ci')
-//        }
-//    }
-//
-//    steps {
-//        shell('echo "Hello!"')
-//
-//        progressJiraIssues {
-//            jqlSearch('Summary ~ "${product_name} ${product_version} ${release_milestone} Release"')
-//            workflowActionName('To Do')
-//            comment('Comment')
-//        }
-//    }
+    wrappers {
+        preBuildCleanup()
+    }
+
+    scm {
+        git {
+            url('https://code.engineering.redhat.com/gerrit/integration-platform-config.git/')
+            branch('master')
+        }
+    }
+
+    publishers {
+        createJiraIssue {
+            projectKey('IPBRPMS')
+            testDescription('${product_name} ${product_version} ${release_milestone} Release')
+            assignee('mw-prod-ci')
+        }
+    }
+
+    steps {
+        shell('echo "Hello!"')
+
+        progressJiraIssues {
+            jqlSearch('Summary ~ "${product_name} ${product_version} ${release_milestone} Release"')
+            workflowActionName('To Do')
+            comment('Comment')
+        }
+    }
 }
