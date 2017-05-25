@@ -1,12 +1,10 @@
+import java.util.logging.Logger
+
 job('sample-init-release') {
 
-    description('This is release initialization job.')
+    Logger logger = Logger.getLogger('org.jboss.bxms.jenkins.dsljobs')
 
-    environmentVariables {
-            propertiesFile('${HOME}/brms-64-jenkins-ci.properties')
-            keepBuildVariables(true)
-    }
-
+    description('This is release initialization job. This job is responsible for preparation of ${HOME}/brms-64-jenkins-ci.properties file')
 
     label('pvt-static')
 
@@ -14,6 +12,7 @@ job('sample-init-release') {
         preBuildCleanup()
     }
 
+    logger.info('Add SCM block')
     scm {
         git {
             remote {
