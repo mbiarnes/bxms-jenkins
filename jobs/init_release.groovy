@@ -1,10 +1,7 @@
-import java.util.logging.Logger
+job("sample-init-release") {
 
-job('sample-init-release') {
 
-    Logger logger = Logger.getLogger('')
-
-    description('This is release initialization job. This job is responsible for preparation of ${HOME}/brms-64-jenkins-ci.properties file')
+    description("This is release initialization job. This job is responsible for preparation of brms-64-jenkins-ci.properties file")
 
     label("pvt-static")
 
@@ -12,18 +9,22 @@ job('sample-init-release') {
         preBuildCleanup()
     }
 
-    logger.info('Add SCM block')
-    scm {
+    multiscm {
         git {
             remote {
-                name('origin')
-                url('https://code.engineering.redhat.com/gerrit/integration-platform-config.git/')
+                url("https://code.engineering.redhat.com/gerrit/integration-platform-config.git/")
             }
-            branch('master')
+            branch("master")
+        }
+
+        git {
+            remote {
+                url("https://code.engineering.redhat.com/gerrit/integration-platform-tooling.git/")
+            }
+            branch("master")
         }
     }
 
-    logger.warning('Add steps block')
     steps {
         shell('echo "Hello!"')
     }
