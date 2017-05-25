@@ -26,6 +26,6 @@ job("sample-init-release") {
     }
 
     steps {
-        shell('echo "Hello!"')
+        shell('integration-platform-tooling/utility/init-releaseci-properties.sh integration-platform-config/brms-64.cfg')
     }
 }
