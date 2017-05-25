@@ -8,6 +8,17 @@ job("sample-init-release") {
         preBuildCleanup()
     }
 
+    triggers {
+        ciBuildTrigger {
+
+            // The name of the Message Provider that was configured in the global settings.
+            selector('CI_TYPE=\'brms-64-releaseci-brew-trigger\'')
+            // JMS selector to choose messages that will fire the trigger.
+            providerName("default")
+
+        }
+    }
+
     multiscm {
         git {
             remote {
