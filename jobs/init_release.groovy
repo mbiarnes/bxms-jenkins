@@ -2,11 +2,11 @@ import java.util.logging.Logger
 
 job('sample-init-release') {
 
-    Logger logger = Logger.getLogger('')
+    Logger logger = Logger.getLogger("")
 
     description('This is release initialization job. This job is responsible for preparation of ${HOME}/brms-64-jenkins-ci.properties file')
 
-    label('pvt-static')
+    label("pvt-static")
 
     wrappers {
         preBuildCleanup()
@@ -23,7 +23,7 @@ job('sample-init-release') {
         }
     }
 
-    logger.warn('Add steps')
+    logger.warn("Add steps")
     steps {
         shell('echo "Hello!"')
     }
