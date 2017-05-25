@@ -1,7 +1,6 @@
 job("sample-init-release") {
 
-
-    description("This is release initialization job. This job is responsible for preparation of brms-64-jenkins-ci.properties file")
+    description("This is release initialization job. This job is responsible for preparation of brms-64-jenkins-ci.properties file.")
 
     label("pvt-static")
 
