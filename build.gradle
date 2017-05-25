@@ -17,5 +17,5 @@ repositories {
 }
 
 dependencies {
-    compile 'org.jenkins-ci.plugins:job-dsl-core:1.63'
+    compile 'org.jenkins-ci.plugins:job-dsl-core:1.57'
 }
