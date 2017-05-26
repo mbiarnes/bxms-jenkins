@@ -94,6 +94,6 @@ job("sample-brew-build") {
     steps {
 
         // Runs a shell script (defaults to sh, but this is configurable) for building the project.
-        shell('shellScript')
+        shell(shellScript)
     }
 }
