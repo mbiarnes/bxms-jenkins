@@ -1,4 +1,4 @@
-// Brew build script
+// Init Brew build script
 def shellScript = '''# Reset the build_counter and brew_build_url.
 export `grep "build_counter" ${HOME}/${release_prefix}-jenkins-ci.properties`
 export `grep "ip_config_sha" ${HOME}/${release_prefix}-jenkins-ci.properties`
@@ -43,10 +43,10 @@ echo "Congratulation Brew build is triggered!"
 '''
 
 // Creates or updates a free style job.
-job("sample-brew-build") {
+job("sample-init-brew-build") {
 
     // Sets a description for the job.
-    description("This is Brew chain build job. This job is responsible for initiation of Brew build.")
+    description("This job is responsible for initiation of Brew chain build.")
 
     // Label which specifies which nodes this job can run on.
     label("pvt-static")
