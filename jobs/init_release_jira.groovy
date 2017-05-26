@@ -1,8 +1,8 @@
 // Creates or updates a free style job.
-job("sample-init-jira") {
+job("sample-init-release-jira") {
 
     // Sets a description for the job.
-    description("This is release initialization job. This job is responsible for preparation of brms-64-jenkins-ci.properties file.")
+    description("This job is responsible for create/update jira issue after initialization of release")
 
     // Label which specifies which nodes this job can run on.
     label("pvt-static")
