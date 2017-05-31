@@ -41,7 +41,7 @@ sed -e 's=rcm-guest.app.eng.bos.redhat.com/rcm-guest/staging/jboss-brms=download
 job("sample-stage-brew-artifacts") {
 
     // Sets a description for the job.
-    description("This job is responsible for put brew artifact to staging area")
+    description("This job is responsible for put brew artifact to staging area.")
 
     // Label which specifies which nodes this job can run on.
     label("pvt-static")
