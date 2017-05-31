@@ -1,5 +1,5 @@
 // Creates or updates a free style job.
-job("stage-brew-artifacts-jira") {
+job("sample-stage-brew-artifacts-jira") {
 
     // Sets a description for the job.
     description("This job is responsible for create/update jira issue after staging of Brew artifacts release.")
