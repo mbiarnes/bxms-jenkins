@@ -1,4 +1,4 @@
-// Init Brew build script
+// Init Brew build script.
 def shellScript = '''# Reset the build_counter and brew_build_url.
 export `grep "build_counter" ${HOME}/${release_prefix}-jenkins-ci.properties`
 export `grep "ip_config_sha" ${HOME}/${release_prefix}-jenkins-ci.properties`

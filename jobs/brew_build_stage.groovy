@@ -1,4 +1,4 @@
-// Staging script
+// Staging script.
 def shellScript = '''# Disable bash tracking mode, too much noise.
 #set +x
 if [ ! -z $CI_MESSAGE ];then
