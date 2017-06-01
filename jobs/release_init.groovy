@@ -1,5 +1,5 @@
 // Creates or updates a free style job.
-job("sample-init-release") {
+job("sample-release-init") {
 
     // Sets a description for the job.
     description("This is release initialization job. This job is responsible for preparation of brms-64-jenkins-ci.properties file.")

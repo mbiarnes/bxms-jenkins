@@ -1,8 +1,8 @@
 // Creates or updates a free style job.
-job("sample-stage-brew-artifacts-jira") {
+job("sample-release-init-jira") {
 
     // Sets a description for the job.
-    description("This job is responsible for create/update jira issue after staging of Brew artifacts release.")
+    description("This job is responsible for create/update jira issue after initialization of release.")
 
     // Label which specifies which nodes this job can run on.
     label("pvt-static")
