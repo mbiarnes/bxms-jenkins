@@ -1,5 +1,5 @@
 // Creates or updates a free style job.
-job("sample-release-init-jira") {
+job("sample-maven-repository-build-jira") {
 
     // Sets a description for the job.
     description("This job is responsible for create/update jira issue after maven repository build.")
