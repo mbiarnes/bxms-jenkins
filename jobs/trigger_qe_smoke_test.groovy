@@ -65,7 +65,7 @@ job("sample-trigger-qe-smoke-test") {
             providerName("default")
 
             // Type of CI message to be sent.
-            messageType("custom")
+            messageType("Custom")
 
             // KEY=value pairs, one per line (Java properties file format) to be used as message properties.
             messageProperties("label=bxms-ci\n" +
