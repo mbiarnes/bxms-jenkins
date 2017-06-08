@@ -1,8 +1,8 @@
 // Creates or updates a free style job.
-job("sample-trigger-qe-smoke-test-jira") {
+job("sample-trigger-qe-handover-test-jira") {
 
     // Sets a description for the job.
-    description("This job is responsible for create/update jira issue after triggering qe smoke test")
+    description("This job is responsible for create/update jira issue after triggering qe handover test")
 
     // Label which specifies which nodes this job can run on.
     label("pvt-static")
