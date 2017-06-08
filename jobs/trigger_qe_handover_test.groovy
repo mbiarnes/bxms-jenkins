@@ -1,4 +1,4 @@
-// QE handover test suite trigger script
+// QE handover test trigger script
 String shellScript = '''#Publish a CI Message to trigger the QE smoketest
 #echo "Send CI message CI_TYPE='${release_prefix}-qe-smoketest-trigger"
 deliverable_list=${rcm_candidate_base}/${brms_product_name}/${brms_product_name}-${product_version}.${release_milestone}/${release_prefix}-deliverable-list.properties
@@ -7,10 +7,10 @@ echo ${deliverable_list}
 '''
 
 // Creates or updates a free style job.
-job("sample-trigger-qe-handover-test-suite") {
+job("sample-trigger-qe-handover-test") {
 
     // Sets a description for the job.
-    description("This job is responsible for triggering QE handover test suite.")
+    description("This job is responsible for triggering QE handover test.")
 
     // Label which specifies which nodes this job can run on.
     label("pvt-static")
