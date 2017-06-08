@@ -9,7 +9,7 @@ echo "resolve_issue_list="`cat /tmp/release-ticketor-output | grep https://url.c
 job("sample-update-product-jira") {
 
     // Sets a description for the job.
-    description("This job is responsible for offline Maven repository build.")
+    description("This job is responsible for update product jira.")
 
     // Label which specifies which nodes this job can run on.
     label("pvt-static")
