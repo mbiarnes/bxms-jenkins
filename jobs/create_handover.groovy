@@ -78,9 +78,6 @@ job("sample-create-handover") {
     // Adds post-build actions to the job.
     publishers {
 
-        //Archives artifacts with each build.
-        archiveArtifacts('workspace/bxms-repository/archive/**/*')
-
         // Send artifacts to an SSH server (using SFTP) and/or execute commands over SSH.
         publishOverSsh {
 
