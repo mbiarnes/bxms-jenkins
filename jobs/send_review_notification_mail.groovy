@@ -83,10 +83,10 @@ String mailContent = '''<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
 '''
 
 // Creates or updates a free style job.
-job("sample-release-review-notification") {
+job("sample-send-review-notification-mail") {
 
     // Sets a description for the job.
-    description("This job sends review notification.")
+    description("This job sends review notification mail.")
 
     // Label which specifies which nodes this job can run on.
     label("pvt-static")
