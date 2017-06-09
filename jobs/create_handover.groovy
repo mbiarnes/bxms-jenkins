@@ -36,7 +36,7 @@ echo "handover_pr=$handover_pr" >>${HOME}/${release_prefix}-jenkins-ci.propertie
 '''
 
 // Creates or updates a free style job.
-job("sample-create-handover-script") {
+job("sample-create-handover") {
 
     // Sets a description for the job.
     description("This job is responsible for creating handover.")
