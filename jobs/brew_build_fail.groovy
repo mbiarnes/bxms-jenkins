@@ -98,21 +98,6 @@ job("sample-brew-build-fail") {
         preBuildCleanup()
     }
 
-    // Adds build triggers to the job.
-    triggers {
-
-        // Triggers build using remote build message.
-        ciBuildTrigger {
-
-            // The name of the Message Provider that was configured in the global settings.
-            selector('new=\'FAILED\' AND target=\'jb-bxms-6.4-candidate\' AND method=\'chainmaven\'')
-
-            // JMS selector to choose messages that will fire the trigger.
-            providerName("default")
-
-        }
-    }
-
     // Adds build steps to the jobs.
     steps {
 
