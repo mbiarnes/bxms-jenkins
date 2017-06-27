@@ -6,7 +6,7 @@ echo "resolve_issue_list="`cat /tmp/release-ticketor-output | grep https://url.c
 '''
 
 // Creates or updates a free style job.
-job("sample-update-product-jira") {
+job("${PRODUCT_NAME}-release-pipeline/${PRODUCT_NAME}-update-product-jira") {
 
     // Sets a description for the job.
     description("This job is responsible for update product jira.")

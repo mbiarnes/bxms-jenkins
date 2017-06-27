@@ -1,5 +1,5 @@
 // Creates or updates a free style job.
-job("sample-send-review-notification-jira") {
+job("${PRODUCT_NAME}-release-pipeline/${PRODUCT_NAME}-send-review-notification-jira") {
 
     // Sets a description for the job.
     description("This job is responsible for create/update jira issue after sending review notification.")

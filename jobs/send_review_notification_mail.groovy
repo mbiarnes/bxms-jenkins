@@ -83,7 +83,7 @@ String mailContent = '''<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
 '''
 
 // Creates or updates a free style job.
-job("sample-send-review-notification-mail") {
+job("${PRODUCT_NAME}-release-pipeline/${PRODUCT_NAME}-send-review-notification-mail") {
 
     // Sets a description for the job.
     description("This job sends review notification mail.")

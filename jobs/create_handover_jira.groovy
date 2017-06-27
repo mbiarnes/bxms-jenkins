@@ -1,5 +1,5 @@
 // Creates or updates a free style job.
-job("sample-create-handover-jira") {
+job("${PRODUCT_NAME}-release-pipeline/${PRODUCT_NAME}-create-handover-jira") {
 
     // Sets a description for the job.
     description("This job is responsible for create/update jira issue after creation of handover.")

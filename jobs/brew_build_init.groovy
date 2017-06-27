@@ -43,7 +43,7 @@ echo "Congratulation Brew build is triggered!"
 '''
 
 // Creates or updates a free style job.
-job("sample-brew-build-init") {
+job("${PRODUCT_NAME}-release-pipeline/${PRODUCT_NAME}-brew-build-init") {
 
     // Sets a description for the job.
     description("This job is responsible for initiation of Brew chain build.")

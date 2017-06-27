@@ -1,5 +1,5 @@
 // Creates or updates a free style job.
-job("sample-trigger-qe-smoke-test-jira") {
+job("${PRODUCT_NAME}-release-pipeline/${PRODUCT_NAME}-trigger-qe-smoke-test-jira") {
 
     // Sets a description for the job.
     description("This job is responsible for create/update jira issue after triggering qe smoke test")

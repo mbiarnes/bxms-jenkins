@@ -1,5 +1,5 @@
 // Creates or updates a free style job.
-job("sample-brew-build-init-jira") {
+job("${PRODUCT_NAME}-release-pipeline/${PRODUCT_NAME}-brew-build-init-jira") {
 
     // Sets a description for the job.
     description("This job is responsible for create/update jira issue after staging of Brew artifacts release.")

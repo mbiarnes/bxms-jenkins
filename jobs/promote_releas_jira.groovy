@@ -1,5 +1,5 @@
 // Creates or updates a free style job.
-job("sample-promote-release-jira") {
+job("${PRODUCT_NAME}-release-pipeline/${PRODUCT_NAME}-promote-release-jira") {
 
     // Sets a description for the job.
     description("This job is responsible for create/update jira issue after promote the release.")

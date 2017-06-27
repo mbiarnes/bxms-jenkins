@@ -9,7 +9,7 @@ sed -e 's=rcm-guest.app.eng.bos.redhat.com/rcm-guest/staging/jboss-brms=download
 '''
 
 // Creates or updates a free style job.
-job("sample-maven-repository-build") {
+job("${PRODUCT_NAME}-release-pipeline/${PRODUCT_NAME}-maven-repository-build") {
 
     // Sets a description for the job.
     description("This job is responsible for offline Maven repository build.")

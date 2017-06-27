@@ -9,7 +9,7 @@ sed -i '/^bpms_pvt_report_html=/d' ${HOME}/${release_prefix}-jenkins-ci.properti
 '''
 
 // Creates or updates a free style job.
-job("sample-pvt-test-bpms") {
+job("${PRODUCT_NAME}-release-pipeline/${PRODUCT_NAME}-pvt-test-bpms") {
 
     // Sets a description for the job.
     description("This job is responsible for executing product validation tests.")
