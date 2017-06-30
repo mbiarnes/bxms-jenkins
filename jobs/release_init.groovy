@@ -72,6 +72,6 @@ job("${PRODUCT_NAME}-release-pipeline/${PRODUCT_NAME}-release-init") {
     steps {
 
         // Runs a shell script (defaults to sh, but this is configurable) for building the project.
-        shell('integration-platform-tooling/utility/init-releaseci-properties.sh integration-platform-config/brms-64.cfg')
+        shell('ip-tooling/utility/init-releaseci-properties.sh brms-64.cfg')
     }
 }
