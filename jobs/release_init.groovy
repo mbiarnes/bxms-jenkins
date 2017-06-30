@@ -44,6 +44,13 @@ job("${PRODUCT_NAME}-release-pipeline/${PRODUCT_NAME}-release-init") {
 
             // Specify the branches to examine for changes and to build.
             branch("master")
+
+            // Adds additional behaviors.
+            extensions {
+
+                // Specifies a local directory (relative to the workspace root) where the Git repository will be checked out.
+                relativeTargetDirectory('integration-platform-config')
+            }
         }
 
         // Adds a Git SCM source.
@@ -58,6 +65,13 @@ job("${PRODUCT_NAME}-release-pipeline/${PRODUCT_NAME}-release-init") {
 
             // Specify the branches to examine for changes and to build.
             branch("master")
+
+            // Adds additional behaviors.
+            extensions {
+
+                // Specifies a local directory (relative to the workspace root) where the Git repository will be checked out.
+                relativeTargetDirectory('integration-platform-tooling')
+            }
         }
     }
 
