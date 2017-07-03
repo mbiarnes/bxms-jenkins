@@ -2,7 +2,7 @@
 job("${PRODUCT_NAME}-release-pipeline/${PRODUCT_NAME}-init-release") {
 
     // Sets a description for the job.
-    description("This is release initialization job. This job is responsible for preparation of brms-64-jenkins-ci.properties file.")
+    description("This is the ${PRODUCT_NAME} release initialization job. This job is responsible for preparation of ${CI_PROPERTIES_FILE} file.")
 
     // Label which specifies which nodes this job can run on.
     label("pvt-static")
@@ -12,21 +12,6 @@ job("${PRODUCT_NAME}-release-pipeline/${PRODUCT_NAME}-init-release") {
 
         // Deletes files from the workspace before the build starts.
         preBuildCleanup()
-    }
-
-    // Adds build triggers to the job.
-    triggers {
-
-        // Triggers build using remote build message.
-        ciBuildTrigger {
-
-            // The name of the Message Provider that was configured in the global settings.
-            selector('CI_TYPE=\'brms-64-releaseci-brew-trigger\'')
-
-            // JMS selector to choose messages that will fire the trigger.
-            providerName("default")
-
-        }
     }
 
     // Allows a job to check out sources from multiple SCM providers.
@@ -72,6 +57,6 @@ job("${PRODUCT_NAME}-release-pipeline/${PRODUCT_NAME}-init-release") {
     steps {
 
         // Runs a shell script (defaults to sh, but this is configurable) for building the project.
-        shell('ip-tooling/utility/init-releaseci-properties.sh brms-64.cfg')
+        shell("ip-tooling/utility/init-releaseci-properties.sh ${IP_CONFIG_FILE}")
     }
 }
