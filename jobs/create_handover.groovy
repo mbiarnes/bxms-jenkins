@@ -21,7 +21,7 @@ git config --global user.email "bxms-releaseci@redhat.com"
 git config --global user.name "bxms-releaseci"
 git add ${release_prefix}-release/${release_prefix}-pvt-report-*.html
 sed -i 's/releaseci_trigger=true/releaseci_trigger=false/g' ${release_prefix}.cfg
-commit_msg="Prepare handover PR ${product_name} ${product_version} ${release_milestone}  "
+commit_msg="Prepare handover PR ${product_name} ${product_version} ${release_milestone}"
 
 
 git commit -a -m "${commit_msg}"
@@ -48,7 +48,7 @@ job("${PRODUCT_NAME}-release-pipeline/${PRODUCT_NAME}-create-handover") {
     environmentVariables {
 
         // Adds environment variables from a properties file.
-        propertiesFile('${HOME}/brms-64-jenkins-ci.properties')
+        propertiesFile("\${HOME}/${CI_PROPERTIES_FILE}")
 
         // Inject Jenkins build variables and also environment contributors and build variable contributors provided by other plugins.
         keepBuildVariables(true)
@@ -91,10 +91,10 @@ job("${PRODUCT_NAME}-release-pipeline/${PRODUCT_NAME}-create-handover") {
                 transferSet {
 
                     // Sets the files to upload to a server.
-                    sourceFiles('integration-platform-config/brms-64-release/brms-64-handover.html,integration-platform-config/brms-64-release/brms-64-pvt-report-brms.html,integration-platform-config/brms-64-release/brms-64-pvt-report-bpms.html')
+                    sourceFiles('integration-platform-config/${release_prefix}-release/${release_prefix}-handover.html,integration-platform-config/${release_prefix}-release/${release_prefix}-pvt-report-brms.html,integration-platform-config/${release_prefix}-release/${release_prefix}-pvt-report-bpms.html')
 
                     // Sets the first part of the file path that should not be created on the remote server.
-                    removePrefix('integration-platform-config/brms-64-release')
+                    removePrefix('integration-platform-config/${release-prefix}-release')
 
                     // Sets the destination folder.
                     remoteDirectory('${brms_stage_folder}/${brms_product_name}-${product_version}.${release_milestone}/')
@@ -104,7 +104,7 @@ job("${PRODUCT_NAME}-release-pipeline/${PRODUCT_NAME}-create-handover") {
                 transferSet {
 
                     // Sets the files to upload to a server.
-                    sourceFiles('integration-platform-config/brms-64.cfg')
+                    sourceFiles('integration-platform-config/${release-prefix}.cfg')
 
                     // Sets the first part of the file path that should not be created on the remote server.
                     removePrefix('integration-platform-config/')
@@ -117,10 +117,10 @@ job("${PRODUCT_NAME}-release-pipeline/${PRODUCT_NAME}-create-handover") {
                 transferSet {
 
                     // Sets the files to upload to a server.
-                    sourceFiles('integration-platform-config/brms-64-release/brms-64-handover.html,integration-platform-config/brms-64-release/brms-64-pvt-report-brms.html,integration-platform-config/brms-64-release/brms-64-pvt-report-bpms.html')
+                    sourceFiles('integration-platform-config/${release-prefix}-release/${release-prefix}-handover.html,integration-platform-config/${release-prefix}-release/${release-prefix}-pvt-report-brms.html,integration-platform-config/${release-prefix}-release/${release-prefix}-pvt-report-bpms.html')
 
                     // Sets the first part of the file path that should not be created on the remote server.
-                    removePrefix('integration-platform-config/brms-64-release')
+                    removePrefix('integration-platform-config/${release-prefix}-release')
 
                     // Sets the destination folder.
                     remoteDirectory('${bpms_stage_folder}/${bpms_product_name}-${product_version}.${release_milestone}/')
@@ -130,7 +130,7 @@ job("${PRODUCT_NAME}-release-pipeline/${PRODUCT_NAME}-create-handover") {
                 transferSet {
 
                     // Sets the files to upload to a server.
-                    sourceFiles('integration-platform-config/brms-64.cfg')
+                    sourceFiles('integration-platform-config/${release-prefix}.cfg')
 
                     // Sets the first part of the file path that should not be created on the remote server.
                     removePrefix('integration-platform-config/')
