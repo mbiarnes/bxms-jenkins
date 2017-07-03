@@ -1,6 +1,6 @@
 // PVT script.
 String shellScript = '''cd pvt
-/mnt/maven-3.2.3-prod/bin/mvn clean site surefire-report:report -B -Dproduct.config=${bpms_smoketest_cfg}  -Dproduct.version=${product_version}.${release_milestone}
+/mnt/maven-3.2.3-prod/bin/mvn clean site surefire-report:report -B -Dproduct.config=${bpms_smoketest_cfg}  -Dproduct.version=${product_version}.${release_milestone} -Dproduct.target=${product_version}.GA
 
 cd generic/
 
