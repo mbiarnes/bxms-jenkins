@@ -38,7 +38,7 @@ sed -e 's=rcm-guest.app.eng.bos.redhat.com/rcm-guest/staging/jboss-brms=download
 '''
 
 // Creates or updates a free style job.
-job("${PRODUCT_NAME}-release-pipeline/${PRODUCT_NAME}-brew-build-stage") {
+job("${PRODUCT_NAME}-release-pipeline/${PRODUCT_NAME}-stage-brew-build") {
 
     // Sets a description for the job.
     description("This job is responsible for put brew artifact to staging area.")
