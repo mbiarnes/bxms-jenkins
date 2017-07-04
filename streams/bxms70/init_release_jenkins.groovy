@@ -1,0 +1,1 @@
+../../jobs/init_release_jenkins.groovy
