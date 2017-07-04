@@ -44,22 +44,6 @@ job("${PRODUCT_NAME}-release-pipeline/${PRODUCT_NAME}-stage-jenkins-build") {
         preBuildCleanup()
     }
 
-    // Allows to parameterize the job.
-    parameters {
-
-        // Defines a simple text parameter, where users can enter a string value.
-        stringParam(parameterName = "name", defaultValue = null, description = "Brew task name")
-
-        // Defines a simple text parameter, where users can enter a string value.
-        stringParam(parameterName = "version", defaultValue = null, description = "Brew task version")
-
-        // Defines a simple text parameter, where users can enter a string value.
-        stringParam(parameterName = "release", defaultValue = null, description = "Brew task release")
-
-        // Defines a simple text parameter, where users can enter a string value.
-        stringParam(parameterName = "task_id", defaultValue = null, description = "Brew task id")
-    }
-
     // Adds environment variables to the build.
     environmentVariables {
 
