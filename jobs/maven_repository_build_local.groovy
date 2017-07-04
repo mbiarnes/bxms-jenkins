@@ -1,5 +1,6 @@
 // Repository builder script
-String shellScript = '''make -f Makefile.BRMS repository
+String shellScript = '''export JAVA_OPTS="-Xms8192m -Xmx8192m"
+make -f Makefile.BRMS MAVEN_REPOSITORY_BUILDER_SCRIPT=regen_bxms_repo_builder.sh REPO_TYPE=local REPO_PARAM=/mnt/jboss-prod/m2/bxms-7-milestone MAVEN_REPOSITORY_BUILDER_SCRIPT_GENERATION_OPTION=script repository
 
 sed -i '/^bxms.maven.repo.latest.url=/d' ${HOME}/${release_prefix}-deliverable-list-staging.properties 
 echo "bxms.maven.repo.latest.url=${rcm_stage_base}/jboss-bpmsuite/${bpms_product_name}-${product_version}.${release_milestone}/jboss-brms-bpmsuite-${product_version}.GA-maven-repository.zip">>${HOME}/${release_prefix}-deliverable-list-staging.properties
@@ -9,13 +10,13 @@ sed -e 's=rcm-guest.app.eng.bos.redhat.com/rcm-guest/staging/jboss-brms=download
 '''
 
 // Creates or updates a free style job.
-job("${PRODUCT_NAME}-release-pipeline/${PRODUCT_NAME}-maven-repository-build") {
+job("${PRODUCT_NAME}-release-pipeline/${PRODUCT_NAME}-maven-repository-build-local") {
 
     // Sets a description for the job.
     description("This job is responsible for offline Maven repository build.")
 
     // Label which specifies which nodes this job can run on.
-    label("pvt-static")
+    label("bxms-nightly")
 
     // Adds environment variables to the build.
     environmentVariables {

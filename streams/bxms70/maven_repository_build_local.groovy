@@ -1,0 +1,1 @@
+../../jobs/maven_repository_build_local.groovy
