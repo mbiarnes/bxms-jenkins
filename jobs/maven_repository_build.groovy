@@ -13,10 +13,7 @@ sed -e 's=rcm-guest.app.eng.bos.redhat.com/rcm-guest/staging/jboss-brms=download
 // Creates or updates a free style job.
 job("${PRODUCT_NAME}-release-pipeline/${PRODUCT_NAME}-maven-repository-build") {
 
-    // Prepare repository build script
-    if (true) {
-        out.println("Hello World!")
-    }
+
 
     // Sets a description for the job.
     description("This job is responsible for offline Maven repository build.")
@@ -35,6 +32,11 @@ job("${PRODUCT_NAME}-release-pipeline/${PRODUCT_NAME}-maven-repository-build") {
 
         // Injects Jenkins system variables and environment variables defined as global properties and as node properties.
         keepSystemVariables(true)
+
+        // Prepare repository build script
+        if ($PRODUCT_NAME == "intpack17") {
+            out.println("Hello World!")
+        }
     }
 
     // Adds pre/post actions to the job.
