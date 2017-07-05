@@ -34,7 +34,7 @@ job("${PRODUCT_NAME}-release-pipeline/${PRODUCT_NAME}-maven-repository-build") {
         keepSystemVariables(true)
 
         // Prepare repository build script
-        if (${PRODUCT_NAME} == "intpack17") {
+        if (PRODUCT_NAME == "intpack17") {
             out.println("Hello World!")
         }
     }
