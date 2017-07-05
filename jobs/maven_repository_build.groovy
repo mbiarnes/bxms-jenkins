@@ -1,7 +1,4 @@
-// Prepare repository build script
-if (true) {
-    out.println("Hello World!")
-}
+
 
 // Repository builder script
 String shellScript = """make -f Makefile.BRMS repository
@@ -15,6 +12,11 @@ sed -e 's=rcm-guest.app.eng.bos.redhat.com/rcm-guest/staging/jboss-brms=download
 
 // Creates or updates a free style job.
 job("${PRODUCT_NAME}-release-pipeline/${PRODUCT_NAME}-maven-repository-build") {
+
+    // Prepare repository build script
+    if (true) {
+        out.println("Hello World!")
+    }
 
     // Sets a description for the job.
     description("This job is responsible for offline Maven repository build.")
