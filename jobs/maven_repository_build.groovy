@@ -37,7 +37,7 @@ job("${PRODUCT_NAME}-release-pipeline/${PRODUCT_NAME}-maven-repository-build") {
         if (PRODUCT_NAME == "intpack17") {
 
             // Adds an environment variable to the build.
-            env(COMBINATION, "fuse63-bxms64")
+            env("COMBINATION", "fuse63-bxms64")
         }
     }
 
