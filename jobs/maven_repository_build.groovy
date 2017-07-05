@@ -1,12 +1,17 @@
+// Prepare repository build script
+if (true) {
+    out.println("Hello World!")
+}
+
 // Repository builder script
-String shellScript = '''make -f Makefile.BRMS repository
+String shellScript = """make -f Makefile.BRMS repository
 
-sed -i '/^bxms.maven.repo.latest.url=/d' ${HOME}/${release_prefix}-deliverable-list-staging.properties 
-echo "bxms.maven.repo.latest.url=${rcm_stage_base}/jboss-bpmsuite/${bpms_product_name}-${product_version}.${release_milestone}/jboss-brms-bpmsuite-${product_version}.GA-maven-repository.zip">>${HOME}/${release_prefix}-deliverable-list-staging.properties
+sed -i '/^bxms.maven.repo.latest.url=/d' \${HOME}/\${release_prefix}-deliverable-list-staging.properties 
+echo "bxms.maven.repo.latest.url=\${rcm_stage_base}/jboss-bpmsuite/\${bpms_product_name}-\${product_version}.\${release_milestone}/jboss-brms-bpmsuite-\${product_version}.GA-maven-repository.zip">>\${HOME}/\${release_prefix}-deliverable-list-staging.properties
 
-cp ${HOME}/${release_prefix}-deliverable-list-staging.properties ${release_prefix}-deliverable-list-staging.properties
-sed -e 's=rcm-guest.app.eng.bos.redhat.com/rcm-guest/staging/jboss-brms=download.devel.redhat.com/devel/candidates/BRMS=g' -e 's=rcm-guest.app.eng.bos.redhat.com/rcm-guest/staging/jboss-bpmsuite=download.devel.redhat.com/devel/candidates/BPMS=g' ${release_prefix}-deliverable-list-staging.properties > ${release_prefix}-deliverable-list.properties
-'''
+cp \${HOME}/\${release_prefix}-deliverable-list-staging.properties \${release_prefix}-deliverable-list-staging.properties
+sed -e 's=rcm-guest.app.eng.bos.redhat.com/rcm-guest/staging/jboss-brms=download.devel.redhat.com/devel/candidates/BRMS=g' -e 's=rcm-guest.app.eng.bos.redhat.com/rcm-guest/staging/jboss-bpmsuite=download.devel.redhat.com/devel/candidates/BPMS=g' \${release_prefix}-deliverable-list-staging.properties > \${release_prefix}-deliverable-list.properties
+"""
 
 // Creates or updates a free style job.
 job("${PRODUCT_NAME}-release-pipeline/${PRODUCT_NAME}-maven-repository-build") {
