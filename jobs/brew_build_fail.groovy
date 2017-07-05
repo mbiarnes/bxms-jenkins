@@ -82,7 +82,7 @@ job("${PRODUCT_NAME}-release-pipeline/${PRODUCT_NAME}-brew-build-fail") {
     environmentVariables {
 
         // Adds environment variables from a properties file.
-        propertiesFile('${HOME}/brms-64-jenkins-ci.properties')
+        propertiesFile("\${HOME}/${CI_PROPERTIES_FILE}")
 
         // Inject Jenkins build variables and also environment contributors and build variable contributors provided by other plugins.
         keepBuildVariables(true)
