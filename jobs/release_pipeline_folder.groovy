@@ -5,8 +5,6 @@ folder("${PRODUCT_NAME}-release-pipeline") {
     description("Sample Release Pipeline")
 
     if(${PRODUCT_NAME} == 'intpack17') {
-        properties {
-            COMBINATION="abc"
-        }
+        println("test!!!!")
     }
 }
