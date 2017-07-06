@@ -140,4 +140,4 @@ def jobDefinition = job("${PRODUCT_NAME}-release-pipeline/${PRODUCT_NAME}-maven-
     }
 }
 
-JobTemplate.addCommonConfiguration(jobDefinition)
+JobTemplate.addCommonConfiguration(jobDefinition, CI_PROPERTIES_FILE, PRODUCT_NAME)

@@ -2,7 +2,7 @@ package org.jboss.bxms.jenkins
 
 
 class JobTemplate {
-    static void addCommonConfiguration(job) {
+    static void addCommonConfiguration(job, CI_PROPERTIES_FILE, PRODUCT_NAME) {
 
         job.with {
 
