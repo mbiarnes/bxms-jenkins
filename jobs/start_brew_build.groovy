@@ -46,7 +46,7 @@ echo "Congratulation Brew build is triggered!"
 job("${PRODUCT_NAME}-release-pipeline/${PRODUCT_NAME}-start-brew-build") {
 
     // Sets a description for the job.
-    description("This job is responsible for initiation of Brew chain build.")
+    description("This job is responsible for initialising the Brew chain build.")
 
     // Label which specifies which nodes this job can run on.
     label("pvt-static")

@@ -1,4 +1,4 @@
-// Update product jira script
+// Update product JIRA script
 String shellScript = '''echo "The product version is $product_version and the release milestone is $release_milestone."
 python ./integration-platform-tooling/release-ticketor.py --headless $product_version.GA $cutoff_date $product_version.$release_milestone 2>&1 | tee /tmp/release-ticketor-output
 sed -i '/^resolve_issue_list=/d' ${HOME}/brms-64-jenkins-ci.properties
@@ -9,7 +9,7 @@ echo "resolve_issue_list="`cat /tmp/release-ticketor-output | grep https://url.c
 job("${PRODUCT_NAME}-release-pipeline/${PRODUCT_NAME}-update-product-jira") {
 
     // Sets a description for the job.
-    description("This job is responsible for update product jira.")
+    description("This job is responsible for updating the community JIRA tickets associated with this release.")
 
     // Label which specifies which nodes this job can run on.
     label("pvt-static")

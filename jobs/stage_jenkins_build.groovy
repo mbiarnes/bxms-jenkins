@@ -32,7 +32,7 @@ cp ${HOME}/${release_prefix}-deliverable-list.properties ${release_prefix}-deliv
 job("${PRODUCT_NAME}-release-pipeline/${PRODUCT_NAME}-stage-jenkins-build") {
 
     // Sets a description for the job.
-    description("This job is responsible for put brew artifact to staging area.")
+    description("This job is responsible for staging the Jenkins release deliverables to the RCM staging area.")
 
     // Label which specifies which nodes this job can run on.
     label("pvt-static")

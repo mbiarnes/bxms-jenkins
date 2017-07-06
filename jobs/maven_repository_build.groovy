@@ -14,7 +14,7 @@ sed -e 's=rcm-guest.app.eng.bos.redhat.com/rcm-guest/staging/jboss-brms=download
 def jobDefinition = job("${PRODUCT_NAME}-release-pipeline/${PRODUCT_NAME}-maven-repository-build") {
 
     // Sets a description for the job.
-    description("This job is responsible for offline Maven repository build.")
+    description("This job is responsible for building the offline maven repository zip for MRRC.")
 
     // Allows to parameterize the job.
     parameters {

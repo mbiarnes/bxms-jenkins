@@ -13,7 +13,7 @@ sed -e 's=rcm-guest.app.eng.bos.redhat.com/rcm-guest/staging/jboss-brms=download
 job("${PRODUCT_NAME}-release-pipeline/${PRODUCT_NAME}-maven-repository-build-local") {
 
     // Sets a description for the job.
-    description("This job is responsible for offline Maven repository build.")
+    description("This job is responsible for building the offline maven repository zip for MRRC (Local mode).")
 
     // Label which specifies which nodes this job can run on.
     label("bxms-nightly")

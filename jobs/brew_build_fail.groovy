@@ -73,7 +73,7 @@ String mailContent = '''<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
 job("${PRODUCT_NAME}-release-pipeline/${PRODUCT_NAME}-brew-build-fail") {
 
     // Sets a description for the job.
-    description("This job is triggered when Brew build fail.")
+    description("This job is triggered via a CI message when the Brew build fails.")
 
     // Label which specifies which nodes this job can run on.
     label("pvt-static")

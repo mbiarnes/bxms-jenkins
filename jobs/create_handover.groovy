@@ -39,7 +39,7 @@ echo "handover_pr=$handover_pr" >>${HOME}/${release_prefix}-jenkins-ci.propertie
 job("${PRODUCT_NAME}-release-pipeline/${PRODUCT_NAME}-create-handover") {
 
     // Sets a description for the job.
-    description("This job is responsible for creating handover.")
+    description("This job creates the handover report and pushes it to the staging area.")
 
     // Label which specifies which nodes this job can run on.
     label("pvt-static")

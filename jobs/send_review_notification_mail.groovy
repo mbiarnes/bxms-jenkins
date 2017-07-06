@@ -86,7 +86,7 @@ String mailContent = '''<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
 job("${PRODUCT_NAME}-release-pipeline/${PRODUCT_NAME}-send-review-notification-mail") {
 
     // Sets a description for the job.
-    description("This job sends review notification mail.")
+    description("This job is responsible for sending the PR review email to the team.")
 
     // Label which specifies which nodes this job can run on.
     label("pvt-static")
