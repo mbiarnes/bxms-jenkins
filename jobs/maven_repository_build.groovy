@@ -1,3 +1,5 @@
+import org.jboss.bxms.jenkins.JobTemplate
+
 // Repository builder script
 String shellScript = """make -f ${IP_MAKEFILE} repository
 
@@ -9,15 +11,10 @@ sed -e 's=rcm-guest.app.eng.bos.redhat.com/rcm-guest/staging/jboss-brms=download
 """
 
 // Creates or updates a free style job.
-job("${PRODUCT_NAME}-release-pipeline/${PRODUCT_NAME}-maven-repository-build") {
-
-
+def jobDefinition = job("${PRODUCT_NAME}-release-pipeline/${PRODUCT_NAME}-maven-repository-build") {
 
     // Sets a description for the job.
     description("This job is responsible for offline Maven repository build.")
-
-    // Label which specifies which nodes this job can run on.
-    label("pvt-static")
 
     // Adds environment variables to the build.
     environmentVariables {
@@ -172,3 +169,5 @@ job("${PRODUCT_NAME}-release-pipeline/${PRODUCT_NAME}-maven-repository-build") {
         }
     }
 }
+
+JobTemplate.addCommonConfiguration(jobDefinition, this)
