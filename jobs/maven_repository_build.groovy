@@ -1,7 +1,5 @@
-
-
 // Repository builder script
-String shellScript = """make -f Makefile.BRMS repository
+String shellScript = """make -f ${IP_MAKEFILE} repository
 
 sed -i '/^bxms.maven.repo.latest.url=/d' \${HOME}/\${release_prefix}-deliverable-list-staging.properties 
 echo "bxms.maven.repo.latest.url=\${rcm_stage_base}/jboss-bpmsuite/\${bpms_product_name}-\${product_version}.\${release_milestone}/jboss-brms-bpmsuite-\${product_version}.GA-maven-repository.zip">>\${HOME}/\${release_prefix}-deliverable-list-staging.properties
@@ -100,7 +98,7 @@ job("${PRODUCT_NAME}-release-pipeline/${PRODUCT_NAME}-maven-repository-build") {
     publishers {
 
         //Archives artifacts with each build.
-        archiveArtifacts('workspace/bxms-repository/archive/**/*')
+        archiveArtifacts('workspace/${release_prefix}-repository/archive/**/*')
 
         // Send artifacts to an SSH server (using SFTP) and/or execute commands over SSH.
         publishOverSsh {
@@ -115,10 +113,10 @@ job("${PRODUCT_NAME}-release-pipeline/${PRODUCT_NAME}-maven-repository-build") {
                 transferSet {
 
                     // Sets the files to upload to a server.
-                    sourceFiles('workspace/bxms-repository/archive/*.zip,workspace/bxms-repository/archive/*.text,workspace/bxms-repository/archive/*.md5')
+                    sourceFiles('workspace/${release_prefix}-repository/archive/*.zip,workspace/bxms-repository/archive/*.text,workspace/bxms-repository/archive/*.md5')
 
                     // Sets the first part of the file path that should not be created on the remote server.
-                    removePrefix('workspace/bxms-repository/archive/')
+                    removePrefix('workspace/${release_prefix}-repository/archive/')
 
                     // Sets the destination folder.
                     remoteDirectory('${bpms_stage_folder}/${bpms_product_name}-${product_version}.${release_milestone}/')
@@ -135,10 +133,10 @@ job("${PRODUCT_NAME}-release-pipeline/${PRODUCT_NAME}-maven-repository-build") {
                 transferSet {
 
                     // Sets the files to upload to a server.
-                    sourceFiles('workspace/bxms-repository/archive/*.zip,workspace/bxms-repository/archive/*.text,workspace/bxms-repository/archive/*.md5')
+                    sourceFiles('workspace/${release_prefix}-repository/archive/*.zip,workspace/bxms-repository/archive/*.text,workspace/bxms-repository/archive/*.md5')
 
                     // Sets the first part of the file path that should not be created on the remote server.
-                    removePrefix('workspace/bxms-repository/archive/')
+                    removePrefix('workspace/${release_prefix}-repository/archive/')
 
                     // Sets the destination folder.
                     remoteDirectory('${brms_stage_folder}/${brms_product_name}-${product_version}.${release_milestone}/')
