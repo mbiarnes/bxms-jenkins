@@ -1,7 +1,7 @@
 import org.jboss.bxms.jenkins.JobTemplate
 
 // Creates or updates a free style job.
-job("${PRODUCT_NAME}-release-pipeline/${PRODUCT_NAME}-promote-release") {
+def jobDefinition = job("${PRODUCT_NAME}-release-pipeline/${PRODUCT_NAME}-promote-release") {
 
     // Sets a description for the job.
     description("This job is responsible for uploading release to candidate area.")

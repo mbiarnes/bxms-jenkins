@@ -29,7 +29,7 @@ cp ${HOME}/${release_prefix}-deliverable-list.properties ${release_prefix}-deliv
 '''
 
 // Creates or updates a free style job.
-job("${PRODUCT_NAME}-release-pipeline/${PRODUCT_NAME}-stage-jenkins-build") {
+def jobDefinition = job("${PRODUCT_NAME}-release-pipeline/${PRODUCT_NAME}-stage-jenkins-build") {
 
     // Sets a description for the job.
     description("This job is responsible for staging the Jenkins release deliverables to the RCM staging area.")

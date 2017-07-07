@@ -16,7 +16,7 @@ echo "Product tag has been completed. Tag name: BxMS-${product_version}.${releas
 '''
 
 // Creates or updates a free style job.
-job("${PRODUCT_NAME}-release-pipeline/${PRODUCT_NAME}-create-product-tag") {
+def jobDefinition = job("${PRODUCT_NAME}-release-pipeline/${PRODUCT_NAME}-create-product-tag") {
 
     // Sets a description for the job.
     description("This job is responsible for creating the product milestone tags for this release in the format of ProductVersion.Milestone.")
