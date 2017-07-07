@@ -13,38 +13,6 @@ def jobDefinition = job("${PRODUCT_NAME}-release-pipeline/${PRODUCT_NAME}-update
     // Sets a description for the job.
     description("This job is responsible for updating the community JIRA tickets associated with this release.")
 
-    // Allows a job to check out sources from multiple SCM providers.
-    multiscm {
-
-        // Adds a Git SCM source.
-        git {
-
-            // Adds a remote.
-            remote {
-
-                // Sets the remote URL.
-                url("https://code.engineering.redhat.com/gerrit/integration-platform-config.git/")
-            }
-
-            // Specify the branches to examine for changes and to build.
-            branch("master")
-        }
-
-        // Adds a Git SCM source.
-        git {
-
-            // Adds a remote.
-            remote {
-
-                // Sets the remote URL.
-                url("https://code.engineering.redhat.com/gerrit/integration-platform-tooling.git/")
-            }
-
-            // Specify the branches to examine for changes and to build.
-            branch("master")
-        }
-    }
-
     // Adds build steps to the jobs.
     steps {
 
@@ -54,3 +22,4 @@ def jobDefinition = job("${PRODUCT_NAME}-release-pipeline/${PRODUCT_NAME}-update
 }
 
 JobTemplate.addCommonConfiguration(jobDefinition, CI_PROPERTIES_FILE, PRODUCT_NAME)
+JobTemplate.addIpToolingScmConfiguration(jobDefinition)
