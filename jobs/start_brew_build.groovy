@@ -1,3 +1,5 @@
+import org.jboss.bxms.jenkins.JobTemplate
+
 // Init Brew build script.
 def shellScript = """# Reset the build_counter and brew_build_url.
 export `grep "build_counter" \${HOME}/\${release_prefix}-jenkins-ci.properties`
@@ -48,29 +50,6 @@ job("${PRODUCT_NAME}-release-pipeline/${PRODUCT_NAME}-start-brew-build") {
     // Sets a description for the job.
     description("This job is responsible for initialising the Brew chain build.")
 
-    // Label which specifies which nodes this job can run on.
-    label("pvt-static")
-
-    // Adds environment variables to the build.
-    environmentVariables {
-
-        // Adds environment variables from a properties file.
-        propertiesFile("\${HOME}/${CI_PROPERTIES_FILE}")
-
-        // Inject Jenkins build variables and also environment contributors and build variable contributors provided by other plugins.
-        keepBuildVariables(true)
-
-        // Injects Jenkins system variables and environment variables defined as global properties and as node properties.
-        keepSystemVariables(true)
-    }
-
-    // Adds pre/post actions to the job.
-    wrappers {
-
-        // Deletes files from the workspace before the build starts.
-        preBuildCleanup()
-    }
-
     // Allows a job to check out sources from an SCM provider.
     scm {
 
@@ -96,3 +75,5 @@ job("${PRODUCT_NAME}-release-pipeline/${PRODUCT_NAME}-start-brew-build") {
         shell(shellScript)
     }
 }
+
+JobTemplate.addCommonConfiguration(jobDefinition, CI_PROPERTIES_FILE, PRODUCT_NAME)

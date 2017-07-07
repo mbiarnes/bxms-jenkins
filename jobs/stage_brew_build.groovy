@@ -1,3 +1,5 @@
+import org.jboss.bxms.jenkins.JobTemplate
+
 // Staging script.
 def shellScript = '''# Disable bash tracking mode, too much noise.
 #set +x
@@ -43,16 +45,6 @@ job("${PRODUCT_NAME}-release-pipeline/${PRODUCT_NAME}-stage-brew-build") {
     // Sets a description for the job.
     description("This job is responsible for staging the Brew release deliverables to the RCM staging area.")
 
-    // Label which specifies which nodes this job can run on.
-    label("pvt-static")
-
-    // Adds pre/post actions to the job.
-    wrappers {
-
-        // Deletes files from the workspace before the build starts.
-        preBuildCleanup()
-    }
-
     // Allows to parameterize the job.
     parameters {
 
@@ -67,19 +59,6 @@ job("${PRODUCT_NAME}-release-pipeline/${PRODUCT_NAME}-stage-brew-build") {
 
         // Defines a simple text parameter, where users can enter a string value.
         stringParam(parameterName = "task_id", defaultValue = null, description = "Brew task id")
-    }
-
-    // Adds environment variables to the build.
-    environmentVariables {
-
-        // Adds environment variables from a properties file.
-        propertiesFile('${HOME}/brms-64-jenkins-ci.properties')
-
-        // Inject Jenkins build variables and also environment contributors and build variable contributors provided by other plugins.
-        keepBuildVariables(true)
-
-        // Injects Jenkins system variables and environment variables defined as global properties and as node properties.
-        keepSystemVariables(true)
     }
 
     scm {
@@ -161,3 +140,5 @@ job("${PRODUCT_NAME}-release-pipeline/${PRODUCT_NAME}-stage-brew-build") {
         }
     }
 }
+
+JobTemplate.addCommonConfiguration(jobDefinition, CI_PROPERTIES_FILE, PRODUCT_NAME)

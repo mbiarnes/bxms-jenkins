@@ -1,3 +1,5 @@
+import org.jboss.bxms.jenkins.JobTemplate
+
 // QE handover test trigger script
 String shellScript = '''#Publish a CI Message to trigger the QE smoketest
 #echo "Send CI message CI_TYPE='${release_prefix}-qe-smoketest-trigger"
@@ -11,29 +13,6 @@ job("${PRODUCT_NAME}-release-pipeline/${PRODUCT_NAME}-trigger-qe-handover-test")
 
     // Sets a description for the job.
     description("This job is responsible for triggering QE handover test.")
-
-    // Label which specifies which nodes this job can run on.
-    label("pvt-static")
-
-    // Adds pre/post actions to the job.
-    wrappers {
-
-        // Deletes files from the workspace before the build starts.
-        preBuildCleanup()
-    }
-
-    // Adds environment variables to the build.
-    environmentVariables {
-
-        // Adds environment variables from a properties file.
-        propertiesFile('${HOME}/brms-64-jenkins-ci.properties')
-
-        // Inject Jenkins build variables and also environment contributors and build variable contributors provided by other plugins.
-        keepBuildVariables(true)
-
-        // Injects Jenkins system variables and environment variables defined as global properties and as node properties.
-        keepSystemVariables(true)
-    }
 
     scm {
 
@@ -77,3 +56,5 @@ job("${PRODUCT_NAME}-release-pipeline/${PRODUCT_NAME}-trigger-qe-handover-test")
         }
     }
 }
+
+JobTemplate.addCommonConfiguration(jobDefinition, CI_PROPERTIES_FILE, PRODUCT_NAME)

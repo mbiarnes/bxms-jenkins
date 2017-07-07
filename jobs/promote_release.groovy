@@ -1,31 +1,10 @@
+import org.jboss.bxms.jenkins.JobTemplate
+
 // Creates or updates a free style job.
 job("${PRODUCT_NAME}-release-pipeline/${PRODUCT_NAME}-promote-release") {
 
     // Sets a description for the job.
     description("This job is responsible for uploading release to candidate area.")
-
-    // Label which specifies which nodes this job can run on.
-    label("pvt-static")
-
-    // Adds pre/post actions to the job.
-    wrappers {
-
-        // Deletes files from the workspace before the build starts.
-        preBuildCleanup()
-    }
-
-    // Adds environment variables to the build.
-    environmentVariables {
-
-        // Adds environment variables from a properties file.
-        propertiesFile("\${HOME}/${CI_PROPERTIES_FILE}")
-
-        // Inject Jenkins build variables and also environment contributors and build variable contributors provided by other plugins.
-        keepBuildVariables(true)
-
-        // Injects Jenkins system variables and environment variables defined as global properties and as node properties.
-        keepSystemVariables(true)
-    }
 
     // Adds post-build actions to the job.
     publishers {
@@ -51,3 +30,5 @@ job("${PRODUCT_NAME}-release-pipeline/${PRODUCT_NAME}-promote-release") {
         }
     }
 }
+
+JobTemplate.addCommonConfiguration(jobDefinition, CI_PROPERTIES_FILE, PRODUCT_NAME)

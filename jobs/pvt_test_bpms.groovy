@@ -1,3 +1,5 @@
+import org.jboss.bxms.jenkins.JobTemplate
+
 // PVT script.
 String shellScript = '''cd pvt
 /mnt/maven-3.2.3-prod/bin/mvn clean site surefire-report:report -B -Dproduct.config=${bpms_smoketest_cfg}  -Dproduct.version=${product_version}.${release_milestone} -Dproduct.target=${product_version}.GA
@@ -13,29 +15,6 @@ job("${PRODUCT_NAME}-release-pipeline/${PRODUCT_NAME}-pvt-test-bpms") {
 
     // Sets a description for the job.
     description("This job is responsible for executing product validation tests.")
-
-    // Label which specifies which nodes this job can run on.
-    label("pvt-static")
-
-    // Adds pre/post actions to the job.
-    wrappers {
-
-        // Deletes files from the workspace before the build starts.
-        preBuildCleanup()
-    }
-
-    // Adds environment variables to the build.
-    environmentVariables {
-
-        // Adds environment variables from a properties file.
-        propertiesFile("\${HOME}/${CI_PROPERTIES_FILE}")
-
-        // Inject Jenkins build variables and also environment contributors and build variable contributors provided by other plugins.
-        keepBuildVariables(true)
-
-        // Injects Jenkins system variables and environment variables defined as global properties and as node properties.
-        keepSystemVariables(true)
-    }
 
     scm {
 
@@ -74,3 +53,5 @@ job("${PRODUCT_NAME}-release-pipeline/${PRODUCT_NAME}-pvt-test-bpms") {
         archiveArtifacts('pvt/generic/*.html,pvt/generic/*.adoc')
     }
 }
+
+JobTemplate.addCommonConfiguration(jobDefinition, CI_PROPERTIES_FILE, PRODUCT_NAME)

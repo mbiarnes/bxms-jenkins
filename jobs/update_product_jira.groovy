@@ -1,3 +1,5 @@
+import org.jboss.bxms.jenkins.JobTemplate
+
 // Update product JIRA script
 String shellScript = '''echo "The product version is $product_version and the release milestone is $release_milestone."
 python ./integration-platform-tooling/release-ticketor.py --headless $product_version.GA $cutoff_date $product_version.$release_milestone 2>&1 | tee /tmp/release-ticketor-output
@@ -10,45 +12,6 @@ job("${PRODUCT_NAME}-release-pipeline/${PRODUCT_NAME}-update-product-jira") {
 
     // Sets a description for the job.
     description("This job is responsible for updating the community JIRA tickets associated with this release.")
-
-    // Label which specifies which nodes this job can run on.
-    label("pvt-static")
-
-    // Adds environment variables to the build.
-    environmentVariables {
-
-        // Adds environment variables from a properties file.
-        propertiesFile('${HOME}/brms-64-jenkins-ci.properties')
-
-        // Inject Jenkins build variables and also environment contributors and build variable contributors provided by other plugins.
-        keepBuildVariables(true)
-
-        // Injects Jenkins system variables and environment variables defined as global properties and as node properties.
-        keepSystemVariables(true)
-    }
-
-    // Adds pre/post actions to the job.
-    wrappers {
-
-        // Deletes files from the workspace before the build starts.
-        preBuildCleanup()
-
-        // Adds timestamps to the console log.
-        timestamps()
-
-        // Add a timeout to the build job. Defaults to a absolute timeout with a maximum build time of 3 minutes.
-        timeout {
-
-            // Aborts the build based on a fixed time-out
-            absolute(minutes = 3)
-
-            // Aborts the build.
-            abortBuild()
-
-            // Marked the build as failed
-            failBuild()
-        }
-    }
 
     // Allows to parameterize the job.
     parameters {
@@ -109,3 +72,5 @@ job("${PRODUCT_NAME}-release-pipeline/${PRODUCT_NAME}-update-product-jira") {
         shell(shellScript)
     }
 }
+
+JobTemplate.addCommonConfiguration(jobDefinition, CI_PROPERTIES_FILE, PRODUCT_NAME)
