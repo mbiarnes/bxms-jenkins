@@ -22,7 +22,7 @@ class JobTemplate {
                 keepSystemVariables(true)
 
                 // Prepare repository build script
-                if (PRODUCT_NAME == "intpack17") {
+                if (PRODUCT_NAME == "intpack-fuse63-bxms64") {
 
                     // Adds an environment variable to the build.
                     env("COMBINATION", "fuse63-bxms64")
