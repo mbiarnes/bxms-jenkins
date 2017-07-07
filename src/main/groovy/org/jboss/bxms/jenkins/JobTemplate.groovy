@@ -38,6 +38,17 @@ class JobTemplate {
                 // Adds timestamps to the console log.
                 timestamps()
             }
+
+            // Adds post-build actions to the job.
+            publishers {
+
+                // Publishes builds to another Jenkins instance.
+                publishBuild {
+
+                    // Manages how long to keep records of the builds.
+                    discardOldBuilds(numToKeep = 50, artifactNumToKeep = 5)
+                }
+            }
         }
     }
 }
