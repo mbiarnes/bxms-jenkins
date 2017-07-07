@@ -39,15 +39,14 @@ class JobTemplate {
                 timestamps()
             }
 
-            // Adds post-build actions to the job.
-            publishers {
+            // Manages how long to keep records of the builds.
+            logRotator {
 
-                // Publishes builds to another Jenkins instance.
-                publishBuild {
+                // If specified, only up to this number of build records are kept.
+                numToKeep(50)
 
-                    // Manages how long to keep records of the builds.
-                    discardOldBuilds(numToKeep = 50, artifactNumToKeep = 5)
-                }
+                // If specified, only up to this number of builds have their artifacts retained.
+                artifactNumToKeep(5)
             }
         }
     }
