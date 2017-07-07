@@ -2,6 +2,7 @@ package org.jboss.bxms.jenkins
 
 
 class JobTemplate {
+
     static void addCommonConfiguration(job, CI_PROPERTIES_FILE, PRODUCT_NAME) {
 
         job.with {
@@ -47,6 +48,51 @@ class JobTemplate {
 
                 // If specified, only up to this number of builds have their artifacts retained.
                 artifactNumToKeep(5)
+            }
+        }
+    }
+
+    static void addIpToolingScmConfiguration(job) {
+
+        job.with {
+
+            // Allows a job to check out sources from multiple SCM providers.
+            multiscm {
+
+                // Adds a Git SCM source.
+                git {
+
+                    // Adds a remote.
+                    remote {
+
+                        // Sets the remote URL.
+                        url("https://code.engineering.redhat.com/gerrit/integration-platform-config.git/")
+                    }
+
+                    // Specify the branches to examine for changes and to build.
+                    branch("master")
+                }
+
+                // Adds a Git SCM source.
+                git {
+
+                    // Adds a remote.
+                    remote {
+
+                        // Sets the remote URL.
+                        url("https://code.engineering.redhat.com/gerrit/integration-platform-tooling.git/")
+                    }
+
+                    // Specify the branches to examine for changes and to build.
+                    branch("master")
+
+                    // Adds additional behaviors.
+                    extensions {
+
+                        // Specifies a local directory (relative to the workspace root) where the Git repository will be checked out.
+                        relativeTargetDirectory('ip-tooling')
+                    }
+                }
             }
         }
     }
