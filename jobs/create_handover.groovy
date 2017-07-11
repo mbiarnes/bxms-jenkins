@@ -3,14 +3,6 @@ import org.jboss.bxms.jenkins.JobTemplate
 // Create handover script
 String shellScript = '''rm -rf  integration-platform-config
 
-git clone ssh://zheyzhan@code.engineering.redhat.com:22/integration-platform-config.git
-cd integration-platform-config
-git checkout ${ip_config_branch}
-
-git clone ssh://zheyzhan@code.engineering.redhat.com:22/integration-platform-tooling.git
-cd integration-platform-tooling
-git checkout ${ip_tooling_branch}
-
 #chmod 655 create_handover.py
 python create_handover.py -a ${bpms_pvt_summary_adoc} -t ../${release_prefix}-release/${release_prefix}-handover.template -p ${HOME}/${release_prefix}-jenkins-ci.properties -o ../${release_prefix}-release/${release_prefix}-handover.adoc
 asciidoctor ../${release_prefix}-release/${release_prefix}-handover.adoc
@@ -119,3 +111,4 @@ def jobDefinition = job("${PRODUCT_NAME}-release-pipeline/${PRODUCT_NAME}-create
 }
 
 JobTemplate.addCommonConfiguration(jobDefinition, CI_PROPERTIES_FILE, PRODUCT_NAME)
+JobTemplate.addIpToolingScmConfiguration(jobDefinition)
