@@ -6,7 +6,7 @@ unset WORKSPACE
 RELEASE_TAG=\${product_name}-\${product_version}.\${release_milestone} LOCAL=1 CFG=./\${release_prefix}.cfg REPO_GROUP=MEAD make POMMANIPEXT=brms-bom -f ${IP_MAKEFILE} ${PRODUCT_ROOT_COMPNENT} 2>&1| tee b.log 
 
 sed -i '/^product_tag=/d' \${HOME}/\${release_prefix}-jenkins-ci.properties && echo "product_tag=BxMS-\${product_version}.\${release_milestone}" >> \${HOME}/\${release_prefix}-jenkins-ci.properties
-echo "Product tag has been completed. Tag name: BxMS-${product_version}.${release_milestone}"
+echo "Product tag has been completed. Tag name: BxMS-\${product_version}.\${release_milestone}"
 """
 
 // Creates or updates a free style job.
