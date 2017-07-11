@@ -22,7 +22,7 @@ class JobTemplate {
                 // Injects Jenkins system variables and environment variables defined as global properties and as node properties.
                 keepSystemVariables(true)
 
-                // Prepare repository build script
+                // Prepare additional variables
                 if (PRODUCT_NAME == "intpack-fuse63-bxms64") {
 
                     // Adds an environment variable to the build.
