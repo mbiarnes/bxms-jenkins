@@ -36,11 +36,8 @@ echo "Brewchain Build URL: \$brewchain_build_url"
 
 build_counter=\$((\$build_counter+1))
 sed -i '/^build_counter=/d' \${HOME}/\${release_prefix}-jenkins-ci.properties && echo "build_counter=\$build_counter" >>\${HOME}/\${release_prefix}-jenkins-ci.properties
-#sed -i '/^brew_build_url=/d' \${HOME}/\${release_prefix}-jenkins-ci.properties && echo "brew_build_url=\$brew_build_url" >>\${HOME}/\${release_prefix}-jenkins-ci.properties
-
 
 sed -i '/^brewchain_build_url=/d' \${HOME}/\${release_prefix}-jenkins-ci.properties && echo "brewchain_build_url=\$brewchain_build_url" >>\${HOME}/\${release_prefix}-jenkins-ci.properties
-#sed -i '/^task_id=/d' \${HOME}/\${release_prefix}-jenkins-ci.properties && echo "task_id=\$brewchain_build_url" >>\${HOME}/\${release_prefix}-jenkins-ci.properties
 echo "Congratulation Brew build is triggered!"
 """
 
@@ -49,24 +46,6 @@ def jobDefinition = job("${PRODUCT_NAME}-release-pipeline/${PRODUCT_NAME}-start-
 
     // Sets a description for the job.
     description("This job is responsible for initialising the Brew chain build.")
-
-    // Allows a job to check out sources from an SCM provider.
-    scm {
-
-        // Adds a Git SCM source.
-        git {
-
-            // Adds a remote.
-            remote {
-
-                // Sets the remote URL.
-                url("https://code.engineering.redhat.com/gerrit/integration-platform-config.git/")
-            }
-
-            // Specify the branches to examine for changes and to build.
-            branch('${ip_config_branch}')
-        }
-    }
 
     // Adds build steps to the jobs.
     steps {
@@ -77,3 +56,4 @@ def jobDefinition = job("${PRODUCT_NAME}-release-pipeline/${PRODUCT_NAME}-start-
 }
 
 JobTemplate.addCommonConfiguration(jobDefinition, CI_PROPERTIES_FILE, PRODUCT_NAME)
+JobTemplate.addIpToolingScmConfiguration(jobDefinition)
