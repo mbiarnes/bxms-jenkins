@@ -30,7 +30,7 @@ release=`echo \$CI_MESSAGE| python -c "import sys, json; print json.load(sys.std
 task_id=`echo \$CI_MESSAGE| python -c "import sys, json; print json.load(sys.stdin)['build']['task_id']"` 1>/dev/null
 
 fi
-maven_repo_url="http://download.eng.bos.redhat.com/brewroot/packages/${name}/${version}/${release}/maven/"
+maven_repo_url="http://download.eng.bos.redhat.com/brewroot/packages/\${name}/\${version}/\${release}/maven/"
 
 echo \$maven_repo_url
 
