@@ -5,14 +5,10 @@ rm -rf ip-tooling
 git clone  https://code.engineering.redhat.com/gerrit/integration-platform-tooling.git ip-tooling
 if ${IP_CONFIG_FILE} == 'brms-64.cfg';
 then
-    brew_tag = 'jb-bxms-6.4-build'
-    nfs_repo_cache= '/mnt/jboss-prod/m3/bxms-6.4-milestone' 
+    ip-tooling/MEAD_check_artifact.sh jb-bxms-6.4-build /mnt/jboss-prod/m3/bxms-6.4-milestone 2>&1 | tee mead_check.log
 elif ${IP_CONFIG_FILE} == 'brms.cfg'; 
-    brew_tag = 'jb-bxms-7.0-maven-build'
-    nfs_repo_cache= '/mnt/jboss-prod/m2/bxms-7.0-milestone' 
+    ip-tooling/MEAD_check_artifact.sh jb-bxms-7.0-maven-build /mnt/jboss-prod/m3/bxms-7.0-milestone 2>&1 | tee mead_check.log
 fi
-
-ip-tooling/MEAD_check_artifact.sh $brew_tag $nfs_repo_cache 2>&1 | tee mead_check.log
 cat mead_check.log
 """
 // Creates or updates a free style job.
