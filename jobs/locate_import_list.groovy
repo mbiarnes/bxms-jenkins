@@ -3,11 +3,12 @@ import org.jboss.bxms.jenkins.JobTemplate
 String script = """
 rm -rf ip-tooling
 git clone  https://code.engineering.redhat.com/gerrit/integration-platform-tooling.git ip-tooling
-if ${IP_CONFIG_FILE} == 'brms-64.cfg';
+if [ '${IP_CONFIG_FILE}' == 'brms-64.cfg' ];
 then
-    ip-tooling/MEAD_check_artifact.sh jb-bxms-6.4-build /mnt/jboss-prod/m3/bxms-6.4-milestone 2>&1 | tee mead_check.log
-elif ${IP_CONFIG_FILE} == 'brms.cfg'; 
-    ip-tooling/MEAD_check_artifact.sh jb-bxms-7.0-maven-build /mnt/jboss-prod/m3/bxms-7.0-milestone 2>&1 | tee mead_check.log
+    ip-tooling/MEAD_check_artifact.sh jb-bxms-6.4-build /mnt/jboss-prod/bxms-6.4-milestone 2>&1 | tee mead_check.log
+elif [ '${IP_CONFIG_FILE}' == 'brms.cfg' ]; 
+then
+    ip-tooling/MEAD_check_artifact.sh jb-bxms-7.0-maven-build /mnt/jboss-prod/bxms-7.0-milestone 2>&1 | tee mead_check.log
 fi
 cat mead_check.log
 """
