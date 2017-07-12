@@ -14,23 +14,6 @@ def jobDefinition = job("${PRODUCT_NAME}-release-pipeline/${PRODUCT_NAME}-trigge
     // Sets a description for the job.
     description("This job is responsible for triggering QE smoke test.")
 
-    scm {
-
-        // Adds a Git SCM source.
-        git {
-
-            // Adds a remote.
-            remote {
-
-                // Sets the remote URL.
-                url("https://code.engineering.redhat.com/gerrit/integration-platform-config.git/")
-            }
-
-            // Specify the branches to examine for changes and to build.
-            branch('${ip_config_branch}')
-        }
-    }
-
     // Adds build steps to the jobs.
     steps {
 
