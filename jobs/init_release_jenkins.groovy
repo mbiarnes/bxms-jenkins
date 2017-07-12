@@ -1,3 +1,5 @@
+import org.jboss.bxms.jenkins.JobTemplate
+
 // Shell script
 String script = """
 ip-tooling/utility/init-releaseci-properties.sh ${IP_CONFIG_FILE}
@@ -32,45 +34,6 @@ job("${PRODUCT_NAME}-release-pipeline/${PRODUCT_NAME}-init-release-jenkins") {
         preBuildCleanup()
     }
 
-    // Allows a job to check out sources from multiple SCM providers.
-    multiscm {
-
-        // Adds a Git SCM source.
-        git {
-
-            // Adds a remote.
-            remote {
-
-                // Sets the remote URL.
-                url("https://code.engineering.redhat.com/gerrit/integration-platform-config.git/")
-            }
-
-            // Specify the branches to examine for changes and to build.
-            branch("master")
-        }
-
-        // Adds a Git SCM source.
-        git {
-
-            // Adds a remote.
-            remote {
-
-                // Sets the remote URL.
-                url("https://code.engineering.redhat.com/gerrit/integration-platform-tooling.git/")
-            }
-
-            // Specify the branches to examine for changes and to build.
-            branch("master")
-
-            // Adds additional behaviors.
-            extensions {
-
-                // Specifies a local directory (relative to the workspace root) where the Git repository will be checked out.
-                relativeTargetDirectory('ip-tooling')
-            }
-        }
-    }
-
     // Adds build steps to the jobs.
     steps {
 
@@ -78,3 +41,5 @@ job("${PRODUCT_NAME}-release-pipeline/${PRODUCT_NAME}-init-release-jenkins") {
         shell(script)
     }
 }
+
+JobTemplate.addIpToolingScmConfiguration(jobDefinition)
