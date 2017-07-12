@@ -19,7 +19,7 @@ scp -i \${HOME}/.ssh/jenkins_rsa \${HOME}/brms-jenkins-ci.properties 10.8.172.25
 """
 
 // Creates or updates a free style job.
-job("${PRODUCT_NAME}-release-pipeline/${PRODUCT_NAME}-init-release-jenkins") {
+def jobDefinition = job("${PRODUCT_NAME}-release-pipeline/${PRODUCT_NAME}-init-release-jenkins") {
 
     // Sets a description for the job.
     description("This is the ${PRODUCT_NAME} release initialization job. This job is responsible for preparation of ${CI_PROPERTIES_FILE} file.")
