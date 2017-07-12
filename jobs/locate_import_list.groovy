@@ -1,9 +1,6 @@
 import org.jboss.bxms.jenkins.JobTemplate
 
-String script = """
-rm -rf ip-tooling
-git clone  https://code.engineering.redhat.com/gerrit/integration-platform-tooling.git ip-tooling
-if [ '${IP_CONFIG_FILE}' == 'brms-64.cfg' ];
+String script = """if [ '${IP_CONFIG_FILE}' == 'brms-64.cfg' ];
 then
     ip-tooling/MEAD_check_artifact.sh jb-bxms-6.4-build /mnt/jboss-prod/bxms-6.4-milestone 2>&1 | tee mead_check.log
 elif [ '${IP_CONFIG_FILE}' == 'brms.cfg' ]; 
@@ -16,7 +13,7 @@ cat mead_check.log
 def jobDefinition = job("${PRODUCT_NAME}-release-pipeline/${PRODUCT_NAME}-locate-import-list") {
 
     // Sets a description for the job.
-    description("This job is responsible for finding brew missing jars .")
+    description("This job is responsible for finding brew missing jars.")
 
     // Adds build steps to the jobs.
     steps {
@@ -27,3 +24,4 @@ def jobDefinition = job("${PRODUCT_NAME}-release-pipeline/${PRODUCT_NAME}-locate
 }
 
 JobTemplate.addCommonConfiguration(jobDefinition, CI_PROPERTIES_FILE, PRODUCT_NAME)
+JobTemplate.addIpToolingScmConfiguration(jobDefinition)
