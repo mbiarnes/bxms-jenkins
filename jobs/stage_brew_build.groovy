@@ -2,10 +2,10 @@ import org.jboss.bxms.jenkins.JobTemplate
 
 
 // sed command
-def command = ""
+def command = null
 
 // temp workaround for bpms
-def mavenToStageBpmsCommand = ""
+def mavenToStageBpmsCommand = null
 
 // Prepare properties command
 if (PRODUCT_NAME == "intpack-fuse63-bxms64") {
