@@ -1,13 +1,10 @@
+import org.jboss.bxms.jenkins.JobTemplate
+
 // Staging script.
 def shellScript = '''#disable bash tracking mode, too much noise
 #set +x
 
 echo $maven_repo_url
-
-rm -rf ip-tooling
-git clone  https://code.engineering.redhat.com/gerrit/integration-platform-tooling.git ip-tooling
-cd ip-tooling && git checkout ${ip_tooling_branch}
-cd -
 
 #Uploading to rcm staging folder
 ip-tooling/maven-to-stage.py --version=${product_artifact_version} --override-version ${product_version}.${release_milestone} \\
@@ -33,46 +30,6 @@ def jobDefinition = job("${PRODUCT_NAME}-release-pipeline/${PRODUCT_NAME}-stage-
 
     // Sets a description for the job.
     description("This job is responsible for staging the Jenkins release deliverables to the RCM staging area.")
-
-    // Label which specifies which nodes this job can run on.
-    label("pvt-static")
-
-    // Adds pre/post actions to the job.
-    wrappers {
-
-        // Deletes files from the workspace before the build starts.
-        preBuildCleanup()
-    }
-
-    // Adds environment variables to the build.
-    environmentVariables {
-
-        // Adds environment variables from a properties file.
-        propertiesFile("\${HOME}/${CI_PROPERTIES_FILE}")
-
-        // Inject Jenkins build variables and also environment contributors and build variable contributors provided by other plugins.
-        keepBuildVariables(true)
-
-        // Injects Jenkins system variables and environment variables defined as global properties and as node properties.
-        keepSystemVariables(true)
-    }
-
-    scm {
-
-        // Adds a Git SCM source.
-        git {
-
-            // Adds a remote.
-            remote {
-
-                // Sets the remote URL.
-                url("https://code.engineering.redhat.com/gerrit/integration-platform-config.git/")
-            }
-
-            // Specify the branches to examine for changes and to build.
-            branch('${ip_config_branch}')
-        }
-    }
 
     // Adds build steps to the jobs.
     steps {
@@ -136,3 +93,6 @@ def jobDefinition = job("${PRODUCT_NAME}-release-pipeline/${PRODUCT_NAME}-stage-
         }
     }
 }
+
+JobTemplate.addCommonConfiguration(jobDefinition, CI_PROPERTIES_FILE, PRODUCT_NAME)
+JobTemplate.addIpToolingScmConfiguration(jobDefinition)
