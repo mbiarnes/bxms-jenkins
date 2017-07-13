@@ -7,17 +7,15 @@ def jobDefinition = job("${PRODUCT_NAME}-release-pipeline/${PRODUCT_NAME}-test")
     // Adds environment variables to the build.
     environmentVariables {
         groovy('''
-            kieDateFormat = "7.1.0." + now.format("yyyyMMdd-HHmmss")
-            ufDateFormat = "1.1.0." + now.format("yyyyMMdd-HHmmss")
-            dashDateFormat = "0.7.0." + now.format("yyyyMMdd-HHmmss")
-            erraiDateFormat = "4.0.1." + now.format("yyyyMMdd-HHmmss")
-            return [A: kieDateFormat, B: ufDateFormat, C: dashDateFormat, D: erraiDateFormat]
+def date = new Date().format( 'yyyyMMdd-hhMMss' )
+def version = "7.1.0."
+return [tag_name: version + date]
         ''')
     }
     // Adds build steps to the jobs.
     steps {
 
         // Runs a shell script (defaults to sh, but this is configurable) for building the project.
-        shell('echo "$A and $B and $C and $D"')
+        shell('echo $tag_name')
     }
 }
