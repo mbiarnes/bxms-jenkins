@@ -2,7 +2,7 @@ import org.jboss.bxms.jenkins.JobTemplate
 
 String script = """if [ '${IP_CONFIG_FILE}' == 'brms-64.cfg' ];
 then
-    ip-tooling/MEAD_check_artifact.sh jb-bxms-6.4-build /mnt/jboss-prod/bxms-6.4-milestone 2>&1 | tee mead_check.log
+    ip-tooling/MEAD_check_artifact.sh jb-bxms-6.4-build /mnt/jboss-prod/m2/bxms-6.4-milestone 2>&1 | tee mead_check.log
 elif [ '${IP_CONFIG_FILE}' == 'brms.cfg' ]; 
 then
     ip-tooling/MEAD_check_artifact.sh jb-bxms-7.0-maven-build /mnt/jboss-prod/m2/bxms-7-milestone 2>&1 | tee mead_check.log
