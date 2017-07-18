@@ -85,13 +85,23 @@ def jobDefinition = job("${PRODUCT_NAME}-release-pipeline/${PRODUCT_NAME}-create
                     transferSet {
 
                         // Sets the files to upload to a server.
-                        sourceFiles('${release_prefix}-release/${release_prefix}-handover.html')
+                        sourceFiles('${release_prefix}-release/${release_prefix}-handover.html,${release_prefix}-release/${release_prefix}-pvt-report.html')
 
                         // Sets the first part of the file path that should not be created on the remote server.
                         removePrefix('${release-prefix}-release')
 
                         // Sets the destination folder.
                         remoteDirectory('${product_stage_folder}/${product_name}-${product_version}')
+                    }
+
+                    // Adds a transfer set.
+                    transferSet {
+
+                        // Sets the files to upload to a server.
+                        sourceFiles('${release-prefix}.cfg')
+
+                        // Sets the destination folder.
+                        remoteDirectory('${stage_folder}/${product_name}-${product_version}/')
                     }
 
                 } else {
