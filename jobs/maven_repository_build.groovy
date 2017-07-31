@@ -92,13 +92,13 @@ def jobDefinition = job("${PRODUCT_NAME}-release-pipeline/${PRODUCT_NAME}-maven-
                     transferSet {
 
                         // Sets the files to upload to a server.
-                        sourceFiles('workspace/${release_prefix}-repository/archive/*.zip,workspace/bxms-repository/archive/*.text,workspace/bxms-repository/archive/*.md5')
+                        sourceFiles('workspace/${release_prefix}-repository/archive/*.zip,workspace/${release_prefix}-repository/archive/*.text,workspace/${release_prefix}-repository/archive/*.md5')
 
                         // Sets the first part of the file path that should not be created on the remote server.
                         removePrefix('workspace/${release_prefix}-repository/archive/')
 
                         // Sets the destination folder.
-                        remoteDirectory('${bpms_stage_folder}/${bpms_product_name}-${product_version}.${release_milestone}/')
+                        remoteDirectory('${brms_stage_folder}/${brms_product_name}-${product_version}.${release_milestone}/')
 
                         // Specifies a command to execute on the remote server.
                         execCommand('unzip ' +
@@ -112,13 +112,13 @@ def jobDefinition = job("${PRODUCT_NAME}-release-pipeline/${PRODUCT_NAME}-maven-
                     transferSet {
 
                         // Sets the files to upload to a server.
-                        sourceFiles('workspace/${release_prefix}-repository/archive/*.zip,workspace/bxms-repository/archive/*.text,workspace/bxms-repository/archive/*.md5')
+                        sourceFiles('workspace/${release_prefix}-repository/archive/*.zip,workspace/${release_prefix}-repository/archive/*.text,workspace/${release_prefix}-repository/archive/*.md5')
 
                         // Sets the first part of the file path that should not be created on the remote server.
                         removePrefix('workspace/${release_prefix}-repository/archive/')
 
                         // Sets the destination folder.
-                        remoteDirectory('${brms_stage_folder}/${brms_product_name}-${product_version}.${release_milestone}/')
+                        remoteDirectory('${bpms_stage_folder}/${bpms_product_name}-${product_version}.${release_milestone}/')
 
                         // Specifies a command to execute on the remote server.
                         execCommand('unzip ' +
