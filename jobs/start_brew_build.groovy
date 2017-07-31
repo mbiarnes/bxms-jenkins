@@ -23,8 +23,6 @@ fi
 #Enable keytab authentication.
 kinit -k -t \${HOME}/host-host-8-172-124.host.centralci.eng.rdu2.redhat.com.keytab host/host-8-172-124.host.centralci.eng.rdu2.redhat.com@REDHAT.COM
 
-git clone  https://code.engineering.redhat.com/gerrit/integration-platform-tooling.git ip-tooling
-
 UNBLOCK=1 BREWCHAIN=1 CFG=./\${release_prefix}.cfg POMMANIPEXT=brms-bom make -f  ${IP_MAKEFILE} ${PRODUCT_ROOT_COMPNENT}  2>&1| tee b.log 
 
 brewchain_build_url=`grep 'build: Watching task ID:' b.log`
