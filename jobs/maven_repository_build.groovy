@@ -43,7 +43,7 @@ def jobDefinition = job("${PRODUCT_NAME}-release-pipeline/${PRODUCT_NAME}-maven-
                 description = "Tick if you want to generate report for the newly created repository.")
 
         // Defines a simple text parameter, where users can enter a string value.
-        stringParam(parameterName = "task_id", defaultValue = incrementalRepositoryString,
+        stringParam(parameterName = "INCREMENTAL_REPO_FOR", defaultValue = incrementalRepositoryString,
                 description = "List of repositories to exclude. They can be online repository urls or online available zip files in format <url to the zip>:<relative path to repo root inside the zip<. Each repository is supposed to be put on a new line.")
     }
 
