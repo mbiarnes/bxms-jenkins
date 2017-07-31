@@ -5,17 +5,16 @@ def shellScript = null
 
 if (PRODUCT_NAME == "intpack-fuse63-bxms64") {
 
-    shellScript = """./ip-tooling/python create_handover.py -a \${pvt_summary_adoc} -t ../\${release_prefix}-release/\${release_prefix}-handover.template -p \${HOME}/\${release_prefix}-jenkins-ci.properties -o ../\${release_prefix}-release/\${release_prefix}-handover.adoc
-asciidoctor ../\${release_prefix}-release/\${release_prefix}-handover.adoc
+    shellScript = """./ip-tooling/python create_handover.py -a \${pvt_summary_adoc} -t \${release_prefix}-release/\${release_prefix}-handover.template -p \${HOME}/\${release_prefix}-jenkins-ci.properties -o \${release_prefix}-release/\${release_prefix}-handover.adoc
+asciidoctor \${release_prefix}-release/\${release_prefix}-handover.adoc
 
-cd ../
 cp \${pvt_report_html} \${release_prefix}-release/\${release_prefix}-pvt-report.html
 
 git config --global user.email "bxms-releaseci@redhat.com"
 git config --global user.name "bxms-releaseci"
 git add \${release_prefix}-release/\${release_prefix}-pvt-report.html
 sed -i 's/releaseci_trigger=true/releaseci_trigger=false/g' \${release_prefix}.cfg
-commit_msg="Prepare handover PR \${product_name} \${product_version} \${release_milestone}  "
+commit_msg="Prepare handover PR \${product_name} \${product_version} \${release_milestone}"
 
 
 git commit -a -m "\${commit_msg}"
@@ -30,10 +29,9 @@ echo "handover_pr=\$handover_pr" >>\${HOME}/\${release_prefix}-jenkins-ci.proper
 """
 } else {
 
-    shellScript = """python ./ip-tooling/create_handover.py -a \${bpms_pvt_summary_adoc} -t ../\${release_prefix}-release/\${release_prefix}-handover.template -p \${HOME}/\${release_prefix}-jenkins-ci.properties -o ../\${release_prefix}-release/\${release_prefix}-handover.adoc
-asciidoctor ../\${release_prefix}-release/\${release_prefix}-handover.adoc
+    shellScript = """python ./ip-tooling/create_handover.py -a \${bpms_pvt_summary_adoc} -t \${release_prefix}-release/\${release_prefix}-handover.template -p \${HOME}/\${release_prefix}-jenkins-ci.properties -o \${release_prefix}-release/\${release_prefix}-handover.adoc
+asciidoctor \${release_prefix}-release/\${release_prefix}-handover.adoc
 
-cd ../
 cp \${brms_pvt_report_html} \${release_prefix}-release/\${release_prefix}-pvt-report-brms.html
 cp \${bpms_pvt_report_html} \${release_prefix}-release/\${release_prefix}-pvt-report-bpms.html
 
