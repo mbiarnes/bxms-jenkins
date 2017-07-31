@@ -18,9 +18,9 @@ if (PRODUCT_NAME == "intpack-fuse63-bxms64") {
     command = 'sed -e \'s=rcm-guest.app.eng.bos.redhat.com/rcm-guest/staging/jboss-brms=download.devel.redhat.com/devel/candidates/BRMS=g\' -e \'s=rcm-guest.app.eng.bos.redhat.com/rcm-guest/staging/jboss-bpmsuite=download.devel.redhat.com/devel/candidates/BPMS=g\' brms-64-deliverable-list-staging.properties >> brms-64-deliverable-list.properties'
 
     mavenToStageBpmsCommand = 'ip-tooling/maven-to-stage.py --version=\\${product_artifact_version} --override-version \\${product_version} \\\n' +
-            '   --deliverable \\${release_prefix}-release/${release_prefix}-deliverable.properties --maven-repo \\${maven_repo_url} \\\n' +
-            '   --output \\${bpms_product_name}-\\${product_version}.\\${release_milestone} \\\n' +
-            '   --release-url=\\${rcm_stage_base}/jboss-bpmsuite/\\${bpms_product_name}-\\${product_version}.\\${release_milestone} --output-deliverable-list \\${HOME}/\\${release_prefix}-deliverable-list-staging.properties'
+            '   --deliverable \${release_prefix}-release/${release_prefix}-deliverable.properties --maven-repo \\${maven_repo_url} \\\n' +
+            '   --output \${bpms_product_name}-\\${product_version}.\\${release_milestone} \\\n' +
+            '   --release-url=\${rcm_stage_base}/jboss-bpmsuite/\${bpms_product_name}-\${product_version}.\${release_milestone} --output-deliverable-list \${HOME}/\${release_prefix}-deliverable-list-staging.properties'
 }
 
 // Staging script.
@@ -143,7 +143,7 @@ def jobDefinition = job("${PRODUCT_NAME}-release-pipeline/${PRODUCT_NAME}-stage-
                     transferSet {
 
                         // Sets the files to upload to a server.
-                        sourceFiles('brms-64-deliverable-list*.properties')
+                        sourceFiles('${release_prefix}-deliverable-list*.properties')
 
                         // Sets the destination folder.
                         remoteDirectory('${brms_stage_folder}/${brms_product_name}-${product_version}.${release_milestone}/')
@@ -153,7 +153,7 @@ def jobDefinition = job("${PRODUCT_NAME}-release-pipeline/${PRODUCT_NAME}-stage-
                     transferSet {
 
                         // Sets the files to upload to a server.
-                        sourceFiles('brms-64-deliverable-list*.properties')
+                        sourceFiles('${release_prefix}-deliverable-list*.properties')
 
                         // Sets the destination folder.
                         remoteDirectory('${bpms_stage_folder}/${bpms_product_name}-${product_version}.${release_milestone}/')
