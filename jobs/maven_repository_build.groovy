@@ -5,19 +5,14 @@ import org.jboss.bxms.jenkins.JobTemplate
 // incremental repository
 def incrementalRepositoryString = null
 
-// make command
-def makeCommand = "make -f ${IP_MAKEFILE} repository"
-
 if (PRODUCT_NAME == "bxms64") {
 
     incrementalRepositoryString = "http://rcm-guest.app.eng.bos.redhat.com/rcm-guest/staging/jboss-brms/BRMS-6.4.0.CR2/jboss-brms-bpmsuite-6.4.0.GA-maven-repository/maven-repository"
 
-} else if (PRODUCT_NAME == "bxms70") {
-    makeCommand = "make -f Makefile.BRMS MAVEN_REPOSITORY_BUILDER_SCRIPT=regen_bxms_repo_builder.sh REPO_TYPE=local REPO_PARAM=/mnt/jboss-prod/m2/bxms-7-milestone MAVEN_REPOSITORY_BUILDER_SCRIPT_GENERATION_OPTION=script repository"
 }
 
 // Repository builder script
-String shellScript = """${makeCommand}
+def shellScript = """make ${IP_MAKEFILE} repository
 
 sed -i '/^bxms.maven.repo.latest.url=/d' \${HOME}/\${release_prefix}-deliverable-list-staging.properties 
 echo "bxms.maven.repo.latest.url=\${rcm_stage_base}/\${bpms_stage_folder}/\${bpms_product_name}-\${product_version}.\${release_milestone}/jboss-brms-bpmsuite-\${product_version}.GA-maven-repository.zip">>\${HOME}/\${release_prefix}-deliverable-list-staging.properties
