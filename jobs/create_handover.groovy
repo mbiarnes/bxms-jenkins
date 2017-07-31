@@ -30,7 +30,7 @@ echo "handover_pr=\$handover_pr" >>\${HOME}/\${release_prefix}-jenkins-ci.proper
 """
 } else {
 
-    shellScript = """./ip-tooling/python create_handover.py -a \${bpms_pvt_summary_adoc} -t ../\${release_prefix}-release/\${release_prefix}-handover.template -p \${HOME}/\${release_prefix}-jenkins-ci.properties -o ../\${release_prefix}-release/\${release_prefix}-handover.adoc
+    shellScript = """python ./ip-tooling/create_handover.py -a \${bpms_pvt_summary_adoc} -t ../\${release_prefix}-release/\${release_prefix}-handover.template -p \${HOME}/\${release_prefix}-jenkins-ci.properties -o ../\${release_prefix}-release/\${release_prefix}-handover.adoc
 asciidoctor ../\${release_prefix}-release/\${release_prefix}-handover.adoc
 
 cd ../
