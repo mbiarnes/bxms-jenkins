@@ -1,1 +1,0 @@
-../../jobs/stage_jenkins_build.groovy
