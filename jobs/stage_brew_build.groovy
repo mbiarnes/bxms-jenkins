@@ -15,7 +15,17 @@ if (PRODUCT_NAME == "intpack-fuse63-bxms64") {
     mavenToStageBpmsCommand = ''
 } else {
 
-    command = 'sed -e \'s=rcm-guest.app.eng.bos.redhat.com/rcm-guest/staging/jboss-brms=download.devel.redhat.com/devel/candidates/BRMS=g\' -e \'s=rcm-guest.app.eng.bos.redhat.com/rcm-guest/staging/jboss-bpmsuite=download.devel.redhat.com/devel/candidates/BPMS=g\' brms-64-deliverable-list-staging.properties >> brms-64-deliverable-list.properties'
+    command = 'sed -e \'s=rcm-guest.app.eng.bos.redhat.com/rcm-guest/staging/jboss-brms=download.devel.redhat.com/devel/candidates/BRMS=g\' -e \'s=rcm-guest.app.eng.bos.redhat.com/rcm-guest/staging/jboss-bpmsuite=download.devel.redhat.com/devel/candidates/BPMS=g\' ${release_prefix}-deliverable-list-staging.properties >> ${release_prefix}-deliverable-list.properties\n' +
+            '\n' +
+            '\n' +
+            'sed -i \'/^ip_brms_brew_task_url=/d\' ${HOME}/${release_prefix}-jenkins-ci.properties && echo "ip_brms_brew_task_url=https://brewweb.engineering.redhat.com/brew/taskinfo?taskID=${task_id}">>${HOME}/${release_prefix}-jenkins-ci.properties\n' +
+            '\n' +
+            'sed -i \'/^build.config=/d\' ${HOME}/${release_prefix}-deliverable-list-staging.properties && echo "build.config=${rcm_stage_base}/jboss-bpmsuite/${bpms_product_name}-${product_version}.${release_milestone}/${release_prefix}.cfg">>${HOME}/${release_prefix}-deliverable-list-staging.properties\n' +
+            'sed -i \'/^DROOLSJBPM_VERSION=/d\' ${HOME}/${release_prefix}-deliverable-list-staging.properties && echo "DROOLSJBPM_VERSION=${kie_version}">>${HOME}/${release_prefix}-deliverable-list-staging.properties\n' +
+            'sed -i \'/^BXMS_VERSION=/d\' ${HOME}/${release_prefix}-deliverable-list-staging.properties && echo "BXMS_VERSION=${product_artifact_version}">>${HOME}/${release_prefix}-deliverable-list-staging.properties\n' +
+            '\n' +
+            '\n' +
+            'cp ${HOME}/${release_prefix}-deliverable-list-staging.properties ${release_prefix}-deliverable-list-staging.properties'
 
     mavenToStageBpmsCommand = 'ip-tooling/maven-to-stage.py --version=${product_artifact_version} --override-version ${product_version} \\\n' +
             "   --deliverable \${release_prefix}-release/${BPMS_DELIVERABLE_LIST_FILE} --maven-repo \${maven_repo_url} \\\n" +
