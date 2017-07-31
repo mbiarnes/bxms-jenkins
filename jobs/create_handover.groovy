@@ -35,22 +35,22 @@ asciidoctor \${release_prefix}-release/\${release_prefix}-handover.adoc
 cp \${brms_pvt_report_html} \${release_prefix}-release/\${release_prefix}-pvt-report-brms.html
 cp \${bpms_pvt_report_html} \${release_prefix}-release/\${release_prefix}-pvt-report-bpms.html
 
-git config --global user.email "bxms-releaseci@redhat.com"
-git config --global user.name "bxms-releaseci"
-git add \${release_prefix}-release/\${release_prefix}-pvt-report-*.html
-sed -i 's/releaseci_trigger=true/releaseci_trigger=false/g' \${release_prefix}.cfg
-commit_msg="Prepare handover PR \${product_name} \${product_version} \${release_milestone}"
+#git config --global user.email "bxms-releaseci@redhat.com"
+#git config --global user.name "bxms-releaseci"
+#git add \${release_prefix}-release/\${release_prefix}-pvt-report-*.html
+#sed -i 's/releaseci_trigger=true/releaseci_trigger=false/g' \${release_prefix}.cfg
+#commit_msg="Prepare handover PR \${product_name} \${product_version} \${release_milestone}"
 
 
-git commit -a -m "\${commit_msg}"
-git push origin HEAD:refs/for/\${ip_config_branch} 2>&1| tee b.log 
+#git commit -a -m "\${commit_msg}"
+#git push origin HEAD:refs/for/\${ip_config_branch} 2>&1| tee b.log 
 
 
-handover_pr=`grep "\${commit_msg}" b.log`
-handover_pr=\${handover_pr#remote: }
-handover_pr=\${handover_pr%% Prepare*}
-sed -i '/^handover_pr=/d' \${HOME}/\${release_prefix}-jenkins-ci.properties
-echo "handover_pr=\$handover_pr" >> \${HOME}/\${release_prefix}-jenkins-ci.properties
+#handover_pr=`grep "\${commit_msg}" b.log`
+#handover_pr=\${handover_pr#remote: }
+#handover_pr=\${handover_pr%% Prepare*}
+#sed -i '/^handover_pr=/d' \${HOME}/\${release_prefix}-jenkins-ci.properties
+#echo "handover_pr=\$handover_pr" >> \${HOME}/\${release_prefix}-jenkins-ci.properties
 """
 }
 // Creates or updates a free style job.
