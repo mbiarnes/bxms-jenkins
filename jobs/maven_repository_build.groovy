@@ -12,7 +12,7 @@ if (PRODUCT_NAME == "bxms64") {
 }
 
 // Repository builder script
-def shellScript = """make ${IP_MAKEFILE} repository
+def shellScript = """make MAVEN_REPOSITORY_BUILDER_SCRIPT=${REPOSITORY_BUILDER_SCRIPT} -f ${IP_MAKEFILE} repository
 
 sed -i '/^bxms.maven.repo.latest.url=/d' \${HOME}/\${release_prefix}-deliverable-list-staging.properties 
 echo "bxms.maven.repo.latest.url=\${rcm_stage_base}/\${bpms_stage_folder}/\${bpms_product_name}-\${product_version}.\${release_milestone}/jboss-brms-bpmsuite-\${product_version}.GA-maven-repository.zip">>\${HOME}/\${release_prefix}-deliverable-list-staging.properties
