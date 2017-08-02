@@ -10,7 +10,7 @@ def mavenToStageBpmsCommand = null
 // Prepare properties command
 if (PRODUCT_NAME == "intpack-fuse63-bxms64") {
 
-    command = 'sed -e \'s=rcm-guest.app.eng.bos.redhat.com/rcm-guest/staging/jboss-brms=download.devel.redhat.com/devel/candidates/INTPACK=g\' ${release_prefix}-deliverable-list-staging.properties >> ${release_prefix}-deliverable-list.properties'
+    command = 'sed -e \'s=rcm-guest.app.eng.bos.redhat.com/rcm-guest/staging/jboss-brms=download.devel.redhat.com/devel/candidates/INTPACK=g\' ${release_prefix}-deliverable-list-staging.properties >> ${release_prefix}-deliverable-list-staging.properties'
 
     mavenToStageBpmsCommand = ''
 } else {
@@ -31,7 +31,7 @@ if (PRODUCT_NAME == "intpack-fuse63-bxms64") {
             "   --deliverable \${release_prefix}-release/${BPMS_DELIVERABLE_LIST_FILE} --maven-repo \${maven_repo_url} \\\n" +
             '   --output ${bpms_product_name}-${product_version}.${release_milestone}\\\n' +
             '   --release-url=${rcm_stage_base}/jboss-bpmsuite/${bpms_product_name}-${product_version}.${release_milestone} \\\n' +
-            '   --output-deliverable-list ${HOME}/${release_prefix}-deliverable-list.properties'
+            '   --output-deliverable-list ${HOME}/${release_prefix}-deliverable-list-staging.properties'
 }
 
 // Staging script.
@@ -56,7 +56,7 @@ ip-tooling/maven-to-stage.py --version=\${product_artifact_version} --override-v
    
 ${mavenToStageBpmsCommand}
 
-cp \${HOME}/\${release_prefix}-deliverable-list.properties \${release_prefix}-deliverable-list-staging.properties
+cp \${HOME}/\${release_prefix}-deliverable-list-staging.properties \${release_prefix}-deliverable-list-staging.properties
 
 ${command}
 """
