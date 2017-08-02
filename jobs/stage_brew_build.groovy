@@ -124,6 +124,16 @@ def jobDefinition = job("${PRODUCT_NAME}-release-pipeline/${PRODUCT_NAME}-stage-
                         remoteDirectory('${product_stage_folder}/${product_name}-${product_version}/')
                     }
 
+                    // Adds a transfer set.
+                    transferSet {
+
+                        // Sets the files to upload to a server.
+                        sourceFiles('${release_prefix}.cfg')
+
+                        // Sets the destination folder.
+                        remoteDirectory('${stage_folder}/${product_name}-${product_version}/')
+                    }
+
                 } else {
 
                     // Adds a target server.
@@ -163,7 +173,27 @@ def jobDefinition = job("${PRODUCT_NAME}-release-pipeline/${PRODUCT_NAME}-stage-
                     transferSet {
 
                         // Sets the files to upload to a server.
+                        sourceFiles('${release_prefix}.cfg')
+
+                        // Sets the destination folder.
+                        remoteDirectory('${brms_stage_folder}/${brms_product_name}-${product_version}.${release_milestone}/')
+                    }
+
+                    // Adds a transfer set.
+                    transferSet {
+
+                        // Sets the files to upload to a server.
                         sourceFiles('${release_prefix}-deliverable-list*.properties')
+
+                        // Sets the destination folder.
+                        remoteDirectory('${bpms_stage_folder}/${bpms_product_name}-${product_version}.${release_milestone}/')
+                    }
+
+                    // Adds a transfer set.
+                    transferSet {
+
+                        // Sets the files to upload to a server.
+                        sourceFiles('${release_prefix}.cfg')
 
                         // Sets the destination folder.
                         remoteDirectory('${bpms_stage_folder}/${bpms_product_name}-${product_version}.${release_milestone}/')

@@ -92,16 +92,6 @@ def jobDefinition = job("${PRODUCT_NAME}-release-pipeline/${PRODUCT_NAME}-create
                         remoteDirectory('${product_stage_folder}/${product_name}-${product_version}')
                     }
 
-                    // Adds a transfer set.
-                    transferSet {
-
-                        // Sets the files to upload to a server.
-                        sourceFiles('${release_prefix}.cfg')
-
-                        // Sets the destination folder.
-                        remoteDirectory('${stage_folder}/${product_name}-${product_version}/')
-                    }
-
                 } else {
                     // Adds a transfer set.
                     transferSet {
@@ -120,30 +110,10 @@ def jobDefinition = job("${PRODUCT_NAME}-release-pipeline/${PRODUCT_NAME}-create
                     transferSet {
 
                         // Sets the files to upload to a server.
-                        sourceFiles('${release_prefix}.cfg')
-
-                        // Sets the destination folder.
-                        remoteDirectory('${brms_stage_folder}/${brms_product_name}-${product_version}.${release_milestone}/')
-                    }
-
-                    // Adds a transfer set.
-                    transferSet {
-
-                        // Sets the files to upload to a server.
                         sourceFiles('${release_prefix}-release/${release_prefix}-handover.html,${release_prefix}-release/${release_prefix}-pvt-report-brms.html,${release_prefix}-release/${release_prefix}-pvt-report-bpms.html')
 
                         // Sets the first part of the file path that should not be created on the remote server.
                         removePrefix('${release_prefix}-release')
-
-                        // Sets the destination folder.
-                        remoteDirectory('${bpms_stage_folder}/${bpms_product_name}-${product_version}.${release_milestone}/')
-                    }
-
-                    // Adds a transfer set.
-                    transferSet {
-
-                        // Sets the files to upload to a server.
-                        sourceFiles('${release_prefix}.cfg')
 
                         // Sets the destination folder.
                         remoteDirectory('${bpms_stage_folder}/${bpms_product_name}-${product_version}.${release_milestone}/')
