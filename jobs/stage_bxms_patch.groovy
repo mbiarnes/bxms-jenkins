@@ -1,32 +1,32 @@
 import org.jboss.bxms.jenkins.JobTemplate
 
 // Staging script.
-def shellScript = """if [ ! -z $CI_MESSAGE ];then
-name=`echo $CI_MESSAGE| python -c "import sys, json; print json.load(sys.stdin)['build']['name']"` 1>/dev/null
-version=`echo $CI_MESSAGE| python -c "import sys, json; print json.load(sys.stdin)['build']['version']"` 1>/dev/null
-release=`echo $CI_MESSAGE| python -c "import sys, json; print json.load(sys.stdin)['build']['release']"` 1>/dev/null
-task_id=`echo $CI_MESSAGE| python -c "import sys, json; print json.load(sys.stdin)['build']['task_id']"` 1>/dev/null
+def shellScript = """if [ ! -z \$CI_MESSAGE ];then
+name=`echo \$CI_MESSAGE| python -c "import sys, json; print json.load(sys.stdin)['build']['name']"` 1>/dev/null
+version=`echo \$CI_MESSAGE| python -c "import sys, json; print json.load(sys.stdin)['build']['version']"` 1>/dev/null
+release=`echo \$CI_MESSAGE| python -c "import sys, json; print json.load(sys.stdin)['build']['release']"` 1>/dev/null
+task_id=`echo \$CI_MESSAGE| python -c "import sys, json; print json.load(sys.stdin)['build']['task_id']"` 1>/dev/null
 
 fi
-maven_repo_url="http://download.eng.bos.redhat.com/brewroot/packages/${name}/${version}/${release}/maven/"
+maven_repo_url="http://download.eng.bos.redhat.com/brewroot/packages/\${name}/\${version}/\${release}/maven/"
 
-echo $maven_repo_url
+echo \$maven_repo_url
 
 #Uploading to rcm staging folder
-ip-tooling/maven-to-stage.py --version=${product_artifact_version} --override-version ${product_version} \
-   --deliverable ${release_prefix}-release/brms-64-deliverable.properties --maven-repo ${maven_repo_url} \
-   --output ${brms_product_name}-${product_version}.${release_milestone} \
-   --release-url=${rcm_stage_base}/jboss-brms/${brms_product_name}-${product_version}.${release_milestone} --output-deliverable-list ${HOME}/${release_prefix}-deliverable-list-staging.properties
+ip-tooling/maven-to-stage.py --version=\${product_artifact_version} --override-version \${product_version} \
+   --deliverable \${release_prefix}-release/brms-64-deliverable.properties --maven-repo \${maven_repo_url} \
+   --output \${brms_product_name}-\${product_version}.\${release_milestone} \
+   --release-url=\${rcm_stage_base}/jboss-brms/\${brms_product_name}-\${product_version}.\${release_milestone} --output-deliverable-list \${HOME}/\${release_prefix}-deliverable-list-staging.properties
    
 
-ip-tooling/maven-to-stage.py --version=${product_artifact_version} --override-version ${product_version} \
-   --deliverable ${release_prefix}-release/bpmsuite-64-deliverable.properties --maven-repo ${maven_repo_url} \
-   --output ${bpms_product_name}-${product_version}.${release_milestone} \
-   --release-url=${rcm_stage_base}/jboss-bpmsuite/${bpms_product_name}-${product_version}.${release_milestone} --output-deliverable-list ${HOME}/${release_prefix}-deliverable-list-staging.properties
+ip-tooling/maven-to-stage.py --version=\${product_artifact_version} --override-version \${product_version} \
+   --deliverable \${release_prefix}-release/bpmsuite-64-deliverable.properties --maven-repo \${maven_repo_url} \
+   --output \${bpms_product_name}-\${product_version}.\${release_milestone} \
+   --release-url=\${rcm_stage_base}/jboss-bpmsuite/\${bpms_product_name}-\${product_version}.\${release_milestone} --output-deliverable-list \${HOME}/\${release_prefix}-deliverable-list-staging.properties
 
-cp ${HOME}/${release_prefix}-deliverable-list-staging.properties ${release_prefix}-deliverable-list-staging.properties
+cp \${HOME}/\${release_prefix}-deliverable-list-staging.properties \${release_prefix}-deliverable-list-staging.properties
 
-sed -e 's=rcm-guest.app.eng.bos.redhat.com/rcm-guest/staging/jboss-brms=download.devel.redhat.com/devel/candidates/BRMS=g' -e 's=rcm-guest.app.eng.bos.redhat.com/rcm-guest/staging/jboss-bpmsuite=download.devel.redhat.com/devel/candidates/BPMS=g' ${release_prefix}-deliverable-list-staging.properties >> ${release_prefix}-deliverable-list.properties
+sed -e 's=rcm-guest.app.eng.bos.redhat.com/rcm-guest/staging/jboss-brms=download.devel.redhat.com/devel/candidates/BRMS=g' -e 's=rcm-guest.app.eng.bos.redhat.com/rcm-guest/staging/jboss-bpmsuite=download.devel.redhat.com/devel/candidates/BPMS=g' \${release_prefix}-deliverable-list-staging.properties >> \${release_prefix}-deliverable-list.properties
 """
 
 // Creates or updates a free style job.
