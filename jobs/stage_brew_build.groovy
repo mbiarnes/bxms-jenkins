@@ -52,7 +52,7 @@ echo \$maven_repo_url
 ip-tooling/maven-to-stage.py --version=\${product_artifact_version} --override-version \${product_version} \\
    --deliverable \${release_prefix}-release/\${release_prefix}-deliverable.properties --maven-repo \${maven_repo_url} \\
    --output \${brms_product_name}-\${product_version}.\${release_milestone} \\
-   --release-url=\${rcm_stage_base}/jboss-brms/\${brms_product_name}-\${product_version}.\${release_milestone} --output-deliverable-list \${HOME}/\${release_prefix}-deliverable-list.properties
+   --release-url=\${rcm_stage_base}/jboss-brms/\${brms_product_name}-\${product_version}.\${release_milestone} --output-deliverable-list \${HOME}/\${release_prefix}-deliverable-list-staging.properties
    
 ${mavenToStageBpmsCommand}
 
