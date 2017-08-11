@@ -66,7 +66,7 @@ class JobTemplate {
                     remote {
 
                         // Sets the remote URL.
-                        url("https://code.engineering.redhat.com/gerrit/integration-platform-config.git/")
+                        url("ssh://jb-ip-tooling-jenkins@code.engineering.redhat.com:22/integration-platform-config")
                     }
 
                     // Specify the branches to examine for changes and to build.
@@ -80,7 +80,7 @@ class JobTemplate {
                     remote {
 
                         // Sets the remote URL.
-                        url("https://code.engineering.redhat.com/gerrit/integration-platform-tooling.git/")
+                        url("ssh://jb-ip-tooling-jenkins@code.engineering.redhat.com:22/integration-platform-tooling")
                     }
 
                     // Specify the branches to examine for changes and to build.
