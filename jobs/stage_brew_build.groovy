@@ -16,7 +16,7 @@ if (PRODUCT_NAME == "intpack-fuse63-bxms64") {
 
     mavenToStageCommand = "ip-tooling/maven-to-stage.py --version=\${product_artifact_version} --override-version \${product_version} \\\n" +
             "   --deliverable \${release_prefix}-release/\${release_prefix}-deliverable.properties --maven-repo \${maven_repo_url} \\\n" +
-            "   --output \$product_name}-\${product_version} \\\n" +
+            "   --output \${product_name}-\${product_version} \\\n" +
             "   --release-url=\${rcm_stage_base}/jboss-brms/\${brms_product_name}-\${product_version} --output-deliverable-list \${HOME}/\${release_prefix}-deliverable-list-staging.properties"
 } else {
 
