@@ -10,7 +10,7 @@ def mavenToStageBpmsCommand = null
 // Prepare properties command
 if (PRODUCT_NAME == "intpack-fuse63-bxms64") {
 
-    command = 'sed -e \'s=rcm-guest.app.eng.bos.redhat.com/rcm-guest/staging/jboss-brms=download.devel.redhat.com/devel/candidates/INTPACK=g\' ${release_prefix}-deliverable-list-staging.properties >> ${release_prefix}-deliverable-list-staging.properties'
+    command = 'sed -e \'s=rcm-guest.app.eng.bos.redhat.com/rcm-guest/staging/jboss-brms=download.devel.redhat.com/devel/candidates/INTPACK=g\' ${release_prefix}-deliverable-list-staging.properties >> ${release_prefix}-deliverable-list.properties'
 
     mavenToStageBpmsCommand = ''
 
