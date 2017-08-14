@@ -139,7 +139,7 @@ def jobDefinition = job("${PRODUCT_NAME}-release-pipeline/${PRODUCT_NAME}-stage-
                         sourceFiles('${release_prefix}.cfg')
 
                         // Sets the destination folder.
-                        remoteDirectory('${stage_folder}/${product_name}-${product_version}/')
+                        remoteDirectory('${product_stage_folder}/${product_name}-${product_version}/')
                     }
 
                 } else {
