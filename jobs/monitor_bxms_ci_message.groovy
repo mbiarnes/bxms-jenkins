@@ -1,5 +1,5 @@
 // This job-DSL createsa a job that monitor the bxms ci message
-job('common/monitoring-bxms-CI-message'){
+job('utility/monitoring-bxms-CI-message'){
   description("This DSL generates a job that monitor bxms ci message")
 
   /*environmentVariables {
