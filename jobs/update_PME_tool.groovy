@@ -1,12 +1,12 @@
 def job_d = """"This job should create a jobautomatically check and update jenkins-PME-tool"""
 
-folder("common") {
+folder("utility") {
     // Sets a description for the folder.
-    description("common")
+    description("It only store the utility jobs")
 }
 
 
-job('common/Automate-updating-jenkins-PME-tool-dsl'){
+job('utility/Automate-updating-jenkins-PME-tool-dsl'){
    description("$job_d")
    // check daily 
    triggers{

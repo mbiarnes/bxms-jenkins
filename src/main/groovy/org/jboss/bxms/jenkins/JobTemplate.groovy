@@ -29,7 +29,6 @@ class JobTemplate {
                     env("COMBINATION", "fuse63-bxms64")
                 }
             }
-
             // Adds pre/post actions to the job.
             wrappers {
 
