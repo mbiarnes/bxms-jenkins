@@ -1,12 +1,7 @@
 def job_d = """"This job should create a jobautomatically check and update jenkins-PME-tool"""
 
-folder("utility") {
-    // Sets a description for the folder.
-    description("It only store the utility jobs")
-}
-
-
-job('utility/Automate-updating-jenkins-PME-tool-dsl'){
+folder("utility")
+job('utility/bxms-pme-update'){
    description("$job_d")
    // check daily 
    triggers{
@@ -46,7 +41,5 @@ echo "finished"'''
     wrappers {
         preBuildCleanup()
     }
-   
-   
 }
 

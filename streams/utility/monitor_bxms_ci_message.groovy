@@ -1,1 +1,0 @@
-../../jobs/monitor_bxms_ci_message.groovy
