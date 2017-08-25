@@ -1,9 +1,13 @@
+
+// reference from job-dsl-gradle example https://github.com/sheehan/job-dsl-gradle-example
+// use ./gradlew test to test all dsl .groovy files locally
+
 apply plugin: 'groovy'
 
 sourceSets {
     jobs {
         groovy {
-            srcDirs 'jobs'
+            srcDirs 'jobs'  // folder to store dsl .groovy files
             compileClasspath += main.compileClasspath
         }
         compileClasspath += sourceSets.main.output
@@ -12,12 +16,86 @@ sourceSets {
 }
 
 repositories {
+    mavenCentral()
     jcenter()
+    // add in a local repository to store third party plugins if there is any
+    // Note that flat dir does not support maven pom files
+    //flatDir(dirs: 'lib')
     maven {
         url 'https://repo.jenkins-ci.org/public/'
+
+    }
+
+}
+
+configurations {
+    testPlugins {}
+}
+
+// According to the example there is a bug in xalan dependency
+configurations.all*.exclude group: 'xalan'
+
+
+dependencies {
+    compile 'org.codehaus.groovy:groovy-all:2.4.7'
+    compile "org.jenkins-ci.plugins:job-dsl-core:${jobDslVersion}"
+
+
+    testCompile 'org.spockframework:spock-core:1.0-groovy-2.4'
+    testCompile 'cglib:cglib-nodep:2.2.2' // used by Spock
+
+    // Jenkins test harness dependencies
+    testCompile 'org.jenkins-ci.main:jenkins-test-harness:2.8'
+    testCompile "org.jenkins-ci.main:jenkins-war:${jenkinsVersion}"
+    testCompile "org.jenkins-ci.main:jenkins-war:${jenkinsVersion}:war-for-test@jar"
+
+    // Job DSL plugin including plugin dependencies
+    testCompile "org.jenkins-ci.plugins:job-dsl:${jobDslVersion}"
+    testCompile "org.jenkins-ci.plugins:job-dsl:${jobDslVersion}@jar"
+    testCompile 'org.jenkins-ci.plugins:structs:1.2@jar'
+    testCompile 'org.jenkins-ci.plugins:cloudbees-folder:5.0@jar'
+
+    // plugins to install in test instance
+
+    testPlugins 'com.coravy.hudson.plugins.github:github:1.19.0'
+    testPlugins 'org.jenkins-ci.plugins:cloudbees-folder:5.0'
+    testPlugins 'org.jenkins-ci.plugins:jms-messaging:1.0.8@hpi'
+    //testPlugins 'com.redhat.jenkins.plugins:redhat-ci-plugin:1.4.10@hpi'
+    //this is an example of a third party plugin which could be put in the lib dir
+
+}
+
+task resolveTestPlugins(type: Copy) {
+    from configurations.testPlugins
+    into new File(sourceSets.test.output.resourcesDir, 'test-dependencies')
+    include '*.hpi'
+    include '*.jpi'
+    def mapping = [:]
+
+    //format the file to name.extension
+    doFirst {
+        configurations.testPlugins.resolvedConfiguration.resolvedArtifacts.each {
+            mapping[it.file.name] = "${it.name}.${it.extension}"
+        }
+
+
+    }
+    rename { mapping[it] }
+
+    doLast {
+        List<String> baseNames = source*.name.collect { mapping[it] }.collect { it[0..it.lastIndexOf('.') - 1] }
+        new File(destinationDir, 'index').setText(baseNames.join('\n'), 'UTF-8')
     }
 }
 
-dependencies {
-    compile 'org.jenkins-ci.plugins:job-dsl-core:1.57'
+test {
+    dependsOn tasks.resolveTestPlugins
+    inputs.files sourceSets.jobs.groovy.srcDirs
+
+    // set build directory for Jenkins test harness, JENKINS-26331
+    systemProperty 'buildDirectory', project.buildDir.absolutePath
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '3.4.1'
 }
