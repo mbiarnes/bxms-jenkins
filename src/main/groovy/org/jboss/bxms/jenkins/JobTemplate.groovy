@@ -51,7 +51,7 @@ class JobTemplate {
         }
     }
 
-    static void addIpToolingScmConfiguration(job) {
+    static void addIpToolingScmConfiguration(job, ipConfigBranch = "master") {
 
         job.with {
 
@@ -69,7 +69,7 @@ class JobTemplate {
                     }
 
                     // Specify the branches to examine for changes and to build.
-                    branch("master")
+                    branch(ipConfigBranch)
                 }
 
                 // Adds a Git SCM source.

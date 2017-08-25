@@ -15,6 +15,13 @@ def jobDefinition = job("${PRODUCT_NAME}-release-pipeline/${PRODUCT_NAME}-create
     // Sets a description for the job.
     description("This job is responsible for creating the product milestone tags for this release in the format of ProductVersion.Milestone.")
 
+    // Allows to parameterize the job.
+    parameters {
+
+        // Defines a simple text parameter, where users can enter a string value.
+        stringParam(parameterName = "ip_config_branch", defaultValue = "master", description = "IP Config branch, commit id or tag to clone")
+    }
+
     // Adds build steps to the jobs.
     steps {
 
@@ -24,4 +31,4 @@ def jobDefinition = job("${PRODUCT_NAME}-release-pipeline/${PRODUCT_NAME}-create
 }
 
 JobTemplate.addCommonConfiguration(jobDefinition, CI_PROPERTIES_FILE, PRODUCT_NAME)
-JobTemplate.addIpToolingScmConfiguration(jobDefinition)
+JobTemplate.addIpToolingScmConfiguration(jobDefinition, '${ip_config_branch}')
