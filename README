@@ -1,0 +1,62 @@
+BxMS DSL script:
+
+BxMS DSL controlls Jenkins job and release pipelinefor BxMS product CI which is in https://brms-bpms-jenkins.rhev-ci-vms.eng.rdu2.redhat.com/
+
+All the job dsl are located in jobs/*.groovy
+
+How to test your DSL script:
+
+./gradlew test
+
+JobScriptsSpec.grrovy will test (compile and deploy in embedded jenkins) all DSL files from the ./jobs and check for exceptions. All successful generated XML files will be written to ./build/debug-xml directory.
+If your DSL contains automation generated API, you could add the testplugin in build.gradle and configure the maven repository url in it as well.
+If your plugin isn't available in maven repo, a fatdir lib is also possible by specify
+repositories {
+    mavenCentral()
+    jcenter()
+    
+    flatDir(dirs: 'lib')   
+}
+
+
+File structure:
+
+.
+|── jobs                                                 # All DSL script files 
+│── streams  
+|── src
+│   ├── main
+│   │   ├── groovy
+│   │   │   └── org
+│   │   │       └── jboss
+│   │   │           └── bxms
+│   │   │               └── jenkins
+│   │   │                   └── JobTemplate.groovy      # Job DSL template for some DSL 
+│   │   └── resources                                     scripts
+│   │       └── idea.gdsl                               # IDE support for IDEA
+│   └── test
+│       └── groovy
+│           └── org
+│               └── Jboss
+│                   └── bxms
+│                       └── jenkins
+│                           └── JobScriptsSpec.groovy   # Complie and generate XML files
+│                                                          for all DSL script
+│── gradle                                              # Gradle wrapper
+│  
+│── build.gradle                                        # Build file 
+│  
+│── gradle.properties                                   # Store Jenkins and DSL versions
+│
+│── lib                                                 # For storage of other 
+                                                          third-party plugins 
+                                                          through flatDir. 
+                                                          See build.gradle
+
+
+
+
+
+Reference:
+The Gradle Test Harness forked from Jenkins Job DSL Gradle Example 
+https://github.com/sheehan/job-dsl-gradle-example
