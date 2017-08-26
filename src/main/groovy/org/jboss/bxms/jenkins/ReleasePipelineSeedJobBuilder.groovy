@@ -81,6 +81,10 @@ class ReleasePipelineSeedJobBuilder {
                 dsl {
                     external 'streams/' + product_name + '/*.groovy'
                     additionalClasspath 'src/main/groovy'
+                    // Specifies the action to be taken for job that have been removed from DSL scripts.
+                    removeAction('DELETE')
+                    // Specifies the action to be taken for views that have been removed from DSL scripts.
+                    removeViewAction('DELETE')
                 }
             }
 
