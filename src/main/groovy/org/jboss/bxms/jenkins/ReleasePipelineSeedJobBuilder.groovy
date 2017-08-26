@@ -85,7 +85,7 @@ class ReleasePipelineSeedJobBuilder {
             }
 
             triggers {
-                upstream('master-seed', 'SUCCESS')
+                upstream('a-master-seed', 'SUCCESS')
             }
         }
     }
