@@ -40,7 +40,7 @@ echo "Congratulation Brew build is triggered!"
 """
 
 // Creates or updates a free style job.
-def jobDefinition = job("${PRODUCT_NAME}-start-brew-build") {
+def jobDefinition = job("${PRODUCT_NAME}-release-pipeline/${PRODUCT_NAME}-start-brew-build") {
 
     // Sets a description for the job.
     description("This job is responsible for initialising the Brew chain build.")

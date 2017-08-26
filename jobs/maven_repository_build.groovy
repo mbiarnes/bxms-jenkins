@@ -24,7 +24,7 @@ sed -e 's=rcm-guest.app.eng.bos.redhat.com/rcm-guest/staging/\${brms_stage_folde
 """
 
 // Creates or updates a free style job.
-def jobDefinition = job("${PRODUCT_NAME}-maven-repository-build") {
+def jobDefinition = job("${PRODUCT_NAME}-release-pipeline/${PRODUCT_NAME}-maven-repository-build") {
 
     // Sets a description for the job.
     description("This job is responsible for building the offline maven repository zip for MRRC.")

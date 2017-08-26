@@ -1,1 +1,0 @@
-../../jobs/release_pipeline_folder.groovy

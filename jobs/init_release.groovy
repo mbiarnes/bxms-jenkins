@@ -1,7 +1,7 @@
 import org.jboss.bxms.jenkins.JobTemplate
 
 // Creates or updates a free style job.
-def jobDefinition = job("${PRODUCT_NAME}-init-release") {
+def jobDefinition = job("${PRODUCT_NAME}-release-pipeline/${PRODUCT_NAME}-init-release") {
 
     // Sets a description for the job.
     description("This is the ${PRODUCT_NAME} release initialization job. This job is responsible for preparation of ${CI_PROPERTIES_FILE} file.")

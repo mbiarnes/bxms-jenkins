@@ -10,7 +10,7 @@ fi
 cat mead_check.log
 """
 // Creates or updates a free style job.
-def jobDefinition = job("${PRODUCT_NAME}-locate-import-list") {
+def jobDefinition = job("${PRODUCT_NAME}-release-pipeline/${PRODUCT_NAME}-locate-import-list") {
 
     // Sets a description for the job.
     description("This job is responsible for finding brew missing jars.")

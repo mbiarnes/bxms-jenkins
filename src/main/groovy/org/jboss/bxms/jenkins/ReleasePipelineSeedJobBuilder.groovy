@@ -79,7 +79,7 @@ class ReleasePipelineSeedJobBuilder {
 
             steps {
                 dsl {
-                    external 'streams/*/*.groovy'
+                    external 'streams/' + product_name + '/*.groovy'
                     additionalClasspath 'src/main/groovy'
                 }
             }
