@@ -18,7 +18,7 @@ class ReleasePipelineSeedJobBuilder {
 
     Job build(DslFactory dslFactory) {
         dslFactory.folder(product_name + "-release-pipeline")
-        dslFactory.job(product_name + "-release-pipeline/" + product_name + "-release-pipeline-seed") {
+        dslFactory.job(product_name + "-release-pipeline/z-" + product_name + "-release-pipeline-seed") {
             it.description "This job is a seed job for generating " + product_name + "release pipeline. To change the  parameter of the release pipeline, Please go to streams/product_name/env.properties"
             logRotator {
                 numToKeep 8

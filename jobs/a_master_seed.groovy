@@ -59,6 +59,11 @@ job('utility/utility-seed') {
         dsl {
             external 'streams/utility/*.groovy'
             additionalClasspath 'src/main/groovy'
+
+            // Specifies the action to be taken for job that have been removed from DSL scripts.
+            removeAction('DELETE')
+            // Specifies the action to be taken for views that have been removed from DSL scripts.
+            removeViewAction('DELETE')
         }
 
         triggers {
