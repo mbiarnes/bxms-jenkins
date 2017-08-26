@@ -50,6 +50,8 @@ job('codereview/bxms_jenkins_codereview'){
        dsl {
            external ('streams/utility/*.groovy', 'streams/codereview/*.groovy' )
            additionalClasspath 'src/main/groovy'
+           //For SEED_JOB strategy, PR will create job in codereview/ folder instead of JENKINS_ROOT
+           lookupStrategy 'SEED_JOB'
            // Specifies the action to be taken for job that have been removed from DSL scripts.
            removeAction('DELETE')
            // Specifies the action to be taken for views that have been removed from DSL scripts.
