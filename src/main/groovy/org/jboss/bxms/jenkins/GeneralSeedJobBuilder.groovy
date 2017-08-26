@@ -49,8 +49,7 @@ class GeneralSeedJobBuilder {
                 scm 'H/5 * * * *'
             }
             triggers {
-                //upstream('a-master-seed', 'SUCCESS')
-                upstream('PR/Gerrit-trigger-for-bxms-jenkins', 'SUCCESS')
+                upstream('a-master-seed', 'SUCCESS')
             }
         }
     }
