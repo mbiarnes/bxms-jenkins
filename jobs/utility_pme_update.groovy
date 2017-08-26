@@ -1,7 +1,6 @@
 def job_d = """"This job should create a jobautomatically check and update jenkins-PME-tool"""
 
-folder("utility")
-job('utility/bxms-pme-update'){
+job('bxms-pme-update'){
    description("$job_d")
    // check daily 
    triggers{

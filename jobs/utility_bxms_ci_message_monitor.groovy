@@ -1,13 +1,6 @@
 // This job-DSL createsa a job that monitor the bxms ci message
-folder("utility")
-job('utility/bxms-ci-message-monitor'){
+job('bxms-ci-message-monitor'){
   description("This DSL generates a job that monitor bxms ci message")
-
-  /*environmentVariables {
-      propertiesFile('${HOME}/${release_prefix}-jenkins-ci.properties')
-      keepSystemVariables(true)
-      keepBuildVariables(true)
-  }*/
 
   // both tag and label will trigger the job
   triggers{
@@ -23,14 +16,4 @@ job('utility/bxms-ci-message-monitor'){
 echo "$CI_MESSAGE"''')
     }
 
-   /* send irc message. Currently connection failed
-   publishers {
-        irc {
-            	channel('#prod-bxms')
-            	setNotifyOnBuildStarts(true)
-            	strategy('ALL')
-            	notificationMessage('Default')
-        	}
-        }*/
-        
 }

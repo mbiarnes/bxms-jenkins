@@ -37,7 +37,7 @@ zip -5 -r  jboss-bpmsuite-7.0.0-openshift.zip jboss-bpmsuite-7.0.0-openshift/
 '''
 
 // Creates or updates a free style job.
-def jobDefinition = job("${PRODUCT_NAME}-release-pipeline/${PRODUCT_NAME}-export-openshift-images") {
+def jobDefinition = job("${PRODUCT_NAME}-export-openshift-images") {
 
     // Sets a description for the job.
     description("This job is responsible for exporting openshift images to zip files.")

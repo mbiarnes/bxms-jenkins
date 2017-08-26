@@ -12,7 +12,7 @@ Kind regards,
 BxMS Prod Team"""
 
 // Creates or updates a free style job.
-def jobDefinition = job("${PRODUCT_NAME}-release-pipeline/${PRODUCT_NAME}-send-handover-mail") {
+def jobDefinition = job("${PRODUCT_NAME}-send-handover-mail") {
 
     // Sets a description for the job.
     description("This job is responsible for sending handover email to the team.")

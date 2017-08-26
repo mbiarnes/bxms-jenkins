@@ -99,10 +99,11 @@ class JobScriptsSpec extends Specification {
         }
 
         // Put the release pipeline dsl to the first so that it will be executed first
-        def pick = files.find{it.name == 'release_pipeline_folder.groovy'}
-        def sorted_files = files.minus(pick)
-        sorted_files.add(0,pick)
-        return sorted_files
+        //def pick = files.find{it.name == 'release_pipeline_folder.groovy'}
+        //def sorted_files = files.minus(pick)
+        //sorted_files.add(0,pick)
+        //return sorted_files
+        files
     }
 }
 
