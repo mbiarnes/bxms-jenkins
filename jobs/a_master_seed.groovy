@@ -1,5 +1,7 @@
 import org.jboss.bxms.jenkins.ReleasePipelineSeedJobBuilder
+import org.jboss.bxms.jenkins.GeneralSeedJobBuilder
 
+//Establish the parametize release pipeline
 new ReleasePipelineSeedJobBuilder(
         product_name: "bxms64",
         ci_properties_file:"brms-64-jenkins-ci.properties",
@@ -30,45 +32,10 @@ new ReleasePipelineSeedJobBuilder(
         repo_builder_script:"regen_bxms_intpack_repo_builder.sh",
 ).build(this)
 
-folder("utility")
-job('utility/utility-seed') {
-    logRotator {
-        numToKeep 8
-    }
-    scm {
-        // Adds a Git SCM source.
-        git {
+new GeneralSeedJobBuilder(
+        stream_name: "utility"
+).build(this)
 
-            // Adds a remote.
-            remote {
-
-                // Sets the remote URL.
-                url("ssh://jb-ip-tooling-jenkins@code.engineering.redhat.com:22/bxms-jenkins")
-            }
-
-            // Specify the branches to examine for changes and to build.
-            branch("master")
-        }
-    }
-    label("pvt-static")
-    triggers {
-        scm 'H/5 * * * *'
-    }
-    steps {
-
-        dsl {
-            external 'streams/utility/*.groovy'
-            additionalClasspath 'src/main/groovy'
-
-            // Specifies the action to be taken for job that have been removed from DSL scripts.
-            removeAction('DELETE')
-            // Specifies the action to be taken for views that have been removed from DSL scripts.
-            removeViewAction('DELETE')
-        }
-
-        triggers {
-            upstream('a-master-seed', 'SUCCESS')
-        }
-    }
-
-}
+new GeneralSeedJobBuilder(
+        stream_name: "codereview"
+).build(this)

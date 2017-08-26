@@ -1,0 +1,1 @@
+../../jobs/pr_bxms_jenkins.groovy
