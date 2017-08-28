@@ -1,4 +1,4 @@
-def job_d = """"This job should create a job automatically check and update jenkins-PME-tool"""
+def job_d = """This job should create a job automatically check and update jenkins-PME-tool"""
 folder ("utility")
 job('utility/bxms-pme-update'){
    description("$job_d")
