@@ -8,13 +8,12 @@ class JobTemplate {
         job.with {
 
             // Label which specifies which nodes this job can run on.
-            label("pvt-static")
+            label("release-pipeline")
 
             // Adds environment variables to the build.
             environmentVariables {
-
                 // Adds environment variables from a properties file.
-                propertiesFile("\${HOME}/${CI_PROPERTIES_FILE}")
+                propertiesFile("${CI_PROPERTIES_FILE}")
 
                 // Inject Jenkins build variables and also environment contributors and build variable contributors provided by other plugins.
                 keepBuildVariables(true)
@@ -22,18 +21,9 @@ class JobTemplate {
                 // Injects Jenkins system variables and environment variables defined as global properties and as node properties.
                 keepSystemVariables(true)
 
-                // Prepare additional variables
-                if (PRODUCT_NAME == "intpack-fuse63-bxms64") {
-
-                    // Adds an environment variable to the build.
-                    env("COMBINATION", "fuse63-bxms64")
-                }
             }
             // Adds pre/post actions to the job.
             wrappers {
-
-                // Deletes files from the workspace before the build starts.
-                preBuildCleanup()
 
                 // Adds timestamps to the console log.
                 timestamps()
@@ -69,9 +59,8 @@ class JobTemplate {
                     }
 
                     // Specify the branches to examine for changes and to build.
-                    branch(ipConfigBranch)
+                    branch("master")
                 }
-
                 // Adds a Git SCM source.
                 git {
 

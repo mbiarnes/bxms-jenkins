@@ -1,13 +1,8 @@
 import org.jboss.bxms.jenkins.JobTemplate
 
-String script = """if [ '${IP_CONFIG_FILE}' == 'brms-64.cfg' ];
-then
-    ip-tooling/MEAD_check_artifact.sh jb-bxms-6.4-build /mnt/jboss-prod/m2/bxms-6.4-milestone 2>&1 | tee mead_check.log
-elif [ '${IP_CONFIG_FILE}' == 'brms.cfg' ]; 
-then
-    ip-tooling/MEAD_check_artifact.sh jb-bxms-7.0-maven-build /mnt/jboss-prod/m2/bxms-7-milestone 2>&1 | tee mead_check.log
-fi
-cat mead_check.log
+String shellScript = """ip-tooling/MEAD_check_artifact.sh \$brew_tag /jboss-prod/m2/\${jenkins_cache_repo} 2>&1 | tee /tmp/mead_check.log
+sed "/redhat-/d" /tmp/mead_check.log
+echo "JOB DONE"
 """
 // Creates or updates a free style job.
 def jobDefinition = job("${PRODUCT_NAME}-locate-import-list") {
@@ -19,7 +14,13 @@ def jobDefinition = job("${PRODUCT_NAME}-locate-import-list") {
     steps {
 
         // Runs a shell script (defaults to sh, but this is configurable) for building the project.
-        shell(script)
+        shell(shellScript)
+    }
+    publishers {
+        postBuildTask {
+            //TODO
+            task('JOB DONE', "echo 'send an email notification and trigger automation import'")
+        }
     }
 }
 

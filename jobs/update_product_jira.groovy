@@ -2,10 +2,11 @@ import org.jboss.bxms.jenkins.JobTemplate
 
 // Update product JIRA script
 def shellScript = '''echo "The product version is $product_version and the release milestone is $release_milestone."
-ssh anstephe@dev138.mw.lab.eng.bos.redhat.com python ./integration-platform-tooling/release-ticketor.py --headless $product_version.GA $cutoff_date $product_version.$release_milestone 2>&1 | tee /tmp/release-ticketor-output
+ssh anstephe@dev138.mw.lab.eng.bos.redhat.com python ./integration-platform-tooling/release-ticketor.py \
+    --headless $product_version.GA $cutoff_date $product_version.$release_milestone 2>&1 | tee /tmp/release-ticketor-output
 
-sed -i '/^resolve_issue_list=/d' ${HOME}/${release_prefix}-jenkins-ci.properties
-echo "resolve_issue_list="`cat /tmp/release-ticketor-output | grep https://url.corp.redhat.com` >>${HOME}/${release_prefix}-jenkins-ci.properties
+sed -i '/^resolve_issue_list=/d' ${CI_PROPERTIES_FILE} \
+    && echo "resolve_issue_list="`cat /tmp/release-ticketor-output | grep https://url.corp.redhat.com` >> ${CI_PROPERTIES_FILE}
 '''
 
 // Creates or updates a free style job.

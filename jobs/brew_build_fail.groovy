@@ -78,7 +78,14 @@ def jobDefinition = job("${PRODUCT_NAME}-brew-build-fail") {
     steps {
 
         // Runs a shell script (defaults to sh, but this is configurable) for building the project.
-        shell('echo "Dear, something happened!"')
+        shell('echo "JOB FAILED"')
+    }
+
+    triggers{
+        ciBuildTrigger {
+            selector("new='FAILED' AND target='\${brew_tag}' AND method='chainmaven'")
+            providerName('default')
+        }
     }
 
     // Adds post-build actions to the job.
@@ -101,6 +108,9 @@ def jobDefinition = job("${PRODUCT_NAME}-brew-build-fail") {
 
             // Sets the content type of the emails sent after a build.
             contentType('text/html')
+        }
+        postBuildTask {
+            task('JOB FAILED', "echo 'send notification'")
         }
     }
 }

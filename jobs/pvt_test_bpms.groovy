@@ -1,14 +1,18 @@
 import org.jboss.bxms.jenkins.JobTemplate
 
 // PVT script.
-String shellScript = '''cd pvt
-/mnt/maven-3.2.3-prod/bin/mvn clean site surefire-report:report -B -Dproduct.config=${bpms_smoketest_cfg}  -Dproduct.version=${product_version}.${release_milestone} -Dproduct.target=${product_version}
+String shellScript = """cd pvt
+/jboss-prod/tools/maven-3.3.9-prod/bin/mvn -Dmaven.repo.local=/jboss-prod/m2/bxms-dev-repo \
+    surefire-report:report -B -Dproduct.config=\${bpms_smoketest_cfg} -Dproduct.version=\${product_deliver_version} \
+    -Dproduct.target=\${product_deliver_version} clean package
 
 cd generic/
-
-sed -i '/^bpms_pvt_summary_adoc=/d' ${HOME}/${release_prefix}-jenkins-ci.properties && echo "bpms_pvt_summary_adoc=`pwd`/`find . -name 'pvt_handover_summary*.adoc'`">>${HOME}/${release_prefix}-jenkins-ci.properties
-sed -i '/^bpms_pvt_report_html=/d' ${HOME}/${release_prefix}-jenkins-ci.properties && echo "bpms_pvt_report_html=`pwd`/`find . -name 'pvt_report*.html'`">>${HOME}/${release_prefix}-jenkins-ci.properties
-'''
+#TODO update the pvt report to share folder
+sed -i '/^bpms_pvt_summary_adoc=/d' ${CI_PROPERTIES_FILE} \
+    && echo "bpms_pvt_summary_adoc=`pwd`/`find . -name 'pvt_handover_summary*.adoc'`">> ${CI_PROPERTIES_FILE}
+sed -i '/^bpms_pvt_report_html=/d' ${CI_PROPERTIES_FILE} \
+    && echo "bpms_pvt_report_html=`pwd`/`find . -name 'pvt_report*.html'`">>${CI_PROPERTIES_FILE}
+"""
 
 // Creates or updates a free style job.
 def jobDefinition = job("${PRODUCT_NAME}-pvt-test-bpms") {
@@ -16,7 +20,7 @@ def jobDefinition = job("${PRODUCT_NAME}-pvt-test-bpms") {
     // Sets a description for the job.
     description("This job is responsible for executing product validation tests.")
 
-    scm {
+    multiscm {
 
         // Adds a Git SCM source.
         git {
@@ -25,12 +29,26 @@ def jobDefinition = job("${PRODUCT_NAME}-pvt-test-bpms") {
             remote {
 
                 // Sets the remote URL.
-                url("https://github.com/project-ncl/pvt")
+                url("ssh://jb-ip-tooling-jenkins@code.engineering.redhat.com:22/integration-platform-tooling")
             }
 
+            // Specify the branches to examine for changes and to build.
+            branch("master")
             // Adds additional behaviors.
             extensions {
 
+                // Specifies a local directory (relative to the workspace root) where the Git repository will be checked out.
+                relativeTargetDirectory('ip-tooling')
+            }
+        }
+        git {
+            remote {
+
+                // Sets the remote URL.
+                url("https://github.com/project-ncl/pvt")
+            }
+            // Adds additional behaviors.
+            extensions {
                 // Specifies a local directory (relative to the workspace root) where the Git repository will be checked out.
                 relativeTargetDirectory("pvt")
             }
@@ -38,7 +56,10 @@ def jobDefinition = job("${PRODUCT_NAME}-pvt-test-bpms") {
             branch('*/master')
         }
     }
-
+    wrappers {
+        // Deletes files from the workspace before the build starts.
+        preBuildCleanup()
+    }
     // Adds build steps to the jobs.
     steps {
 
@@ -51,6 +72,9 @@ def jobDefinition = job("${PRODUCT_NAME}-pvt-test-bpms") {
 
         //Archives artifacts with each build.
         archiveArtifacts('pvt/generic/*.html,pvt/generic/*.adoc')
+        postBuildTask {
+            task('BUILD SUCCESS', "ip-tooling/jira_helper.py -c ${IP_CONFIG_FILE} -a '${PRODUCT_NAME} PVT test in completed: \${BUILD_URL}' -f")
+        }
     }
 }
 

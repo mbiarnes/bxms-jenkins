@@ -1,0 +1,1 @@
+../../jobs/export_openshift_image.groovy

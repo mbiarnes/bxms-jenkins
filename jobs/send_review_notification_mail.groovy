@@ -89,7 +89,11 @@ def jobDefinition = job("${PRODUCT_NAME}-send-review-notification-mail") {
 
     // Sets a description for the job.
     description("This job is responsible for sending the PR review email to the team.")
+    steps {
 
+        // Runs a shell script (defaults to sh, but this is configurable) for building the project.
+        shell("echo 'JOB DONE'")
+    }
     // Adds post-build actions to the job.
     publishers {
 
@@ -110,6 +114,14 @@ def jobDefinition = job("${PRODUCT_NAME}-send-review-notification-mail") {
 
             // Sets the content type of the emails sent after a build.
             contentType('text/html')
+        }
+        postBuildTask {
+            task('JOB DONE', "ip-tooling/jira_helper.py -c \${IP_CONFIG_FILE} -f -a 'Release handover is {color:#ff0000}waiting for review{color}  in \${handover_pr} \n" +
+                    "\n" +
+                    "Staging folder URL: \n" +
+                    "[\${rcm_stage_base}/\${brms_stage_folder}/\${brms_product_name}-\${product_version}.\${release_milestone}/]\n" +
+                    "\n" +
+                    "[\${rcm_stage_base}/\${bpms_stage_folder}/\${bpms_product_name}-\${product_version}.\${release_milestone}/]'")
         }
     }
 }

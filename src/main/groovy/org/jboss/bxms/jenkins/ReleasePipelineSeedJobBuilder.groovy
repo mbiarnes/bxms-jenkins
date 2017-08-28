@@ -35,30 +35,12 @@ class ReleasePipelineSeedJobBuilder {
                 // IP project configuration file
                 env("IP_CONFIG_FILE", cfg_file)
 
-                // IP make file
-                env("IP_MAKEFILE", ip_makefile);
-
-                // Product root component
-                env("PRODUCT_ROOT_COMPNENT", product_root_component)
-
-                // BPMS deliverable list filename
-                env("BPMS_DELIVERABLE_LIST_FILE", bpms_deliverable_list_file)
-
-                // Repository builder script
-                env("REPOSITORY_BUILDER_SCRIPT", repo_builder_script)
-
                 // Inject Jenkins build variables and also environment contributors and build variable contributors provided by other plugins.
                 keepBuildVariables(true)
 
                 // Injects Jenkins system variables and environment variables defined as global properties and as node properties.
                 keepSystemVariables(true)
 
-                // Prepare additional variables
-                if (product_name == "intpack-fuse63-bxms64") {
-
-                    // Adds an environment variable to the build.
-                    env("COMBINATION", "fuse63-bxms64")
-                }
             }
             label ("service-node")
             scm {

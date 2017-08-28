@@ -2,7 +2,7 @@ def shell_script = '''wget http://git.app.eng.bos.redhat.com/git/integration-pla
 export _KEYSTORE=`pwd`/jssecacerts
 export MAVEN_OPTS="-Djavax.net.ssl.trustStore=${_KEYSTORE} -Djavax.net.ssl.trustStorePassword=changeit -Djavax.net.ssl.trustStoreType=jks -Djavax.net.ssl.keyStore=${_KEYSTORE} -Djavax.net.ssl.keyStorePassword=changeit -Djavax.net.ssl.keyStoreType=jks -Xms512m -Xmx3096m -XX:MaxPermSize=1024m -Dgwt-plugin.localWorkers='3' -XX:+UseConcMarkSweepGC -XX:-UseGCOverheadLimit"
 
-mvn  -Pbrms -DdependencyManagement=org.jboss.brms.component.management:brms-dependency-management-all:7.0.0.redhat-SNAPSHOT \\
+/jboss-prod/tools/maven-3.3.9-prod/bin/mvn  -Pbrms -DdependencyManagement=org.jboss.brms.component.management:brms-dependency-management-all:7.0.0.redhat-SNAPSHOT \\
 \t-Denforce-skip=false -Dfull=true -DoverrideTransitive=false -Dproject.meta.skip=true \\
     -DpropertyManagement=org.jboss.brms.component.management:brms-dependency-management-all:7.0.0.redhat-SNAPSHOT \\
     -Drepo-reporting-removal=true -Dversion.override=7.0.0 -Dversion.suffix=redhat-SNAPSHOT -Dversion.suffix.snapshot=true \\
@@ -25,7 +25,7 @@ job('bxms7_assembly_codereview'){
             // Adds a remote.
             remote {
                 // Sets the remote URL.
-                url("https://code.engineering.redhat.com/gerrit/ip")
+                url("ssh://jb-ip-tooling-jenkins@code.engineering.redhat.com:22/ip")
                 name("origin")
                 refspec("+refs/heads/*:refs/remotes/origin/* \$GERRIT_REFSPEC")
 

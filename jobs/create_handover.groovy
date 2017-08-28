@@ -3,56 +3,31 @@ import org.jboss.bxms.jenkins.JobTemplate
 // Create handover script
 def shellScript = null
 
-if (PRODUCT_NAME == "intpack-fuse63-bxms64") {
-
-    shellScript = """./ip-tooling/python create_handover.py -a \${pvt_summary_adoc} -t \${release_prefix}-release/\${release_prefix}-handover.template -p \${HOME}/\${release_prefix}-jenkins-ci.properties -o \${release_prefix}-release/\${release_prefix}-handover.adoc
+    shellScript = """
+ip-tooling/create_handover.py -a \${pvt_summary_adoc} -t \${release_prefix}-release/\${release_prefix}-handover.template -p ${CI_PROPERTIES_FILE} -o \${release_prefix}-release/\${release_prefix}-handover.adoc
 asciidoctor \${release_prefix}-release/\${release_prefix}-handover.adoc
 
-cp \${pvt_report_html} \${release_prefix}-release/\${release_prefix}-pvt-report.html
+git config --global user.email "bxms-prod@redhat.com"
+git config --global user.name "bxms-prod"
+#Skip providing pvt test report for intpack and patch release
+if [ \${release_type} != "intpack" ] || [ \$release_type != "patch" ] ;then
+    cp \${brms_pvt_report_html} \${release_prefix}-release/\${release_prefix}-pvt-report-brms.html
+    cp \${bpms_pvt_report_html} \${release_prefix}-release/\${release_prefix}-pvt-report-bpms.html
+    git add \${release_prefix}-release/\${release_prefix}-pvt-report*.html
+fi
 
-git config --global user.email "bxms-releaseci@redhat.com"
-git config --global user.name "bxms-releaseci"
-git add \${release_prefix}-release/\${release_prefix}-pvt-report.html
-sed -i 's/releaseci_trigger=true/releaseci_trigger=false/g' \${release_prefix}.cfg
+#sed -i 's/releaseci_trigger=true/releaseci_trigger=false/g' \${release_prefix}.cfg
 commit_msg="Prepare handover PR \${product_name} \${product_version} \${release_milestone}"
 
-
 git commit -a -m "\${commit_msg}"
-git push origin HEAD:refs/for/\${ip_config_branch} 2>&1| tee b.log 
-
+git push origin HEAD:refs/for/master 2>&1| tee b.log 
 
 handover_pr=`grep "\${commit_msg}" b.log`
 handover_pr=\${handover_pr#remote: }
 handover_pr=\${handover_pr%% Prepare*}
-sed -i '/^handover_pr=/d' \${HOME}/\${release_prefix}-jenkins-ci.properties
-echo "handover_pr=\$handover_pr" >>\${HOME}/\${release_prefix}-jenkins-ci.properties
+#Update the handover pr link
+sed -i '/^handover_pr=/d' ${CI_PROPERTIES_FILE} && echo "handover_pr=\$handover_pr" >>${CI_PROPERTIES_FILE}
 """
-} else {
-
-    shellScript = """python ./ip-tooling/create_handover.py -a \${bpms_pvt_summary_adoc} -t \${release_prefix}-release/\${release_prefix}-handover.template -p \${HOME}/\${release_prefix}-jenkins-ci.properties -o \${release_prefix}-release/\${release_prefix}-handover.adoc
-asciidoctor \${release_prefix}-release/\${release_prefix}-handover.adoc
-
-cp \${brms_pvt_report_html} \${release_prefix}-release/\${release_prefix}-pvt-report-brms.html
-cp \${bpms_pvt_report_html} \${release_prefix}-release/\${release_prefix}-pvt-report-bpms.html
-
-#git config --global user.email "bxms-releaseci@redhat.com"
-#git config --global user.name "bxms-releaseci"
-#git add \${release_prefix}-release/\${release_prefix}-pvt-report-*.html
-#sed -i 's/releaseci_trigger=true/releaseci_trigger=false/g' \${release_prefix}.cfg
-#commit_msg="Prepare handover PR \${product_name} \${product_version} \${release_milestone}"
-
-
-#git commit -a -m "\${commit_msg}"
-#git push origin HEAD:refs/for/\${ip_config_branch} 2>&1| tee b.log 
-
-
-#handover_pr=`grep "\${commit_msg}" b.log`
-#handover_pr=\${handover_pr#remote: }
-#handover_pr=\${handover_pr%% Prepare*}
-#sed -i '/^handover_pr=/d' \${HOME}/\${release_prefix}-jenkins-ci.properties
-#echo "handover_pr=\$handover_pr" >> \${HOME}/\${release_prefix}-jenkins-ci.properties
-"""
-}
 // Creates or updates a free style job.
 def jobDefinition = job("${PRODUCT_NAME}-create-handover") {
 
@@ -103,7 +78,7 @@ def jobDefinition = job("${PRODUCT_NAME}-create-handover") {
                         removePrefix('${release_prefix}-release')
 
                         // Sets the destination folder.
-                        remoteDirectory('${brms_stage_folder}/${brms_product_name}-${product_version}.${availability}.${release_milestone}/')
+                        remoteDirectory('${brms_stage_path}')
                     }
 
                     // Adds a transfer set.
@@ -116,9 +91,14 @@ def jobDefinition = job("${PRODUCT_NAME}-create-handover") {
                         removePrefix('${release_prefix}-release')
 
                         // Sets the destination folder.
-                        remoteDirectory('${bpms_stage_folder}/${bpms_product_name}-${product_version}.${availability}.${release_milestone}/')
+                        remoteDirectory('${bpms_stage_path}')
                     }
                 }
+            }
+        }
+        publishers {
+            postBuildTask {
+                task('JOB DONE', "ip-tooling/jira_helper.py -c ${IP_CONFIG_FILE} -a 'handover has been created' -f ")
             }
         }
     }

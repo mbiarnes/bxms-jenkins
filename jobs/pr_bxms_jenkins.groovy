@@ -13,7 +13,7 @@ job('bxms_jenkins_codereview'){
             // Adds a remote.
             remote {
                 // Sets the remote URL.
-                url("https://code.engineering.redhat.com/gerrit/bxms-jenkins")
+                url("ssh://jb-ip-tooling-jenkins@code.engineering.redhat.com:22/bxms-jenkins")
                 name("origin")
                 refspec("+refs/heads/*:refs/remotes/origin/* \$GERRIT_REFSPEC")
             }
@@ -29,7 +29,7 @@ job('bxms_jenkins_codereview'){
     }
     triggers{
         gerrit{
-            project("bxms-jenkins", "master")
+            project("bxms-jenkins", "ant:**")
             events {
                 patchsetCreated()
             }

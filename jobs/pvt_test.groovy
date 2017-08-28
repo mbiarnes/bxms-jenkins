@@ -2,15 +2,15 @@ import org.jboss.bxms.jenkins.JobTemplate
 
 // PVT script.
 String shellScript = '''cd pvt
-/mnt/maven-3.2.3-prod/bin/mvn  clean site surefire-report:report -B -Dproduct.config=${smoketest_cfg}  -Dproduct.version=${product_version}
+/jboss-prod/tools/maven-3.3.9-prod/bin/mvn clean surefire-report:report -B -Dproduct.config=${smoketest_cfg}  -Dproduct.version=${product_version} package
 
 cd generic/
 
-sed -i '/^pvt_summary_adoc=/d' ${HOME}/${release_prefix}-jenkins-ci.properties
-sed -i '/^pvt_report_html=/d' ${HOME}/${release_prefix}-jenkins-ci.properties
-echo "pvt_summary_adoc=`pwd`/`find . -name 'pvt_handover_summary*.adoc'`">>${HOME}/${release_prefix}-jenkins-ci.properties
+sed -i '/^pvt_summary_adoc=/d' 
+sed -i '/^pvt_report_html=/d' 
+echo "pvt_summary_adoc=`pwd`/`find . -name 'pvt_handover_summary*.adoc'`">>
 
-echo "pvt_report_html=`pwd`/`find . -name 'pvt_report*.html'`">>${HOME}/${release_prefix}-jenkins-ci.properties
+echo "pvt_report_html=`pwd`/`find . -name 'pvt_report*.html'`">>
 '''
 
 // Creates or updates a free style job.

@@ -25,7 +25,7 @@ def jobDefinition = job("${PRODUCT_NAME}-promote-release") {
                     execTimeout(0)
 
                     // Specifies a command to execute on the remote server.
-                    execCommand('kinit -k -t ~/host-host-8-172-124.host.centralci.eng.rdu2.redhat.com.keytab host/host-8-172-124.host.centralci.eng.rdu2.redhat.com@REDHAT.COM\n' +
+                    execCommand('kinit -k -t ~/bxms-release.keytab bxms-release/prod-ci@REDHAT.COM\n' +
                             '/mnt/redhat/scripts/rel-eng/utility/bus-clients/stage-mw-release ${brms_product_name}-${product_version}.${release_milestone}\n' +
                             '/mnt/redhat/scripts/rel-eng/utility/bus-clients/stage-mw-release ${bpms_product_name}-${product_version}.${release_milestone}')
                 }

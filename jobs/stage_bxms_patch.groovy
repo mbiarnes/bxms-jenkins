@@ -13,20 +13,19 @@ maven_repo_url="http://download.eng.bos.redhat.com/brewroot/packages/\${name}/\$
 echo \$maven_repo_url
 
 #Uploading to rcm staging folder
+wget \${brms_staging_properties_url}
+wget \${bpms_staging_properties_url}
+
 ip-tooling/maven-to-stage.py --version=\${product_artifact_version} --override-version \${product_version} \
-   --deliverable \${release_prefix}-release/brms-64-deliverable.properties --maven-repo \${maven_repo_url} \
-   --output \${brms_product_name}-\${product_version}.\${release_milestone} \
-   --release-url=\${rcm_stage_base}/jboss-brms/\${brms_product_name}-\${product_version}.\${release_milestone} --output-deliverable-list \${HOME}/\${release_prefix}-deliverable-list-staging.properties
+   --deliverable \${release_prefix}-release/\${release_prefix}-deliverable.properties --maven-repo \${maven_repo_url} \
+   --output \${brms_product_name}\
+   --release-url=\${rcm_staging_base}/\${brms_staging_folder} --output-deliverable-list \${brms_staging_properties_name}
    
-
-ip-tooling/maven-to-stage.py --version=\${product_artifact_version} --override-version \${product_version} \
+ip-tooling/maven-to-staging.py --version=\${product_artifact_version} --override-version \${product_version} \
    --deliverable \${release_prefix}-release/bpmsuite-64-deliverable.properties --maven-repo \${maven_repo_url} \
-   --output \${bpms_product_name}-\${product_version}.\${release_milestone} \
-   --release-url=\${rcm_stage_base}/jboss-bpmsuite/\${bpms_product_name}-\${product_version}.\${release_milestone} --output-deliverable-list \${HOME}/\${release_prefix}-deliverable-list-staging.properties
+   --output \${bpms_product_name}\
+   --release-url=\${rcm_staging_base}/\${bpms_staging_folder} --output-deliverable-list \${brms_staging_properties_name}
 
-cp \${HOME}/\${release_prefix}-deliverable-list-staging.properties \${release_prefix}-deliverable-list-staging.properties
-
-sed -e 's=rcm-guest.app.eng.bos.redhat.com/rcm-guest/staging/jboss-brms=download.devel.redhat.com/devel/candidates/BRMS=g' -e 's=rcm-guest.app.eng.bos.redhat.com/rcm-guest/staging/jboss-bpmsuite=download.devel.redhat.com/devel/candidates/BPMS=g' \${release_prefix}-deliverable-list-staging.properties >> \${release_prefix}-deliverable-list.properties
 """
 
 // Creates or updates a free style job.
@@ -58,6 +57,11 @@ def jobDefinition = job("${PRODUCT_NAME}-stage-bxms-patch") {
         shell(shellScript)
     }
 
+    wrappers {
+        // Deletes files from the workspace before the build starts.
+        preBuildCleanup()
+
+    }
     // Adds post-build actions to the job.
     publishers {
 
@@ -74,30 +78,22 @@ def jobDefinition = job("${PRODUCT_NAME}-stage-bxms-patch") {
                 transferSet {
 
                     // Sets the files to upload to a server.
-                    sourceFiles('${brms_product_name}-${product_version}.${release_milestone}/*.*')
+                    sourceFiles('${brms_product_name}/*.*')
+                    removePrefix('${brms_product_name}/')
 
                     // Sets the destination folder.
-                    remoteDirectory('${brms_stage_folder}')
+                    remoteDirectory('${brms_staging_path}')
                 }
 
                 // Adds a transfer set.
                 transferSet {
 
                     // Sets the files to upload to a server.
-                    sourceFiles('${bpms_product_name}-${product_version}.${release_milestone}/*.*')
+                    sourceFiles('${bpms_product_name}/*.*')
+                    removePrefix('${bpms_product_name}/')
 
                     // Sets the destination folder.
-                    remoteDirectory('${bpms_stage_folder}')
-                }
-
-                // Adds a transfer set.
-                transferSet {
-
-                    // Sets the files to upload to a server.
-                    sourceFiles('${release_prefix}-deliverable-list*.properties')
-
-                    // Sets the destination folder.
-                    remoteDirectory('${brms_stage_folder}/${brms_product_name}-${product_version}.${release_milestone}/')
+                    remoteDirectory('${bpms_staging_path}')
                 }
 
                 // Adds a transfer set.
@@ -107,7 +103,17 @@ def jobDefinition = job("${PRODUCT_NAME}-stage-bxms-patch") {
                     sourceFiles('${release_prefix}-deliverable-list*.properties')
 
                     // Sets the destination folder.
-                    remoteDirectory('${bpms_stage_folder}/${bpms_product_name}-${product_version}.${release_milestone}/')
+                    remoteDirectory('${brms_staging_path}/')
+                }
+
+                // Adds a transfer set.
+                transferSet {
+
+                    // Sets the files to upload to a server.
+                    sourceFiles('${release_prefix}-deliverable-list*.properties')
+
+                    // Sets the destination folder.
+                    remoteDirectory('${bpms_staging_path}/')
                 }
             }
         }

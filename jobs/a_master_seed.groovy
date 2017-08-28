@@ -4,32 +4,26 @@ import org.jboss.bxms.jenkins.GeneralSeedJobBuilder
 //Establish the parametize release pipeline
 new ReleasePipelineSeedJobBuilder(
         product_name: "bxms64",
-        ci_properties_file:"brms-64-jenkins-ci.properties",
+        ci_properties_file:"/jboss-prod/config/brms-64-ci.properties",
         cfg_file:"brms-64.cfg",
-        ip_makefile:"Makefile.BRMS",
-        product_root_component:"bxms-maven-repo-root",
-        bpms_deliverable_list_file:"bpmsuite-64-deliverable.properties",
-        repo_builder_script:"regen_bxms_64_repo_builder.sh",
 ).build(this)
 
 new ReleasePipelineSeedJobBuilder(
         product_name: "bxms70",
-        ci_properties_file:"brms-jenkins-ci.properties",
+        ci_properties_file:"/jboss-prod/config/brms-ci.properties",
         cfg_file:"brms.cfg",
-        ip_makefile:"Makefile.BRMS",
-        product_root_component:"bxms-maven-repo-root",
-        bpms_deliverable_list_file:"bpmsuite-deliverable.properties",
-        repo_builder_script:"regen_bxms_repo_builder.sh",
 ).build(this)
 
 new ReleasePipelineSeedJobBuilder(
         product_name: "intpack-fuse63-bxms64",
-        ci_properties_file:"intpack-fuse63-bxms64-jenkins-ci.properties",
+        ci_properties_file:"/jboss-prod/config/intpack-fuse63-bxms64-ci.properties",
         cfg_file:"intpack-fuse63-bxms64.cfg",
-        ip_makefile:"Makefile.IntPack",
-        product_root_component:"fuse-integration",
-        bpms_deliverable_list_file:"",
-        repo_builder_script:"regen_bxms_intpack_repo_builder.sh",
+).build(this)
+
+new ReleasePipelineSeedJobBuilder(
+        product_name: "bxms-test",
+        ci_properties_file:"/jboss-prod/config/bxms-test-ci.properties",
+        cfg_file:"brms-test.cfg",
 ).build(this)
 
 new GeneralSeedJobBuilder(

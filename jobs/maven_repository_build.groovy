@@ -1,26 +1,29 @@
 import org.jboss.bxms.jenkins.JobTemplate
 
-// Computing differences between streams
-
-// incremental repository
-def incrementalRepositoryString = null
-
-if (PRODUCT_NAME == "bxms64") {
-
-    incrementalRepositoryString = "http://rcm-guest.app.eng.bos.redhat.com/rcm-guest/staging/jboss-brms/BRMS-6.4.0.CR2/jboss-brms-bpmsuite-6.4.0.GA-maven-repository/maven-repository"
-
-}
-
 // Repository builder script
-def shellScript = """make CFG=${IP_CONFIG_FILE} MAVEN_REPOSITORY_BUILDER_SCRIPT=${REPOSITORY_BUILDER_SCRIPT} -f ${IP_MAKEFILE} repository
+def shellScript = """
+wget \${brms_staging_properties_url}
+wget \${brms_candidate_properties_url}
+wget \${bpms_staging_properties_url}
+wget \${bpms_candidate_properties_url}
+ 
+#append the maven repo url into the properties
+sed -i '/^bxms.maven.repo.latest.url=/d' \${brms_staging_properties_name} && echo "bxms.maven.repo.latest.url=\${rcm_staging_base}/\${brms_staging_folder}/\${bxms_maven_repo_name} >>\${brms_staging_properties_name}
+sed -i '/^bxms.maven.repo.latest.url=/d' \${brms_candidate_properties_name} && echo "bxms.maven.repo.latest.url=\${rcm_candidate_base}/\${brms_staging_folder}/\${bxms_maven_repo_name}  >>\${brms_staging_properties_name}
 
-sed -i '/^bxms.maven.repo.latest.url=/d' \${HOME}/\${release_prefix}-deliverable-list-staging.properties
-sed -i '/^bxms.maven.incremental.repo.latest.url=/d' \${HOME}/\${release_prefix}-deliverable-list-staging.properties
-echo "bxms.maven.repo.latest.url=\${rcm_stage_base}/\${bpms_stage_folder}/\${bpms_product_name}-\${product_version}.\${availability}.\${release_milestone}/jboss-brms-bpmsuite-\${product_version}.\${availability}-maven-repository.zip">>\${HOME}/\${release_prefix}-deliverable-list-staging.properties
-echo "bxms.maven.incremental.repo.latest.url=\${rcm_stage_base}/\${bpms_stage_folder}/\${bpms_product_name}-\${product_version}.\${availability}.\${release_milestone}/jboss-brms-bpmsuite-\${product_version}.\${availability}-incremental-maven-repository.zip">>\${HOME}/\${release_prefix}-deliverable-list-staging.properties
+sed -i '/^bxms.maven.repo.latest.url=/d' \${brms_staging_properties_name} && echo "bxms.maven.repo.latest.url=\${rcm_staging_base}/\${bpms_staging_folder}/\${bxms_maven_repo_name}  >>\${brms_staging_properties_name}
+sed -i '/^bxms.maven.repo.latest.url=/d' \${bpms_candidate_properties_name} && echo "bxms.maven.repo.latest.url=\${rcm_candidate_base}/\${bpms_staging_folder}/\${bxms_maven_repo_name}  >>\${brms_staging_properties_name}
+if [ \$release_type = "patch" ];then
+    sed -i '/^bxms.maven.incremental.repo.latest.url=/d' \${brms_staging_properties_name} && echo "bxms.maven.incremental.repo.latest.url=\${rcm_staging_base}/\${brms_staging_folder}/\${bxms_incr_maven_repo_name} >>\${brms_staging_properties_name}
+    sed -i '/^bxms.maven.incremental.repo.latest.url=/d' \${brms_staging_properties_name} && echo "bxms.maven.incremental.repo.latest.url=\${rcm_staging_base}/\${brms_candidate_folder}/\${brms_staging_folder}/\${bxms_incr_maven_repo_name} >>\${brms_candidate_properties_name}
+    
+    sed -i '/^bxms.maven.incremental.repo.latest.url=/d' \${brms_staging_properties_name} && echo "bxms.maven.incremental.repo.latest.url=\${rcm_staging_base}/\${bpms_staging_folder}/\${bxms_incr_maven_repo_name} >>\${brms_staging_properties_name}
+    sed -i '/^bxms.maven.incremental.repo.latest.url=/d' \${brms_staging_properties_name} && echo "bxms.maven.incremental.repo.latest.url=\${rcm_staging_base}/\${bpms_candidate_folder}/\${bpms_staging_folder}/\${bxms_incr_maven_repo_name} >>\${bpms_candidate_properties_name}
 
-cp \${HOME}/\${release_prefix}-deliverable-list-staging.properties \${release_prefix}-deliverable-list-staging.properties
-sed -e 's=rcm-guest.app.eng.bos.redhat.com/rcm-guest/staging/\${brms_stage_folder}=download.devel.redhat.com/devel/candidates/BRMS=g' -e 's=rcm-guest.app.eng.bos.redhat.com/rcm-guest/staging/jboss-bpmsuite=download.devel.redhat.com/devel/candidates/BPMS=g' \${release_prefix}-deliverable-list-staging.properties > \${release_prefix}-deliverable-list.properties
+fi
+
+#TODO rename the maven repository zip to make it consistent with others
+make CFG=${IP_CONFIG_FILE} MAVEN_REPOSITORY_BUILDER_SCRIPT=\${repository_builder_script} -f \${makefile} repository
 """
 
 // Creates or updates a free style job.
@@ -44,9 +47,6 @@ def jobDefinition = job("${PRODUCT_NAME}-maven-repository-build") {
         booleanParam(parameterName = "GEN_REPORT", defaultValue = true,
                 description = "Tick if you want to generate report for the newly created repository.")
 
-        // Defines a simple text parameter, where users can enter a string value.
-        stringParam(parameterName = "INCREMENTAL_REPO_FOR", defaultValue = incrementalRepositoryString,
-                description = "List of repositories to exclude. They can be online repository urls or online available zip files in format <url to the zip>:<relative path to repo root inside the zip<. Each repository is supposed to be put on a new line.")
     }
 
     // Adds build steps to the jobs.
@@ -56,6 +56,14 @@ def jobDefinition = job("${PRODUCT_NAME}-maven-repository-build") {
         shell(shellScript)
     }
 
+    wrappers {
+        // Deletes files from the workspace before the build starts.
+        preBuildCleanup(){
+            includePattern('workspace/**')
+            deleteDirectories()
+        }
+
+    }
     // Adds post-build actions to the job.
     publishers {
 
@@ -100,14 +108,14 @@ def jobDefinition = job("${PRODUCT_NAME}-maven-repository-build") {
                         removePrefix('workspace/${release_prefix}-repository/archive/')
 
                         // Sets the destination folder.
-                        remoteDirectory('${brms_stage_folder}/${brms_product_name}-${product_version}.${availability}.${release_milestone}/')
+                        remoteDirectory('${brms_stage_path}')
 
                         // Specifies a command to execute on the remote server.
                         execCommand('unzip ' +
-                                '-o ~/staging/${brms_stage_folder}/${brms_product_name}-${product_version}.${availability}.${release_milestone}/maven-repository-report.zip ' +
-                                '-d ~/staging/${brms_stage_folder}/${brms_product_name}-${product_version}.${availability}.${release_milestone}/ ' +
+                                '-o ~/staging/${brms_stage_path}/maven-repository-report.zip ' +
+                                '-d ~/staging/${brms_stage_path}' +
                                 '&& rm ' +
-                                '-f ~/staging/${brms_stage_folder}/${brms_product_name}-${product_version}.${availability}.${release_milestone}/maven-repository-report.zip')
+                                '-f ~/staging/${brms_stage_path}/maven-repository-report.zip')
                     }
 
                     // Adds a transfer set.
@@ -120,34 +128,33 @@ def jobDefinition = job("${PRODUCT_NAME}-maven-repository-build") {
                         removePrefix('workspace/${release_prefix}-repository/archive/')
 
                         // Sets the destination folder.
-                        remoteDirectory('${bpms_stage_folder}/${bpms_product_name}-${product_version}.${availability}.${release_milestone}/')
+                        remoteDirectory('${bpms_stage_path}')
 
                         // Specifies a command to execute on the remote server.
                         execCommand('unzip ' +
-                                '-o ~/staging/${bpms_stage_folder}/${bpms_product_name}-${product_version}.${availability}.${release_milestone}/maven-repository-report.zip ' +
-                                '-d ~/staging/${bpms_stage_folder}/${bpms_product_name}-${product_version}.${availability}.${release_milestone}/ ' +
+                                '-o ~/staging/${bpms_stage__path}/maven-repository-report.zip ' +
+                                '-d ~/staging/${bpms_stage__path}/ ' +
                                 '&& rm ' +
-                                '-f ~/staging/${bpms_stage_folder}/${bpms_product_name}-${product_version}.${availability}.${release_milestone}/maven-repository-report.zip')
+                                '-f ~/staging/${bpms_stage__path}/maven-repository-report.zip')
                     }
 
                     // Adds a transfer set.
                     transferSet {
 
                         // Sets the files to upload to a server.
-                        sourceFiles('${release_prefix}-deliverable-list*.properties')
+                        sourceFiles('${brms_staging_properties_name},${bpms_candidate_properties_name}')
 
-                        // Sets the destination folder.
-                        remoteDirectory('${brms_stage_folder}/${brms_product_name}-${product_version}.${availability}.${release_milestone}/')
+                        // Sets the destination _path.
+                        remoteDirectory('${brms_stage_path}')
                     }
 
                     // Adds a transfer set.
                     transferSet {
 
                         // Sets the files to upload to a server.
-                        sourceFiles('${release_prefix}-deliverable-list*.properties')
+                        sourceFiles('${brms_staging_properties_name},${bpms_candidate_properties_name}')
 
-                        // Sets the destination folder.
-                        remoteDirectory('${bpms_stage_folder}/${bpms_product_name}-${product_version}.${availability}.${release_milestone}/')
+                        remoteDirectory('${bpms_stage_path}')
                     }
                 }
             }

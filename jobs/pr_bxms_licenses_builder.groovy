@@ -1,5 +1,5 @@
 def shell_script = '''export MAVEN_OPTS="-Xms512m -Xmx8096m -Dgwt-plugin.localWorkers='3' -XX:+UseConcMarkSweepGC -XX:-UseGCOverheadLimit"
-/mnt/maven-3.3.3-prod/bin/mvn -Dmaven.repo.local=/jboss-prod/m2/bxms-dev-repo clean install
+/jboss-prod/tools/maven-3.3.9-prod/bin/mvn -Dmaven.repo.local=/jboss-prod/m2/bxms-dev-repo clean install
 '''
 job('bxms_licenses_builder_codereview'){
     description("Monitor the code change in bxms-licenses-builder")
@@ -19,7 +19,7 @@ job('bxms_licenses_builder_codereview'){
             // Adds a remote.
             remote {
                 // Sets the remote URL.
-                url("https://code.engineering.redhat.com/gerrit/bxms-licenses-builder")
+                url("ssh://jb-ip-tooling-jenkins@code.engineering.redhat.com:22/bxms-licenses-builder")
                 name("origin")
                 refspec("+refs/heads/*:refs/remotes/origin/* \$GERRIT_REFSPEC")
             }

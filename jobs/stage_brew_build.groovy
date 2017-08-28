@@ -1,43 +1,5 @@
 import org.jboss.bxms.jenkins.JobTemplate
 
-// Prepare properties command
-if (PRODUCT_NAME == "intpack-fuse63-bxms64") {
-
-    command = 'sed -e \'s=rcm-guest.app.eng.bos.redhat.com/rcm-guest/staging/jboss-brms=download.devel.redhat.com/devel/candidates/INTPACK=g\' ${release_prefix}-deliverable-list-staging.properties >> ${release_prefix}-deliverable-list.properties'
-
-    mavenToStageBpmsCommand = ''
-
-    mavenToStageCommand = "ip-tooling/maven-to-stage.py --version=\${product_artifact_version} --override-version \${product_version}\\\n" +
-            "   --deliverable \${release_prefix}-release/\${release_prefix}-deliverable.properties --maven-repo \${maven_repo_url}\\\n" +
-            "   --output \${product_name}-\${product_version}\\\n" +
-            "   --release-url=\${rcm_stage_base}/jboss-brms/\${brms_product_name}-\${product_version} --output-deliverable-list \${HOME}/\${release_prefix}-deliverable-list-staging.properties"
-} else {
-
-    command = 'sed -e \'s=rcm-guest.app.eng.bos.redhat.com/rcm-guest/staging/jboss-brms=download.devel.redhat.com/devel/candidates/BRMS=g\' -e \'s=rcm-guest.app.eng.bos.redhat.com/rcm-guest/staging/jboss-bpmsuite=download.devel.redhat.com/devel/candidates/BPMS=g\' ${release_prefix}-deliverable-list-staging.properties >> ${release_prefix}-deliverable-list.properties\n' +
-            '\n' +
-            '\n' +
-            'sed -i \'/^ip_brms_brew_task_url=/d\' ${HOME}/${release_prefix}-jenkins-ci.properties && echo "ip_brms_brew_task_url=https://brewweb.engineering.redhat.com/brew/taskinfo?taskID=${task_id}">>${HOME}/${release_prefix}-jenkins-ci.properties\n' +
-            '\n' +
-            'sed -i \'/^build.config=/d\' ${HOME}/${release_prefix}-deliverable-list-staging.properties && echo "build.config=${rcm_stage_base}/jboss-bpmsuite/${bpms_product_name}-${product_version}.${release_milestone}/${release_prefix}.cfg">>${HOME}/${release_prefix}-deliverable-list-staging.properties\n' +
-            'sed -i \'/^DROOLSJBPM_VERSION=/d\' ${HOME}/${release_prefix}-deliverable-list-staging.properties && echo "DROOLSJBPM_VERSION=${kie_version}">>${HOME}/${release_prefix}-deliverable-list-staging.properties\n' +
-            'sed -i \'/^BXMS_VERSION=/d\' ${HOME}/${release_prefix}-deliverable-list-staging.properties && echo "BXMS_VERSION=${product_artifact_version}">>${HOME}/${release_prefix}-deliverable-list-staging.properties\n' +
-            '\n' +
-            '\n' +
-            'cp ${HOME}/${release_prefix}-deliverable-list-staging.properties ${release_prefix}-deliverable-list-staging.properties'
-
-    mavenToStageBpmsCommand = 'ip-tooling/maven-to-stage.py --version=${product_artifact_version} --override-version ${product_version}.${availability}\\\n' +
-            "   --deliverable \${release_prefix}-release/${BPMS_DELIVERABLE_LIST_FILE} --maven-repo \${maven_repo_url}\\\n" +
-            '   --output ${bpms_product_name}-${product_version}.${availability}.${release_milestone}\\\n' +
-            '   --release-url=${rcm_stage_base}/jboss-bpmsuite/${bpms_product_name}-${product_version}.${availability}.${release_milestone}\\\n' +
-            '   --output-deliverable-list ${HOME}/${release_prefix}-deliverable-list-staging.properties'
-
-    mavenToStageCommand = "ip-tooling/maven-to-stage.py --version=\${product_artifact_version} --override-version \${product_version}.\${availability}\\\n" +
-            "   --deliverable \${release_prefix}-release/\${release_prefix}-deliverable.properties --maven-repo \${maven_repo_url}\\\n" +
-            "   --output \${brms_product_name}-\${product_version}.\${availability}.\${release_milestone}\\\n" +
-            "   --release-url=\${rcm_stage_base}/jboss-brms/\${brms_product_name}-\${product_version}.\${availability}.\${release_milestone} --output-deliverable-list \${HOME}/\${release_prefix}-deliverable-list-staging.properties"
-}
-
-// Staging script.
 def shellScript = """# Disable bash tracking mode, too much noise.
 #set +x
 if [ ! -z \$CI_MESSAGE ];then
@@ -45,21 +7,35 @@ name=`echo \$CI_MESSAGE| python -c "import sys, json; print json.load(sys.stdin)
 version=`echo \$CI_MESSAGE| python -c "import sys, json; print json.load(sys.stdin)['build']['version']"` 1>/dev/null
 release=`echo \$CI_MESSAGE| python -c "import sys, json; print json.load(sys.stdin)['build']['release']"` 1>/dev/null
 task_id=`echo \$CI_MESSAGE| python -c "import sys, json; print json.load(sys.stdin)['build']['task_id']"` 1>/dev/null
-
 fi
+
 maven_repo_url="http://download.eng.bos.redhat.com/brewroot/packages/\${name}/\${version}/\${release}/maven/"
 
-echo \$maven_repo_url
-
 #Uploading to rcm staging folder
-
-${mavenToStageCommand}
-   
-${mavenToStageBpmsCommand}
-
-cp \${HOME}/\${release_prefix}-deliverable-list-staging.properties \${release_prefix}-deliverable-list-staging.properties
-
-${command}
+if [ \${release_type} = 'intpack' ];then
+    ip-tooling/maven-to-stage.py --version=\${product_artifact_version} --override-version \${product_version} --maven-repo \${maven_repo_url} \
+      --deliverable \${release_prefix}-release/\${release_prefix}-deliverable.properties --output \${product_name}-\${product_version}
+else
+    ip-tooling/maven-to-stage.py --version=\${product_artifact_version} --override-version \${product_deliver_version} --maven-repo \${maven_repo_url} \
+      --deliverable \${release_prefix}-release/\${release_prefix}-deliverable.properties --output \${brms_product_name} \
+      --release-url=\${rcm_staging_base}/\${brms_staging_folder} --output-deliverable-list \${brms_staging_properties_name}
+      
+    ip-tooling/maven-to-stage.py --version=\${product_artifact_version} --override-version \${product_deliver_version} --maven-repo \${maven_repo_url} \
+      --deliverable \${release_prefix}-release/bpmsuite-deliverable.properties --output \${bpms_product_name} \
+      --release-url=\${rcm_staging_base}/\${bpms_staging_folder} --output-deliverable-list \${brms_staging_properties_name}
+    
+    #append the other properties per qe's requirement
+    sed -i '/^build.config=/d\' \${brms_staging_properties_name} \
+        && echo "build.config=\${rcm_staging_base}/\${brms_staging_folder}/\${IP_CONFIG_FILE}">>\${brms_staging_properties_name}
+    sed -i '/^DROOLSJBPM_VERSION=/d\' \${brms_staging_properties_name} \
+        && echo "DROOLSJBPM_VERSION=\${kie_version}">>\${brms_staging_properties_name}
+    sed -i '/^BXMS_VERSION=/d\' \${brms_staging_properties_name} \
+        && echo "BXMS_VERSION=\${product_artifact_version}">>\${brms_staging_properties_name}
+    sed -e 's=\${rcm_staging_base}/\${brms_staging_folder}=\${rcm_candidate_base}/\${brms_product_name}=g' \
+        -e 's=\${rcm_staging_base}/\${bpms_staging_folder}=\${rcm_candidate_base}/\${brms_product_name}=g' \
+        \${brms_staging_properties_name} >> \${brms_candidate_properties_name}
+fi
+echo "JOB DONE"
 """
 
 // Creates or updates a free style job.
@@ -72,16 +48,19 @@ def jobDefinition = job("${PRODUCT_NAME}-stage-brew-build") {
     parameters {
 
         // Defines a simple text parameter, where users can enter a string value.
-        stringParam(parameterName = "name", defaultValue = null, description = "Brew task name")
+        stringParam(parameterName = "name", defaultValue = null, description = "Brew Build Package name")
 
         // Defines a simple text parameter, where users can enter a string value.
-        stringParam(parameterName = "version", defaultValue = null, description = "Brew task version")
+        stringParam(parameterName = "version", defaultValue = null, description = "Brew Build version")
 
         // Defines a simple text parameter, where users can enter a string value.
-        stringParam(parameterName = "release", defaultValue = null, description = "Brew task release")
+        stringParam(parameterName = "release", defaultValue = null, description = "Brew Build release number")
 
         // Defines a simple text parameter, where users can enter a string value.
-        stringParam(parameterName = "task_id", defaultValue = null, description = "Brew task id")
+        stringParam(parameterName = "task_id", defaultValue = null, description = "Brew Build task id")
+
+        // Defines a simple text parameter, where users can enter a string value.
+        booleanParam(parameterName = "CLEAN_STAGING_ARTIFACTS", defaultValue = false, description = "WARNING, click this will force remove your artifacts in staging folder!")
     }
 
     // Adds build steps to the jobs.
@@ -90,7 +69,11 @@ def jobDefinition = job("${PRODUCT_NAME}-stage-brew-build") {
         // Runs a shell script (defaults to sh, but this is configurable) for building the project.
         shell(shellScript)
     }
+    wrappers {
+        // Deletes files from the workspace before the build starts.
+        preBuildCleanup()
 
+    }
     // Adds post-build actions to the job.
     publishers {
 
@@ -119,16 +102,6 @@ def jobDefinition = job("${PRODUCT_NAME}-stage-brew-build") {
                     transferSet {
 
                         // Sets the files to upload to a server.
-                        sourceFiles('${release_prefix}-deliverable-list*.properties')
-
-                        // Sets the destination folder.
-                        remoteDirectory('${product_stage_folder}/${product_name}-${product_version}/')
-                    }
-
-                    // Adds a transfer set.
-                    transferSet {
-
-                        // Sets the files to upload to a server.
                         sourceFiles('${release_prefix}.cfg')
 
                         // Sets the destination folder.
@@ -136,7 +109,6 @@ def jobDefinition = job("${PRODUCT_NAME}-stage-brew-build") {
                     }
 
                 } else {
-
                     // Adds a target server.
                     verbose(true)
 
@@ -144,62 +116,61 @@ def jobDefinition = job("${PRODUCT_NAME}-stage-brew-build") {
                     transferSet {
 
                         // Sets the files to upload to a server.
-                        sourceFiles('${brms_product_name}-${product_version}.${availability}.${release_milestone}/*.*')
+                        sourceFiles('')
+                        // Sets the destination folder.
+                        remoteDirectory('${brms_staging_path}')
+                        execCommand('if [ "${CLEAN_STAGING_ARTIFACTS}" = "true" ];then \n' +
+                                        'rm -vf  ~/staging/${brms_staging_path}/* ~/staging/${bpms_staging_path}/* \n' +
+                                    'fi')
+                    }
+                    // Adds a target server.
+                    verbose(true)
+
+                    // Adds a transfer set.
+                    transferSet {
+
+                        // Sets the files to upload to a server.
+                        sourceFiles('${brms_product_name}/*.*')
+                        removePrefix('${brms_product_name}/')
 
                         // Sets the destination folder.
-                        remoteDirectory('${brms_stage_folder}')
+                        remoteDirectory('${brms_staging_path}')
                     }
 
                     // Adds a transfer set.
                     transferSet {
 
                         // Sets the files to upload to a server.
-                        sourceFiles('${bpms_product_name}-${product_version}.${availability}.${release_milestone}/*.*')
+                        sourceFiles('${bpms_product_name}/*.*')
+                        removePrefix('${bpms_product_name}/')
+
 
                         // Sets the destination folder.
-                        remoteDirectory('${bpms_stage_folder}')
+                        remoteDirectory('${bpms_staging_path}')
                     }
 
                     // Adds a transfer set.
                     transferSet {
 
                         // Sets the files to upload to a server.
-                        sourceFiles('${release_prefix}-deliverable-list*.properties')
+                        sourceFiles('${IP_CONFIG_FILE},${release_prefix}-deliverable-list*.properties')
 
                         // Sets the destination folder.
-                        remoteDirectory('${brms_stage_folder}/${brms_product_name}-${product_version}.${availability}.${release_milestone}/')
+                        remoteDirectory('${brms_staging_path}')
                     }
 
                     // Adds a transfer set.
                     transferSet {
 
                         // Sets the files to upload to a server.
-                        sourceFiles('${release_prefix}.cfg')
+                        sourceFiles('${IP_CONFIG_FILE},${release_prefix}-deliverable-list*.properties')
 
                         // Sets the destination folder.
-                        remoteDirectory('${brms_stage_folder}/${brms_product_name}-${product_version}.${availability}.${release_milestone}/')
+                        remoteDirectory('${bpms_staging_path}')
                     }
 
-                    // Adds a transfer set.
-                    transferSet {
-
-                        // Sets the files to upload to a server.
-                        sourceFiles('${release_prefix}-deliverable-list*.properties')
-
-                        // Sets the destination folder.
-                        remoteDirectory('${bpms_stage_folder}/${bpms_product_name}-${product_version}.${availability}.${release_milestone}/')
-                    }
-
-                    // Adds a transfer set.
-                    transferSet {
-
-                        // Sets the files to upload to a server.
-                        sourceFiles('${release_prefix}.cfg')
-
-                        // Sets the destination folder.
-                        remoteDirectory('${bpms_stage_folder}/${bpms_product_name}-${product_version}.${availability}.${release_milestone}/')
-                    }
                 }
+
             }
         }
     }
