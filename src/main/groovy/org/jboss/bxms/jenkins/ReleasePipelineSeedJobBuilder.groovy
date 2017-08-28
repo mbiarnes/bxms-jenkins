@@ -60,7 +60,7 @@ class ReleasePipelineSeedJobBuilder {
                     env("COMBINATION", "fuse63-bxms64")
                 }
             }
-            label ("pvt-static")
+            label ("service-node")
             scm {
                 // Adds a Git SCM source.
                 git {

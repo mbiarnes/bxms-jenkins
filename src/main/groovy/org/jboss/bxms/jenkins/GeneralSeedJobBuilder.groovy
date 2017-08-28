@@ -19,7 +19,7 @@ class GeneralSeedJobBuilder {
             }
             // Adds environment variables to the build.
 
-            label ("pvt-static")
+            label ("service-node")
             scm {
                 // Adds a Git SCM source.
                 git {
