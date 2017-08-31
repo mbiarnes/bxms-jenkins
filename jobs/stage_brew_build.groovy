@@ -144,7 +144,7 @@ def jobDefinition = job("${PRODUCT_NAME}-release-pipeline/${PRODUCT_NAME}-stage-
                     transferSet {
 
                         // Sets the files to upload to a server.
-                        sourceFiles('${brms_product_name}-${product_version}.${release_milestone}/*.*')
+                        sourceFiles('${brms_product_name}-${product_version}.${availability}.${release_milestone}/*.*')
 
                         // Sets the destination folder.
                         remoteDirectory('${brms_stage_folder}')
@@ -154,7 +154,7 @@ def jobDefinition = job("${PRODUCT_NAME}-release-pipeline/${PRODUCT_NAME}-stage-
                     transferSet {
 
                         // Sets the files to upload to a server.
-                        sourceFiles('${bpms_product_name}-${product_version}.${release_milestone}/*.*')
+                        sourceFiles('${bpms_product_name}-${product_version}..${availability}.${release_milestone}/*.*')
 
                         // Sets the destination folder.
                         remoteDirectory('${bpms_stage_folder}')
@@ -167,7 +167,7 @@ def jobDefinition = job("${PRODUCT_NAME}-release-pipeline/${PRODUCT_NAME}-stage-
                         sourceFiles('${release_prefix}-deliverable-list*.properties')
 
                         // Sets the destination folder.
-                        remoteDirectory('${brms_stage_folder}/${brms_product_name}-${product_version}.${release_milestone}/')
+                        remoteDirectory('${brms_stage_folder}/${brms_product_name}-${product_version}.${availability}.${release_milestone}/')
                     }
 
                     // Adds a transfer set.
@@ -177,7 +177,7 @@ def jobDefinition = job("${PRODUCT_NAME}-release-pipeline/${PRODUCT_NAME}-stage-
                         sourceFiles('${release_prefix}.cfg')
 
                         // Sets the destination folder.
-                        remoteDirectory('${brms_stage_folder}/${brms_product_name}-${product_version}.${release_milestone}/')
+                        remoteDirectory('${brms_stage_folder}/${brms_product_name}-${product_version}.${availability}.${release_milestone}/')
                     }
 
                     // Adds a transfer set.
