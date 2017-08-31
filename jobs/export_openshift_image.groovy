@@ -15,7 +15,7 @@ if ! wget http://git.app.eng.bos.redhat.com/git/integration-platform-config.git/
 then
 exit 1;
 fi
-sed -e 's/replace_image_version/${bxms_image_version}/g' application-template/bpmsuite-image-stream.json
+sed -i 's/replace_image_version/${bxms_image_version}/g' application-template/bpmsuite-image-stream.json
 
 #download the zip package
 if [ ! -e maven-to-stage.py ];
