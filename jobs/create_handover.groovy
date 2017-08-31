@@ -103,7 +103,7 @@ def jobDefinition = job("${PRODUCT_NAME}-release-pipeline/${PRODUCT_NAME}-create
                         removePrefix('${release_prefix}-release')
 
                         // Sets the destination folder.
-                        remoteDirectory('${brms_stage_folder}/${brms_product_name}-${product_version}.${release_milestone}/')
+                        remoteDirectory('${brms_stage_folder}/${brms_product_name}-${product_version}.${availability}.${release_milestone}/')
                     }
 
                     // Adds a transfer set.
@@ -116,7 +116,7 @@ def jobDefinition = job("${PRODUCT_NAME}-release-pipeline/${PRODUCT_NAME}-create
                         removePrefix('${release_prefix}-release')
 
                         // Sets the destination folder.
-                        remoteDirectory('${bpms_stage_folder}/${bpms_product_name}-${product_version}.${release_milestone}/')
+                        remoteDirectory('${bpms_stage_folder}/${bpms_product_name}-${product_version}.${availability}.${release_milestone}/')
                     }
                 }
             }
