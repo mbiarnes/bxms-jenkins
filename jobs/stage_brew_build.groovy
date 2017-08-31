@@ -28,13 +28,13 @@ if (PRODUCT_NAME == "intpack-fuse63-bxms64") {
     mavenToStageBpmsCommand = 'ip-tooling/maven-to-stage.py --version=${product_artifact_version} --override-version ${product_version}.${availability}\\\n' +
             "   --deliverable \${release_prefix}-release/${BPMS_DELIVERABLE_LIST_FILE} --maven-repo \${maven_repo_url}\\\n" +
             '   --output ${bpms_product_name}-${product_version}.${availability}.${release_milestone}\\\n' +
-            '   --release-url=${rcm_stage_base}/jboss-bpmsuite/${bpms_product_name}-${product_version}.${release_milestone}\\\n' +
+            '   --release-url=${rcm_stage_base}/jboss-bpmsuite/${bpms_product_name}-${product_version}.${availability}.${release_milestone}\\\n' +
             '   --output-deliverable-list ${HOME}/${release_prefix}-deliverable-list-staging.properties'
 
     mavenToStageCommand = "ip-tooling/maven-to-stage.py --version=\${product_artifact_version} --override-version \${product_version}.\${availability}\\\n" +
             "   --deliverable \${release_prefix}-release/\${release_prefix}-deliverable.properties --maven-repo \${maven_repo_url}\\\n" +
             "   --output \${brms_product_name}-\${product_version}.\${availability}.\${release_milestone}\\\n" +
-            "   --release-url=\${rcm_stage_base}/jboss-brms/\${brms_product_name}-\${product_version}.\${release_milestone} --output-deliverable-list \${HOME}/\${release_prefix}-deliverable-list-staging.properties"
+            "   --release-url=\${rcm_stage_base}/jboss-brms/\${brms_product_name}-\${product_version}.\${availability}.\${release_milestone} --output-deliverable-list \${HOME}/\${release_prefix}-deliverable-list-staging.properties"
 }
 
 // Staging script.
