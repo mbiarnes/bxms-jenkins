@@ -16,8 +16,8 @@ def shellScript = """make CFG=${IP_CONFIG_FILE} MAVEN_REPOSITORY_BUILDER_SCRIPT=
 
 sed -i '/^bxms.maven.repo.latest.url=/d' \${HOME}/\${release_prefix}-deliverable-list-staging.properties
 sed -i '/^bxms.maven.incremental.repo.latest.url=/d' \${HOME}/\${release_prefix}-deliverable-list-staging.properties
-echo "bxms.maven.repo.latest.url=\${rcm_stage_base}/\${bpms_stage_folder}/\${bpms_product_name}-\${product_version}.\${release_milestone}/jboss-brms-bpmsuite-\${product_version}.GA-maven-repository.zip">>\${HOME}/\${release_prefix}-deliverable-list-staging.properties
-echo "bxms.maven.incremental.repo.latest.url=\${rcm_stage_base}/\${bpms_stage_folder}/\${bpms_product_name}-\${product_version}.\${release_milestone}/jboss-brms-bpmsuite-\${product_version}.GA-incremental-maven-repository.zip">>\${HOME}/\${release_prefix}-deliverable-list-staging.properties
+echo "bxms.maven.repo.latest.url=\${rcm_stage_base}/\${bpms_stage_folder}/\${bpms_product_name}-\${product_version}.\${availability}.\${release_milestone}/jboss-brms-bpmsuite-\${product_version}.\${availability}-maven-repository.zip">>\${HOME}/\${release_prefix}-deliverable-list-staging.properties
+echo "bxms.maven.incremental.repo.latest.url=\${rcm_stage_base}/\${bpms_stage_folder}/\${bpms_product_name}-\${product_version}.\${availability}.\${release_milestone}/jboss-brms-bpmsuite-\${product_version}.\${availability}-incremental-maven-repository.zip">>\${HOME}/\${release_prefix}-deliverable-list-staging.properties
 
 cp \${HOME}/\${release_prefix}-deliverable-list-staging.properties \${release_prefix}-deliverable-list-staging.properties
 sed -e 's=rcm-guest.app.eng.bos.redhat.com/rcm-guest/staging/\${brms_stage_folder}=download.devel.redhat.com/devel/candidates/BRMS=g' -e 's=rcm-guest.app.eng.bos.redhat.com/rcm-guest/staging/jboss-bpmsuite=download.devel.redhat.com/devel/candidates/BPMS=g' \${release_prefix}-deliverable-list-staging.properties > \${release_prefix}-deliverable-list.properties
@@ -100,14 +100,14 @@ def jobDefinition = job("${PRODUCT_NAME}-release-pipeline/${PRODUCT_NAME}-maven-
                         removePrefix('workspace/${release_prefix}-repository/archive/')
 
                         // Sets the destination folder.
-                        remoteDirectory('${brms_stage_folder}/${brms_product_name}-${product_version}.${release_milestone}/')
+                        remoteDirectory('${brms_stage_folder}/${brms_product_name}-${product_version}.${availability}.${release_milestone}/')
 
                         // Specifies a command to execute on the remote server.
                         execCommand('unzip ' +
-                                '-o ~/staging/${brms_stage_folder}/${brms_product_name}-${product_version}.${release_milestone}/maven-repository-report.zip ' +
-                                '-d ~/staging/${brms_stage_folder}/${brms_product_name}-${product_version}.${release_milestone}/ ' +
+                                '-o ~/staging/${brms_stage_folder}/${brms_product_name}-${product_version}.${availability}.${release_milestone}/maven-repository-report.zip ' +
+                                '-d ~/staging/${brms_stage_folder}/${brms_product_name}-${product_version}.${availability}.${release_milestone}/ ' +
                                 '&& rm ' +
-                                '-f ~/staging/${brms_stage_folder}/${brms_product_name}-${product_version}.${release_milestone}/maven-repository-report.zip')
+                                '-f ~/staging/${brms_stage_folder}/${brms_product_name}-${product_version}.${availability}.${release_milestone}/maven-repository-report.zip')
                     }
 
                     // Adds a transfer set.
@@ -120,14 +120,14 @@ def jobDefinition = job("${PRODUCT_NAME}-release-pipeline/${PRODUCT_NAME}-maven-
                         removePrefix('workspace/${release_prefix}-repository/archive/')
 
                         // Sets the destination folder.
-                        remoteDirectory('${bpms_stage_folder}/${bpms_product_name}-${product_version}.${release_milestone}/')
+                        remoteDirectory('${bpms_stage_folder}/${bpms_product_name}-${product_version}.${availability}.${release_milestone}/')
 
                         // Specifies a command to execute on the remote server.
                         execCommand('unzip ' +
-                                '-o ~/staging/${bpms_stage_folder}/${bpms_product_name}-${product_version}.${release_milestone}/maven-repository-report.zip ' +
-                                '-d ~/staging/${bpms_stage_folder}/${bpms_product_name}-${product_version}.${release_milestone}/ ' +
+                                '-o ~/staging/${bpms_stage_folder}/${bpms_product_name}-${product_version}.${availability}.${release_milestone}/maven-repository-report.zip ' +
+                                '-d ~/staging/${bpms_stage_folder}/${bpms_product_name}-${product_version}.${availability}.${release_milestone}/ ' +
                                 '&& rm ' +
-                                '-f ~/staging/${bpms_stage_folder}/${bpms_product_name}-${product_version}.${release_milestone}/maven-repository-report.zip')
+                                '-f ~/staging/${bpms_stage_folder}/${bpms_product_name}-${product_version}.${availability}.${release_milestone}/maven-repository-report.zip')
                     }
 
                     // Adds a transfer set.
@@ -137,7 +137,7 @@ def jobDefinition = job("${PRODUCT_NAME}-release-pipeline/${PRODUCT_NAME}-maven-
                         sourceFiles('${release_prefix}-deliverable-list*.properties')
 
                         // Sets the destination folder.
-                        remoteDirectory('${brms_stage_folder}/${brms_product_name}-${product_version}.${release_milestone}/')
+                        remoteDirectory('${brms_stage_folder}/${brms_product_name}-${product_version}.${availability}.${release_milestone}/')
                     }
 
                     // Adds a transfer set.
@@ -147,7 +147,7 @@ def jobDefinition = job("${PRODUCT_NAME}-release-pipeline/${PRODUCT_NAME}-maven-
                         sourceFiles('${release_prefix}-deliverable-list*.properties')
 
                         // Sets the destination folder.
-                        remoteDirectory('${bpms_stage_folder}/${bpms_product_name}-${product_version}.${release_milestone}/')
+                        remoteDirectory('${bpms_stage_folder}/${bpms_product_name}-${product_version}.${availability}.${release_milestone}/')
                     }
                 }
             }
