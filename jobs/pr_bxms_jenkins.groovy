@@ -48,7 +48,7 @@ job('codereview/bxms_jenkins_codereview'){
    steps{
         // shell script to check latest version of PME and update accordingly
        dsl {
-           external ('streams/utility/*.groovy', 'streams/codereview/*.groovy' )
+           external ('jobs/b_test_seed.groovy')
            additionalClasspath 'src/main/groovy'
            //For SEED_JOB strategy, PR will create job in codereview/ folder instead of JENKINS_ROOT
            lookupStrategy 'SEED_JOB'
