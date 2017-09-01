@@ -85,7 +85,7 @@ String mailContent = '''<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
 '''
 
 // Creates or updates a free style job.
-def jobDefinition = job("${PRODUCT_NAME}-release-pipeline/${PRODUCT_NAME}-send-review-notification-mail") {
+def jobDefinition = job("${PRODUCT_NAME}-send-review-notification-mail") {
 
     // Sets a description for the job.
     description("This job is responsible for sending the PR review email to the team.")

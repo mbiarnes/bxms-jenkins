@@ -72,7 +72,7 @@ String mailContent = '''<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
 '''
 
 // Creates or updates a free style job.
-def jobDefinition = job("${PRODUCT_NAME}-release-pipeline/${PRODUCT_NAME}-brew-build-fail") {
+def jobDefinition = job("${PRODUCT_NAME}-brew-build-fail") {
 
     // Adds build steps to the jobs.
     steps {

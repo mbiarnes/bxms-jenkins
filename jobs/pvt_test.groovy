@@ -14,7 +14,7 @@ echo "pvt_report_html=`pwd`/`find . -name 'pvt_report*.html'`">>${HOME}/${releas
 '''
 
 // Creates or updates a free style job.
-def jobDefinition = job("${PRODUCT_NAME}-release-pipeline/${PRODUCT_NAME}-pvt-test") {
+def jobDefinition = job("${PRODUCT_NAME}-pvt-test") {
 
     // Sets a description for the job.
     description("This job is responsible for executing product validation tests.")

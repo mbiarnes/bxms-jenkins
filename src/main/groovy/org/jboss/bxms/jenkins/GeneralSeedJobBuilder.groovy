@@ -40,6 +40,8 @@ class GeneralSeedJobBuilder {
                     external 'streams/' + stream_name + '/*.groovy'
                     additionalClasspath 'src/main/groovy'
                     // Specifies the action to be taken for job that have been removed from DSL scripts.
+                    lookupStrategy 'SEED_JOB'
+
                     removeAction('DELETE')
                     // Specifies the action to be taken for views that have been removed from DSL scripts.
                     removeViewAction('DELETE')

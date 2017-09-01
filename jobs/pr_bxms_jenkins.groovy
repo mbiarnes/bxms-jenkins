@@ -1,5 +1,4 @@
-folder ("codereview")
-job('codereview/bxms_jenkins_codereview'){
+job('bxms_jenkins_codereview'){
    description("Monitor the code change in bxms-assembly")
 
     parameters {

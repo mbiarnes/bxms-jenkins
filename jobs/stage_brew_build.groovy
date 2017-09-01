@@ -63,7 +63,7 @@ ${command}
 """
 
 // Creates or updates a free style job.
-def jobDefinition = job("${PRODUCT_NAME}-release-pipeline/${PRODUCT_NAME}-stage-brew-build") {
+def jobDefinition = job("${PRODUCT_NAME}-stage-brew-build") {
 
     // Sets a description for the job.
     description("This job is responsible for staging the Brew release deliverables to the RCM staging area.")

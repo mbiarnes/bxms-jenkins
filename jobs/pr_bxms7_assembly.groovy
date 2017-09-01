@@ -8,8 +8,7 @@ mvn  -Pbrms -DdependencyManagement=org.jboss.brms.component.management:brms-depe
     -Drepo-reporting-removal=true -Dversion.override=7.0.0 -Dversion.suffix=redhat-SNAPSHOT -Dversion.suffix.snapshot=true \\
     -DversionOverride=true -DversionSuffixSnapshot=true -Dvictims.updates=offline -B -Dmaven.repo.local=/mnt/jboss-prod/m2/bxms-7-nightly -s /jboss-prod/m2/bxms-7-nightly-settings.xml clean package
 '''
-folder ("codereview")
-job('codereview/bxms7_assembly_codereview'){
+job('bxms7_assembly_codereview'){
     description("Monitor the code change in bxms-assembly")
 
     parameters {

@@ -35,8 +35,6 @@ org.jboss.ip:jboss-bpmsuite::smart-router:jar
 org.jboss.ip:jboss-brms-bpmsuite::execution-server-ee7:zip
 org.jboss.ip:jboss-brms-bpmsuite::execution-server-controller-ee7:zip""" >>download_list.properties
 fi
-product_artifact_version=7.0.0.ER-redhat-1
-product_version=7.0.0.Beta01
 maven_repo_url="http://download-node-02.eng.bos.redhat.com/brewroot/repos/jb-bxms-7.0-maven-build/latest/maven/"
 ./maven-to-stage.py --version=${product_artifact_version} --override-version ${product_version} --deliverable download_list.properties --maven-repo ${maven_repo_url} --output BPMS-${product_version}
 
@@ -66,7 +64,7 @@ fi
 '''
 
 // Creates or updates a free style job.
-def jobDefinition = job("${PRODUCT_NAME}-release-pipeline/${PRODUCT_NAME}-export-openshift-images") {
+def jobDefinition = job("${PRODUCT_NAME}-export-openshift-images") {
 
     // Sets a description for the job.
     description("This job is responsible for exporting openshift images to zip files.")

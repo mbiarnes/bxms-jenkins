@@ -9,7 +9,7 @@ echo ${deliverable_list}
 '''
 
 // Creates or updates a free style job.
-def jobDefinition = job("${PRODUCT_NAME}-release-pipeline/${PRODUCT_NAME}-trigger-qe-handover-test") {
+def jobDefinition = job("${PRODUCT_NAME}-trigger-qe-handover-test") {
 
     // Sets a description for the job.
     description("This job is responsible for triggering QE handover test.")

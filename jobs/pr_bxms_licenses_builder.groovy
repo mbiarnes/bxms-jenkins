@@ -1,8 +1,7 @@
 def shell_script = '''export MAVEN_OPTS="-Xms512m -Xmx8096m -Dgwt-plugin.localWorkers='3' -XX:+UseConcMarkSweepGC -XX:-UseGCOverheadLimit"
 /mnt/maven-3.3.3-prod/bin/mvn -Dmaven.repo.local=/jboss-prod/m2/bxms-dev-repo clean install
 '''
-folder ("codereview")
-job('codereview/bxms_licenses_builder_codereview'){
+job('bxms_licenses_builder_codereview'){
     description("Monitor the code change in bxms-licenses-builder")
 
     parameters {

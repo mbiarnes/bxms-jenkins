@@ -1,6 +1,5 @@
 // This job-DSL createsa a job that monitor the bxms ci message
-folder ("utility")
-job('utility/bxms-ci-message-monitor'){
+job('bxms-ci-message-monitor'){
   description("This DSL generates a job that monitor bxms ci message")
 
   // both tag and label will trigger the job
