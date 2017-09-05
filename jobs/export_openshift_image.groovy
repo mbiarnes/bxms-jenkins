@@ -2,8 +2,8 @@ String shellScript = '''
 #Clean  docker images
 for i in $(docker images -q);do docker rmi $i; done
 
-mkdir jboss-bpmsuite-7.0.0-openshift
-cd jboss-bpmsuite-7.0.0-openshift
+mkdir jboss-bpmsuite-${product_version}-openshift
+cd jboss-bpmsuite-${product_version}-openshift
 
 #Download image config/sources
 wget https://github.com/jboss-openshift/application-templates/archive/bpmsuite-wip.zip ;unzip -j bpmsuite-wip.zip */bpmsuite/* -d application-template;rm -f bpmsuite-wip.zip;
@@ -14,7 +14,7 @@ if ! wget http://git.app.eng.bos.redhat.com/git/integration-platform-config.git/
 then
 exit 1;
 fi
-sed -i 's/replace_image_version/${bxms_image_version}/g' application-template/bpmsuite-image-stream.json
+sed -i "s/replace_image_version/${bxms_image_version}/g" application-template/bpmsuite-image-stream.json
 
 #download the zip package
 if [ ! -e maven-to-stage.py ];
@@ -49,17 +49,17 @@ then
 #Define the internal docker registry            
 docker_registry=docker-registry.engineering.redhat.com
 
-docker pull ${docker_registry}/jboss-bpmsuite-7/bpmsuite70-businesscentral-openshift:\${bxms_image_version}
-docker save ${docker_registry}/jboss-bpmsuite-7/bpmsuite70-businesscentral-openshift:\${bxms_image_version} >bpmsuite70-businesscentral-openshift-${version}.tar
-docker pull ${docker_registry}/jboss-bpmsuite-7/bpmsuite70-executionserver-openshift:\${bxms_image_version}
-docker save ${docker_registry}/jboss-bpmsuite-7/bpmsuite70-executionserver-openshift:\${bxms_image_version} >bpmsuite70-executionserver-openshift:${version}.tar
-docker pull ${docker_registry}/jboss-bpmsuite-7/bpmsuite70-standalonecontroller-openshift:\${bxms_image_version}
-docker save ${docker_registry}/jboss-bpmsuite-7/bpmsuite70-standalonecontroller-openshift:\${bxms_image_version} >bpmsuite70-standalonecontroller-openshift-${version}.tar
-docker pull ${docker_registry}/jboss-bpmsuite-7/bpmsuite70-smartrouter-openshift:\${bxms_image_version}
-docker save ${docker_registry}/jboss-bpmsuite-7/bpmsuite70-smartrouter-openshift:\${bxms_image_version} >bpmsuite70-smartrouter-openshift-${version}.tar
+docker pull ${docker_registry}/jboss-bpmsuite-7/bpmsuite70-businesscentral-openshift:${bxms_image_version}
+docker save ${docker_registry}/jboss-bpmsuite-7/bpmsuite70-businesscentral-openshift:${bxms_image_version} >bpmsuite70-businesscentral-openshift-${bxms_image_version}.tar
+docker pull ${docker_registry}/jboss-bpmsuite-7/bpmsuite70-executionserver-openshift:${bxms_image_version}
+docker save ${docker_registry}/jboss-bpmsuite-7/bpmsuite70-executionserver-openshift:${bxms_image_version} >bpmsuite70-executionserver-openshift:${bxms_image_version}.tar
+docker pull ${docker_registry}/jboss-bpmsuite-7/bpmsuite70-standalonecontroller-openshift:${bxms_image_version}
+docker save ${docker_registry}/jboss-bpmsuite-7/bpmsuite70-standalonecontroller-openshift:${bxms_image_version} >bpmsuite70-standalonecontroller-openshift-${bxms_image_version}.tar
+docker pull ${docker_registry}/jboss-bpmsuite-7/bpmsuite70-smartrouter-openshift:${bxms_image_version}
+docker save ${docker_registry}/jboss-bpmsuite-7/bpmsuite70-smartrouter-openshift:${bxms_image_version} >bpmsuite70-smartrouter-openshift-${bxms_image_version}.tar
 
 cd ..
-zip -5 -r  jboss-bpmsuite-7.0.0-openshift.zip jboss-bpmsuite-7.0.0-openshift/
+zip -5 -r  jboss-bpmsuite-${product_version}-openshift.zip jboss-bpmsuite-${product_version}-openshift/
 fi
 '''
 
