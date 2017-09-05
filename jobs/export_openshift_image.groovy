@@ -119,7 +119,7 @@ def jobDefinition = job("${PRODUCT_NAME}-export-openshift-images") {
                     sourceFiles('jboss-bpmsuite-7.0.0-openshift.zip')
 
                     // Sets the destination folder.
-                    remoteDirectory('jboss-bpmsutie/BPMS-7.0.0.LA.ER2/')
+                    remoteDirectory('jboss-bpmsuite/BPMS-7.0.0.LA.ER2/')
                 }
 
             }
