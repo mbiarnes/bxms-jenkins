@@ -62,6 +62,7 @@ docker save ${docker_registry}/jboss-bpmsuite-7/bpmsuite70-businesscentral-monit
 
 cd ..
 zip -5 -r  jboss-bpmsuite-${product_version}-openshift.zip jboss-bpmsuite-${product_version}-openshift/
+md5sum jboss-bpmsuite-${product_version}-openshift.zip >jboss-bpmsuite-${product_version}-openshift.zip.md5
 fi
 '''
 
@@ -118,7 +119,7 @@ def jobDefinition = job("${PRODUCT_NAME}-export-openshift-images") {
                 transferSet {
 
                     // Sets the files to upload to a server.
-                    sourceFiles('jboss-bpmsuite-7.0.0-openshift.zip')
+                    sourceFiles('jboss-bpmsuite-${product_version}-openshift.zip*')
 
                     // Sets the destination folder.
                     remoteDirectory('jboss-bpmsuite/BPMS-7.0.0.LA.ER2/')
