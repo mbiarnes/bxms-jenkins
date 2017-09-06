@@ -57,6 +57,8 @@ docker pull ${docker_registry}/jboss-bpmsuite-7/bpmsuite70-standalonecontroller-
 docker save ${docker_registry}/jboss-bpmsuite-7/bpmsuite70-standalonecontroller-openshift:${bxms_image_version} >bpmsuite70-standalonecontroller-openshift-${bxms_image_version}.tar
 docker pull ${docker_registry}/jboss-bpmsuite-7/bpmsuite70-smartrouter-openshift:${bxms_image_version}
 docker save ${docker_registry}/jboss-bpmsuite-7/bpmsuite70-smartrouter-openshift:${bxms_image_version} >bpmsuite70-smartrouter-openshift-${bxms_image_version}.tar
+docker pull ${docker_registry}/jboss-bpmsuite-7/bpmsuite70-businesscentral-monitoring-openshift:${bxms_image_version}
+docker save ${docker_registry}/jboss-bpmsuite-7/bpmsuite70-businesscentral-monitoring-openshift:${bxms_image_version} >bpmsuite70-businesscentral-monitoring-openshift-${bxms_image_version}.tar
 
 cd ..
 zip -5 -r  jboss-bpmsuite-${product_version}-openshift.zip jboss-bpmsuite-${product_version}-openshift/
