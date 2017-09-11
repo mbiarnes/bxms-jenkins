@@ -12,7 +12,7 @@ function appendProp() {
         echo "Properties value is empty"
         exit 1
     fi
-    sed -i '/^\$1/d' ${CI_PROPERTIES_FILE} && echo "\$1=\$2" >> ${CI_PROPERTIES_FILE}
+    sed -i "/^\$1/d" ${CI_PROPERTIES_FILE} && echo "\$1=\$2" >> ${CI_PROPERTIES_FILE}
 }
 kinit -k -t \${HOME}/bxms-release.keytab bxms-release/prod-ci@REDHAT.COM
 if [ "\$CI_TYPE" = "brew-tag" ];then

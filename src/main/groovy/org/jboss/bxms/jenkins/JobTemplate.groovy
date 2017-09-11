@@ -3,12 +3,13 @@ package org.jboss.bxms.jenkins
 
 class JobTemplate {
 
-    static void addCommonConfiguration(job, CI_PROPERTIES_FILE, PRODUCT_NAME) {
+
+    static void addCommonConfiguration(job, CI_PROPERTIES_FILE, PRODUCT_NAME, NODE_LABEL="release_pipeline"){
 
         job.with {
 
             // Label which specifies which nodes this job can run on.
-            label("release-pipeline")
+            label(NODE_LABEL)
 
             // Adds environment variables to the build.
             environmentVariables {

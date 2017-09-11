@@ -17,6 +17,7 @@ fi
 if [ \${release_type} = "intpack" ];then
     ip-tooling/maven-to-stage.py --version=\${product_artifact_version} --override-version \${product_version} --maven-repo \${product_assembly_maven_repo_url} \
       --deliverable \${release_prefix}-release/\${release_prefix}-deliverable.properties --output \${product_name}-\${product_version}
+    cp ${IP_CONFIG_FILE} \${product_name}-\${product_version}
 else
     ip-tooling/maven-to-stage.py --version=\${product_artifact_version} --override-version \${product_file_deliver_version} --maven-repo \${product_assembly_maven_repo_url} \
       --deliverable \${release_prefix}-release/brms-deliverable.properties --output \${brms_product_name} \
@@ -25,7 +26,9 @@ else
     ip-tooling/maven-to-stage.py --version=\${product_artifact_version} --override-version \${product_file_deliver_version} --maven-repo \${product_assembly_maven_repo_url} \
       --deliverable \${release_prefix}-release/bpmsuite-deliverable.properties --output \${bpms_product_name} \
       --release-url=\${rcm_staging_base}/\${bpms_staging_path} --output-deliverable-list \${brms_staging_properties_name}
-    
+    cp ${IP_CONFIG_FILE} \${brms_product_name}
+    cp ${IP_CONFIG_FILE} \${bpms_product_name}
+
     #append the other properties per qe's requirement
     appendProp "build.config" \${rcm_staging_base}/\${brms_staging_path}/${IP_CONFIG_FILE} 
     appendProp "DROOLSJBPM_VERSION" \${kie_version} 
