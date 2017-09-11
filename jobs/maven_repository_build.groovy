@@ -112,10 +112,10 @@ def jobDefinition = job("${PRODUCT_NAME}-maven-repository-build") {
 
                         // Specifies a command to execute on the remote server.
                         execCommand('unzip ' +
-                                '-o ~/staging/${brms_stage_path}/maven-repository-report.zip ' +
-                                '-d ~/staging/${brms_stage_path}' +
+                                '-o ~/staging/${brms_staging_path}/maven-repository-report.zip ' +
+                                '-d ~/staging/${brms_staging_path}' +
                                 '&& rm ' +
-                                '-f ~/staging/${brms_stage_path}/maven-repository-report.zip')
+                                '-f ~/staging/${brms_staging_path}/maven-repository-report.zip')
                     }
 
                     // Adds a transfer set.
@@ -128,14 +128,14 @@ def jobDefinition = job("${PRODUCT_NAME}-maven-repository-build") {
                         removePrefix('workspace/${release_prefix}-repository/archive/')
 
                         // Sets the destination folder.
-                        remoteDirectory('${bpms_stage_path}')
+                        remoteDirectory('${bpms_staging_path}')
 
                         // Specifies a command to execute on the remote server.
                         execCommand('unzip ' +
-                                '-o ~/staging/${bpms_stage__path}/maven-repository-report.zip ' +
-                                '-d ~/staging/${bpms_stage__path}/ ' +
+                                '-o ~/staging/${bpms_staging_path}/maven-repository-report.zip ' +
+                                '-d ~/staging/${bpms_staging_path}/ ' +
                                 '&& rm ' +
-                                '-f ~/staging/${bpms_stage__path}/maven-repository-report.zip')
+                                '-f ~/staging/${bpms_staging_path}/maven-repository-report.zip')
                     }
 
                     // Adds a transfer set.
@@ -145,7 +145,7 @@ def jobDefinition = job("${PRODUCT_NAME}-maven-repository-build") {
                         sourceFiles('${brms_staging_properties_name},${bpms_candidate_properties_name}')
 
                         // Sets the destination _path.
-                        remoteDirectory('${brms_stage_path}')
+                        remoteDirectory('${brms_staging_path}')
                     }
 
                     // Adds a transfer set.
@@ -154,7 +154,7 @@ def jobDefinition = job("${PRODUCT_NAME}-maven-repository-build") {
                         // Sets the files to upload to a server.
                         sourceFiles('${brms_staging_properties_name},${bpms_candidate_properties_name}')
 
-                        remoteDirectory('${bpms_stage_path}')
+                        remoteDirectory('${bpms_staging_path}')
                     }
                 }
             }
