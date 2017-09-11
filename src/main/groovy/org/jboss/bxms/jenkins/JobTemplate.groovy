@@ -61,6 +61,7 @@ class JobTemplate {
                     // Specify the branches to examine for changes and to build.
                     branch("master")
                 }
+
                 // Adds a Git SCM source.
                 git {
 
@@ -79,6 +80,27 @@ class JobTemplate {
 
                         // Specifies a local directory (relative to the workspace root) where the Git repository will be checked out.
                         relativeTargetDirectory('ip-tooling')
+                    }
+                }
+
+                // Adds a Git SCM source.
+                git {
+
+                    // Adds a remote.
+                    remote {
+
+                        // Sets the remote URL.
+                        url("ssh://jb-ip-tooling-jenkins@code.engineering.redhat.com:22/bxms-tooling")
+                    }
+
+                    // Specify the branches to examine for changes and to build.
+                    branch("master")
+
+                    // Adds additional behaviors.
+                    extensions {
+
+                        // Specifies a local directory (relative to the workspace root) where the Git repository will be checked out.
+                        relativeTargetDirectory('bxms-tooling')
                     }
                 }
             }
