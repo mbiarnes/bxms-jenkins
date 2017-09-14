@@ -108,7 +108,7 @@ def jobDefinition = job("${PRODUCT_NAME}-maven-repository-build") {
                         removePrefix('workspace/${release_prefix}-repository/archive/')
 
                         // Sets the destination folder.
-                        remoteDirectory('${brms_stage_path}')
+                        remoteDirectory('${brms_staging_path}')
 
                         // Specifies a command to execute on the remote server.
                         execCommand('unzip ' +

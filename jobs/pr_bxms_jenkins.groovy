@@ -8,6 +8,14 @@ job('bxms-test-release-pipline/bxms_jenkins_teststream_masterbranch_codereview')
         stringParam(parameterName = "GERRIT_BRANCH", defaultValue = "master", description = "Parameter passed by Gerrit code review trigger")
     }
 
+    // Adds environment variables to the build.
+    environmentVariables {
+        // Adds environment variables from a properties file.
+        env ("${PRODUCT_NAME}", "brms-test")
+        env ("${CI_PROPERTIES_FILE}", "/jboss-prod/config/bxms-test-ci.properties")
+        env ("${CFG_FILE}", "brms-test.cfg")
+    }
+
     scm {
         // Adds a Git SCM source.
         git {

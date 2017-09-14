@@ -6,9 +6,9 @@ mkdir jboss-bpmsuite-${product_version}-openshift
 cd jboss-bpmsuite-${product_version}-openshift
 
 #Download image config/sources
-wget https://github.com/jboss-openshift/application-templates/archive/bpmsuite-wip.zip ;unzip -j bpmsuite-wip.zip */bpmsuite/* -d application-template;rm -f bpmsuite-wip.zip;
-wget https://github.com/jboss-container-images/jboss-bpmsuite-7-image/archive/bpmsuite70-dev.zip; unzip bpmsuite70-dev.zip;mv jboss-bpmsuite-7-image-bpmsuite70-dev standalone-image-source; rm -f bpmsuite70-dev.zip; 
-wget https://github.com/jboss-container-images/jboss-bpmsuite-7-openshift-image/archive/bpmsuite70-dev.zip; unzip bpmsuite70-dev.zip;mv jboss-bpmsuite-7-openshift-image-bpmsuite70-dev openshift-image-source;rm -f bpmsuite70-dev.zip;
+wget https://github.com/jboss-openshift/application-templates/archive/bpmsuite70-${bxms_image_version}.zip ;unzip -j bpmsuite70-${bxms_image_version}.zip */bpmsuite/* -d application-template;rm -f bpmsuite*.zip;
+wget https://github.com/jboss-container-images/jboss-bpmsuite-7-image/archive/bpmsuite70-${bxms_image_version}.zip; unzip bpmsuite70-${bxms_image_version}.zip;mv jboss-bpmsuite-7-image-bpmsuite70-${bxms_image_version} standalone-image-source; rm -f bpmsuite70-*.zip; 
+wget https://github.com/jboss-container-images/jboss-bpmsuite-7-openshift-image/archive/bpmsuite70-${bxms_image_version}.zip; unzip bpmsuite70-${bxms_image_version}.zip;mv jboss-bpmsuite-7-openshift-image-bpmsuite70-${bxms_image_version} openshift-image-source;rm -f bpmsuite70-*.zip;
 
 if ! wget http://git.app.eng.bos.redhat.com/git/integration-platform-config.git/plain/brms-release/bpmsuite-image-stream.json -P application-template/
 then
