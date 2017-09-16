@@ -1,41 +1,37 @@
 import org.jboss.bxms.jenkins.JobTemplate
 
-def shellScript = """# Disable bash tracking mode, too much noise.
-#set +x
-if [ ! -z \$CI_MESSAGE ];then
-name=`echo \$CI_MESSAGE| python -c "import sys, json; print json.load(sys.stdin)['build']['name']"` 1>/dev/null
-version=`echo \$CI_MESSAGE| python -c "import sys, json; print json.load(sys.stdin)['build']['version']"` 1>/dev/null
-release=`echo \$CI_MESSAGE| python -c "import sys, json; print json.load(sys.stdin)['build']['release']"` 1>/dev/null
-task_id=`echo \$CI_MESSAGE| python -c "import sys, json; print json.load(sys.stdin)['build']['task_id']"` 1>/dev/null
-fi
-
-maven_repo_url="http://download.eng.bos.redhat.com/brewroot/packages/\${name}/\${version}/\${release}/maven/"
+def shellScript = """#set +x
+#kinit -k -t \${HOME}/bxms-release.keytab bxms-release/prod-ci@REDHAT.COM
+function appendProp(){
+    if [ -z "\$1" ] || [ -z "\$2" ];then
+        echo "Param  is not allow empty"
+        exit 1
+    fi
+    sed -i '/^\$1/d' \${brms_staging_properties_name} && echo '\$1="\$2"' >> \${brms_staging_properties_name}
+}
 
 #Uploading to rcm staging folder
 if [ \${release_type} = 'intpack' ];then
-    ip-tooling/maven-to-stage.py --version=\${product_artifact_version} --override-version \${product_version} --maven-repo \${maven_repo_url} \
+    ip-tooling/maven-to-stage.py --version=\${product_artifact_version} --override-version \${product_version} --maven-repo \${ product_assembly_maven_repo_url} \
       --deliverable \${release_prefix}-release/\${release_prefix}-deliverable.properties --output \${product_name}-\${product_version}
 else
-    ip-tooling/maven-to-stage.py --version=\${product_artifact_version} --override-version \${product_deliver_version} --maven-repo \${maven_repo_url} \
+    ip-tooling/maven-to-stage.py --version=\${product_artifact_version} --override-version \${product_deliver_version} --maven-repo \${ product_assembly_maven_repo_url} \
       --deliverable \${release_prefix}-release/\${release_prefix}-deliverable.properties --output \${brms_product_name} \
       --release-url=\${rcm_staging_base}/\${brms_staging_folder} --output-deliverable-list \${brms_staging_properties_name}
       
-    ip-tooling/maven-to-stage.py --version=\${product_artifact_version} --override-version \${product_deliver_version} --maven-repo \${maven_repo_url} \
+    ip-tooling/maven-to-stage.py --version=\${product_artifact_version} --override-version \${product_deliver_version} --maven-repo \${ product_assembly_maven_repo_url} \
       --deliverable \${release_prefix}-release/bpmsuite-deliverable.properties --output \${bpms_product_name} \
       --release-url=\${rcm_staging_base}/\${bpms_staging_folder} --output-deliverable-list \${brms_staging_properties_name}
     
     #append the other properties per qe's requirement
-    sed -i '/^build.config=/d\' \${brms_staging_properties_name} \
-        && echo "build.config=\${rcm_staging_base}/\${brms_staging_folder}/\${IP_CONFIG_FILE}">>\${brms_staging_properties_name}
-    sed -i '/^DROOLSJBPM_VERSION=/d\' \${brms_staging_properties_name} \
-        && echo "DROOLSJBPM_VERSION=\${kie_version}">>\${brms_staging_properties_name}
-    sed -i '/^BXMS_VERSION=/d\' \${brms_staging_properties_name} \
-        && echo "BXMS_VERSION=\${product_artifact_version}">>\${brms_staging_properties_name}
+    appendProp 'build.config' \${rcm_staging_base}/\${brms_staging_folder}/${IP_CONFIG_FILE} 
+    appendProp 'DROOLSJBPM_VERSION' \${kie_version} 
+    appendProp 'BXMS_VERSION' \${product_artifact_version} 
+    
     sed -e 's=\${rcm_staging_base}/\${brms_staging_folder}=\${rcm_candidate_base}/\${brms_product_name}=g' \
-        -e 's=\${rcm_staging_base}/\${bpms_staging_folder}=\${rcm_candidate_base}/\${brms_product_name}=g' \
+        -e 's=\${rcm_staging_base}/\${bpms_staging_folder}=\${rcm_candidate_base}/\${bpms_product_name}=g' \
         \${brms_staging_properties_name} >> \${brms_candidate_properties_name}
 fi
-echo "JOB DONE"
 """
 
 // Creates or updates a free style job.

@@ -1,28 +1,18 @@
 import org.jboss.bxms.jenkins.JobTemplate
 
 // Staging script.
-def shellScript = """if [ ! -z \$CI_MESSAGE ];then
-name=`echo \$CI_MESSAGE| python -c "import sys, json; print json.load(sys.stdin)['build']['name']"` 1>/dev/null
-version=`echo \$CI_MESSAGE| python -c "import sys, json; print json.load(sys.stdin)['build']['version']"` 1>/dev/null
-release=`echo \$CI_MESSAGE| python -c "import sys, json; print json.load(sys.stdin)['build']['release']"` 1>/dev/null
-task_id=`echo \$CI_MESSAGE| python -c "import sys, json; print json.load(sys.stdin)['build']['task_id']"` 1>/dev/null
-
-fi
-maven_repo_url="http://download.eng.bos.redhat.com/brewroot/packages/\${name}/\${version}/\${release}/maven/"
-
-echo \$maven_repo_url
-
+def shellScript = """
 #Uploading to rcm staging folder
-wget \${brms_staging_properties_url}
-wget \${bpms_staging_properties_url}
+wget \${brms_staging_properties_url} -O \${brms_staging_properties_name} 
+wget \${brms_candidate_properties_url} -O \${brms_candidate_properties_name}
 
 ip-tooling/maven-to-stage.py --version=\${product_artifact_version} --override-version \${product_version} \
-   --deliverable \${release_prefix}-release/\${release_prefix}-deliverable.properties --maven-repo \${maven_repo_url} \
+   --deliverable \${release_prefix}-release/\${release_prefix}-deliverable.properties --maven-repo \${bxms_patch_maven_repo_url} \
    --output \${brms_product_name}\
    --release-url=\${rcm_staging_base}/\${brms_staging_folder} --output-deliverable-list \${brms_staging_properties_name}
    
 ip-tooling/maven-to-staging.py --version=\${product_artifact_version} --override-version \${product_version} \
-   --deliverable \${release_prefix}-release/bpmsuite-64-deliverable.properties --maven-repo \${maven_repo_url} \
+   --deliverable \${release_prefix}-release/bpmsuite-64-deliverable.properties --maven-repo \${bxms_patch_maven_repo_url} \
    --output \${bpms_product_name}\
    --release-url=\${rcm_staging_base}/\${bpms_staging_folder} --output-deliverable-list \${brms_staging_properties_name}
 

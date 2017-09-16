@@ -1,0 +1,1 @@
+../../jobs/verify_qe_deliverable_properties.groovy

@@ -1,5 +1,23 @@
 import org.jboss.bxms.jenkins.JobTemplate
+def shellScript = """# Disable bash tracking mode, too much noise.
+kinit -k -t \${HOME}/bxms-release.keytab bxms-release/prod-ci@REDHAT.COM
+jira_comment1= "Hi, All
+BRMS & BPMSuite \${product_version} \${release_milestone} {color:#d04437}is now available{color}.
 
+The BxMS \${product_version} \${release_milestone} Release is ready for QA. 
+
+Candidate download URL:
+Handover: [\${rcm_candidate_base}/\${bpms_staging_path}/\${release_prefix}-handover.html]
+
+[\${rcm_candidate_base}/\${brms_staging_path}/]
+
+[\${rcm_candidate_base}/\${bpms_staging_path}/]
+
+"
+
+ip-tooling/jira_helper.py -c ${IP_CONFIG_FILE} -a "\${jira_comment1}" -f
+ip-tooling/jira_helper.py -c ${IP_CONFIG_FILE} -a "QE full test is triggered by CI message. Build URL:\${qe_fulltest_url}" -f
+"""
 
 // Creates or updates a free style job.
 def jobDefinition = job("${PRODUCT_NAME}-trigger-qe-handover-test") {
@@ -10,6 +28,7 @@ def jobDefinition = job("${PRODUCT_NAME}-trigger-qe-handover-test") {
     // Adds build steps to the jobs.
     steps {
 
+        shell(shellScript)
         // Sends JMS message.
         ciMessageBuilder {
 
@@ -31,3 +50,4 @@ def jobDefinition = job("${PRODUCT_NAME}-trigger-qe-handover-test") {
 }
 
 JobTemplate.addCommonConfiguration(jobDefinition, CI_PROPERTIES_FILE, PRODUCT_NAME)
+JobTemplate.addIpToolingScmConfiguration(jobDefinition)

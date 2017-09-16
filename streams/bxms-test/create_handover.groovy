@@ -1,1 +1,1 @@
-../../jobs/create_handover.groovy
+../../jobs/create_release_notes.groovy

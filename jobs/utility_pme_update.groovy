@@ -20,7 +20,7 @@ version=$(grep -oP '(?<=latest>)[^<]+' "./maven-metadata.xml")
 echo "Latest version online is $version"
 echo "In ext:"
 cd /mnt/jboss-prod/tools/maven-extension/
-if ls|grep "pom-manipulation-ext-$version.jar";then
+if [ -f pom-manipulation-ext-$version.jar ];then
 	echo "Find the latest version"
 else
     echo "Does not find the latest version"

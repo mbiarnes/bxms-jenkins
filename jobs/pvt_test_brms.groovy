@@ -72,14 +72,6 @@ def jobDefinition = job("${PRODUCT_NAME}-pvt-test-brms") {
     }
 
     // Adds post-build actions to the job.
-    publishers {
-
-        //Archives artifacts with each build.
-        archiveArtifacts('pvt/generic/*.html,pvt/generic/*.adoc')
-        postBuildTask {
-            task('BUILD SUCCESS', "ip-tooling/jira_helper.py -c ${IP_CONFIG_FILE} -a 'BRMS PVT test in completed: \${BUILD_URL}' -f")
-        }
-    }
 }
 
 JobTemplate.addCommonConfiguration(jobDefinition, CI_PROPERTIES_FILE, PRODUCT_NAME)

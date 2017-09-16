@@ -2,26 +2,29 @@ import org.jboss.bxms.jenkins.JobTemplate
 
 // Repository builder script
 def shellScript = """
-wget \${brms_staging_properties_url}
-wget \${brms_candidate_properties_url}
-wget \${bpms_staging_properties_url}
-wget \${bpms_candidate_properties_url}
+kinit -k -t \${HOME}/bxms-release.keytab bxms-release/prod-ci@REDHAT.COM
+ip-tooling/jira_helper.py -c ${IP_CONFIG_FILE} -a "Maven repository build started: Build url:\${BUILD_URL}" -f
+
+function appendProp(){
+    if [ -z "\$1" ] || [ -z "\$2" ] || [ -z "\$3" ];then
+        echo "Param  is not allow empty"
+        exit 1
+    fi
+    sed -i '/^\$1/d' \$3 && echo '\$1="\$2"' >> \$3
+}
+
+wget \${brms_staging_properties_url} -O \${brms_staging_properties_name} 
+wget \${brms_candidate_properties_url} -O \${brms_candidate_properties_name}
  
 #append the maven repo url into the properties
-sed -i '/^bxms.maven.repo.latest.url=/d' \${brms_staging_properties_name} && echo "bxms.maven.repo.latest.url=\${rcm_staging_base}/\${brms_staging_folder}/\${bxms_maven_repo_name} >>\${brms_staging_properties_name}
-sed -i '/^bxms.maven.repo.latest.url=/d' \${brms_candidate_properties_name} && echo "bxms.maven.repo.latest.url=\${rcm_candidate_base}/\${brms_staging_folder}/\${bxms_maven_repo_name}  >>\${brms_staging_properties_name}
+appendProp 'bxms.maven.repo.latest.url' \${rcm_staging_base}/\${bpms_staging_folder}/\${bxms_maven_repo_name} \$brms_staging_properties_name
+appendProp 'bxms.maven.repo.latest.url' \${rcm_candidate_base}/\${bpms_product_name}/\${bxms_maven_repo_name} \$brms_candidate_properties_name
 
-sed -i '/^bxms.maven.repo.latest.url=/d' \${brms_staging_properties_name} && echo "bxms.maven.repo.latest.url=\${rcm_staging_base}/\${bpms_staging_folder}/\${bxms_maven_repo_name}  >>\${brms_staging_properties_name}
-sed -i '/^bxms.maven.repo.latest.url=/d' \${bpms_candidate_properties_name} && echo "bxms.maven.repo.latest.url=\${rcm_candidate_base}/\${bpms_staging_folder}/\${bxms_maven_repo_name}  >>\${brms_staging_properties_name}
+
 if [ \$release_type = "patch" ];then
-    sed -i '/^bxms.maven.incremental.repo.latest.url=/d' \${brms_staging_properties_name} && echo "bxms.maven.incremental.repo.latest.url=\${rcm_staging_base}/\${brms_staging_folder}/\${bxms_incr_maven_repo_name} >>\${brms_staging_properties_name}
-    sed -i '/^bxms.maven.incremental.repo.latest.url=/d' \${brms_staging_properties_name} && echo "bxms.maven.incremental.repo.latest.url=\${rcm_staging_base}/\${brms_candidate_folder}/\${brms_staging_folder}/\${bxms_incr_maven_repo_name} >>\${brms_candidate_properties_name}
-    
-    sed -i '/^bxms.maven.incremental.repo.latest.url=/d' \${brms_staging_properties_name} && echo "bxms.maven.incremental.repo.latest.url=\${rcm_staging_base}/\${bpms_staging_folder}/\${bxms_incr_maven_repo_name} >>\${brms_staging_properties_name}
-    sed -i '/^bxms.maven.incremental.repo.latest.url=/d' \${brms_staging_properties_name} && echo "bxms.maven.incremental.repo.latest.url=\${rcm_staging_base}/\${bpms_candidate_folder}/\${bpms_staging_folder}/\${bxms_incr_maven_repo_name} >>\${bpms_candidate_properties_name}
-
+    appendProp 'bxms.maven.incremental.repo.latest.url' \${rcm_staging_base}/\${bpms_staging_folder}/\${bxms_incr_maven_repo_name} \$brms_staging_properties_name
+    appendProp 'bxms.maven.incremental.repo.latest.url' \${rcm_candidate_base}/\${bpms_product_name}/\${bxms_incr_maven_repo_name} \$brms_candidate_properties_name
 fi
-
 #TODO rename the maven repository zip to make it consistent with others
 make CFG=${IP_CONFIG_FILE} MAVEN_REPOSITORY_BUILDER_SCRIPT=\${repository_builder_script} -f \${makefile} repository
 """

@@ -22,10 +22,7 @@ import spock.lang.Unroll
 class JobScriptsSpec extends Specification {
 
     // add in a sample environment for testing
-    def enviMap = ['PRODUCT_NAME':'bxms70', 'CI_PROPERTIES_FILE':'brms-jenkins-ci.properties', 'IP_CONFIG_FILE':'brms.cfg',
-                   'IP_MAKEFILE':'Makefile.BRMS', 'PRODUCT_ROOT_COMPNENT':'bxms-maven-repo-root', 'BPMS_DELIVERABLE_LIST_FILE':'bpmsuite-deliverable.properties',
-                   'REPOSITORY_BUILDER_SCRIPT':'regen_bxms_repo_builder.sh'
-    ]
+    def enviMap = ['PRODUCT_NAME':'bxms-test', 'CI_PROPERTIES_FILE':'brms-test-jenkins-ci.properties', 'IP_CONFIG_FILE':'brms-test.cfg']
 
     @Shared
     @ClassRule
@@ -97,7 +94,6 @@ class JobScriptsSpec extends Specification {
                 files << it
             }
         }
-
         files
     }
 }

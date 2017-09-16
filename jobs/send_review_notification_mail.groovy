@@ -40,8 +40,8 @@ String mailContent = '''<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
                                     <tr> 
                                         <td class="text-paragraph-pattern-container mobile-resize-text " style="padding: 0px; border-collapse: collapse; padding: 0 0 10px 0"> 
                                             <p style="margin: 10px 0 0 0">Release handover is <font color="#ff0000">waiting for review</font> in remote: <a href="${handover_pr}" class="external-link" rel="nofollow" style="color: #3b73af; text-decoration: none">${handover_pr}</a></p> 
-                                            <p style="margin: 10px 0 0 0">Staging folder URL: <br /> <a href="${rcm_stage_base}/${brms_stage_folder}/${brms_product_name}-${product_version}.${release_milestone}/" class="external-link" rel="nofollow" style="color: #3b73af; text-decoration: none">${rcm_stage_base}/${brms_stage_folder}/${brms_product_name}-${product_version}.${release_milestone}/</a></p> 
-                                            <p style="margin: 10px 0 0 0"><a href="${rcm_stage_base}/${bpms_stage_folder}/${bpms_product_name}-${product_version}.${release_milestone}/" class="external-link" rel="nofollow" style="color: #3b73af; text-decoration: none">${rcm_stage_base}/${bpms_stage_folder}/${bpms_product_name}-${product_version}.${release_milestone}/</a></p> 
+                                            <p style="margin: 10px 0 0 0">Staging folder URL: <br /> <a href="${rcm_staging_base}/${brms_staging_path}/" class="external-link" rel="nofollow" style="color: #3b73af; text-decoration: none">${rcm_staging_base}/${brms_staging_path}/</a></p> 
+                                            <p style="margin: 10px 0 0 0"><a href="${rcm_staging_base}/${bpms_staging_path}/" class="external-link" rel="nofollow" style="color: #3b73af; text-decoration: none">${rcm_staging_base}/${bpms_staging_path}/</a></p> 
                                         </td> 
                                     </tr> 
                                 </table> 
@@ -84,6 +84,14 @@ String mailContent = '''<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
 </html>
 '''
 
+def shellScript = """#set +x
+jira_comment="Release handover is {color:#ff0000}waiting for review{color}  in \${handover_pr} \n
+Staging folder URL: \n
+[\${rcm_staging_base}/\${brms_staging_path}/]\n
+[\${rcm_staging_base}/\${bpms_staging_path}/]"
+kinit -k -t \${HOME}/bxms-release.keytab bxms-release/prod-ci@REDHAT.COM
+ip-tooling/jira_helper.py -c ${IP_CONFIG_FILE} -f -a "\${jira_comment}"
+"""
 // Creates or updates a free style job.
 def jobDefinition = job("${PRODUCT_NAME}-send-review-notification-mail") {
 
@@ -92,7 +100,25 @@ def jobDefinition = job("${PRODUCT_NAME}-send-review-notification-mail") {
     steps {
 
         // Runs a shell script (defaults to sh, but this is configurable) for building the project.
-        shell("echo 'JOB DONE'")
+        shell(shellScript)
+    }
+    triggers{
+        gerrit{
+
+            project("integration-platform-config", "ant:**")
+            events {
+                patchsetCreated()
+            }
+            configure { triggers ->
+                triggers   <<  {
+                    'serverName' 'code.engineering.redhat.com'
+                }
+                triggers/'gerritProjects'/'com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.data.GerritProject'/'filePaths'/'com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.data.FilePath' << {
+                    'compareType' 'REG_EXP'
+                    'pattern' '*-release/*-handover.adoc'
+                }
+            }
+        }
     }
     // Adds post-build actions to the job.
     publishers {
@@ -114,16 +140,15 @@ def jobDefinition = job("${PRODUCT_NAME}-send-review-notification-mail") {
 
             // Sets the content type of the emails sent after a build.
             contentType('text/html')
-        }
-        postBuildTask {
-            task('JOB DONE', "ip-tooling/jira_helper.py -c \${IP_CONFIG_FILE} -f -a 'Release handover is {color:#ff0000}waiting for review{color}  in \${handover_pr} \n" +
-                    "\n" +
-                    "Staging folder URL: \n" +
-                    "[\${rcm_stage_base}/\${brms_stage_folder}/\${brms_product_name}-\${product_version}.\${release_milestone}/]\n" +
-                    "\n" +
-                    "[\${rcm_stage_base}/\${bpms_stage_folder}/\${bpms_product_name}-\${product_version}.\${release_milestone}/]'")
+            triggers {
+                always{
+                    sendTo {
+                        recipientList()
+                    }
+                }
+            }
         }
     }
 }
-
+JobTemplate.addIpToolingScmConfiguration(jobDefinition)
 JobTemplate.addCommonConfiguration(jobDefinition, CI_PROPERTIES_FILE, PRODUCT_NAME)

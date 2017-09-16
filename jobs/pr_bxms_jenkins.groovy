@@ -12,7 +12,7 @@ job('bxms-test-release-pipline/bxms_jenkins_teststream_masterbranch_codereview')
     environmentVariables {
         // Adds environment variables from a properties file.
         env ("PRODUCT_NAME", "brms-test")
-        env ("CI_PROPERTIES_FILE", "/jboss-prod/config/bxms-test-ci.properties")
+        env ("CI_PROPERTIES_FILE", "/jboss-prod/config/brms-test-ci.properties")
         env ("IP_CONFIG_FILE", "brms-test.cfg")
     }
 

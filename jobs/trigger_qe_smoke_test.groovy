@@ -1,5 +1,9 @@
 import org.jboss.bxms.jenkins.JobTemplate
 
+def shellScript = """
+kinit -k -t \${HOME}/bxms-release.keytab bxms-release/prod-ci@REDHAT.COM
+ip-tooling/jira_helper.py -c ${IP_CONFIG_FILE} -a "QE smoketest is triggered by CI message. Build URL:\${qe_smoketest_url}" -f
+"""
 // Creates or updates a free style job.
 def jobDefinition = job("${PRODUCT_NAME}-trigger-qe-smoke-test") {
 
@@ -8,6 +12,7 @@ def jobDefinition = job("${PRODUCT_NAME}-trigger-qe-smoke-test") {
 
     // Adds build steps to the jobs.
     steps {
+        shell(shellScript)
 
         // Sends JMS message.
         ciMessageBuilder {
@@ -21,7 +26,7 @@ def jobDefinition = job("${PRODUCT_NAME}-trigger-qe-smoke-test") {
             // KEY=value pairs, one per line (Java properties file format) to be used as message properties.
             messageProperties("label=bxms-ci\n" +
                     "CI_TYPE=custom\n" +
-                    "EVENT_TYPE=brms-64-qe-smoketest-trigger\n")
+                    "EVENT_TYPE=\${release_prefix}-qe-smoketest-trigger\n")
 
             // Content of CI message to be sent.
             messageContent('${brms_staging_properties_url}')
@@ -30,3 +35,4 @@ def jobDefinition = job("${PRODUCT_NAME}-trigger-qe-smoke-test") {
 }
 
 JobTemplate.addCommonConfiguration(jobDefinition, CI_PROPERTIES_FILE, PRODUCT_NAME)
+JobTemplate.addIpToolingScmConfiguration(jobDefinition)

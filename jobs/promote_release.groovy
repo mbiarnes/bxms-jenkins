@@ -1,11 +1,27 @@
 import org.jboss.bxms.jenkins.JobTemplate
-
 // Creates or updates a free style job.
 def jobDefinition = job("${PRODUCT_NAME}-promote-release") {
 
     // Sets a description for the job.
     description("This job is responsible for uploading release to candidate area.")
+    triggers{
+        gerrit{
 
+            project("integration-platform-config", "ant:**")
+            events {
+                changeMerged()
+            }
+            configure { triggers ->
+                triggers   <<  {
+                    'serverName' 'code.engineering.redhat.com'
+                }
+                triggers/'gerritProjects'/'com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.data.GerritProject'/'filePaths'/'com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.data.FilePath' << {
+                    'compareType' 'REG_EXP'
+                    'pattern' '*-release/*-handover.adoc'
+                }
+            }
+        }
+    }
     // Adds post-build actions to the job.
     publishers {
 
