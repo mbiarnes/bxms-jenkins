@@ -10,23 +10,24 @@ function appendProp(){
         echo "Param  is not allow empty"
         exit 1
     fi
-    sed -i '/^\$1/d' \$3 && echo '\$1="\$2"' >> \$3
+    sed -i "/^\$1/d" \$3 && echo "\$1=\$2" >> \$3
 }
 
 wget \${brms_staging_properties_url} -O \${brms_staging_properties_name} 
 wget \${brms_candidate_properties_url} -O \${brms_candidate_properties_name}
  
 #append the maven repo url into the properties
-appendProp 'bxms.maven.repo.latest.url' \${rcm_staging_base}/\${bpms_staging_folder}/\${bxms_maven_repo_name} \$brms_staging_properties_name
-appendProp 'bxms.maven.repo.latest.url' \${rcm_candidate_base}/\${bpms_product_name}/\${bxms_maven_repo_name} \$brms_candidate_properties_name
+appendProp "bxms.maven.repo.latest.url" \${rcm_staging_base}/\${bpms_staging_folder}/\${bxms_maven_repo_name} \$brms_staging_properties_name
+appendProp "bxms.maven.repo.latest.url" \${rcm_candidate_base}/\${bpms_product_name}/\${bxms_maven_repo_name} \$brms_candidate_properties_name
 
 
 if [ \$release_type = "patch" ];then
-    appendProp 'bxms.maven.incremental.repo.latest.url' \${rcm_staging_base}/\${bpms_staging_folder}/\${bxms_incr_maven_repo_name} \$brms_staging_properties_name
-    appendProp 'bxms.maven.incremental.repo.latest.url' \${rcm_candidate_base}/\${bpms_product_name}/\${bxms_incr_maven_repo_name} \$brms_candidate_properties_name
+    appendProp "bxms.maven.incremental.repo.latest.url" \${rcm_staging_base}/\${bpms_staging_folder}/\${bxms_incr_maven_repo_name} \$brms_staging_properties_name
+    appendProp "bxms.maven.incremental.repo.latest.url" \${rcm_candidate_base}/\${bpms_product_name}/\${bxms_incr_maven_repo_name} \$brms_candidate_properties_name
 fi
 #TODO rename the maven repository zip to make it consistent with others
 make CFG=${IP_CONFIG_FILE} MAVEN_REPOSITORY_BUILDER_SCRIPT=\${repository_builder_script} -f \${makefile} repository
+#TODO rename
 """
 
 // Creates or updates a free style job.

@@ -21,13 +21,15 @@ if [ -f ${CI_PROPERTIES_FILE} ];then
     if [ "\${new_version}\${new_milestone}" != "\${old_version}\${old_milestone}" ] || \
        [ "\${product_cfg_sha}" != "\${remote_product_cfg_sha}" ]       
     then
-        rm -vf \$${CI_PROPERTIES_FILE}
+        rm -vf ${CI_PROPERTIES_FILE}
     fi
 fi
 if [ ! -f ${CI_PROPERTIES_FILE} ];then
     #Loading env from cfg file
     python ip-tooling/jenkins_ci_property_loader.py -i ${IP_CONFIG_FILE} -o ${CI_PROPERTIES_FILE}
-    sed -i '/^product_cfg_sha=/d' ${CI_PROPERTIES_FILE} && echo "product_cfg_sha=\${remote_product_cfg_sha}" >> ${CI_PROPERTIES_FILE}    
+    sed -i '/^product_cfg_sha=/d' ${CI_PROPERTIES_FILE} && echo "product_cfg_sha=\${remote_product_cfg_sha}" >> ${CI_PROPERTIES_FILE}
+    sed -i '/^ci_properties_file=/d' ${CI_PROPERTIES_FILE} && echo "ci_properties_file=${CI_PROPERTIES_FILE}" >> ${CI_PROPERTIES_FILE}    
+    
 fi
 source ${CI_PROPERTIES_FILE}
 #Use kerbose to create the release JIRA

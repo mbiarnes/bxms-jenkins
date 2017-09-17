@@ -3,78 +3,68 @@ String shellScript = """
 wget \${brms_staging_properties_url} -O \${brms_staging_properties_name} 
 wget \${brms_candidate_properties_url} -O \${brms_candidate_properties_name}
 
-function assertContain(){
-    if [ ! -z "\$1" ] || [ ! -z "\$2" ];then
-        echo "Param is empty"
-        exit 1
-    fi
-    if [ "\$1" =~ \$2];then
-        echo ""
-    else
-        echo "Validation failed, \$1 don't contain string \$2"
-        exit 1;
-    fi
-}
-function isvalidurl(){
-    if [ ! -z "\$1" ];then
-        echo "Param is empty"
-        exit 1
-    fi
-    if curl --output /dev/null --silent --head --fail "\$1";then
-        echo "URL exists: \$1"
-    else
-        echo "URL does not exist: \$1"
-        exit 1
-    fi
-    #If provie second param, verify it contians the string
-    if [ -z "\$2" ];then
-        assertContain("\$1", "\$2")
-    fi
-}
-function assertEqual(){
-    if [ ! -z "\$1" ] || [ ! -z "\$2" ];then
-        echo "Param is empty"
-        exit 1
-    fi
-    if [ "\$1" != "\$2" ];then
-        echo "Expected \$1, But: \$2
-        exit 1
-    fi
-}
+python -c "import sys,os
+from urllib2 import urlopen
+ret=0
+def isvalidurl(url, inc_str):
+    print url
+    try:
+        code = urlopen(url).code
+    except IOError:
+        print 'ERROR ', url + 'is invalid!'
+        ret=1
+        return 1
+    if (code / 100 >= 4):
+        print 'ERROR ', url + 'is invalid!'
+        ret=1
+    assertContain(url, inc_str)
 
-#Verify the staging properties
-source \${brms_staging_properties_name} 
-isvalidurl \$brms.business-central.standalone.latest.url "rcm-guest"
-isvalidurl \$brms.collection.latest.url "rcm-guest"
-isvalidurl \$bpms.business-central.standalone.latest.url "rcm-guest"
-isvalidurl \$bpms.collection.latest.url "rcm-guest"
-isvalidurl \$bxms.execution-server.ee7.latest.url "rcm-guest"
-isvalidurl \$bxms.execution-server.jws.latest.url "rcm-guest"
-isvalidurl \$build.config "rcm-guest"
-isvalidurl \$bxms.maven.repo.latest.url "rcm-guest"
-assertEqual "\$kie_version" "\$bxms.maven.repo.latest.url"
-assertEqual "\$product_artifact_version" "\$BXMS_VERSION"
-assertContain "\$brms.business-central.standalone.latest.url" "\$product_deliver_version"
-assertContain "\$brms.collection.latest.url" "\$product_deliver_version"
-assertContain \$bxms.execution-server.ee7.latest.url "\$product_deliver_version"
-assertContain \$bxms.execution-server.jws.latest.url "\$product_deliver_version"
+def assertEqual(expect, actual):
+    if expect != actual:
+        print 'ERROR Actual is ' + actual + ' , Expect is ' + expect
+        ret=1
 
-#Verify the staging properties
-source \${brms_candidate_properties_name}
-isvalidurl \$brms.business-central.standalone.latest.url "candidates"
-isvalidurl \$brms.collection.latest.url "candidates"
-isvalidurl \$bpms.business-central.standalone.latest.url "candidates"
-isvalidurl \$bpms.collection.latest.url "candidates"
-isvalidurl \$bxms.execution-server.ee7.latest.url "candidates"
-isvalidurl \$bxms.execution-server.jws.latest.url "candidates"
-isvalidurl \$build.config "candidates"
-isvalidurl \$bxms.maven.repo.latest.url
-assertEqual "\$kie_version" "\$bxms.maven.repo.latest.url"
-assertEqual "\$product_artifact_version" "\$BXMS_VERSION"
-assertContain "\$brms.business-central.standalone.latest.url" "\$product_deliver_version"
-assertContain "\$brms.collection.latest.url" "\$product_deliver_version"
-assertContain \$bxms.execution-server.ee7.latest.url "\$product_deliver_version"
-assertContain \$bxms.execution-server.jws.latest.url "\$product_deliver_version"
+def assertContain(actual, expect):
+    if expect not in actual:
+        print 'ERROR Actual is ' + actual + ' , Expect is ' + expect
+        ret=1
+
+def validateProperties(propfile, keyword):
+    ret = 0
+    dic = {}
+    if os.path.isfile(propfile):
+        tmpFile = open(propfile, 'r')
+        for line in tmpFile:
+            str1, tmp, str2 = line.partition('=')
+            str2 = str2.replace('\\n', '')
+            dic[str1] = str2
+        tmpFile.close()
+        isvalidurl(dic['brms.business-central.standalone.latest.url'],keyword)
+        isvalidurl(dic['brms.collection.latest.url'],keyword)
+        isvalidurl(dic['bpms.business-central.standalone.latest.url'],keyword)
+        isvalidurl(dic['collection.latest.url'],keyword)
+        isvalidurl(dic['bxms.execution-server.ee7.latest.url'],keyword)
+        isvalidurl(dic['bxms.execution-server.jws.latest.url'],keyword)
+        isvalidurl(dic['build.config'],keyword)
+        isvalidurl(dic['bxms.maven.repo.latest.url'],keyword)
+
+        assertEqual('\$kie_version', dic['bxms.maven.repo.latest.url'])
+        assertEqual('\$product_artifact_version', dic['BXMS_VERSION'])
+        assertContain(dic['brms.business-central.standalone.latest.url'], '\$product_deliver_version')
+        assertContain(dic['collection.latest.url'], '\$product_deliver_version')
+        assertContain(dic['bxms.execution-server.ee7.latest.url'], '\$product_deliver_version')
+        assertContain(dic['bxms.execution-server.jws.latest.url'], '\$product_deliver_version')
+        if ret != 0:
+            print propfile + ' Validation No Pass'
+            sys.exit(1)
+        else:
+            print  propfile + ' Validation Pass'   
+    else:
+        return 1
+
+validateProperties('\$brms_staging_properties_name', 'rcm-guest')    
+validateProperties('\${brms_candidate_properties_name}', 'candidates')
+"
 """
 // Creates or updates a free style job.
 def jobDefinition = job("${PRODUCT_NAME}-verify-deliverable-properties") {
@@ -99,7 +89,7 @@ def jobDefinition = job("${PRODUCT_NAME}-verify-deliverable-properties") {
                 }
                 triggers/'gerritProjects'/'com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.data.GerritProject'/'filePaths'/'com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.data.FilePath' << {
                     'compareType' 'REG_EXP'
-                    'pattern' '*-release/*-handover.adoc'
+                    'pattern' '.*-release/.*-handover.adoc'
                 }
             }
         }

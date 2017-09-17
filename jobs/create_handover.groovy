@@ -2,18 +2,18 @@ import org.jboss.bxms.jenkins.JobTemplate
 
 // Create handover script
 def shellScript = """
-python ip-tooling/create_handover.py -a \${bpms_pvt_report_path}.adoc -t \${release_prefix}-release/\${release_prefix}-handover.template -p ${CI_PROPERTIES_FILE} -o \${release_prefix}-release/\${release_prefix}-handover.adoc
+python ip-tooling/template_helper.py -i \${release_prefix}-release/\${release_prefix}-handover.template -p ${CI_PROPERTIES_FILE} -o \${release_prefix}-release/\${release_prefix}-handover.adoc
 asciidoctor \${release_prefix}-release/\${release_prefix}-handover.adoc
 
 git config --global user.email "jb-ip-tooling-jenkins@redhat.com"
 git config --global user.name "bxms-prod"
 #Skip providing pvt test report for intpack and patch release
 if [ \${release_type} != "intpack" ] || [ \$release_type != "patch" ] ;then
-    if [ -f \${brms_pvt_report_path}.html ];then
-        cp \${brms_pvt_report_path}.html \${release_prefix}-release/\${release_prefix}-pvt-report-brms.html
+    if [ -f \${brms_pvt_report_basename}.html ];then
+        cp \${brms_pvt_report_basename}.html \${release_prefix}-release/\${release_prefix}-pvt-report-brms.html
     fi
-    if [ -f \${bpms_pvt_report_path}.html ];then
-        cp \${bpms_pvt_report_path}.html \${release_prefix}-release/\${release_prefix}-pvt-report-bpms.html
+    if [ -f \${bpms_pvt_report_basename}.html ];then
+        cp \${bpms_pvt_report_basename}.html \${release_prefix}-release/\${release_prefix}-pvt-report-bpms.html
     fi
     git add \${release_prefix}-release/\${release_prefix}-pvt-report*.html
 fi
@@ -27,6 +27,7 @@ git push origin HEAD:refs/for/master 2>&1| tee b.log
 handover_pr=`grep "\${commit_msg}" b.log`
 handover_pr=\${handover_pr#remote: }
 handover_pr=\${handover_pr%% Prepare*}
+handover_pr=`echo -e "\${handover_pr}" | tr -d '[:space:]'`
 #Update the handover pr link
 sed -i '/^handover_pr=/d' ${CI_PROPERTIES_FILE} && echo "handover_pr=\$handover_pr" >>${CI_PROPERTIES_FILE}
 

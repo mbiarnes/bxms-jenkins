@@ -9,6 +9,7 @@ UNBLOCK=1 BREWCHAIN=1 CFG=./${IP_CONFIG_FILE} POMMANIPEXT=brms-bom make -f  \${m
 brewchain_build_url=`grep 'build: Watching task ID:' b.log`
 brewchain_build_url=\${brewchain_build_url##INFO*\\(}
 brewchain_build_url=\${brewchain_build_url% *\\)}
+brewchain_build_url=`echo -e "\${brewchain_build_url}" | tr -d '[:space:]'`
 
 echo "Brewchain Build URL: \$brewchain_build_url"
 

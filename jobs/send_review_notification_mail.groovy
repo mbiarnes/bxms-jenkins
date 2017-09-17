@@ -84,7 +84,8 @@ String mailContent = '''<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
 </html>
 '''
 
-def shellScript = """#set +x
+def shellScript = """
+set +x
 jira_comment="Release handover is {color:#ff0000}waiting for review{color}  in \${handover_pr} \n
 Staging folder URL: \n
 [\${rcm_staging_base}/\${brms_staging_path}/]\n
@@ -115,7 +116,7 @@ def jobDefinition = job("${PRODUCT_NAME}-send-review-notification-mail") {
                 }
                 triggers/'gerritProjects'/'com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.data.GerritProject'/'filePaths'/'com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.data.FilePath' << {
                     'compareType' 'REG_EXP'
-                    'pattern' '*-release/*-handover.adoc'
+                    'pattern' '.*-release/.*-handover.adoc'
                 }
             }
         }
@@ -133,7 +134,7 @@ def jobDefinition = job("${PRODUCT_NAME}-send-review-notification-mail") {
             replyToList('${release_engineer}')
 
             // Sets the default email subject that will be used for each email that is sent.
-            defaultSubject('[ACTION REQUIRED] [BxMS Release CI] ${product_name} ${product_version} ${release_milestone}  Release Handover Review')
+            defaultSubject('[ACTION REQUIRED] [BxMS Release CI] ${product_name} ${product_deliver_version} ${release_milestone}  Release Handover Review')
 
             // Sets the default email content that will be used for each email that is sent.
             defaultContent(mailContent)

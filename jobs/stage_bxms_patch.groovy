@@ -7,12 +7,12 @@ wget \${brms_staging_properties_url} -O \${brms_staging_properties_name}
 wget \${brms_candidate_properties_url} -O \${brms_candidate_properties_name}
 
 ip-tooling/maven-to-stage.py --version=\${product_artifact_version} --override-version \${product_version} \
-   --deliverable \${release_prefix}-release/\${release_prefix}-deliverable.properties --maven-repo \${bxms_patch_maven_repo_url} \
+   --deliverable \${release_prefix}-release/brms-deliverable.properties --maven-repo \${bxms_patch_maven_repo_url} \
    --output \${brms_product_name}\
    --release-url=\${rcm_staging_base}/\${brms_staging_folder} --output-deliverable-list \${brms_staging_properties_name}
    
 ip-tooling/maven-to-staging.py --version=\${product_artifact_version} --override-version \${product_version} \
-   --deliverable \${release_prefix}-release/bpmsuite-64-deliverable.properties --maven-repo \${bxms_patch_maven_repo_url} \
+   --deliverable \${release_prefix}-release/bpmsuite-deliverable.properties --maven-repo \${bxms_patch_maven_repo_url} \
    --output \${bpms_product_name}\
    --release-url=\${rcm_staging_base}/\${bpms_staging_folder} --output-deliverable-list \${brms_staging_properties_name}
 
