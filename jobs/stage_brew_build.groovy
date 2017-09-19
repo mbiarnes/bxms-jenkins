@@ -18,14 +18,14 @@ if [ \${release_type} = 'intpack' ];then
 else
     ip-tooling/maven-to-stage.py --version=\${product_artifact_version} --override-version \${product_deliver_version} --maven-repo \${product_assembly_maven_repo_url} \
       --deliverable \${release_prefix}-release/brms-deliverable.properties --output \${brms_product_name} \
-      --release-url=\${rcm_staging_base}/\${brms_staging_folder} --output-deliverable-list \${brms_staging_properties_name}
+      --release-url=\${rcm_staging_base}/\${brms_staging_path} --output-deliverable-list \${brms_staging_properties_name}
       
     ip-tooling/maven-to-stage.py --version=\${product_artifact_version} --override-version \${product_deliver_version} --maven-repo \${product_assembly_maven_repo_url} \
       --deliverable \${release_prefix}-release/bpmsuite-deliverable.properties --output \${bpms_product_name} \
-      --release-url=\${rcm_staging_base}/\${bpms_staging_folder} --output-deliverable-list \${brms_staging_properties_name}
+      --release-url=\${rcm_staging_base}/\${bpms_staging_path} --output-deliverable-list \${brms_staging_properties_name}
     
     #append the other properties per qe's requirement
-    appendProp "build.config" \${rcm_staging_base}/\${brms_staging_folder}/${IP_CONFIG_FILE} 
+    appendProp "build.config" \${rcm_staging_base}/\${brms_staging_path}/${IP_CONFIG_FILE} 
     appendProp "DROOLSJBPM_VERSION" \${kie_version} 
     appendProp "BXMS_VERSION" \${product_artifact_version} 
     
@@ -105,7 +105,7 @@ def jobDefinition = job("${PRODUCT_NAME}-stage-brew-build") {
                         // Sets the destination folder.
                         remoteDirectory('${brms_staging_path}')
                         execCommand('if [ "${CLEAN_STAGING_ARTIFACTS}" = "true" ];then \n' +
-                                        'rm -vf  ~/staging/${brms_staging_path}/* ~/staging/${bpms_staging_path}/* \n' +
+                                        'rm -vrf  ~/staging/${brms_staging_path}/* ~/staging/${bpms_staging_path}/* \n' +
                                     'fi')
                     }
                     // Adds a target server.

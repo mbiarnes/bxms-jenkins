@@ -5,6 +5,14 @@ remote_product_cfg_sha=\$(git log -1 --pretty="%H" ${IP_CONFIG_FILE})
 cfg=${IP_CONFIG_FILE}
 release_prefix=\${cfg%%.cfg}
 
+function appendProp() {
+    echo "Inject Properties:\$2"
+    if [ -z "\$1" ] || [ -z "\$2" ];then
+        echo "Properties value is empty"
+        exit 1
+    fi
+    sed -i '/^\$1/d' ${CI_PROPERTIES_FILE} && echo "\$1=\$2" >> ${CI_PROPERTIES_FILE}
+}
 if [ "\${CLEAN_CONFIG}" = "true" ];then
     rm -vf /jboss-prod/config/\${release_prefix}-*.*
 fi
@@ -27,15 +35,17 @@ fi
 if [ ! -f ${CI_PROPERTIES_FILE} ];then
     #Loading env from cfg file
     python ip-tooling/jenkins_ci_property_loader.py -i ${IP_CONFIG_FILE} -o ${CI_PROPERTIES_FILE}
-    sed -i '/^product_cfg_sha=/d' ${CI_PROPERTIES_FILE} && echo "product_cfg_sha=\${remote_product_cfg_sha}" >> ${CI_PROPERTIES_FILE}
-    sed -i '/^ci_properties_file=/d' ${CI_PROPERTIES_FILE} && echo "ci_properties_file=${CI_PROPERTIES_FILE}" >> ${CI_PROPERTIES_FILE}    
-    
+    appendProp "product_cfg_sha" \$remote_product_cfg_sha    
+    appendProp "ci_properties_file" ${CI_PROPERTIES_FILE}    
 fi
 source ${CI_PROPERTIES_FILE}
 #Use kerbose to create the release JIRA
 kinit -k -t \${HOME}/bxms-release.keytab bxms-release/prod-ci@REDHAT.COM
-ip-tooling/jira_helper.py -c ${IP_CONFIG_FILE} -t \${release_estimation} \${release_estimation} -f
-
+ip-tooling/jira_helper.py -c ${IP_CONFIG_FILE} -t \${release_estimation} \${release_estimation} -f |tee /tmp/jira.log
+jira_id=`tail -n 2 /tmp/jira.log |head -n 1`
+jira_id=\${jira_id/Selected Result:/}
+echo "https://projects.engineering.redhat.com/browse/\$jira_id"
+appendProp "release_jira_id" \$jira_id
 """
 
 // Creates or updates a free style job.
