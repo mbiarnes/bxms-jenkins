@@ -7,7 +7,7 @@ mvn  -Pbrms -DdependencyManagement=org.jboss.brms.component.management:brms-depe
 \t-Denforce-skip=false -Dfull=true -DoverrideTransitive=false -Dproject.meta.skip=true \\
     -DpropertyManagement=org.jboss.brms.component.management:brms-dependency-management-all:7.0.0.redhat-SNAPSHOT \\
     -Drepo-reporting-removal=true -Dversion.override=7.0.0 -Dversion.suffix=redhat-SNAPSHOT -Dversion.suffix.snapshot=true \\
-    -DversionOverride=true -DversionSuffixSnapshot=true -Dvictims.updates=offline -B -Dmaven.repo.local=/mnt/jboss-prod/m2/bxms-7-nightly -s /jboss-prod/m2/bxms-7-nightly-settings.xml clean package
+    -DversionOverride=true -DversionSuffixSnapshot=true -Dvictims.updates=offline -B -Dmaven.repo.local=/jboss-prod/m2/bxms-7-nightly -s /jboss-prod/m2/bxms-7-nightly-settings.xml clean package
 '''
 job('bxms7_assembly_codereview'){
     description("Monitor the code change in bxms-assembly")
