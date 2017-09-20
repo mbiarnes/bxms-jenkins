@@ -13,9 +13,12 @@ function appendProp(){
     sed -i "/^\$1/d" \$3 && echo "\$1=\$2" >> \$3
 }
 
-wget \${brms_staging_properties_url} -O \${brms_staging_properties_name} 
-wget \${brms_candidate_properties_url} -O \${brms_candidate_properties_name}
- 
+if ! wget \${brms_staging_properties_url} -O \${brms_staging_properties_name} 2>/dev/null ;then
+    echo " \${brms_staging_properties_url} isn't available yet"  
+fi 
+if ! wget \${brms_candidate_properties_url} -O \${brms_candidate_properties_name} 2>/dev/null ;then
+  echo " \${brms_candidate_properties_url} isn't available yet"
+fi
 #append the maven repo url into the properties
 appendProp "bxms.maven.repo.latest.url" \${rcm_staging_base}/\${bpms_staging_folder}/\${bxms_maven_repo_name} \$brms_staging_properties_name
 appendProp "bxms.maven.repo.latest.url" \${rcm_candidate_base}/\${bpms_product_name}/\${bxms_maven_repo_name} \$brms_candidate_properties_name
