@@ -121,7 +121,7 @@ def jobDefinition = job("${PRODUCT_NAME}-export-openshift-images") {
                     sourceFiles('jboss-bpmsuite-${product_version}-openshift.zip*')
 
                     // Sets the destination folder.
-                    remoteDirectory('jboss-bpmsuite/BPMS-7.0.0.LA.ER2/')
+                    remoteDirectory('${bpms_staging_path}/')
                 }
 
             }
@@ -129,4 +129,6 @@ def jobDefinition = job("${PRODUCT_NAME}-export-openshift-images") {
     }
 
 }
+JobTemplate.addCommonConfiguration(jobDefinition, CI_PROPERTIES_FILE, PRODUCT_NAME)
+
 
