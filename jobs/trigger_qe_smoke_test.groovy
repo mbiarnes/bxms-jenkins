@@ -2,7 +2,7 @@ import org.jboss.bxms.jenkins.JobTemplate
 
 def shellScript = """
 kinit -k -t \${HOME}/bxms-release.keytab bxms-release/prod-ci@REDHAT.COM
-ip-tooling/jira_helper.py -c ${IP_CONFIG_FILE} -a "QE smoketest is triggered by CI message. Build URL:\${qe_smoketest_url}" -f
+ip-tooling/jira_helper.py -c ${IP_CONFIG_FILE} -a "QE smoketest is triggered by CI message. Build URL:\${qe_smoketest_job_url}" -f
 """
 // Creates or updates a free style job.
 def jobDefinition = job("${PRODUCT_NAME}-trigger-qe-smoke-test") {
