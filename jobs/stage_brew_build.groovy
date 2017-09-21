@@ -11,6 +11,10 @@ function appendProp(){
     sed -i "/^\$1/d" \${brms_staging_properties_name} && echo "\$1=\$2" >> \${brms_staging_properties_name}
 }
 
+if ! wget \${brms_staging_properties_url} -O \${brms_staging_properties_name} 2>/dev/null ;then
+    echo " \${brms_staging_properties_url} isn't available yet"  
+fi
+ 
 #Uploading to rcm staging folder
 if [ \${release_type} = 'intpack' ];then
     ip-tooling/maven-to-stage.py --version=\${product_artifact_version} --override-version \${product_version} --maven-repo \${product_assembly_maven_repo_url} \

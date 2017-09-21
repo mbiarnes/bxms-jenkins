@@ -40,20 +40,19 @@ def validateProperties(propfile, keyword):
             dic[str1] = str2
         tmpFile.close()
         isvalidurl(dic['brms.collection.latest.url'],keyword)
-        isvalidurl(dic['collection.latest.url'],keyword)
-        isvalidurl(dic['bxms.execution-server.ee7.latest.url'],keyword)
-        
-#        isvalidurl(dic['brms.business-central.standalone.latest.url'],keyword)
-#        isvalidurl(dic['bpms.business-central.standalone.latest.url'],keyword)
-#        isvalidurl(dic['bxms.execution-server.jws.latest.url'],keyword)
+        isvalidurl(dic['bpms.collection.latest.url'],keyword)
+        isvalidurl(dic['brms.execution-server.ee7.latest.url'],keyword)
+        isvalidurl(dic['bpms.execution-server.ee7.latest.url'],keyword)
+        isvalidurl(dic['bxms.maven.repo.latest.url'],keyword)        
         isvalidurl(dic['build.config'],keyword)
-        isvalidurl(dic['bxms.maven.repo.latest.url'],keyword)
 
         assertEqual('\$kie_version', dic['bxms.maven.repo.latest.url'])
         assertEqual('\$product_artifact_version', dic['BXMS_VERSION'])
 #        assertContain(dic['brms.business-central.standalone.latest.url'], '\$product_deliver_version')
-        assertContain(dic['collection.latest.url'], '\$product_deliver_version')
-        assertContain(dic['bxms.execution-server.ee7.latest.url'], '\$product_deliver_version')
+        assertContain(dic['brms.collection.latest.url'], '\$product_deliver_version')
+        assertContain(dic['brms.execution-server.ee7.latest.url'], '\$product_deliver_version')
+        assertContain(dic['bpms.collection.latest.url'], '\$product_deliver_version')
+        assertContain(dic['bpms.execution-server.ee7.latest.url'], '\$product_deliver_version')
 #        assertContain(dic['bxms.execution-server.jws.latest.url'], '\$product_deliver_version')
         if ret != 0:
             print propfile + ' Validation No Pass'
