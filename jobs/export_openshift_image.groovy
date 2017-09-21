@@ -1,20 +1,6 @@
 String shellScript = '''
-#Clean  docker images
-for i in $(docker images -q);do docker rmi $i; done
-
 mkdir jboss-bpmsuite-${product_version}-openshift
 cd jboss-bpmsuite-${product_version}-openshift
-
-#Download image config/sources
-wget https://github.com/jboss-openshift/application-templates/archive/bpmsuite70-${bxms_image_version}.zip ;unzip -j bpmsuite70-${bxms_image_version}.zip */bpmsuite/* -d application-template;rm -f bpmsuite*.zip;
-wget https://github.com/jboss-container-images/jboss-bpmsuite-7-image/archive/bpmsuite70-${bxms_image_version}.zip; unzip bpmsuite70-${bxms_image_version}.zip;mv jboss-bpmsuite-7-image-bpmsuite70-${bxms_image_version} standalone-image-source; rm -f bpmsuite70-*.zip; 
-wget https://github.com/jboss-container-images/jboss-bpmsuite-7-openshift-image/archive/bpmsuite70-${bxms_image_version}.zip; unzip bpmsuite70-${bxms_image_version}.zip;mv jboss-bpmsuite-7-openshift-image-bpmsuite70-${bxms_image_version} openshift-image-source;rm -f bpmsuite70-*.zip;
-
-if ! wget http://git.app.eng.bos.redhat.com/git/integration-platform-config.git/plain/brms-release/bpmsuite-image-stream.json -P application-template/
-then
-exit 1;
-fi
-sed -i "s/replace_image_version/${bxms_image_version}/g" application-template/bpmsuite-image-stream.json
 
 #download the zip package
 if [ ! -e maven-to-stage.py ];
@@ -32,8 +18,8 @@ then
 org.jboss.ip:jboss-bpmsuite::business-central-eap7:zip
 org.jboss.ip:jboss-bpmsuite::business-central-monitoring-ee7:zip
 org.jboss.ip:jboss-bpmsuite::smart-router:jar
-org.jboss.ip:jboss-brms-bpmsuite::execution-server-ee7:zip
-org.jboss.ip:jboss-brms-bpmsuite::execution-server-controller-ee7:zip""" >>download_list.properties
+org.jboss.ip:jboss-bpmsuite::execution-server-ee7:zip
+org.jboss.ip:jboss-bpmsuite::execution-server-controller-ee7:zip""" >>download_list.properties
 fi
 maven_repo_url="http://download-node-02.eng.bos.redhat.com/brewroot/repos/jb-bxms-7.0-maven-build/latest/maven/"
 ./maven-to-stage.py --version=${product_artifact_version} --override-version ${product_version} --deliverable download_list.properties --maven-repo ${maven_repo_url} --output BPMS-${product_version}
@@ -45,7 +31,20 @@ then
     exit 1;
 fi
 if [ ${skipDocker} = "false"  ]
-then            
+then
+#Clean  docker images
+for i in $(docker images -q);do docker rmi $i; done
+
+#Download image config/sources
+wget https://github.com/jboss-openshift/application-templates/archive/bpmsuite70-${bxms_image_version}.zip ;unzip -j bpmsuite70-${bxms_image_version}.zip */bpmsuite/* -d application-template;rm -f bpmsuite*.zip;
+wget https://github.com/jboss-container-images/jboss-bpmsuite-7-image/archive/bpmsuite70-${bxms_image_version}.zip; unzip bpmsuite70-${bxms_image_version}.zip;mv jboss-bpmsuite-7-image-bpmsuite70-${bxms_image_version} standalone-image-source; rm -f bpmsuite70-*.zip; 
+wget https://github.com/jboss-container-images/jboss-bpmsuite-7-openshift-image/archive/bpmsuite70-${bxms_image_version}.zip; unzip bpmsuite70-${bxms_image_version}.zip;mv jboss-bpmsuite-7-openshift-image-bpmsuite70-${bxms_image_version} openshift-image-source;rm -f bpmsuite70-*.zip;
+
+if ! wget http://git.app.eng.bos.redhat.com/git/integration-platform-config.git/plain/brms-release/bpmsuite-image-stream.json -P application-template/
+then
+exit 1;
+fi
+sed -i "s/replace_image_version/${bxms_image_version}/g" application-template/bpmsuite-image-stream.json            
 #Define the internal docker registry            
 docker_registry=docker-registry.engineering.redhat.com
 
