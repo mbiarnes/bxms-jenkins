@@ -45,6 +45,38 @@ def jobDefinition = job("${PRODUCT_NAME}-release-notes") {
         // Runs a shell script (defaults to sh, but this is configurable) for building the project.
         shell(shellScript)
     }
+    publishers {
+
+        // Send artifacts to an SSH server (using SFTP) and/or execute commands over SSH.
+        publishOverSsh {
+
+            // Adds a target server.
+            server('publish server') {
+
+                // Adds a target server.
+                verbose(true)
+
+                // Adds a transfer set.
+                transferSet {
+
+                    // Sets the files to upload to a server.
+                    sourceFiles('${bxms_release_notes_path}')
+
+                    // Sets the destination folder.
+                    remoteDirectory('${brms_staging_path}/')
+                }
+                // Adds a transfer set.
+                transferSet {
+
+                    // Sets the files to upload to a server.
+                    sourceFiles('${bxms_release_notes_path}')
+
+                    // Sets the destination folder.
+                    remoteDirectory('${bpms_staging_path}/')
+                }
+            }
+        }
+    }
 }
 
 JobTemplate.addCommonConfiguration(jobDefinition, CI_PROPERTIES_FILE, PRODUCT_NAME)
