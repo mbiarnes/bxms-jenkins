@@ -1,8 +1,8 @@
 import org.jboss.bxms.jenkins.JobTemplate
 
 String shellScript = '''
-mkdir jboss-bpmsuite-${product_version}${availability}-openshift
-cd jboss-bpmsuite-${product_version}${availability}-openshift
+mkdir jboss-bpmsuite-${product_version}${openshift_image_version_suffix}-openshift
+cd jboss-bpmsuite-${product_version}${openshift_image_version_suffix}-openshift
 
 #download the zip package
 if [ ! -e maven-to-stage.py ];
@@ -24,7 +24,7 @@ org.jboss.ip:jboss-bpmsuite::execution-server-ee7:zip
 org.jboss.ip:jboss-bpmsuite::execution-server-controller-ee7:zip""" >>download_list.properties
 fi
 maven_repo_url="http://download-node-02.eng.bos.redhat.com/brewroot/repos/jb-bxms-7.0-maven-build/latest/maven/"
-./maven-to-stage.py --version=${product_artifact_version} --override-version ${openshift_image_version} --deliverable download_list.properties --maven-repo ${maven_repo_url} --output BPMS-${product_version}${availability}
+./maven-to-stage.py --version=${product_artifact_version} --override-version ${product_version}${openshift_image_version_suffix} --deliverable download_list.properties --maven-repo ${maven_repo_url} --output BPMS-${product_version}${openshift_image_version_suffix}
 
 rm -f download_list.properties maven-to-stage.py
 if [ $? -ne 0 ]
@@ -37,6 +37,7 @@ then
 #Clean  docker images
 for i in $(docker images -q);do docker rmi $i; done
 
+openshift_image_version=1.0.${openshift_image_version_suffix}
 #Download image config/sources
 wget https://github.com/jboss-openshift/application-templates/archive/bpmsuite70-${openshift_image_version}.zip ;unzip -j bpmsuite70-${openshift_image_version}.zip */bpmsuite/* -d application-template;rm -f bpmsuite*.zip;
 wget https://github.com/jboss-container-images/jboss-bpmsuite-7-image/archive/bpmsuite70-${openshift_image_version}.zip; unzip bpmsuite70-${openshift_image_version}.zip;mv jboss-bpmsuite-7-image-bpmsuite70-${openshift_image_version} standalone-image-source; rm -f bpmsuite70-*.zip; 
@@ -62,8 +63,8 @@ docker pull ${docker_registry}/jboss-bpmsuite-7/bpmsuite70-businesscentral-monit
 docker save ${docker_registry}/jboss-bpmsuite-7/bpmsuite70-businesscentral-monitoring-openshift:${openshift_image_version} >bpmsuite70-businesscentral-monitoring-openshift-${openshift_image_version}.tar
 
 cd ..
-zip -5 -r  jboss-bpmsuite-${product_version}${availability}-openshift.zip jboss-bpmsuite-${product_version}${availability}-openshift/
-md5sum jboss-bpmsuite-${product_version}${availability}-openshift.zip >jboss-bpmsuite-${product_version}${availability}-openshift.zip.md5
+zip -5 -r  jboss-bpmsuite-${product_version}${openshift_image_version_suffix}-openshift.zip jboss-bpmsuite-${product_version}${openshift_image_version_suffix}-openshift/
+md5sum jboss-bpmsuite-${product_version}${openshift_image_version_suffix}-openshift.zip >jboss-bpmsuite-${product_version}${openshift_image_version_suffix}-openshift.zip.md5
 fi
 '''
 
@@ -119,7 +120,7 @@ def jobDefinition = job("${PRODUCT_NAME}-export-openshift-images") {
                 transferSet {
 
                     // Sets the files to upload to a server.
-                    sourceFiles('jboss-bpmsuite-${product_version}${availability}-openshift.zip*')
+                    sourceFiles('jboss-bpmsuite-${product_version}${openshift_image_version_suffix}-openshift.zip*')
 
                     // Sets the destination folder.
                     remoteDirectory('${bpms_staging_path}/')
