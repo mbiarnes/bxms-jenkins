@@ -30,10 +30,10 @@ if [ \$release_type = "patch" ];then
 fi
 make CFG=${IP_CONFIG_FILE} MAVEN_REPOSITORY_BUILDER_SCRIPT=\${repository_builder_script} -f \${makefile} repository
 #TODO rename the maven repository zip to make it consistent with others
-cd workspace/\${release_prefix}-repository
+cd workspace/\${release_prefix}-repository/archive
 for file in jboss-brms-bpmsuite-*
 do
-  mv "\$file" "\${file/\${product_version}\${release_milestone}/\${product_deliver_version}}"
+  mv "\$file" "\${file/\${product_version}.\${release_milestone}/\${product_deliver_version}}"
 done
 """
 
