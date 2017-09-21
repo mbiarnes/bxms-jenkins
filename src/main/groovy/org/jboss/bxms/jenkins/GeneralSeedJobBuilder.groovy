@@ -18,8 +18,6 @@ class GeneralSeedJobBuilder {
                 numToKeep 8
             }
             // Adds environment variables to the build.
-
-            label ("service-node")
             scm {
                 // Adds a Git SCM source.
                 git {

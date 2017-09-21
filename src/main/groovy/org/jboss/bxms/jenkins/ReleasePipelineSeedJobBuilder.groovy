@@ -42,7 +42,7 @@ class ReleasePipelineSeedJobBuilder {
                 keepSystemVariables(true)
 
             }
-            label ("service-node")
+            
             scm {
                 // Adds a Git SCM source.
                 git {
