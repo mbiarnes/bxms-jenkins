@@ -79,8 +79,6 @@ def jobDefinition = job("${PRODUCT_NAME}-export-openshift-images") {
     parameters {
 
         // Defines a simple text parameter, where users can enter a string value.
-        stringParam(parameterName = "openshift_image_version", defaultValue = "1.0.Beta01" , description = "Input the bxms 7 openshift image version to export")
-        stringParam(parameterName = "product_version", defaultValue = "7.0.0.Beta01" , description = "Product Version looks like 7.0.0.Beta01")
         booleanParam(parameterName = "skipDocker", defaultValue = false , description = "Skip package Openshift Image")
     }
     
