@@ -24,22 +24,6 @@ def jobDefinition = job("${PRODUCT_NAME}-stage-bxms-patch") {
     // Sets a description for the job.
     description("This job is responsible for staging the Brew release deliverables to the RCM staging area.")
 
-    // Allows to parameterize the job.
-    parameters {
-
-        // Defines a simple text parameter, where users can enter a string value.
-        stringParam(parameterName = "name", defaultValue = null, description = "Brew task name")
-
-        // Defines a simple text parameter, where users can enter a string value.
-        stringParam(parameterName = "version", defaultValue = null, description = "Brew task version")
-
-        // Defines a simple text parameter, where users can enter a string value.
-        stringParam(parameterName = "release", defaultValue = null, description = "Brew task release")
-
-        // Defines a simple text parameter, where users can enter a string value.
-        stringParam(parameterName = "task_id", defaultValue = null, description = "Brew task id")
-    }
-
     // Adds build steps to the jobs.
     steps {
 

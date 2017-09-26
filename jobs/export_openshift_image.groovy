@@ -37,11 +37,10 @@ then
 #Clean  docker images
 for i in $(docker images -q);do docker rmi $i; done
 
-openshift_image_version=1.0.${openshift_image_version_suffix}
 #Download image config/sources
-wget https://github.com/jboss-openshift/application-templates/archive/bpmsuite70-${openshift_image_version}.zip ;unzip -j bpmsuite70-${openshift_image_version}.zip */bpmsuite/* -d application-template;rm -f bpmsuite*.zip;
-wget https://github.com/jboss-container-images/jboss-bpmsuite-7-image/archive/bpmsuite70-${openshift_image_version}.zip; unzip bpmsuite70-${openshift_image_version}.zip;mv jboss-bpmsuite-7-image-bpmsuite70-${openshift_image_version} standalone-image-source; rm -f bpmsuite70-*.zip; 
-wget https://github.com/jboss-container-images/jboss-bpmsuite-7-openshift-image/archive/bpmsuite70-${openshift_image_version}.zip; unzip bpmsuite70-${openshift_image_version}.zip;mv jboss-bpmsuite-7-openshift-image-bpmsuite70-${openshift_image_version} openshift-image-source;rm -f bpmsuite70-*.zip;
+wget https://github.com/jboss-openshift/application-templates/archive/bpmsuite70-wip.zip ;unzip -j bpmsuite70-wip.zip */bpmsuite/* -d application-template;rm -f bpmsuite*.zip;
+wget https://github.com/jboss-container-images/jboss-bpmsuite-7-image/archive/bpmsuite70-dev.zip; unzip bpmsuite70-dev.zip;mv jboss-bpmsuite-7-image-bpmsuite70-dev standalone-image-source; rm -f bpmsuite70-*.zip; 
+wget https://github.com/jboss-container-images/jboss-bpmsuite-7-openshift-image/archive/bpmsuite70-dev.zip; unzip bpmsuite70-dev.zip;mv jboss-bpmsuite-7-openshift-image-bpmsuite70-dev openshift-image-source;rm -f bpmsuite70-*.zip;
 
 if ! wget http://git.app.eng.bos.redhat.com/git/integration-platform-config.git/plain/brms-release/bpmsuite-image-stream.json -P application-template/
 then
@@ -63,8 +62,8 @@ docker pull ${docker_registry}/jboss-bpmsuite-7/bpmsuite70-businesscentral-monit
 docker save ${docker_registry}/jboss-bpmsuite-7/bpmsuite70-businesscentral-monitoring-openshift:${openshift_image_version} >bpmsuite70-businesscentral-monitoring-openshift-${openshift_image_version}.tar
 
 cd ..
-zip -5 -r  jboss-bpmsuite-${product_version}${openshift_image_version_suffix}-openshift.zip jboss-bpmsuite-${product_version}${openshift_image_version_suffix}-openshift/
-md5sum jboss-bpmsuite-${product_version}${openshift_image_version_suffix}-openshift.zip >jboss-bpmsuite-${product_version}${openshift_image_version_suffix}-openshift.zip.md5
+zip -5 -r  jboss-bpmsuite-${product_version}${product_deliver_version}-openshift.zip jboss-bpmsuite-${product_version}${openshift_image_version_suffix}-openshift/
+md5sum jboss-bpmsuite-${product_version}${product_deliver_version}-openshift.zip >jboss-bpmsuite-${product_version}${product_deliver_version}-openshift.zip.md5
 fi
 '''
 
