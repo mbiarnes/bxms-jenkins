@@ -6,7 +6,7 @@ job('bxms-ci-message-monitor'){
   triggers{
     ciBuildTrigger {
         selector("label='bxms-ci'")
-        providerName('default')
+        providerName('CI Publish')
     }
   }
 

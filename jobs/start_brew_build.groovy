@@ -14,12 +14,13 @@ print re.match('^.*(https.*\\d+).*\$', '\$brewchain_build_url').group(1)
 echo "Brewchain Build URL: \$brewchain_build_url"
 
 sed -i '/^brewchain_build_url=/d' ${CI_PROPERTIES_FILE} && echo "brewchain_build_url=\$brewchain_build_url" >>${CI_PROPERTIES_FILE}
+sed -i '/^brew_status=/d' ${CI_PROPERTIES_FILE} && echo "brew_status=running" >>${CI_PROPERTIES_FILE}
 ip-tooling/jira_helper.py -c ${IP_CONFIG_FILE} -a "Brew chainbuild is trigger at:\${brewchain_build_url}" -f
 
 """
 
 // Creates or updates a free style job.
-def jobDefinition = job("${PRODUCT_NAME}-start-brew-build") {
+def jobDefinition = job("${RELEASE_CODE}-start-brew-build") {
 
     // Sets a description for the job.
     description("This job is responsible for initialising the Brew chain build.")
@@ -32,5 +33,5 @@ def jobDefinition = job("${PRODUCT_NAME}-start-brew-build") {
     }
 }
 
-JobTemplate.addCommonConfiguration(jobDefinition, CI_PROPERTIES_FILE, PRODUCT_NAME)
+JobTemplate.addCommonConfiguration(jobDefinition, CI_PROPERTIES_FILE, RELEASE_CODE)
 JobTemplate.addIpToolingScmConfiguration(jobDefinition)

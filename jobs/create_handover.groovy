@@ -15,13 +15,13 @@ if [ \${release_type} != "intpack" ] || [ \$release_type != "patch" ] ;then
     if [ -f \${bpms_pvt_report_basename}.html ];then
         cp \${bpms_pvt_report_basename}.html \${release_prefix}-release/\${release_prefix}-pvt-report-bpms.html
     fi
-    git add \${release_prefix}-release/\${release_prefix}-pvt-report*.html
+    git add .
 fi
 
 #sed -i 's/releaseci_trigger=true/releaseci_trigger=false/g' \${release_prefix}.cfg
 commit_msg="Prepare handover PR \${product_name} \${product_version} \${release_milestone}"
 
-git commit -a -m "\${commit_msg}"
+git commit -m "\${commit_msg}"
 git push origin HEAD:refs/for/master 2>&1| tee b.log 
 
 handover_pr=`grep "\${commit_msg}" b.log`
@@ -35,7 +35,7 @@ sed -i '/^handover_pr=/d' ${CI_PROPERTIES_FILE} && echo "handover_pr=\$handover_
 echo "JOB DONE"
 """
 // Creates or updates a free style job.
-def jobDefinition = job("${PRODUCT_NAME}-create-handover") {
+def jobDefinition = job("${RELEASE_CODE}-create-handover") {
 
     // Sets a description for the job.
     description("This job creates the handover report and pushes it to the staging area.")
@@ -59,7 +59,7 @@ def jobDefinition = job("${PRODUCT_NAME}-create-handover") {
                 // Adds a target server.
                 verbose(true)
 
-                if (PRODUCT_NAME == "intpack-fuse63-bxms64") {
+                if (RELEASE_CODE == "intpack-fuse63-bxms64") {
 
                     transferSet {
 
@@ -105,5 +105,5 @@ def jobDefinition = job("${PRODUCT_NAME}-create-handover") {
     }
 }
 
-JobTemplate.addCommonConfiguration(jobDefinition, CI_PROPERTIES_FILE, PRODUCT_NAME)
+JobTemplate.addCommonConfiguration(jobDefinition, CI_PROPERTIES_FILE, RELEASE_CODE)
 JobTemplate.addIpToolingScmConfiguration(jobDefinition)

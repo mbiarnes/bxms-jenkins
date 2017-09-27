@@ -20,7 +20,7 @@ ip-tooling/jira_helper.py -c ${IP_CONFIG_FILE} -a "QE full test is triggered by 
 """
 
 // Creates or updates a free style job.
-def jobDefinition = job("${PRODUCT_NAME}-trigger-qe-handover-test") {
+def jobDefinition = job("${RELEASE_CODE}-trigger-qe-handover-test") {
 
     // Sets a description for the job.
     description("This job is responsible for triggering QE handover test.")
@@ -31,11 +31,12 @@ def jobDefinition = job("${PRODUCT_NAME}-trigger-qe-handover-test") {
         shell(shellScript)
         // Sends JMS message.
         ciMessageBuilder {
-            overrides{
-                topic("Custom")
+            overrides {
+                topic("default")
             }
+
             // JMS selector to choose messages that will fire the trigger.
-            providerName("default")
+            providerName("CI Publish")
 
             // Type of CI message to be sent.
             messageType("Custom")
@@ -51,5 +52,5 @@ def jobDefinition = job("${PRODUCT_NAME}-trigger-qe-handover-test") {
     }
 }
 
-JobTemplate.addCommonConfiguration(jobDefinition, CI_PROPERTIES_FILE, PRODUCT_NAME)
+JobTemplate.addCommonConfiguration(jobDefinition, CI_PROPERTIES_FILE, RELEASE_CODE)
 JobTemplate.addIpToolingScmConfiguration(jobDefinition)

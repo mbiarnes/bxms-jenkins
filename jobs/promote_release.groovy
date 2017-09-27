@@ -1,9 +1,19 @@
 import org.jboss.bxms.jenkins.JobTemplate
+
+String shellScript = """
+sed -i 's/release_status=/release_status=closed/g' ${CI_PROPERTIES_FILE}
+sed -i '/^release_status=/d' ${CI_PROPERTIES_FILE} && echo "release_status=closed" >>${CI_PROPERTIES_FILE}
+"""
 // Creates or updates a free style job.
-def jobDefinition = job("${PRODUCT_NAME}-promote-release") {
+def jobDefinition = job("${RELEASE_CODE}-promote-release") {
 
     // Sets a description for the job.
     description("This job is responsible for uploading release to candidate area.")
+    steps {
+
+        // Runs a shell script (defaults to sh, but this is configurable) for building the project.
+        shell(shellScript)
+    }
     triggers{
         gerrit{
 
@@ -50,4 +60,4 @@ def jobDefinition = job("${PRODUCT_NAME}-promote-release") {
     }
 }
 
-JobTemplate.addCommonConfiguration(jobDefinition, CI_PROPERTIES_FILE, PRODUCT_NAME)
+JobTemplate.addCommonConfiguration(jobDefinition, CI_PROPERTIES_FILE, RELEASE_CODE)

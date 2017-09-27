@@ -5,7 +5,7 @@ echo "Done"
 """
 def report_string = '''{"SuccessfulJobs":{"BxMS/BxMS-prod-6.4/smoke-prod/bpms-prod-6.4-blessed-business-central-smoke-container":"SUCCESS","BxMS/BxMS-prod-6.4/smoke-prod/bpms-prod-6.4-blessed-business-central-smoke-db":"SUCCESS","BxMS/BxMS-prod-6.4/smoke-prod/bpms-prod-6.4-blessed-business-central-smoke-was":"SUCCESS","BxMS/BxMS-prod-6.4/smoke-prod/bpms-prod-6.4-blessed-business-central-smoke-wls":"SUCCESS","BxMS/BxMS-prod-6.4/smoke-prod/bpms-prod-6.4-blessed-dashbuilder-smoke-container":"SUCCESS","BxMS/BxMS-prod-6.4/smoke-prod/bpms-prod-6.4-blessed-dashbuilder-smoke-was":"SUCCESS","BxMS/BxMS-prod-6.4/smoke-prod/bpms-prod-6.4-blessed-integration-smoke-container":"SUCCESS","BxMS/BxMS-prod-6.4/smoke-prod/bpms-prod-6.4-blessed-quickstarts-smoke":"SUCCESS","BxMS/BxMS-prod-6.4/smoke-prod/bpms-prod-6.4-blessed-united-exec-servers-smoke":"SUCCESS","BxMS/BxMS-prod-6.4/smoke-prod/bpms-prod-6.4-blessed-wb-rest-smoke-container":"SUCCESS","BxMS/BxMS-prod-6.4/smoke-prod/bpms-prod-6.4-blessed-wb-rest-smoke-wls":"SUCCESS","BxMS/BxMS-prod-6.4/smoke-prod/brms-prod-6.4-blessed-bre-smoke":"SUCCESS","BxMS/BxMS-prod-6.4/smoke-prod/brms-prod-6.4-blessed-business-central-smoke-container":"SUCCESS","BxMS/BxMS-prod-6.4/smoke-prod/brms-prod-6.4-blessed-business-central-smoke-was":"SUCCESS","BxMS/BxMS-prod-6.4/smoke-prod/brms-prod-6.4-blessed-business-central-smoke-wls":"SUCCESS","BxMS/BxMS-prod-6.4/smoke-prod/brms-prod-6.4-blessed-quickstarts-smoke":"SUCCESS","BxMS/BxMS-prod-6.4/smoke-prod/brms-prod-6.4-blessed-wb-rest-smoke-was":"SUCCESS","BxMS/BxMS-prod-6.4/smoke-prod/bxms-prod-6.4-blessed-inc-maven-repo-testsuite-smoke":"SUCCESS","BxMS/BxMS-prod-6.4/smoke-prod/bxms-prod-6.4-blessed-maven-repo-testsuite-smoke":"SUCCESS"},"UnsuccessfulJobs":{"BxMS/BxMS-prod-6.4/smoke-prod/bpms-prod-6.4-blessed-clustering-smoke":"FAILURE","BxMS/BxMS-prod-6.4/smoke-prod/bpms-prod-6.4-blessed-dashbuilder-smoke-db":"UNSTABLE","BxMS/BxMS-prod-6.4/smoke-prod/brms-prod-6.4-blessed-exec-server-smoke-container":"FAILURE","BxMS/BxMS-prod-6.4/smoke-prod/brms-prod-6.4-blessed-wb-rest-smoke-container":"FAILURE"},"Statistics":{"TotaBuildRuns":23,"SuccessfulBuilds":19,"UnsuccessfulBuilds":4}}'''
 // Creates or updates a free style job.
-def jobDefinition = job("${PRODUCT_NAME}-mock-qe-smoketest-report") {
+def jobDefinition = job("${RELEASE_CODE}-mock-qe-smoketest-report") {
 
     // Sets a description for the job.
     description("This job is responsible for mocking a CI message triggered returned the smoketest result from QE.")
@@ -16,12 +16,12 @@ def jobDefinition = job("${PRODUCT_NAME}-mock-qe-smoketest-report") {
 
         // Sends JMS message.
         ciMessageBuilder {
-            overrides{
-                topic("Custom")
+            overrides {
+                topic("default")
             }
 
             // JMS selector to choose messages that will fire the trigger.
-            providerName("default")
+            providerName("CI Publish")
 
             // Type of CI message to be sent.
             messageType("Custom")
@@ -37,5 +37,5 @@ def jobDefinition = job("${PRODUCT_NAME}-mock-qe-smoketest-report") {
     }
 }
 
-JobTemplate.addCommonConfiguration(jobDefinition, CI_PROPERTIES_FILE, PRODUCT_NAME)
+JobTemplate.addCommonConfiguration(jobDefinition, CI_PROPERTIES_FILE, RELEASE_CODE)
 JobTemplate.addIpToolingScmConfiguration(jobDefinition)

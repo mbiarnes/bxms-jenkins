@@ -5,7 +5,7 @@ sed "/redhat-/d" /tmp/mead_check.log
 echo "JOB DONE"
 """
 // Creates or updates a free style job.
-def jobDefinition = job("${PRODUCT_NAME}-locate-import-list") {
+def jobDefinition = job("${RELEASE_CODE}-locate-import-list") {
 
     // Sets a description for the job.
     description("This job is responsible for finding brew missing jars.")
@@ -24,5 +24,5 @@ def jobDefinition = job("${PRODUCT_NAME}-locate-import-list") {
     }
 }
 
-JobTemplate.addCommonConfiguration(jobDefinition, CI_PROPERTIES_FILE, PRODUCT_NAME)
+JobTemplate.addCommonConfiguration(jobDefinition, CI_PROPERTIES_FILE, RELEASE_CODE)
 JobTemplate.addIpToolingScmConfiguration(jobDefinition)

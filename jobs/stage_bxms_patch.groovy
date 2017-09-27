@@ -22,7 +22,7 @@ sed -e "s=\${rcm_staging_base}/\${brms_staging_folder}=\${rcm_candidate_base}/\$
 """
 
 // Creates or updates a free style job.
-def jobDefinition = job("${PRODUCT_NAME}-stage-bxms-patch") {
+def jobDefinition = job("${RELEASE_CODE}-stage-bxms-patch") {
 
     // Sets a description for the job.
     description("This job is responsible for staging the Brew release deliverables to the RCM staging area.")
@@ -97,5 +97,5 @@ def jobDefinition = job("${PRODUCT_NAME}-stage-bxms-patch") {
     }
 }
 
-JobTemplate.addCommonConfiguration(jobDefinition, CI_PROPERTIES_FILE, PRODUCT_NAME)
+JobTemplate.addCommonConfiguration(jobDefinition, CI_PROPERTIES_FILE, RELEASE_CODE)
 JobTemplate.addIpToolingScmConfiguration(jobDefinition)

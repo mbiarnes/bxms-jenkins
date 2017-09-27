@@ -44,7 +44,7 @@ generate_release_notes ${bpms_release_notes_path} "${bpms_jql_cve_search}" "${bp
 '''
 
 // Creates or updates a free style job.
-def jobDefinition = job("${PRODUCT_NAME}-release-notes") {
+def jobDefinition = job("${RELEASE_CODE}-release-notes") {
 
     // Sets a description for the job.
     description("This job is responsible for generating a html release description.")
@@ -89,5 +89,5 @@ def jobDefinition = job("${PRODUCT_NAME}-release-notes") {
     }
 }
 
-JobTemplate.addCommonConfiguration(jobDefinition, CI_PROPERTIES_FILE, PRODUCT_NAME)
+JobTemplate.addCommonConfiguration(jobDefinition, CI_PROPERTIES_FILE, RELEASE_CODE)
 JobTemplate.addIpToolingScmConfiguration(jobDefinition)

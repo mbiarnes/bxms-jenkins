@@ -32,7 +32,7 @@ zip -r sources.zip src/
 """
 
 // Creates or updates a free style job.
-def jobDefinition = job("${PRODUCT_NAME}-generate-sources") {
+def jobDefinition = job("${RELEASE_CODE}-generate-sources") {
 
     // Sets a description for the job.
     description("This job is responsible for generating product sources.")
@@ -95,5 +95,5 @@ def jobDefinition = job("${PRODUCT_NAME}-generate-sources") {
     }
 }
 
-JobTemplate.addCommonConfiguration(jobDefinition, CI_PROPERTIES_FILE, PRODUCT_NAME)
+JobTemplate.addCommonConfiguration(jobDefinition, CI_PROPERTIES_FILE, RELEASE_CODE)
 JobTemplate.addIpToolingScmConfiguration(jobDefinition)

@@ -12,7 +12,7 @@ Kind regards,
 BxMS Prod Team"""
 
 // Creates or updates a free style job.
-def jobDefinition = job("${PRODUCT_NAME}-send-handover-mail") {
+def jobDefinition = job("${RELEASE_CODE}-send-handover-mail") {
 
     // Sets a description for the job.
     description("This job is responsible for sending handover email to the team.")
@@ -41,4 +41,4 @@ def jobDefinition = job("${PRODUCT_NAME}-send-handover-mail") {
     }
 }
 
-JobTemplate.addCommonConfiguration(jobDefinition, CI_PROPERTIES_FILE, PRODUCT_NAME)
+JobTemplate.addCommonConfiguration(jobDefinition, CI_PROPERTIES_FILE, RELEASE_CODE)

@@ -11,7 +11,7 @@ sed -i '/^resolve_issue_list=/d' ${CI_PROPERTIES_FILE} \
 """
 
 // Creates or updates a free style job.
-def jobDefinition = job("${PRODUCT_NAME}-update-product-jira") {
+def jobDefinition = job("${RELEASE_CODE}-update-product-jira") {
 
     // Sets a description for the job.
     description("This job is responsible for updating the community JIRA tickets associated with this release.")
@@ -24,5 +24,5 @@ def jobDefinition = job("${PRODUCT_NAME}-update-product-jira") {
     }
 }
 
-JobTemplate.addCommonConfiguration(jobDefinition, CI_PROPERTIES_FILE, PRODUCT_NAME)
+JobTemplate.addCommonConfiguration(jobDefinition, CI_PROPERTIES_FILE, RELEASE_CODE)
 JobTemplate.addIpToolingScmConfiguration(jobDefinition)

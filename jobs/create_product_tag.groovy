@@ -47,7 +47,7 @@ fi
 """
 
 // Creates or updates a free style job.
-def jobDefinition = job("${PRODUCT_NAME}-create-product-tag") {
+def jobDefinition = job("${RELEASE_CODE}-create-product-tag") {
 
     // Sets a description for the job.
     description("This job is responsible for creating the product milestone tags for this release in the format of ProductVersion.Milestone.")
@@ -68,5 +68,5 @@ def jobDefinition = job("${PRODUCT_NAME}-create-product-tag") {
     }
 }
 
-JobTemplate.addCommonConfiguration(jobDefinition, CI_PROPERTIES_FILE, PRODUCT_NAME, "bxms-nightly")
+JobTemplate.addCommonConfiguration(jobDefinition, CI_PROPERTIES_FILE, RELEASE_CODE, "bxms-nightly")
 JobTemplate.addIpToolingScmConfiguration(jobDefinition)

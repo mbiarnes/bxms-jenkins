@@ -41,7 +41,7 @@ fi
 """
 
 // Creates or updates a free style job.
-def jobDefinition = job("${PRODUCT_NAME}-stage-brew-build") {
+def jobDefinition = job("${RELEASE_CODE}-stage-brew-build") {
 
     // Sets a description for the job.
     description("This job is responsible for staging the Brew release deliverables to the RCM staging area.")
@@ -73,7 +73,7 @@ def jobDefinition = job("${PRODUCT_NAME}-stage-brew-build") {
             // Adds a target server.
             server('publish server') {
 
-                if (PRODUCT_NAME == "intpack-fuse63-bxms64") {
+                if (RELEASE_CODE == "intpack-fuse63-bxms64") {
 
                     // Adds a target server.
                     verbose(true)
@@ -166,5 +166,5 @@ def jobDefinition = job("${PRODUCT_NAME}-stage-brew-build") {
     }
 }
 
-JobTemplate.addCommonConfiguration(jobDefinition, CI_PROPERTIES_FILE, PRODUCT_NAME)
+JobTemplate.addCommonConfiguration(jobDefinition, CI_PROPERTIES_FILE, RELEASE_CODE)
 JobTemplate.addIpToolingScmConfiguration(jobDefinition)

@@ -5,7 +5,7 @@ kinit -k -t \${HOME}/bxms-release.keytab bxms-release/prod-ci@REDHAT.COM
 ip-tooling/jira_helper.py -c ${IP_CONFIG_FILE} -a "QE smoketest is triggered by CI message. Build URL:\${qe_smoketest_job_url}" -f
 """
 // Creates or updates a free style job.
-def jobDefinition = job("${PRODUCT_NAME}-trigger-qe-smoke-test") {
+def jobDefinition = job("${RELEASE_CODE}-trigger-qe-smoke-test") {
 
     // Sets a description for the job.
     description("This job is responsible for triggering QE smoke test.")
@@ -16,12 +16,12 @@ def jobDefinition = job("${PRODUCT_NAME}-trigger-qe-smoke-test") {
 
         // Sends JMS message.
         ciMessageBuilder {
-            overrides{
-                topic("Custom")
+            overrides {
+                topic("default")
             }
 
             // JMS selector to choose messages that will fire the trigger.
-            providerName("default")
+            providerName("CI Publish")
 
             // Type of CI message to be sent.
             messageType("Custom")
@@ -37,5 +37,5 @@ def jobDefinition = job("${PRODUCT_NAME}-trigger-qe-smoke-test") {
     }
 }
 
-JobTemplate.addCommonConfiguration(jobDefinition, CI_PROPERTIES_FILE, PRODUCT_NAME)
+JobTemplate.addCommonConfiguration(jobDefinition, CI_PROPERTIES_FILE, RELEASE_CODE)
 JobTemplate.addIpToolingScmConfiguration(jobDefinition)

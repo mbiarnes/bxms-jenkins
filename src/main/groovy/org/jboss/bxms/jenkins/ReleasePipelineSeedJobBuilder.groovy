@@ -8,7 +8,7 @@ import javaposse.jobdsl.dsl.Job
  */
 class ReleasePipelineSeedJobBuilder {
 
-    String product_name
+    String release_code
     String ci_properties_file
     String cfg_file
     String ip_makefile
@@ -17,9 +17,9 @@ class ReleasePipelineSeedJobBuilder {
     String repo_builder_script
 
     Job build(DslFactory dslFactory) {
-        dslFactory.folder(product_name + "-release-pipeline")
-        dslFactory.job(product_name + "-release-pipeline/z-" + product_name + "-release-pipeline-seed") {
-            it.description "This job is a seed job for generating " + product_name + "release pipeline. To change the  parameter of the release pipeline, Please go to streams/product_name/env.properties"
+        dslFactory.folder(release_code + "-release-pipeline")
+        dslFactory.job(release_code + "-release-pipeline/z-" + release_code + "-release-pipeline-seed") {
+            it.description "This job is a seed job for generating " + release_code + "release pipeline. To change the  parameter of the release pipeline, Please go to streams/release_code/env.properties"
             logRotator {
                 numToKeep 8
             }
@@ -27,7 +27,7 @@ class ReleasePipelineSeedJobBuilder {
             environmentVariables {
 
                 // The name of the product, e.g., bxms64.
-                env("PRODUCT_NAME", product_name)
+                env("RELEASE_CODE", release_code)
 
                 // Release pipeline CI properties file
                 env("CI_PROPERTIES_FILE",ci_properties_file)
@@ -61,7 +61,7 @@ class ReleasePipelineSeedJobBuilder {
 
             steps {
                 dsl {
-                    external 'streams/' + product_name + '/*.groovy'
+                    external 'streams/' + release_code + '/*.groovy'
                     additionalClasspath 'src/main/groovy'
                     // Specifies the action to be taken for job that have been removed from DSL scripts.
                     lookupStrategy 'SEED_JOB'

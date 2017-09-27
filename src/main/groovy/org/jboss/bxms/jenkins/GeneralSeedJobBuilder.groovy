@@ -13,7 +13,7 @@ class GeneralSeedJobBuilder {
     Job build(DslFactory dslFactory) {
         dslFactory.folder(stream_name)
         dslFactory.job(stream_name +"/z-" + stream_name+ "-seed") {
-            it.description "This job is a seed job for generating " + stream_name + "release pipeline. To change the  parameter of the release pipeline, Please go to streams/product_name/env.properties"
+            it.description "This job is a seed job for generating " + stream_name + "release pipeline. To change the  parameter of the release pipeline, Please go to streams/release_code/env.properties"
             logRotator {
                 numToKeep 8
             }

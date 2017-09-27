@@ -1,5 +1,8 @@
 import org.jboss.bxms.jenkins.JobTemplate
 String shellScript = """
+if [ "\$release_status" = "closed" ];then
+        return 0
+fi
 wget \${brms_staging_properties_url} -O \${brms_staging_properties_name} 
 wget \${brms_candidate_properties_url} -O \${brms_candidate_properties_name}
 
@@ -67,7 +70,7 @@ validateProperties('\${brms_candidate_properties_name}', 'candidates')
 "
 """
 // Creates or updates a free style job.
-def jobDefinition = job("${PRODUCT_NAME}-verify-deliverable-properties") {
+def jobDefinition = job("${RELEASE_CODE}-verify-deliverable-properties") {
 
     // Sets a description for the job.
     description("This job is responsible for uploading release to candidate area.")
@@ -88,12 +91,12 @@ def jobDefinition = job("${PRODUCT_NAME}-verify-deliverable-properties") {
                     'serverName' 'code.engineering.redhat.com'
                 }
                 triggers/'gerritProjects'/'com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.data.GerritProject'/'filePaths'/'com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.data.FilePath' << {
-                    'compareType' 'REG_EXP'
-                    'pattern' '.*-release/.*-handover.adoc'
+                    "compareType" "REG_EXP"
+                    "pattern" RELEASE_CODE + "-release/.*-handover.adoc"
                 }
             }
         }
     }
 }
 
-JobTemplate.addCommonConfiguration(jobDefinition, CI_PROPERTIES_FILE, PRODUCT_NAME)
+JobTemplate.addCommonConfiguration(jobDefinition, CI_PROPERTIES_FILE, RELEASE_CODE)

@@ -26,7 +26,7 @@ class JenkinsStandaloneJobBuilder {
     String release_code
     String job_type
     String job_name
-    Map<String, String> maven_repo_map=["bxms-64":"/jboss-prod/m2/bxms-6.4-", "brms-70LA":"/jboss-prod/m2/bxms-7-", "brms":"/jboss-prod/m2/bxms-7-", "bxms-test":"/jboss-prod/m2/bxms-7-"]
+    Map<String, String> maven_repo_map=["brms-64":"/jboss-prod/m2/bxms-6.4-", "brms-70LA":"/jboss-prod/m2/bxms-7-", "brms":"/jboss-prod/m2/bxms-7-", "bxms-test":"/jboss-prod/m2/bxms-7-"]
 
     Job build(DslFactory dslFactory) {
         String urlString ="https://code.engineering.redhat.com/gerrit/gitweb?p=integration-platform-config.git;a=blob_plain;f=" + release_code + ".cfg"
@@ -37,7 +37,7 @@ class JenkinsStandaloneJobBuilder {
 
         dslFactory.folder(job_name + "-jenkins-" + job_type + "-pipeline")
         String maven_repo = maven_repo_map [release_code] + job_type
-        String _cfg = release_code + ".cfg"
+        String _cfg = null + ".cfg"
 
         for (String section_name : sections.keySet())
         {

@@ -70,7 +70,7 @@ fi
 '''
 
 // Creates or updates a free style job.
-def jobDefinition = job("${PRODUCT_NAME}-export-openshift-images") {
+def jobDefinition = job("${RELEASE_CODE}-export-openshift-images") {
 
     // Sets a description for the job.
     description("This job is responsible for exporting openshift images to zip files.")
@@ -128,6 +128,6 @@ def jobDefinition = job("${PRODUCT_NAME}-export-openshift-images") {
     }
 
 }
-JobTemplate.addCommonConfiguration(jobDefinition, CI_PROPERTIES_FILE, PRODUCT_NAME)
+JobTemplate.addCommonConfiguration(jobDefinition, CI_PROPERTIES_FILE, RELEASE_CODE)
 
 

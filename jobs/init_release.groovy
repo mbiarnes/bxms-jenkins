@@ -11,7 +11,7 @@ function appendProp() {
         echo "Properties value is empty"
         exit 1
     fi
-    sed -i '/^\$1/d' ${CI_PROPERTIES_FILE} && echo "\$1=\$2" >> ${CI_PROPERTIES_FILE}
+    sed -i "/^\$1/d" ${CI_PROPERTIES_FILE} && echo "\$1=\$2" >> ${CI_PROPERTIES_FILE}
 }
 if [ "\${CLEAN_CONFIG}" = "true" ];then
     rm -vf /jboss-prod/config/\${release_prefix}-*.*
@@ -56,10 +56,10 @@ appendProp "release_jira_id" \$jira_id
 """
 
 // Creates or updates a free style job.
-def jobDefinition = job("${PRODUCT_NAME}-init-release") {
+def jobDefinition = job("${RELEASE_CODE}-init-release") {
 
     // Sets a description for the job.
-    description("This is the ${PRODUCT_NAME} release initialization job. This job is responsible for preparation of ${CI_PROPERTIES_FILE} file.")
+    description("This is the ${RELEASE_CODE} release initialization job. This job is responsible for preparation of ${CI_PROPERTIES_FILE} file.")
     parameters {
 
         // Defines a simple text parameter, where users can enter a string value.

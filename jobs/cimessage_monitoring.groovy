@@ -2,6 +2,8 @@ import org.jboss.bxms.jenkins.JobTemplate
 
 def shellScript = """# Disable bash tracking mode, too much noise.
 set -x
+
+echo \$target
 echo \$CI_TYPE
 echo \$CI_NAME
 echo "++++++++++++++++++++++++++++++++++++++"
@@ -16,33 +18,45 @@ function appendProp() {
 }
 kinit -k -t \${HOME}/bxms-release.keytab bxms-release/prod-ci@REDHAT.COM
 if [ "\$CI_TYPE" = "brew-tag" ];then
+        if [ "\$brew_status" != "running" ];then
+                exit 0
+        fi
+        
+        brew_tag_name=`echo \$CI_MESSAGE| python -c "import sys, json; print json.load(sys.stdin)['tag']['name']"` 1>/dev/null 
+        if [ "\$brew_tag_name" != "\$brew_tag" ];then
+            exit 0
+        fi        
         version=`echo \$CI_MESSAGE| python -c "import sys, json; print json.load(sys.stdin)['build']['version']"` 1>/dev/null
         release=`echo \$CI_MESSAGE| python -c "import sys, json; print json.load(sys.stdin)['build']['release']"` 1>/dev/null
         task_id=`echo \$CI_MESSAGE| python -c "import sys, json; print json.load(sys.stdin)['build']['task_id']"` 1>/dev/null
         nvr=`echo \$CI_MESSAGE| python -c "import sys, json; print json.load(sys.stdin)['build']['nvr']"` 1>/dev/null
-    if [ "\$CI_NAME" = "org.jboss.ip-brms-bpmsuite-assembly" ];then
-        product_assembly_maven_repo_url="http://download.eng.bos.redhat.com/brewroot/packages/\${name}/\${version}/\${release}/maven/"
-        product_assembly_brew_url="https://brewweb.engineering.redhat.com/brew/taskinfo?taskID=\${task_id}"
-        product_nvr="\$nvr"
-        appendProp "product_assembly_maven_repo_url" \$product_assembly_maven_repo_url
-        appendProp "product_assembly_brew_url" \$product_assembly_brew_url
-        appendProp "product_nvr" \$product_nvr
-        ip-tooling/jira_helper.py -c ${IP_CONFIG_FILE} -a "Product Assembly Build Completed: \$product_assembly_brew_url Build nvr: \$product_nvr " -f
-        
-    elif [ "\$CI_NAME" = "org.jboss.brms-bpmsuite.patching-patching-tools-parent" ];then
-        bxms_patch_maven_repo_url="http://download.eng.bos.redhat.com/brewroot/packages/\${name}/\${version}/\${release}/maven/"
-        bxms_patch_brew_url="https://brewweb.engineering.redhat.com/brew/taskinfo?taskID=\${task_id}"
-        bxms_patch_nvr="\$nvr"
-        appendProp "bxms_patch_maven_repo_url" \$bxms_patch_maven_repo_url
-        appendProp "bxms_patch_maven_repo_url" \$bxms_patch_maven_repo_url
-        appendProp "bxms_patch_nvr" \$bxms_patch_nvr
-        ip-tooling/jira_helper.py -c ${IP_CONFIG_FILE} -a "Patch Brew Build Completed: \$bxms_patch_brew_url nvr:\$bxms_patch_nvr " -f
-    elif [ "\$CI_NAME" = "org.jboss.ip-bxms-maven-repo-root" ];then
-        #Trigger maven repo to build
-        echo "maven-repo-root build has been completed"
-        ip-tooling/jira_helper.py -c ${IP_CONFIG_FILE} -a "All brew build completed: \$brewchain_build_url. Ready to trigger maven repo build" -f
-    fi
+        if [ "\$CI_NAME" = "org.jboss.ip-brms-bpmsuite-assembly" ];then
+            product_assembly_maven_repo_url="http://download.eng.bos.redhat.com/brewroot/packages/\${name}/\${version}/\${release}/maven/"
+            product_assembly_brew_url="https://brewweb.engineering.redhat.com/brew/taskinfo?taskID=\${task_id}"
+            product_nvr="\$nvr"
+            appendProp "product_assembly_maven_repo_url" \$product_assembly_maven_repo_url
+            appendProp "product_assembly_brew_url" \$product_assembly_brew_url
+            appendProp "product_nvr" \$product_nvr
+            ip-tooling/jira_helper.py -c ${IP_CONFIG_FILE} -a "Product Assembly Build Completed: \$product_assembly_brew_url Build nvr: \$product_nvr " -f
+            
+        elif [ "\$CI_NAME" = "org.jboss.brms-bpmsuite.patching-patching-tools-parent" ];then
+            bxms_patch_maven_repo_url="http://download.eng.bos.redhat.com/brewroot/packages/\${name}/\${version}/\${release}/maven/"
+            bxms_patch_brew_url="https://brewweb.engineering.redhat.com/brew/taskinfo?taskID=\${task_id}"
+            bxms_patch_nvr="\$nvr"
+            appendProp "bxms_patch_maven_repo_url" \$bxms_patch_maven_repo_url
+            appendProp "bxms_patch_maven_repo_url" \$bxms_patch_maven_repo_url
+            appendProp "bxms_patch_nvr" \$bxms_patch_nvr
+            ip-tooling/jira_helper.py -c ${IP_CONFIG_FILE} -a "Patch Brew Build Completed: \$bxms_patch_brew_url nvr:\$bxms_patch_nvr " -f
+        elif [ "\$CI_NAME" = "org.jboss.ip-bxms-maven-repo-root" ];then
+            #Trigger maven repo to build
+            echo "maven-repo-root build has been completed"
+            appendProp "brew_status" "closed"
+            ip-tooling/jira_helper.py -c ${IP_CONFIG_FILE} -a "All brew build completed: \$brewchain_build_url. Ready to trigger maven repo build" -f
+        fi
 elif [ "\$label" = "bxms-ci" ];then
+    if [ "\$release_status" = "closed" ];then
+        exit 0
+    fi
     if [[ "\$CI_NAME" =~ smoketest-trigger\$ ]];then
         echo "Triggered by  bxms-prod ci message "
         echo "\$CI_MESSAGE" 
@@ -91,7 +105,7 @@ else
 fi
 """
 // Creates or updates a free style job.
-def jobDefinition = job("${PRODUCT_NAME}-monitoring-cimessage") {
+def jobDefinition = job("${RELEASE_CODE}-monitoring-cimessage") {
 
     // Adds build steps to the jobs.
     steps {
@@ -103,10 +117,10 @@ def jobDefinition = job("${PRODUCT_NAME}-monitoring-cimessage") {
     triggers{
         ciBuildTrigger {
             selector("label='bxms-ci' OR (CI_TYPE='brew-tag' AND ( CI_NAME='org.jboss.ip-bxms-maven-repo-root' OR label='bxms-ci' OR CI_NAME='org.jboss.ip-brms-bpmsuite-assembly' OR CI_NAME='org.jboss.brms-bpmsuite.patching-patching-tools-parent')) OR (new='FAILED' AND method='chainmaven' AND (target='jb-bxms-7.0-maven-candidate' OR target='jb-bxms-6.4-candidate'))")
-            providerName('default')
+            providerName('CI Publish')
         }
     }
 }
 
-JobTemplate.addCommonConfiguration(jobDefinition, CI_PROPERTIES_FILE, PRODUCT_NAME)
+JobTemplate.addCommonConfiguration(jobDefinition, CI_PROPERTIES_FILE, RELEASE_CODE)
 JobTemplate.addIpToolingScmConfiguration(jobDefinition)

@@ -9,7 +9,7 @@ String shellScript = """cd pvt
 """
 
 // Creates or updates a free style job.
-def jobDefinition = job("${PRODUCT_NAME}-pvt-test-brms") {
+def jobDefinition = job("${RELEASE_CODE}-pvt-test-brms") {
 
     // Sets a description for the job.
     description("This job is responsible for executing product validation tests.")
@@ -75,4 +75,4 @@ def jobDefinition = job("${PRODUCT_NAME}-pvt-test-brms") {
     // Adds post-build actions to the job.
 }
 
-JobTemplate.addCommonConfiguration(jobDefinition, CI_PROPERTIES_FILE, PRODUCT_NAME)
+JobTemplate.addCommonConfiguration(jobDefinition, CI_PROPERTIES_FILE, RELEASE_CODE)

@@ -94,7 +94,7 @@ kinit -k -t \${HOME}/bxms-release.keytab bxms-release/prod-ci@REDHAT.COM
 ip-tooling/jira_helper.py -c ${IP_CONFIG_FILE} -f -a "\${jira_comment}"
 """
 // Creates or updates a free style job.
-def jobDefinition = job("${PRODUCT_NAME}-send-review-notification-mail") {
+def jobDefinition = job("${RELEASE_CODE}-send-review-notification-mail") {
 
     // Sets a description for the job.
     description("This job is responsible for sending the PR review email to the team.")
@@ -116,7 +116,7 @@ def jobDefinition = job("${PRODUCT_NAME}-send-review-notification-mail") {
                 }
                 triggers/'gerritProjects'/'com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.data.GerritProject'/'filePaths'/'com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.data.FilePath' << {
                     'compareType' 'REG_EXP'
-                    'pattern' '.*-release/.*-handover.adoc'
+                    'pattern' "${RELEASE_CODE}-release/.*-handover.adoc"
                 }
             }
         }
@@ -152,4 +152,4 @@ def jobDefinition = job("${PRODUCT_NAME}-send-review-notification-mail") {
     }
 }
 JobTemplate.addIpToolingScmConfiguration(jobDefinition)
-JobTemplate.addCommonConfiguration(jobDefinition, CI_PROPERTIES_FILE, PRODUCT_NAME)
+JobTemplate.addCommonConfiguration(jobDefinition, CI_PROPERTIES_FILE, RELEASE_CODE)

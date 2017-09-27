@@ -3,7 +3,7 @@ import org.jboss.bxms.jenkins.JobTemplate
 // incremental repository
 def incrementalRepositoryString = null
 
-if (PRODUCT_NAME == "bxms64") {
+if (RELEASE_CODE == "bxms64") {
 
     incrementalRepositoryString = "http://rcm-guest.app.eng.bos.redhat.com/rcm-guest/staging/jboss-brms/BRMS-6.4.0.CR2/jboss-brms-bpmsuite-6.4.0.GA-maven-repository/maven-repository"
 
@@ -53,7 +53,7 @@ make CFG=${IP_CONFIG_FILE} MAVEN_REPOSITORY_BUILDER_SCRIPT=\${repository_builder
 """
 
 // Creates or updates a free style job.
-def jobDefinition = job("${PRODUCT_NAME}-maven-repository-build") {
+def jobDefinition = job("${RELEASE_CODE}-maven-repository-build") {
 
     // Sets a description for the job.
     description("This job is responsible for building the offline maven repository zip for MRRC.")
@@ -110,7 +110,7 @@ def jobDefinition = job("${PRODUCT_NAME}-maven-repository-build") {
                 verbose(true)
 
                 // Adds a transfer set.
-                if (PRODUCT_NAME == "intpack-fuse63-bxms64") {
+                if (RELEASE_CODE == "intpack-fuse63-bxms64") {
                     transferSet {
 
                         // Sets the files to upload to a server.
@@ -192,5 +192,5 @@ def jobDefinition = job("${PRODUCT_NAME}-maven-repository-build") {
     }
 }
 
-JobTemplate.addCommonConfiguration(jobDefinition, CI_PROPERTIES_FILE, PRODUCT_NAME)
+JobTemplate.addCommonConfiguration(jobDefinition, CI_PROPERTIES_FILE, RELEASE_CODE)
 JobTemplate.addIpToolingScmConfiguration(jobDefinition)
