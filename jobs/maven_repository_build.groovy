@@ -1,5 +1,13 @@
 import org.jboss.bxms.jenkins.JobTemplate
 
+// incremental repository
+def incrementalRepositoryString = null
+
+if (PRODUCT_NAME == "bxms64") {
+
+    incrementalRepositoryString = "http://rcm-guest.app.eng.bos.redhat.com/rcm-guest/staging/jboss-brms/BRMS-6.4.0.CR2/jboss-brms-bpmsuite-6.4.0.GA-maven-repository/maven-repository"
+
+}
 // Repository builder script
 def shellScript = """
 kinit -k -t \${HOME}/bxms-release.keytab bxms-release/prod-ci@REDHAT.COM
@@ -30,7 +38,7 @@ fi
 
 sed -e "s=\${rcm_staging_base}/\${brms_staging_folder}=\${rcm_candidate_base}/\${brms_product_name}=g" \
         -e "s=\${rcm_staging_base}/\${bpms_staging_folder}=\${rcm_candidate_base}/\${bpms_product_name}=g" \
-        \${brms_staging_properties_name} >> \${brms_candidate_properties_name}
+        \${brms_staging_properties_name} > \${brms_candidate_properties_name}
         
 make CFG=${IP_CONFIG_FILE} MAVEN_REPOSITORY_BUILDER_SCRIPT=\${repository_builder_script} -f \${makefile} repository
 #if [ "\$release_type" = "default" ];then
@@ -63,6 +71,10 @@ def jobDefinition = job("${PRODUCT_NAME}-maven-repository-build") {
         // Defines a simple boolean parameter.
         booleanParam(parameterName = "GEN_REPORT", defaultValue = true,
                 description = "Tick if you want to generate report for the newly created repository.")
+
+        // Defines a simple text parameter, where users can enter a string value.
+        stringParam(parameterName = "INCREMENTAL_REPO_FOR", defaultValue = incrementalRepositoryString,
+                description = "List of repositories to exclude. They can be online repository urls or online available zip files in format <url to the zip>:<relative path to repo root inside the zip<. Each repository is supposed to be put on a new line.")
 
     }
 

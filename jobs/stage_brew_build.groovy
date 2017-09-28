@@ -38,7 +38,7 @@ else
     
     sed -e "s=\${rcm_staging_base}/\${brms_staging_folder}=\${rcm_candidate_base}/\${brms_product_name}=g" \
         -e "s=\${rcm_staging_base}/\${bpms_staging_folder}=\${rcm_candidate_base}/\${bpms_product_name}=g" \
-        \${brms_staging_properties_name} >> \${brms_candidate_properties_name}
+        \${brms_staging_properties_name} > \${brms_candidate_properties_name}
 fi
 """
 
