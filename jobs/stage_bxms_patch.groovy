@@ -11,11 +11,14 @@ ip-tooling/maven-to-stage.py --version=\${product_artifact_version} --override-v
    --output \${brms_product_name}\
    --release-url=\${rcm_staging_base}/\${brms_staging_folder} --output-deliverable-list \${brms_staging_properties_name}
    
-ip-tooling/maven-to-staging.py --version=\${product_artifact_version} --override-version \${product_version} \
+ip-tooling/maven-to-stage.py --version=\${product_artifact_version} --override-version \${product_version} \
    --deliverable \${release_prefix}-release/bpmsuite-deliverable.properties --maven-repo \${bxms_patch_maven_repo_url} \
    --output \${bpms_product_name}\
    --release-url=\${rcm_staging_base}/\${bpms_staging_folder} --output-deliverable-list \${brms_staging_properties_name}
 
+sed -e "s=\${rcm_staging_base}/\${brms_staging_folder}=\${rcm_candidate_base}/\${brms_product_name}=g" \
+        -e "s=\${rcm_staging_base}/\${bpms_staging_folder}=\${rcm_candidate_base}/\${bpms_product_name}=g" \
+        \${brms_staging_properties_name} >> \${brms_candidate_properties_name}
 """
 
 // Creates or updates a free style job.
