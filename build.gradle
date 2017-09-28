@@ -23,6 +23,7 @@ repositories {
     //flatDir(dirs: 'lib')
     maven {
         url 'https://repo.jenkins-ci.org/public/'
+        flatDir(dirs: 'lib')
 
     }
 
@@ -37,7 +38,8 @@ configurations.all*.exclude group: 'xalan'
 
 
 dependencies {
-    compile 'org.codehaus.groovy:groovy-all:2.4.7'
+    compile "ca.szc.configparser:java-configparser:0.1"
+    compile 'org.codehaus.groovy:groovy-all:2.4.7'    
     compile "org.jenkins-ci.plugins:job-dsl-core:${jobDslVersion}"
 
 

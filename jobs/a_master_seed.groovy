@@ -1,5 +1,4 @@
-import org.jboss.bxms.jenkins.ReleasePipelineSeedJobBuilder
-import org.jboss.bxms.jenkins.GeneralSeedJobBuilder
+import org.jboss.bxms.jenkins.*
 
 //Establish the parametize release pipeline
 new ReleasePipelineSeedJobBuilder(
@@ -33,3 +32,44 @@ new GeneralSeedJobBuilder(
 new GeneralSeedJobBuilder(
         stream_name: "codereview"
 ).build(this)
+
+//Release code is the prefix for cfg file
+new JenkinsStandaloneJobBuilder(
+        job_name: "bxms64",
+        release_code: "brms-64",
+        job_type: "milestone"
+).build(this)
+
+new JenkinsAllJobBuilder(
+        job_name: "bxms64",
+        release_code: "brms-64",
+        job_type: "milestone"
+).build(this)
+
+
+new JenkinsStandaloneJobBuilder(
+        job_name: "bxms70",
+        release_code: "brms",
+        job_type: "milestone"
+).build(this)
+
+new JenkinsAllJobBuilder(
+        job_name: "bxms70",
+        release_code: "brms",
+        job_type: "milestone"
+).build(this)
+
+
+new JenkinsStandaloneJobBuilder(
+        job_name: "bxms70",
+        release_code: "brms",
+        job_type: "nightly"
+).build(this)
+
+new JenkinsAllJobBuilder(
+        job_name: "bxms70",
+        release_code: "brms",
+        job_type: "nightly"
+).build(this)
+
+
