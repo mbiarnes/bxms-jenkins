@@ -29,12 +29,14 @@ if [ \$release_type = "patch" ];then
     appendProp "bxms.maven.incremental.repo.latest.url" \${rcm_candidate_base}/\${bpms_product_name}/\${bxms_incr_maven_repo_name} \$brms_candidate_properties_name
 fi
 make CFG=${IP_CONFIG_FILE} MAVEN_REPOSITORY_BUILDER_SCRIPT=\${repository_builder_script} -f \${makefile} repository
+if [ "\$release_type" = "default" ];
 #TODO rename the maven repository zip to make it consistent with others
-cd workspace/\${release_prefix}-repository/archive
-for file in jboss-brms-bpmsuite-*
-do
-  mv "\$file" "\${file/\${product_version}.\${release_milestone}/\${product_deliver_version}}"
-done
+    cd workspace/\${release_prefix}-repository/archive
+    for file in jboss-brms-bpmsuite-*
+    do
+      mv "\$file" "\${file/\${product_version}.\${release_milestone}/\${product_deliver_version}}"
+    done
+fi
 """
 
 // Creates or updates a free style job.
