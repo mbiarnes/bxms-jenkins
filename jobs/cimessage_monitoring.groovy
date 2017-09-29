@@ -46,7 +46,7 @@ elif [ "\$label" = "bxms-ci" ];then
     if [[ "\$CI_NAME" =~ smoketest-trigger\$ ]];then
         echo "Triggered by  bxms-prod ci message "
         echo "\$CI_MESSAGE" 
-    elif [[ "\$CI_NAME" =~ smoketest-report\$ ]];then
+    elif [[ "\$EVENT_TYPE" =~ smoketest-report\$ ]];then
         echo "QE smoketest report:\$CI_MESSAGE"
         #Json to adoc
         echo \${CI_MESSAGE}| python -c "import sys, json; 
@@ -55,31 +55,29 @@ adoc_file=open('\${qe_smoketest_report_path}', 'w')
 adoc_file.write('=== QE smoketest Report\\n')
 adoc_file.write('[width=100%,options=header,footer,align=center,frame=all]\\n')
 adoc_file.write('|============\\n')
-adoc_file.write('|SUMMARY|\\n')
-_failure=[]
-_unstable=[]
+adoc_file.write('|Statistics|\\n')
+_success=[]
+_unsuccess=[]
+_statistics=[]
 for key in _report:
-    if ('SUCCESS' in _report[key]):
-        continue
-    elif ('FAILURE' in _report[key]):
-        _failure.append(key)
-        continue
-    elif ('UNSTABLE' in _report[key]):
-        _unstable.append(key)
-        continue
-    adoc_file.write('|' + key + '|' + _report[key] +'\\n')
-    
+    if ('SuccessfulJobs' in key):
+        for x in _report[key]:
+            _success.append(x)
+    elif ('UnsuccessfulJobs' in key):
+        for x in _report[key]:
+            _unsuccess.append(x)
+    elif ('Statistics' in key):
+        for x in _report[key]:
+            adoc_file.write('|' + x + '|' + str(_report[key][x]) +'\\n')    
 
-adoc_file.write('|#FAILURE#|')
-adoc_file.write('\\n\\n'.join(map(str,_failure)))
+adoc_file.write('|#UNSUCCESSFUL#|')
+adoc_file.write('\\n\\n'.join(map(str,_unsuccess)))
 adoc_file.write('\\n')
-adoc_file.write('|#UNSTABLE#|')
-adoc_file.write('\\n\\n'.join(map(str,_unstable)))
-adoc_file.write('\\n')
-adoc_file.write('|URL|\${qe_smoketest_job_url}')
+adoc_file.write('|URL|\${qe_smoketest_job_url}\\n')
 adoc_file.write('|============\\n')
 adoc_file.close()
-"       cat \${qe_smoketest_report_path}.adoc
+"       
+    cat \${qe_smoketest_report_path}
         ip-tooling/jira_helper.py -c ${IP_CONFIG_FILE} -a "QE smoketest returned" -f
     else
         echo "Something else triggered this job"

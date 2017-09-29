@@ -3,16 +3,7 @@ import org.jboss.bxms.jenkins.JobTemplate
 def shellScript = """
 echo "Done"
 """
-def report_string = '''{
-  "BxMS/BxMS-prod-test/smoke-prod/bpms-prod-test-blessed-business-central-smoke-container":"SUCCESS",
-  "BxMS/BxMS-prod-test/smoke-prod/bpms-prod-test-blessed-business-central-smoke-db":"FAILURE",
-  "BxMS/BxMS-prod-test/smoke-prod/bpms-prod-test-blessed-business-central-smoke-db1":"FAILURE",
-  "BxMS/BxMS-prod-test/smoke-prod/bpms-prod-test-blessed-integration-smoke-container":"UNSTABLE",
-  "BxMS/BxMS-prod-test/smoke-prod/bpms-prod-test-blessed-integration-smoke-container1":"UNSTABLE",
-  "Total build runs":"5",
-  "Successful builds":"1",
-  "Other build results":"4"
-}'''
+def report_string = '''{"SuccessfulJobs":{"BxMS/BxMS-prod-6.4/smoke-prod/bpms-prod-6.4-blessed-business-central-smoke-container":"SUCCESS","BxMS/BxMS-prod-6.4/smoke-prod/bpms-prod-6.4-blessed-business-central-smoke-db":"SUCCESS","BxMS/BxMS-prod-6.4/smoke-prod/bpms-prod-6.4-blessed-business-central-smoke-was":"SUCCESS","BxMS/BxMS-prod-6.4/smoke-prod/bpms-prod-6.4-blessed-business-central-smoke-wls":"SUCCESS","BxMS/BxMS-prod-6.4/smoke-prod/bpms-prod-6.4-blessed-dashbuilder-smoke-container":"SUCCESS","BxMS/BxMS-prod-6.4/smoke-prod/bpms-prod-6.4-blessed-dashbuilder-smoke-was":"SUCCESS","BxMS/BxMS-prod-6.4/smoke-prod/bpms-prod-6.4-blessed-integration-smoke-container":"SUCCESS","BxMS/BxMS-prod-6.4/smoke-prod/bpms-prod-6.4-blessed-quickstarts-smoke":"SUCCESS","BxMS/BxMS-prod-6.4/smoke-prod/bpms-prod-6.4-blessed-united-exec-servers-smoke":"SUCCESS","BxMS/BxMS-prod-6.4/smoke-prod/bpms-prod-6.4-blessed-wb-rest-smoke-container":"SUCCESS","BxMS/BxMS-prod-6.4/smoke-prod/bpms-prod-6.4-blessed-wb-rest-smoke-wls":"SUCCESS","BxMS/BxMS-prod-6.4/smoke-prod/brms-prod-6.4-blessed-bre-smoke":"SUCCESS","BxMS/BxMS-prod-6.4/smoke-prod/brms-prod-6.4-blessed-business-central-smoke-container":"SUCCESS","BxMS/BxMS-prod-6.4/smoke-prod/brms-prod-6.4-blessed-business-central-smoke-was":"SUCCESS","BxMS/BxMS-prod-6.4/smoke-prod/brms-prod-6.4-blessed-business-central-smoke-wls":"SUCCESS","BxMS/BxMS-prod-6.4/smoke-prod/brms-prod-6.4-blessed-quickstarts-smoke":"SUCCESS","BxMS/BxMS-prod-6.4/smoke-prod/brms-prod-6.4-blessed-wb-rest-smoke-was":"SUCCESS","BxMS/BxMS-prod-6.4/smoke-prod/bxms-prod-6.4-blessed-inc-maven-repo-testsuite-smoke":"SUCCESS","BxMS/BxMS-prod-6.4/smoke-prod/bxms-prod-6.4-blessed-maven-repo-testsuite-smoke":"SUCCESS"},"UnsuccessfulJobs":{"BxMS/BxMS-prod-6.4/smoke-prod/bpms-prod-6.4-blessed-clustering-smoke":"FAILURE","BxMS/BxMS-prod-6.4/smoke-prod/bpms-prod-6.4-blessed-dashbuilder-smoke-db":"UNSTABLE","BxMS/BxMS-prod-6.4/smoke-prod/brms-prod-6.4-blessed-exec-server-smoke-container":"FAILURE","BxMS/BxMS-prod-6.4/smoke-prod/brms-prod-6.4-blessed-wb-rest-smoke-container":"FAILURE"},"Statistics":{"TotaBuildRuns":23,"SuccessfulBuilds":19,"UnsuccessfulBuilds":4}}'''
 // Creates or updates a free style job.
 def jobDefinition = job("${PRODUCT_NAME}-mock-qe-smoketest-report") {
 
@@ -34,7 +25,7 @@ def jobDefinition = job("${PRODUCT_NAME}-mock-qe-smoketest-report") {
 
             // KEY=value pairs, one per line (Java properties file format) to be used as message properties.
             messageProperties("label=bxms-ci\n" +
-                    "CI_TYPE=custom\n" +
+                    "CI_USER=bxms-qe-service-user\n" +
                     "EVENT_TYPE=\${release_prefix}-qe-smoketest-report\n")
 
             // Content of CI message to be sent.
