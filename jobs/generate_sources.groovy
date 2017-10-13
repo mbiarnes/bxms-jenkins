@@ -1,0 +1,29 @@
+import org.jboss.bxms.jenkins.JobTemplate
+
+shellScript = """
+make LOCAL=1 CFG=brms.cfg SOURCES=1 SRCDIR=src -f Makefile.BRMS kie-wb-distributions kie-docs droolsjbpm-integration
+make LOCAL=1 CFG=common.cfg SOURCES=1 SRCDIR=src -f Makefile.COMMON mvel-2.3.0 xmlpull-1.1.4
+make LOCAL=1 CFG=ip-bom.cfg SOURCES=1 SRCDIR=src -f Makefile.IPBOM jboss-integration-platform-bom
+
+zip -r ${brms_product_name}-${product_deliver_version}-sources.zip
+"""
+
+// Creates or updates a free style job.
+def jobDefinition = job("${PRODUCT_NAME}-generate-sources") {
+    // Sets a description for the job.
+    description("This job is responsible for generating product sources.")
+
+    // Adds build steps to the jobs.
+    steps {
+
+        // Runs a shell script (defaults to sh, but this is configurable) for building the project.
+        shell(shellScript)
+    }
+    publishers {
+        //Archives artifacts with each build.
+        archiveArtifacts('workspace/${brms_product_name}-${product_deliver_version}-sources.zip')
+    }
+}
+
+JobTemplate.addCommonConfiguration(jobDefinition, CI_PROPERTIES_FILE, PRODUCT_NAME)
+JobTemplate.addIpToolingScmConfiguration(jobDefinition)
