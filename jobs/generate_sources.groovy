@@ -9,7 +9,7 @@ zip -r sources.zip
 """
 
 // Creates or updates a free style job.
-def jobDefinition = job("${PRODUCT_NAME}-generate-sources") {
+def jobDefinition = job("generate-sources") {
     // Sets a description for the job.
     description("This job is responsible for generating product sources.")
 
