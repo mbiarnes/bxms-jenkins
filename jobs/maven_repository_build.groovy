@@ -28,7 +28,7 @@ if ! wget \${brms_candidate_properties_url} -O \${brms_candidate_properties_name
   echo " \${brms_candidate_properties_url} isn't available yet"
 fi
 #append the maven repo url into the properties
-bxms_maven_repo_name=jboss-bpmsuite-{product_file_deliver_version}-maven-repository.zip
+bxms_maven_repo_name=jboss-bpmsuite-\${product_file_deliver_version}-maven-repository.zip
 appendProp "bxms.maven.repo.latest.url" \${rcm_staging_base}/\${bpms_staging_path}/\${bxms_maven_repo_name} \$brms_staging_properties_name
 
 
