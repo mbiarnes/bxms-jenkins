@@ -5,7 +5,7 @@ make LOCAL=1 CFG=brms.cfg SOURCES=1 SRCDIR=src -f Makefile.BRMS kie-wb-distribut
 make LOCAL=1 CFG=common.cfg SOURCES=1 SRCDIR=src -f Makefile.COMMON mvel-2.3.0 xmlpull-1.1.4
 make LOCAL=1 CFG=ip-bom.cfg SOURCES=1 SRCDIR=src -f Makefile.IPBOM jboss-integration-platform-bom
 
-zip -r ${brms_product_name}-${product_deliver_version}-sources.zip
+zip -r sources.zip
 """
 
 // Creates or updates a free style job.
@@ -21,7 +21,7 @@ def jobDefinition = job("${PRODUCT_NAME}-generate-sources") {
     }
     publishers {
         //Archives artifacts with each build.
-        archiveArtifacts('workspace/${brms_product_name}-${product_deliver_version}-sources.zip')
+        archiveArtifacts('workspace/sources.zip')
     }
 }
 
