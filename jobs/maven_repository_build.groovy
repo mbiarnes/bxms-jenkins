@@ -28,17 +28,12 @@ if ! wget \${brms_candidate_properties_url} -O \${brms_candidate_properties_name
   echo " \${brms_candidate_properties_url} isn't available yet"
 fi
 #append the maven repo url into the properties
-override_product_deliver_version=\${product_deliver_version} 
-#Uploading to rcm staging folder
-if [ \${release_milestone:0:2} = "CR" ];then
-    override_product_deliver_version=\${product_version}\${availability}
-fi
-bxms_maven_repo_name=jboss-bpmsuite-{override_product_deliver_version}-maven-repository.zip
+bxms_maven_repo_name=jboss-bpmsuite-{product_file_delivier_version}-maven-repository.zip
 appendProp "bxms.maven.repo.latest.url" \${rcm_staging_base}/\${bpms_staging_path}/\${bxms_maven_repo_name} \$brms_staging_properties_name
 
 
 if [ \$release_type = "patch" ];then
-    bxms_maven_repo_name=jboss-bpmsuite-{override_product_deliver_version}-incremental-maven-repository.zip
+    bxms_maven_repo_name=jboss-bpmsuite-{product_file_delivier_version}-incremental-maven-repository.zip
     appendProp "bxms.maven.incremental.repo.latest.url" \${rcm_staging_base}/\${bpms_staging_path}/\${bxms_incr_maven_repo_name} \$brms_staging_properties_name
 fi
 

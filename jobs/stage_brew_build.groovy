@@ -14,20 +14,15 @@ function appendProp(){
 if ! wget \${brms_staging_properties_url} -O \${brms_staging_properties_name} 2>/dev/null ;then
     echo " \${brms_staging_properties_url} isn't available yet"  
 fi
-override_version=\${product_deliver_version} 
-#Uploading to rcm staging folder
-if [ \${release_milestone:0:2} = "CR" ];then
-    override_product_deliver_version=\${product_version}\${availability}
-fi
 if [ \${release_type} = "intpack" ];then
     ip-tooling/maven-to-stage.py --version=\${product_artifact_version} --override-version \${product_version} --maven-repo \${product_assembly_maven_repo_url} \
       --deliverable \${release_prefix}-release/\${release_prefix}-deliverable.properties --output \${product_name}-\${product_version}
 else
-    ip-tooling/maven-to-stage.py --version=\${product_artifact_version} --override-version \${override_product_deliver_version} --maven-repo \${product_assembly_maven_repo_url} \
+    ip-tooling/maven-to-stage.py --version=\${product_artifact_version} --override-version \${product_file_delivier_version} --maven-repo \${product_assembly_maven_repo_url} \
       --deliverable \${release_prefix}-release/brms-deliverable.properties --output \${brms_product_name} \
       --release-url=\${rcm_staging_base}/\${brms_staging_path} --output-deliverable-list \${brms_staging_properties_name}
       
-    ip-tooling/maven-to-stage.py --version=\${product_artifact_version} --override-version \${override_product_deliver_version} --maven-repo \${product_assembly_maven_repo_url} \
+    ip-tooling/maven-to-stage.py --version=\${product_artifact_version} --override-version \${product_file_delivier_version} --maven-repo \${product_assembly_maven_repo_url} \
       --deliverable \${release_prefix}-release/bpmsuite-deliverable.properties --output \${bpms_product_name} \
       --release-url=\${rcm_staging_base}/\${bpms_staging_path} --output-deliverable-list \${brms_staging_properties_name}
     

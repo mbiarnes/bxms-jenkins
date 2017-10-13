@@ -3,7 +3,7 @@ import org.jboss.bxms.jenkins.JobTemplate
 // PVT script.
 String shellScript = """cd pvt
 /jboss-prod/tools/maven-3.3.9-prod/bin/mvn -Dmaven.repo.local=/jboss-prod/m2/bxms-dev-repo \
-    surefire-report:report -B -Dproduct.config=\${brms_smoketest_cfg} -Dproduct.version=\${product_deliver_version} \
+    surefire-report:report -B -Dproduct.config=\${brms_smoketest_cfg} -Dproduct.version=\${product_file_delivier_version} \
     -Dproduct.target=\${product_deliver_version} -Dreport.filepath=\${brms_pvt_report_basename} clean package
 
 """
