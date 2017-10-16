@@ -9,7 +9,7 @@ zip -r sources.zip
 """
 
 // Creates or updates a free style job.
-def jobDefinition = job("generate-sources") {
+def jobDefinition = job("${PRODUCT_NAME}-generate-sources") {
     // Sets a description for the job.
     description("This job is responsible for generating product sources.")
 
@@ -19,6 +19,8 @@ def jobDefinition = job("generate-sources") {
         // Runs a shell script (defaults to sh, but this is configurable) for building the project.
         shell(shellScript)
     }
+
+    // Adds post-build actions to the job.
     publishers {
         //Archives artifacts with each build.
         archiveArtifacts('workspace/sources.zip')
