@@ -2,9 +2,9 @@ import org.jboss.bxms.jenkins.JobTemplate
 
 shellScript = """
 unset WORKSPACE
-make LOCAL=1 CFG=brms.cfg SOURCES=1 SRCDIR=src -f Makefile.BRMS kie-wb-distributions kie-docs droolsjbpm-integration
-make LOCAL=1 CFG=common.cfg SOURCES=1 SRCDIR=src -f Makefile.COMMON mvel-2.3.0 xmlpull-1.1.4
-make LOCAL=1 CFG=ip-bom.cfg SOURCES=1 SRCDIR=src -f Makefile.IPBOM jboss-integration-platform-bom
+make CFG=brms.cfg SOURCES=1 SRCDIR=src -f Makefile.BRMS kie-wb-distributions kie-docs droolsjbpm-integration
+make CFG=common.cfg SOURCES=1 SRCDIR=src -f Makefile.COMMON mvel-2.3.0 xmlpull-1.1.4
+make CFG=ip-bom.cfg SOURCES=1 SRCDIR=src -f Makefile.IPBOM jboss-integration-platform-bom
 
 zip -r sources.zip
 """
