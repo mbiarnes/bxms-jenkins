@@ -5,8 +5,6 @@ unset WORKSPACE
 make CFG=brms.cfg SOURCES=1 SRCDIR=sources -f Makefile.BRMS kie-wb-distributions kie-docs droolsjbpm-integration
 make CFG=common.cfg SOURCES=1 SRCDIR=sources -f Makefile.COMMON mvel-2.3.2 xmlpull-1.1.4
 make CFG=ip-bom.cfg SOURCES=1 SRCDIR=sources -f Makefile.IPBOM jboss-integration-platform-bom
-
-zip -r sources.zip
 """
 
 // Creates or updates a free style job.
