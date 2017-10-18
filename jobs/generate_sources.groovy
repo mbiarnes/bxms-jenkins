@@ -2,9 +2,9 @@ import org.jboss.bxms.jenkins.JobTemplate
 
 shellScript = """
 unset WORKSPACE
-make CFG=brms.cfg SOURCES=1 SRCDIR=src -f Makefile.BRMS kie-wb-distributions kie-docs droolsjbpm-integration
-make CFG=common.cfg SOURCES=1 SRCDIR=src -f Makefile.COMMON mvel-2.3.0 xmlpull-1.1.4
-make CFG=ip-bom.cfg SOURCES=1 SRCDIR=src -f Makefile.IPBOM jboss-integration-platform-bom
+make CFG=brms.cfg SOURCES=1 SRCDIR=sources -f Makefile.BRMS kie-wb-distributions kie-docs droolsjbpm-integration
+make CFG=common.cfg SOURCES=1 SRCDIR=sources -f Makefile.COMMON mvel-2.3.2 xmlpull-1.1.4
+make CFG=ip-bom.cfg SOURCES=1 SRCDIR=sources -f Makefile.IPBOM jboss-integration-platform-bom
 
 zip -r sources.zip
 """
@@ -13,6 +13,13 @@ zip -r sources.zip
 def jobDefinition = job("${PRODUCT_NAME}-generate-sources") {
     // Sets a description for the job.
     description("This job is responsible for generating product sources.")
+
+    // Adds pre/post actions to the job.
+    wrappers {
+
+                // Deletes files from the workspace before the build starts.
+                preBuildCleanup()
+            }
 
     // Adds build steps to the jobs.
     steps {
