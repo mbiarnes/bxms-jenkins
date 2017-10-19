@@ -19,6 +19,7 @@ zip -r sources.zip src/
 
 // Creates or updates a free style job.
 def jobDefinition = job("${PRODUCT_NAME}-generate-sources") {
+
     // Sets a description for the job.
     description("This job is responsible for generating product sources.")
 
@@ -40,6 +41,36 @@ def jobDefinition = job("${PRODUCT_NAME}-generate-sources") {
     publishers {
         //Archives artifacts with each build.
         archiveArtifacts('workspace/sources.zip')
+
+        // Send artifacts to an SSH server (using SFTP) and/or execute commands over SSH.
+        publishOverSsh {
+
+            // Adds a target server.
+            server('publish server') {
+
+                // Adds a target server.
+                verbose(true)
+
+                // Adds a transfer set.
+                transferSet {
+
+                    // Sets the files to upload to a server.
+                    sourceFiles('workspace/sources.zip')
+
+                    // Sets the destination _path.
+                    remoteDirectory('${brms_staging_path}')
+                }
+
+                // Adds a transfer set.
+                transferSet {
+
+                    // Sets the files to upload to a server.
+                    sourceFiles('workspace/sources.zip')
+
+                    remoteDirectory('${bpms_staging_path}')
+                }
+            }
+        }
     }
 }
 
