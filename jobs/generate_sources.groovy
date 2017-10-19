@@ -1,14 +1,19 @@
 import org.jboss.bxms.jenkins.JobTemplate
 
 shellScript = """
+# Kerberos authentication
 kinit -k -t \${HOME}/bxms-release.keytab bxms-release/prod-ci@REDHAT.COM
+
+# Workaround for variable name conflict between Jenkins and ip-tooling 
 unset WORKSPACE
 
+# Make sources
 make CFG=brms.cfg SOURCES=1 SRCDIR=src -f Makefile.BRMS kie-wb-distributions kie-docs droolsjbpm-integration ip-brms
 make CFG=common.cfg SOURCES=1 SRCDIR=src -f Makefile.COMMON mvel-2.3.2 xmlpull-1.1.4
 
+# Prepare sources for delivery
+cd workspace
 rm -rf src/bpms-brms
-
 zip -r sources.zip src/
 """
 
