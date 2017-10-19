@@ -1,11 +1,15 @@
 import org.jboss.bxms.jenkins.JobTemplate
 
 shellScript = """
-kinit -k -t ${HOME}/bxms-release.keytab bxms-release/prod-ci@REDHAT.COM
+kinit -k -t \${HOME}/bxms-release.keytab bxms-release/prod-ci@REDHAT.COM
 unset WORKSPACE
 
-make CFG=brms.cfg SOURCES=1 SRCDIR=sources -f Makefile.BRMS kie-wb-distributions kie-docs droolsjbpm-integration ip-brms
-make CFG=common.cfg SOURCES=1 SRCDIR=sources -f Makefile.COMMON mvel-2.3.2 xmlpull-1.1.4
+make CFG=brms.cfg SOURCES=1 SRCDIR=src -f Makefile.BRMS kie-wb-distributions kie-docs droolsjbpm-integration ip-brms
+make CFG=common.cfg SOURCES=1 SRCDIR=src -f Makefile.COMMON mvel-2.3.2 xmlpull-1.1.4
+
+rm -rf src/bpms-brms
+
+zip -r sources.zip src/
 """
 
 // Creates or updates a free style job.
