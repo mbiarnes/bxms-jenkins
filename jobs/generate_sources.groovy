@@ -57,7 +57,10 @@ def jobDefinition = job("${PRODUCT_NAME}-generate-sources") {
                     // Sets the files to upload to a server.
                     sourceFiles('workspace/sources.zip')
 
-                    // Sets the destination _path.
+                    // Sets the first part of the file path that should not be created on the remote server.
+                    removePrefix('workspace/')
+
+                    // Sets the destination path.
                     remoteDirectory('${brms_staging_path}')
                 }
 
@@ -67,6 +70,10 @@ def jobDefinition = job("${PRODUCT_NAME}-generate-sources") {
                     // Sets the files to upload to a server.
                     sourceFiles('workspace/sources.zip')
 
+                    // Sets the first part of the file path that should not be created on the remote server.
+                    removePrefix('workspace/')
+
+                    // Sets the destination path.
                     remoteDirectory('${bpms_staging_path}')
                 }
             }
