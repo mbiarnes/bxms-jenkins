@@ -36,7 +36,7 @@ if [ ${skipPackage} = "false"  ]
 then
 
 #Download image config/sources
-wget https://github.com/jboss-openshift/application-templates/archive/bpmsuite-wip.zip;unzip -j bpmsuite-wip.zip */bpmsuite/bpmsuite70-businesscentral-monitoring-with-smartrouter.json */bpmsuite/bpmsuite70-executionserver-postgresql.json -d application-template;rm -f bpmsuite*.zip;
+wget https://github.com/jboss-openshift/application-templates/archive/bpmsuite-wip.zip;unzip -j bpmsuite-wip.zip */bpmsuite/bpmsuite70-businesscentral-monitoring-with-smartrouter.json */bpmsuite/bpmsuite70-executionserver-postgresql.json */bpmsuite/bpmsuite70-executionserver-externaldb.json -d application-template;rm -f bpmsuite*.zip;
 wget https://github.com/jboss-container-images/jboss-bpmsuite-7-image/archive/${openshift_image_tag}.zip; unzip ${openshift_image_tag}.zip;mv jboss-bpmsuite-7-image-${openshift_image_tag} standalone-image-source; rm -f ${openshift_image_tag}.zip;rm -f standalone-image-source/.gitignore;
 wget https://github.com/jboss-container-images/jboss-bpmsuite-7-openshift-image/archive/${openshift_image_tag}.zip; unzip ${openshift_image_tag}.zip;mv jboss-bpmsuite-7-openshift-image-${openshift_image_tag} openshift-image-source;rm -f ${openshift_image_tag}.zip;rm -f openshift-image-source/.gitignore;
 
