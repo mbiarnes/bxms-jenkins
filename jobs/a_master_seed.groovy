@@ -71,5 +71,3 @@ new JenkinsAllJobBuilder(
         release_code: "brms",
         job_type: "nightly"
 ).build(this)
-
-
