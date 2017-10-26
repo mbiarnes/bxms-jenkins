@@ -11,9 +11,23 @@ unset WORKSPACE
 make CFG=brms.cfg SOURCES=1 SRCDIR=src -f Makefile.BRMS kie-wb-distributions kie-docs droolsjbpm-integration ip-brms
 make CFG=common.cfg SOURCES=1 SRCDIR=src -f Makefile.COMMON mvel-2.3.2 xmlpull-1.1.4
 
-# Prepare sources for delivery
+
+## Prepare sources for delivery ##
 cd workspace
+
+# Remove SOA component management
 rm -rf src/bpms-brms
+
+# Remove docs
+rm -rf src/kie-docs*
+
+# Remove settings.xml
+# TODO It's a fast fix. It should be more generic.
+rm -f src/errai-parent*/settings.xml
+rm -f src/brms-bpmsuite-assembly*/settings.xml
+rm -f src/xmlpull-parent*/settings.xml
+
+# Create sources archive
 zip -r sources.zip src/
 """
 
