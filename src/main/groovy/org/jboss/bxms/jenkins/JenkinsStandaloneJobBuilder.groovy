@@ -26,7 +26,7 @@ class JenkinsStandaloneJobBuilder {
     String release_code
     String job_type
     String job_name
-    Map<String, String> maven_repo_map=["bxms-64":"/jboss-prod/m2/bxms-6.4-", "bxms":"/jboss-prod/m2/bxms-7-", "bxms-test":"/jboss-prod/m2/bxms-7-"]
+    Map<String, String> maven_repo_map=["bxms-64":"/jboss-prod/m2/bxms-6.4-", "brms-70LA":"/jboss-prod/m2/bxms-7-", "brms":"/jboss-prod/m2/bxms-7-", "bxms-test":"/jboss-prod/m2/bxms-7-"]
 
     Job build(DslFactory dslFactory) {
         String urlString ="https://code.engineering.redhat.com/gerrit/gitweb?p=integration-platform-config.git;a=blob_plain;f=" + release_code + ".cfg"
@@ -104,9 +104,6 @@ MVN_DEP_REPO=nexus-release::default::file://${maven_repo} LOCAL=1 CFG=${_cfg} MV
                         shell(shellScript)
                     }
 
-                    triggers {
-                        upstream('a-master-seed', 'SUCCESS')
-                    }
                 }
             }
 

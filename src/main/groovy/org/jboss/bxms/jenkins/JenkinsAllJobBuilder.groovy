@@ -19,7 +19,9 @@ class JenkinsAllJobBuilder {
 
         //Use .m2/repository as local repo
         String shellScript = """
-LOCAL=1 CFG=./${_cfg} POMMANIPEXT=brms-bom make -f Makefile.BRMS bxms-maven-repo-root 
+unset WORKSPACE
+DEP_REPO=`pwd`/workspace/.m2
+MVN_DEP_REPO=nexus-release::default::file://\${DEP_REPO} LOCAL=1 CFG=./${_cfg} POMMANIPEXT=brms-bom make -f Makefile.BRMS bxms-maven-repo-root
 """
 
         dslFactory.folder(job_name + "-jenkins-" + job_type + "-pipeline")
@@ -72,9 +74,6 @@ LOCAL=1 CFG=./${_cfg} POMMANIPEXT=brms-bom make -f Makefile.BRMS bxms-maven-repo
                 shell(shellScript)
             }
 
-            triggers {
-                upstream('a-master-seed', 'SUCCESS')
-            }
         }
     }
 }

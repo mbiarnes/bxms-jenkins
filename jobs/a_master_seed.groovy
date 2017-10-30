@@ -59,6 +59,11 @@ new JenkinsAllJobBuilder(
         job_type: "milestone"
 ).build(this)
 
+new JenkinsAllJobBuilderPipeline(
+        job_name: "bxms70",
+        release_code: "brms",
+        job_type: "milestone"
+).build(this)
 
 new JenkinsStandaloneJobBuilder(
         job_name: "bxms70",
@@ -67,6 +72,12 @@ new JenkinsStandaloneJobBuilder(
 ).build(this)
 
 new JenkinsAllJobBuilder(
+        job_name: "bxms70",
+        release_code: "brms",
+        job_type: "nightly"
+).build(this)
+
+new JenkinsAllJobBuilderPipeline(
         job_name: "bxms70",
         release_code: "brms",
         job_type: "nightly"

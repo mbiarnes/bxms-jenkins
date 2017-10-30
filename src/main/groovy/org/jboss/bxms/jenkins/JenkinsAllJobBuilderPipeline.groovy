@@ -60,8 +60,8 @@ class JenkinsAllJobBuilderPipeline {
       if (job_type.equals("nightly"))
           _cfg = release_code + "-dev.cfg"
 
-      dslFactory.pipelineJob(job_name + "-jenkins-" + job_type + "-pipeline/" + job_name + "-all-pipeline") {
-            it.description "This job is a seed job for generating " + release_code + " " +  job_type + " jenkins full build."
+      dslFactory.pipelineJob(job_name + "-jenkins-" + job_type + "-pipeline/a_" + job_name + "-build-pipeline") {
+            it.description "This job is pipeline job for " + release_code + " " +  job_type + ". "
             logRotator {
                 numToKeep 8
             }
