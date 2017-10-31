@@ -284,17 +284,17 @@ String getPipelineCode(ArrayList<String> jobsArr,HashMap<String,String[]> packag
             stage(stageNames.get(insidecount).get(insidej)){
                   if(flag==1 && runStageAfter ==1){
                     build job : job_name + "-jenkins-" + job_type + "-pipeline/" + job_name + "-" + stageNames.get(insidecount).get(insidej)
-                    continue
+
                   }
                   if(yourchoose.matches(stageNames.get(insidecount).get(insidej)) ){
                       flag=1
                       build job : job_name + "-jenkins-" + job_type + "-pipeline/" + job_name + "-" + stageNames.get(insidecount).get(insidej)
-                      continue
+
                   }else if(yourchoose.matches(stageNames.get(insidecount).get(insidej)+"_runStageAfter")){
                       runStageAfter=1
                       flag=1
                       build job : job_name + "-jenkins-" + job_type + "-pipeline/" + job_name + "-" + stageNames.get(insidecount).get(insidej)
-                      continue
+                      
                   }
 
             }
