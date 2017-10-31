@@ -13,6 +13,13 @@ new ReleasePipelineSeedJobBuilder(
         cfg_file:"brms.cfg",
 ).build(this)
 
+new ReleasePipelineJobBuilder(
+        product_name: "bxms70",
+        ci_properties_file:"/jboss-prod/config/brms-ci.properties",
+        cfg_file:"brms.cfg",
+        pipelineSeqFile:"release_pipeline_seq.cfg"
+).build(this)
+
 new ReleasePipelineSeedJobBuilder(
         release_code: "intpack-fuse63-bxms64",
         ci_properties_file:"/jboss-prod/config/intpack-fuse63-bxms64-ci.properties",
