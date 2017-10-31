@@ -31,7 +31,9 @@ def jobDefinition = job("${PRODUCT_NAME}-trigger-qe-handover-test") {
         shell(shellScript)
         // Sends JMS message.
         ciMessageBuilder {
-
+            overrides{
+                topic("Custom")
+            }
             // JMS selector to choose messages that will fire the trigger.
             providerName("default")
 
