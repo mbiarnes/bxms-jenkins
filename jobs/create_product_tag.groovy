@@ -11,24 +11,24 @@ echo -e \"Host code.engineering.redhat.com \\n\\
         HostName code.engineering.redhat.com \\n\\
         User jb-ip-tooling-jenkins\" > ~/.ssh/config
 chmod 600 ~/.ssh/config
-
-MVN_LOCAL_REPO=/jboss-prod/m2/bxms-dev-repo RELEASE_TAG=\${product_name}-\${product_version}.\${release_milestone} LOCAL=1 CFG=./${IP_CONFIG_FILE} \
+tag_version=\${product_name}-\${product_version}\${availability}.\${release_milestone}
+MVN_LOCAL_REPO=/jboss-prod/m2/bxms-dev-repo RELEASE_TAG=\${tag_version} LOCAL=1 CFG=./${IP_CONFIG_FILE} \
     REPO_GROUP=MEAD make POMMANIPEXT=brms-bom -f \${makefile} \${product_root_component} 2>&1
 
-sed -i '/^product_tag=/d' ${CI_PROPERTIES_FILE} && echo \"product_tag=\${product_name}-\${product_version}.\${release_milestone}\" >> ${CI_PROPERTIES_FILE}
+sed -i '/^product_tag=/d' ${CI_PROPERTIES_FILE} && echo \"product_tag=\${tag_version}\" >> ${CI_PROPERTIES_FILE}
 
 #need to verify if all tags are created succesfully
 EXIST_MISSING_TAG=0
-echo \"Verifying \${product_name}-\${product_version}.\${release_milestone} tag...\"
+echo \"Verifying \${tag_version} tag...\"
 
 #extract all tag locations from the log file
 cat ${IP_CONFIG_FILE} | grep -Eo \"https://code.engineering.redhat.com.*\\.git\"| awk -F\"/\" '{print \$5\"/\"\$6}' | grep -Eo \".*\\.git\" > tags_location.txt
 
 while read -r line;do
    # curl the tag url; if find return HTTP/1.1 200 OK; if not,return HTTP/1.1 404 Not found
-   curl -Is \"http://git.app.eng.bos.redhat.com/git/\${line}/tag/?h=\${product_name}-\${product_version}.\${release_milestone}\" | head -n 1 > curl_result
+   curl -Is \"http://git.app.eng.bos.redhat.com/git/\${line}/tag/?h=\${tag_version}\" | head -n 1 > curl_result
    if grep -q \"404\" curl_result;then
-      echo \"Missing \${product_name}-\${product_version}.\${release_milestone} tag in \${line}. Please perform some checking...\"
+      echo \"Missing \${tag_version} tag in \${line}. Please perform some checking...\"
       EXIST_MISSING_TAG=1
    fi
 done < tags_location.txt
