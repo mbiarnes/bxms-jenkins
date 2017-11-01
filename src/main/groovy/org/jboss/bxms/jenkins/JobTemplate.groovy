@@ -4,7 +4,7 @@ package org.jboss.bxms.jenkins
 class JobTemplate {
 
 
-    static void addCommonConfiguration(job, CI_PROPERTIES_FILE, PRODUCT_NAME, NODE_LABEL="release_pipeline"){
+    static void addCommonConfiguration(job, CI_PROPERTIES_FILE, PRODUCT_NAME, NODE_LABEL="release-pipeline"){
 
         job.with {
 
