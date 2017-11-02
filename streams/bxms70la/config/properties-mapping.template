@@ -19,7 +19,7 @@ makefile=common:makefile
 cutoff_date=common:cutoff_date
 
 #other properties
-release_code=bxms-test
+release_code=bxms70la
 #This prop defines the abbreviate number used in qe smoketest url, Please use: 6.4, 7.0, 7.0.LA
 qe_smoketest_job_abbr=7.0.LA
 release_milestone_version={product_version}{availability}.{release_milestone}

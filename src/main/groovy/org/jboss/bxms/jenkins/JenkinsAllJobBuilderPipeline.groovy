@@ -104,7 +104,10 @@ class JenkinsAllJobBuilderPipeline {
             definition{
               cps {
                 script(pipelineScript)
-                //sandbox()
+                //running in sandbox and  make sure adding
+                // "new hudson.model.ChoiceParameterDefinition java.lang.String java.lang.String[] java.lang.String"
+                // into Jenkins->Configuration->In-process Script Approval ->Signatures already approved box
+                sandbox()
               }
             }
 
@@ -257,9 +260,9 @@ String getPipelineCode(ArrayList<String> jobsArr,HashMap<String,String[]> packag
   stageNameList=stageNameList+"]]"
   // inside list to used to parellel run stages
   //stageNameList="[[''],['','',''],['','']]"
-  String stageNameStr="['"+jobsArr.get(0)+"','"+jobsArr.get(0)+"_runStageAfter'"
+  String stageNameStr="['"+jobsArr.get(0)+"','"+jobsArr.get(0)+"_chainbuild'"
   for (int i=1;i< jobsArr.size() ;i++  ) {
-    stageNameStr=stageNameStr+",'"+jobsArr.get(i)+"','"+jobsArr.get(i)+"_runStageAfter'"
+    stageNameStr=stageNameStr+",'"+jobsArr.get(i)+"','"+jobsArr.get(i)+"_chainbuild'"
   }
   stageNameStr=stageNameStr+"]"
 //  stageNameStr="['','','','']"
@@ -267,10 +270,10 @@ String getPipelineCode(ArrayList<String> jobsArr,HashMap<String,String[]> packag
   def release_code="'''+release_code+'''"
   def job_type="'''+job_type+'''"
   def stageNames='''+stageNameList+'''
-  node{
+  node ('release-pipeline'){
       stage("Stage0"){
-        choice = new ChoiceParameterDefinition('Choose A Stages To Begin:','''+ stageNameStr+''' as String[], 'Choose which stage to run single or run with stages after it')
-        yourchoose=input message: 'Question', parameters: [choice]
+        choice = new ChoiceParameterDefinition('Choose Single Build or Chainbuild:','''+ stageNameStr+''' as String[], 'Eg: Choose a brms-bom to run a standalone job, Choose brms-bom-chainbuild to run chaibuild build')
+        yourchoose=input message: 'Build Strategy', parameters: [choice]
       }
       int flag=0
       int runStageAfter=0
@@ -282,17 +285,17 @@ String getPipelineCode(ArrayList<String> jobsArr,HashMap<String,String[]> packag
           branches["${insidej}"]={
             stage(stageNames.get(insidecount).get(insidej)){
                   if(flag==1 && runStageAfter ==1){
-                    build job : release_code + "-jenkins-" + job_type + "-pipeline/" + release_code + "-" + stageNames.get(insidecount).get(insidej)
+                    build job : release_code + "-" + stageNames.get(insidecount).get(insidej)
 
                   }
                   if(yourchoose.matches(stageNames.get(insidecount).get(insidej)) ){
                       flag=1
-                      build job : release_code + "-jenkins-" + job_type + "-pipeline/" + release_code + "-" + stageNames.get(insidecount).get(insidej)
+                      build job : release_code + "-" + stageNames.get(insidecount).get(insidej)
 
-                  }else if(yourchoose.matches(stageNames.get(insidecount).get(insidej)+"_runStageAfter")){
+                  }else if(yourchoose.matches(stageNames.get(insidecount).get(insidej)+"_chainbuild")){
                       runStageAfter=1
                       flag=1
-                      build job : release_code + "-jenkins-" + job_type + "-pipeline/" + release_code + "-" + stageNames.get(insidecount).get(insidej)
+                      build job : release_code + "-" + stageNames.get(insidecount).get(insidej)
                       
                   }
 

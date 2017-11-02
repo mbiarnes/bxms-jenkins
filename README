@@ -22,38 +22,6 @@ repositories {
 File structure:
 
 .
-|── jobs                                                 # All DSL script files 
-│── streams  
-|── src
-│   ├── main
-│   │   ├── groovy
-│   │   │   └── org
-│   │   │       └── jboss
-│   │   │           └── bxms
-│   │   │               └── jenkins
-│   │   │                   └── JobTemplate.groovy      # Job DSL template for some DSL 
-│   │   └── resources                                     scripts
-│   │       └── idea.gdsl                               # IDE support for IDEA
-│   └── test
-│       └── groovy
-│           └── org
-│               └── Jboss
-│                   └── bxms
-│                       └── jenkins
-│                           └── JobScriptsSpec.groovy   # Complie and generate XML files
-│                                                          for all DSL script
-│── gradle                                              # Gradle wrapper
-│  
-│── build.gradle                                        # Build file 
-│  
-│── gradle.properties                                   # Store Jenkins and DSL versions
-│
-│── lib                                                 # For storage of other 
-                                                          third-party plugins 
-                                                          through flatDir. 
-                                                          See build.gradle
-
-.
 ├── build
 ├── build.gradle
 ├── bxms-jenkins.iml
@@ -75,8 +43,10 @@ File structure:
 ├── jobs
 │   ├── a_master_seed.groovy
 │   ├── *..groovy
-├── lib
-│   └── java-configparser-0.1.jar
+│── lib                                                 # For storage of other 
+                                                          third-party plugins 
+                                                          through flatDir. 
+                                                          See build.gradle
 ├── LICENSE
 ├── README
 ├── src
@@ -86,6 +56,13 @@ File structure:
 │   │   └── resources
 │   └── test
 │       └── groovy
+│              └── JobScriptsSpec.groovy   # Complie and generate XML files
+│                                                          for all DSL script
+│── gradle                                              # Gradle wrapper
+│  
+│── build.gradle                                        # Build file 
+│  
+│── gradle.properties                                   # Store Jenkins and DSL versions
 └── streams
     ├── bxms
     │   ├── config
@@ -114,7 +91,6 @@ File structure:
     │   ├── config
     │   ├── dsl
     │   └── release-history
-    ├── streams.iml
     └── utility
         ├── utility_bxms_ci_message_monitor.groovy -> ../../jobs/utility_bxms_ci_message_monitor.groovy
         └── utility_pme_update.groovy -> ../../jobs/utility_pme_update.groovy

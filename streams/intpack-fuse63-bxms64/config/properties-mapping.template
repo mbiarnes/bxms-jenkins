@@ -19,11 +19,12 @@ makefile=common:makefile
 cutoff_date=common:cutoff_date
 
 #other properties
-release_code=bxms-test
+release_code=intpack-fuse63-bxms64
 #This prop defines the abbreviate number used in qe smoketest url, Please use: 6.4, 7.0, 7.0.LA
 qe_smoketest_job_abbr=7.0.LA
-candidate_version={product_version}{availability}.{release_milestone}
-shipped_file_deliver_version={product_version}{availability}
+release_milestone_version={product_version}{availability}.{release_milestone}
+#In CR release shipped_file deliver version shouldn't contain ER/CR in the filename
+shipped_file_deliver_version={release_milestone_version}
 brms_product_name=BRMS
 bpms_product_name=BPMS
 release_type=default
@@ -37,6 +38,7 @@ release_jira_base=https://projects.engineering.redhat.com/browse/
 release_jira_id=
 resolve_issue_list=
 product_cfg_sha=
+build_cfg=
 #Jenkins milestone maven repo folder
 jenkins_cache_repo=bxms-7-milestone
 
@@ -46,6 +48,7 @@ handover_template={release_stream_path}/config/release-handover.template
 release_notes_template={release_stream_path}/config/release-notes.template
 brms_deliverable_template={release_stream_path}/config/brms-deliverable.properties
 bpms_deliverable_template={release_stream_path}/config/bpms-deliverable.properties
+archive_pvt_report_basename={release_stream_path}/release-history/{release_code}-pvt-report
 
 release_handover_basename={release_stream_path}/release-history/release-handover
 
@@ -59,11 +62,12 @@ bxms_patch_maven_repo_url=
 brewchain_build_url=
 
 #pvt report
-brms_smoketest_cfg=http://git.app.eng.bos.redhat.com/git/integration-platform-config.git/plain/{release_code}-release/{release_code}-pvt-config.yaml
-bpms_smoketest_cfg=http://git.app.eng.bos.redhat.com/git/integration-platform-config.git/plain/{release_code}-release/{release_code}-pvt-config.yaml
+brms_smoketest_cfg=http://git.app.eng.bos.redhat.com/git/bxms-jenkins.git/plain/config/brms-pvt-config.yaml
+bpms_smoketest_cfg=http://git.app.eng.bos.redhat.com/git/bxms-jenkins.git/plain/config/bpms-pvt-config.yaml
 brms_pvt_report_basename={share_config_dir}/{release_code}-pvt-report-brms
+brms_pvt_report_adoc_path={share_config_dir}/{release_code}-pvt-report-brms.adoc
 bpms_pvt_report_basename={share_config_dir}/{release_code}-pvt-report-bpms
-archive_pvt_report_basename=bxms-jenkins/stream/{release_code}/release-history/{release_code}-pvt-report
+bpms_pvt_report_adoc_path={share_config_dir}/{release_code}-pvt-report-bpms.adoc
 
 #staging, candidate folder
 release_milestone_version={product_version}{availability}.{release_milestone}

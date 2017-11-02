@@ -19,6 +19,9 @@ class ReleasePipelineSeedJobBuilder {
             logRotator {
                 numToKeep 8
             }
+
+            label("service-node")
+
             // Adds environment variables to the build.
             environmentVariables {
 
@@ -57,7 +60,7 @@ class ReleasePipelineSeedJobBuilder {
 
             steps {
                 dsl {
-                    external 'streams/' + release_code + '/*.groovy'
+                    external 'streams/' + release_code + '/dsl/*.groovy'
                     additionalClasspath 'src/main/groovy'
                     // Specifies the action to be taken for job that have been removed from DSL scripts.
                     lookupStrategy 'SEED_JOB'

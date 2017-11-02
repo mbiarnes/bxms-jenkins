@@ -1,0 +1,96 @@
+Fuse And BRMS integration pack 1.7.0.redhat-630023 
+==================================================
+:Author Initials: SJR
+:toc:
+:icons:
+:numbered:
+
+[NOTE]
+.Deliverales
+============================================================================================================================
+Please allow [red]#10-15 minutes# for GlobalSync to occur should the release folder appear to be non-existent at your local mirror.
+============================================================================================================================
+
+Product Milestone
+-----------------
+
+[options="header,footer",align="center",frame="all"] 
+|=====================================================================
+|Product Name: |Fuse And BRMS integration pack
+
+|Product Version |1.7.0.redhat-630023
+
+|Milestone: |
+
+|Engineer: |bxms-prod@redhat.com
+
+|Resolved issues (to be verified) |
+
+|=====================================================================
+
+Special instructions/Notes
+--------------------------
+
+- Note: to install and test, install the fuse-eap-installer, then the kie-eap-installer and then the integration pack installer.
+
+- unzip jboss-eap-eap-6.4.10-full-build.zip
+  java -jar fuse-eap-installer-1.7.0.redhat-630023.jar jboss-eap-6.4
+
+- Please unzip the jboss-brms/bpmsuite-deployable-eap6.x.zip into the latest of EAP 6.4.x. the latest EAP 6.4.x can be downloaded from:
+http://download.eng.pnq.redhat.com/released/JBEAP-6/
+
+Repositories
+------------
+
+- http://download.lab.bos.redhat.com/brewroot/repos/jb-bxms-6.4-build/latest/maven/
+
+
+Integration Pack
+-----------------
+
+.Fuse 6.3.0.redhat-262 & BRMS 6.4.3.GA-redhat-2
+- http://download.devel.redhat.com/devel/candidates/INTPACK/INTPACK-1.7.0.redhat-630023/
+
+
+Components
+----------
+
+- Product tag: *INTPACK-1.7.0.redhat-630023*
+
+- Product version in Maven repo: *1.7.0.redhat-630023*
+
+- Fuse version: *6.3.0.redhat-262*
+
+- KIE version: *6.5.0.Final-redhat-9*
+
+- JBoss Integration Platform BOM: *6.0.8.Final-redhat-3*
+
+- Upstream Tag: *fuse-bxms-integ-1.7.0.redhat-630023*
+
+- For a full list of components and their associated versions, please look at the brms.cfg:
+link:intpack-fuse63-bxms64.cfg[Components and Versions]
+
+Smoke Tests
+-----------
+
+link:intpack-fuse63-bxms64-pvt-report.html[Smoke Test Summary]
+
+link:maven-repository-report[Maven Repository Report]
+
+[options="header"]
+.Not Passed in org.jboss.pvt.generic.JDKCompatibleCheckTest
++
+*_Description_* : Test if the delivered jars are complied by the Java version between the given scope in params. ClassVersion enum: JAVA_0(0), JAVA_12( 46 ), JAVA_13( 47 ), JAVA_14( 48 ), JAVA_15( 49 ), JAVA_16( 50 ), JAVA_17( 51 ), JAVA_18( 52 )
++
+[width="100%",options="header,footer",align="center",frame="all"]
+|============
+|File name
+
+|commons-digester-1.8.1.jar
+
+|myfaces-bundle-2.2.9.jar
+
+|============
+
+
+

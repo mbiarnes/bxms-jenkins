@@ -14,7 +14,7 @@ class ReleasePipelineJobBuilder {
     String pipelineSeqFile
 
     Job build(DslFactory dslFactory) {
-      File file =new File("streams/"+release_code+"/"+pipelineSeqFile)
+        File file =new File("streams/"+release_code+"/"+pipelineSeqFile)
       String file_content=file.text
       String stageSeq=getStageSeq(file_content)
       String product_job_prefix=release_code + "-release-pipeline/"+release_code+"-"

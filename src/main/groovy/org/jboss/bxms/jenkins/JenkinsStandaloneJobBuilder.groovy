@@ -27,7 +27,7 @@ class JenkinsStandaloneJobBuilder {
     String job_type
     String cfg_file
 
-    Map<String, String> maven_repo_map=["brms-64":"/jboss-prod/m2/bxms-6.4-", "bxms-70LA":"/jboss-prod/m2/bxms-7-", "bxms":"/jboss-prod/m2/bxms-7-", "bxms-test":"/jboss-prod/m2/bxms-7-"]
+    Map<String, String> maven_repo_map=["intpack-fuse63-bxms64":"/jboss-prod/m2/bxms-6.4-", "bxms64":"/jboss-prod/m2/bxms-6.4-", "bxms70la":"/jboss-prod/m2/bxms-7-", "bxms":"/jboss-prod/m2/bxms-7-", "bxms-test":"/jboss-prod/m2/bxms-7-"]
 
     Job build(DslFactory dslFactory) {
         String urlString ="https://code.engineering.redhat.com/gerrit/gitweb?p=integration-platform-config.git;a=blob_plain;f=" + cfg_file
@@ -47,6 +47,7 @@ class JenkinsStandaloneJobBuilder {
             {
 
                 String shellScript = """
+unset WORKSPACE
 MVN_DEP_REPO=nexus-release::default::file://${maven_repo} LOCAL=1 CFG=${_cfg} MVN_LOCAL_REPO=${maven_repo} POMMANIPEXT=brms-bom make DEBUG=\$DEBUG ${section_name}
 """
                 dslFactory.job(release_code + "-jenkins-" + job_type + "-pipeline/" + release_code + "-" + section_name ) {
@@ -56,7 +57,7 @@ MVN_DEP_REPO=nexus-release::default::file://${maven_repo} LOCAL=1 CFG=${_cfg} MV
                     }
                     parameters {
                         // Defines a simple text parameter, where users can enter a string value.
-                        booleanParam('DEBUG', false)
+                        booleanParam('DEBUG', false, 'Open Debug Log')
                     }
 
                     label("bxms-nightly")
@@ -96,6 +97,14 @@ MVN_DEP_REPO=nexus-release::default::file://${maven_repo} LOCAL=1 CFG=${_cfg} MV
                                 relativeTargetDirectory('ip-tooling')
                             }
                         }
+                    }
+                    wrappers {
+                        // Deletes files from the workspace before the build starts.
+                        preBuildCleanup(){
+                            includePattern('workspace/**')
+                            deleteDirectories()
+                        }
+
                     }
 
                     steps {
