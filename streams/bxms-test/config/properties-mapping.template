@@ -22,8 +22,9 @@ cutoff_date=common:cutoff_date
 release_code=bxms-test
 #This prop defines the abbreviate number used in qe smoketest url, Please use: 6.4, 7.0, 7.0.LA
 qe_smoketest_job_abbr=7.0.LA
-candidate_version={product_version}{availability}.{release_milestone}
-shipped_file_deliver_version={product_version}{availability}
+release_milestone_version={product_version}{availability}.{release_milestone}
+#In CR release shipped_file deliver version shouldn't contain ER/CR in the filename
+shipped_file_deliver_version={release_milestone_version}
 brms_product_name=BRMS
 bpms_product_name=BPMS
 release_type=default
