@@ -61,8 +61,8 @@ bxms_patch_maven_repo_url=
 brewchain_build_url=
 
 #pvt report
-brms_smoketest_cfg=http://git.app.eng.bos.redhat.com/git/integration-platform-config.git/plain/{release_code}-release/{release_code}-pvt-config.yaml
-bpms_smoketest_cfg=http://git.app.eng.bos.redhat.com/git/integration-platform-config.git/plain/{release_code}-release/{release_code}-pvt-config.yaml
+brms_smoketest_cfg=http://git.app.eng.bos.redhat.com/git/bxms-jenkins.git/plain/config/brms-pvt-config.yaml
+bpms_smoketest_cfg=http://git.app.eng.bos.redhat.com/git/bxms-jenkins.git/plain/config/bpms-pvt-config.yaml
 brms_pvt_report_basename={share_config_dir}/{release_code}-pvt-report-brms
 bpms_pvt_report_basename={share_config_dir}/{release_code}-pvt-report-bpms
 
