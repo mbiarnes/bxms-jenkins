@@ -60,4 +60,4 @@ def jobDefinition = job("${RELEASE_CODE}-promote-release") {
     }
 }
 
-JobTemplate.addCommonConfiguration(jobDefinition, CI_PROPERTIES_FILE, RELEASE_CODE)
+JobTemplate.addCommonConfiguration(jobDefinition, CI_PROPERTIES_FILE)

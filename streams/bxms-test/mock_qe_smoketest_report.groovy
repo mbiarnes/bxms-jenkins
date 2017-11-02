@@ -1,1 +1,0 @@
-../../jobs/mock_qe_smoketest_report.groovy

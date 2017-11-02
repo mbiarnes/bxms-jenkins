@@ -11,7 +11,7 @@ brms_jql_bugfix_search="(project = RHBRMS OR project = RHBPMS) AND 'Target Relea
 kinit -k -t \${HOME}/bxms-release.keytab bxms-release/prod-ci@REDHAT.COM
 function generate_release_notes () {
     #Replace the variable from properties
-    python ip-tooling/template_helper.py -i ./\${release_prefix}-release/\${release_prefix}-release-notes.template -p \${ci_properties_file} -o \$1
+    python ip-tooling/template_helper.py -i \${release_notes_template} -p \${ci_properties_file} -o \$1
     
     echo "cve search link: Please click the following link"
     echo "https://issues.jboss.org/issues/?jql=$2"|sed -e "s/ /%20/g"| sed -e "s/'/%22/g"
@@ -89,5 +89,5 @@ def jobDefinition = job("${RELEASE_CODE}-release-notes") {
     }
 }
 
-JobTemplate.addCommonConfiguration(jobDefinition, CI_PROPERTIES_FILE, RELEASE_CODE)
+JobTemplate.addCommonConfiguration(jobDefinition, CI_PROPERTIES_FILE)
 JobTemplate.addIpToolingScmConfiguration(jobDefinition)

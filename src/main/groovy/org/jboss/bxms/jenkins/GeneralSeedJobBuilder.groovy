@@ -8,12 +8,12 @@ import javaposse.jobdsl.dsl.Job
  */
 class GeneralSeedJobBuilder {
 
-    String stream_name
+    String release_code
 
     Job build(DslFactory dslFactory) {
-        dslFactory.folder(stream_name)
-        dslFactory.job(stream_name +"/z-" + stream_name+ "-seed") {
-            it.description "This job is a seed job for generating " + stream_name + "release pipeline. To change the  parameter of the release pipeline, Please go to streams/release_code/env.properties"
+        dslFactory.folder(release_code)
+        dslFactory.job(release_code +"/z-" + release_code+ "-seed") {
+            it.description "This job is a seed job for generating " + release_code + "release pipeline. To change the  parameter of the release pipeline, Please go to streams/release_code/env.properties"
             logRotator {
                 numToKeep 8
             }
@@ -35,7 +35,7 @@ class GeneralSeedJobBuilder {
 
             steps {
                 dsl {
-                    external 'streams/' + stream_name + '/*.groovy'
+                    external 'streams/' + release_code + '/*.groovy'
                     additionalClasspath 'src/main/groovy'
                     // Specifies the action to be taken for job that have been removed from DSL scripts.
                     lookupStrategy 'SEED_JOB'

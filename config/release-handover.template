@@ -1,0 +1,90 @@
+= BRMS and BPM Suite ${product_version} ${release_milestone}
+
+:Author Initials: SJR
+:toc:
+:icons:
+:numbered:
+
+[NOTE]
+.link:${release_jira_base}${release_jira_id}[Release JIRA]
+
+============================================================================================================================
+Please allow [red]#10-15 minutes# for GlobalSync to occur should the release folder appear to be non-existent at your local mirror.
+============================================================================================================================
+
+== Product Milestone
+
+
+[options="header,footer",align="center",frame="all"] 
+|=====================================================================
+|Product Name: |BRMS and BPM Suite
+
+|Product Version |${product_version}
+
+|Build: |${release_milestone}
+
+|Engineer: |${release_engineer}
+
+|Resolved issues (ON_QA) |${resolve_issue_list}
+
+|Release Notes | link:${brms_release_notes_url}[BRMS]
+
+link:${bpms_release_notes_url}[BPMS]
+
+|=====================================================================
+
+== Special instructions/Notes
+
+
+- BRMS/BPM SUITE ${product_version} ${release_milestone} is dependencies have been aligned to *${eap_version}*
+
+- Please unzip the jboss-brms/jboss-brms-business-central-eap7.zip into the latest of EAP 7.0.x. the latest EAP 7.0.x can be downloaded from:
+http://download.eng.pnq.redhat.com/released/JBEAP-7/
+
+
+== Repositories
+
+
+- http://download.lab.bos.redhat.com/brewroot/repos/${brew_tag}/latest/maven/ 
+
+
+== BRMS & BPM Suite Download
+
+
+- http://download.devel.redhat.com/devel/candidates/BPMS/BPMS-${product_deliver_version}
+
+- http://download.devel.redhat.com/devel/candidates/BRMS/BRMS-${product_deliver_version}
+
+
+== Components
+
+- Product tag: *${product_name}-${product_version}.${release_milestone}*
+
+- Product version in Maven repo: *${product_artifact_version}*
+
+- KIE version: *${kie_version}*
+
+- JBoss Integration Platform BOM: *${ip_bom_version}*
+
+- Upstream Tag: *${upstream_tag}*
+
+- Upstream handover: *${upstream_handover_url}*
+
+- For a full list of components and their associated versions, please look at the brms.cfg:
+link:${release_prefix}.cfg[Components and Versions]
+
+== Build
+
+link:${product_assembly_brew_url}[${product_assembly_nvr}]
+
+== Smoke Tests
+
+${load:qe_smoketest_report_path}
+
+=== Package Checking Summary
+
+link:${release_prefix}-pvt-report-bpms.html[Package Checking Details Report(BPMS)]
+
+link:${maven_repo_report_url}[Maven Repository Report]
+
+${load:bpms_pvt_report_adoc_path}

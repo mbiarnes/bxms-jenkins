@@ -1,0 +1,1 @@
+../../../jobs/promote_release.groovy

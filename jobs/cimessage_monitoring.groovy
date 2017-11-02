@@ -3,7 +3,6 @@ import org.jboss.bxms.jenkins.JobTemplate
 def shellScript = """# Disable bash tracking mode, too much noise.
 set -x
 
-echo \$target
 echo \$CI_TYPE
 echo \$CI_NAME
 echo "++++++++++++++++++++++++++++++++++++++"

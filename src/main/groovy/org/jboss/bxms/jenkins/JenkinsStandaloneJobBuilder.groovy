@@ -25,32 +25,31 @@ import java.io.StringReader
 class JenkinsStandaloneJobBuilder {
     String release_code
     String job_type
-    String job_name
-    Map<String, String> maven_repo_map=["brms-64":"/jboss-prod/m2/bxms-6.4-", "brms-70LA":"/jboss-prod/m2/bxms-7-", "brms":"/jboss-prod/m2/bxms-7-", "bxms-test":"/jboss-prod/m2/bxms-7-"]
+    String cfg_file
+
+    Map<String, String> maven_repo_map=["brms-64":"/jboss-prod/m2/bxms-6.4-", "bxms-70LA":"/jboss-prod/m2/bxms-7-", "bxms":"/jboss-prod/m2/bxms-7-", "bxms-test":"/jboss-prod/m2/bxms-7-"]
 
     Job build(DslFactory dslFactory) {
-        String urlString ="https://code.engineering.redhat.com/gerrit/gitweb?p=integration-platform-config.git;a=blob_plain;f=" + release_code + ".cfg"
+        String urlString ="https://code.engineering.redhat.com/gerrit/gitweb?p=integration-platform-config.git;a=blob_plain;f=" + cfg_file
         URL cfg_url = urlString.toURL()
         BufferedReader configReader = newReader(cfg_url.getHost(), cfg_url.getFile())
         Ini _ini_cfg = new Ini().read(configReader)
         Map<String,Map<String,String>> sections = _ini_cfg.getSections()
 
-        dslFactory.folder(job_name + "-jenkins-" + job_type + "-pipeline")
+        dslFactory.folder(release_code + "-jenkins-" + job_type + "-pipeline")
         String maven_repo = maven_repo_map [release_code] + job_type
-        String _cfg = null + ".cfg"
+        String _cfg = cfg_file
 
         for (String section_name : sections.keySet())
         {
             Map<String, String> section=sections.get(section_name)
             if ((!section.containsKey("config_type")) || (section.containsKey("config_type") && section.get("config_type").equals("bom-builder")) )
             {
-                if (job_type.equals("nightly"))
-                    _cfg = release_code + "-dev.cfg"
 
                 String shellScript = """
 MVN_DEP_REPO=nexus-release::default::file://${maven_repo} LOCAL=1 CFG=${_cfg} MVN_LOCAL_REPO=${maven_repo} POMMANIPEXT=brms-bom make DEBUG=\$DEBUG ${section_name}
 """
-                dslFactory.job(job_name + "-jenkins-" + job_type + "-pipeline/" + job_name + "-" + section_name ) {
+                dslFactory.job(release_code + "-jenkins-" + job_type + "-pipeline/" + release_code + "-" + section_name ) {
                     it.description "This job is a seed job for generating " + release_code + " " + job_type + " jenkins build."
                     logRotator {
                         numToKeep 8

@@ -11,10 +11,6 @@ class ReleasePipelineSeedJobBuilder {
     String release_code
     String ci_properties_file
     String cfg_file
-    String ip_makefile
-    String product_root_component
-    String bpms_deliverable_list_file
-    String repo_builder_script
 
     Job build(DslFactory dslFactory) {
         dslFactory.folder(release_code + "-release-pipeline")

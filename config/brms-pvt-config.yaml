@@ -1,0 +1,20 @@
+#
+# Sample PVT Configuration File.
+#resources: ['jboss-brms-%{version}-engine.zip', 'jboss-brms-bpmsuite-%{version}-maven-repository.zip']
+#
+
+product: BRMS
+version: 7.0.0.DR1
+distrepo: http://download-node-02.eng.bos.redhat.com/rcm-guest/staging/jboss-brms/BRMS-%{version}/
+tests:
+  org.jboss.pvt.generic.NoSignatureCheckTest:
+    resources: ['jboss-brms-%{target}-execution-server-ee7.zip', 'jboss-brms-%{target}-business-central-eap7.zip', 'jboss-brms-%{target}-add-ons.zip']
+    filters: ['.*bouncycastle/.*']
+  org.jboss.pvt.generic.JDKCompatibleCheckTest:
+    resources: ['jboss-brms-%{target}-execution-server-ee7.zip', 'jboss-brms-%{target}-business-central-eap7.zip', 'jboss-brms-%{target}-add-ons.zip']
+    filters: ['.*example.*']
+    params: {min-version: '48', 'max-version':'52'}
+  org.jboss.pvt.generic.VersionFormatTest:
+    resources: ['jboss-brms-%{target}-execution-server-ee7.zip', 'jboss-brms-%{target}-business-central-eap7.zip', 'jboss-brms-%{target}-add-ons.zip']
+    filters: ['.*jboss-modules.jar.*', '.*/client/.*', '.*/bin/.*','.*/bundled/.*']
+    params: {'format':'.*[\.-]redhat-\d+.*'}

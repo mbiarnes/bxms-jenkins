@@ -1,0 +1,20 @@
+#
+# Sample PVT Configuration File.
+#resources: ['jboss-brms-%{version}-engine.zip', 'jboss-brms-bpmsuite-%{version}-maven-repository.zip']
+#
+
+product: BPMS
+version: 7.0.0.ER3
+distrepo: http://download-node-02.eng.bos.redhat.com/rcm-guest/staging/jboss-bpmsuite/BPMS-%{version}/
+tests:
+  org.jboss.pvt.generic.NoSignatureCheckTest:
+    resources: ['jboss-bpmsuite-%{target}-execution-server-ee7.zip', 'jboss-bpmsuite-%{target}-business-central-eap7.zip', 'jboss-bpmsuite-%{target}-add-ons.zip']
+    filters: ['.*bouncycastle/.*']
+  org.jboss.pvt.generic.JDKCompatibleCheckTest:
+    resources: ['jboss-bpmsuite-%{target}-execution-server-ee7.zip', 'jboss-bpmsuite-%{target}-business-central-eap7.zip', 'jboss-bpmsuite-%{target}-add-ons.zip']
+    filters: ['.*example.*']
+    params: {min-version: '48', 'max-version':'52'}
+  org.jboss.pvt.generic.VersionFormatTest:
+    resources: ['jboss-bpmsuite-%{target}-execution-server-ee7.zip', 'jboss-bpmsuite-%{target}-business-central-eap7.zip', 'jboss-bpmsuite-%{target}-add-ons.zip']
+    filters: ['.*jboss-modules.jar.*', '.*/client/.*', '.*/bin/.*','.*/bundled/.*']
+    params: {'format':'.*[\.-]redhat-\d+.*'}

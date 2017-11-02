@@ -3,7 +3,7 @@ import org.jboss.bxms.jenkins.JobTemplate
 String shellScript = """
 remote_product_cfg_sha=\$(git log -1 --pretty="%H" ${IP_CONFIG_FILE})
 cfg=${IP_CONFIG_FILE}
-release_prefix=\${cfg%%.cfg}
+release_code=\${cfg%%.cfg}
 
 function appendProp() {
     echo "Inject Properties:\$2"
@@ -14,7 +14,8 @@ function appendProp() {
     sed -i "/^\$1/d" ${CI_PROPERTIES_FILE} && echo "\$1=\$2" >> ${CI_PROPERTIES_FILE}
 }
 if [ "\${CLEAN_CONFIG}" = "true" ];then
-    rm -vf /jboss-prod/config/\${release_prefix}-*.*
+    rm -vf /jboss-prod/config/\${release_code}-*.*
+    rm -vf \${CI_PROPERTIES_FILE}
 fi
 #If build new versions, then remove the jenkins properties files
 if [ -f ${CI_PROPERTIES_FILE} ];then
@@ -34,7 +35,7 @@ if [ -f ${CI_PROPERTIES_FILE} ];then
 fi
 if [ ! -f ${CI_PROPERTIES_FILE} ];then
     #Loading env from cfg file
-    python ip-tooling/jenkins_ci_property_loader.py -i ${IP_CONFIG_FILE} -o ${CI_PROPERTIES_FILE}
+    python ip-tooling/jenkins_ci_property_loader.py -m bxms-jenkins/streams/${RELEASE_CODE}/config/properties-mapping.template -i ${IP_CONFIG_FILE} -o ${CI_PROPERTIES_FILE}
     appendProp "product_cfg_sha" \$remote_product_cfg_sha    
     appendProp "ci_properties_file" ${CI_PROPERTIES_FILE}    
 fi

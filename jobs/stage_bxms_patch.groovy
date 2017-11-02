@@ -7,12 +7,12 @@ wget \${brms_staging_properties_url} -O \${brms_staging_properties_name}
 wget \${brms_candidate_properties_url} -O \${brms_candidate_properties_name}
 
 ip-tooling/maven-to-stage.py --version=\${product_artifact_version} --override-version \${product_version} \
-   --deliverable \${release_prefix}-release/brms-deliverable.properties --maven-repo \${bxms_patch_maven_repo_url} \
+   --deliverable \${brms_deliverable_template} --maven-repo \${bxms_patch_maven_repo_url} \
    --output \${brms_product_name}\
    --release-url=\${rcm_staging_base}/\${brms_staging_path} --output-deliverable-list \${brms_staging_properties_name}
    
 ip-tooling/maven-to-stage.py --version=\${product_artifact_version} --override-version \${product_version} \
-   --deliverable \${release_prefix}-release/bpmsuite-deliverable.properties --maven-repo \${bxms_patch_maven_repo_url} \
+   --deliverable \${bpms_deliverable_template} --maven-repo \${bxms_patch_maven_repo_url} \
    --output \${bpms_product_name}\
    --release-url=\${rcm_staging_base}/\${bpms_staging_path} --output-deliverable-list \${brms_staging_properties_name}
 
@@ -77,7 +77,7 @@ def jobDefinition = job("${RELEASE_CODE}-stage-bxms-patch") {
                 transferSet {
 
                     // Sets the files to upload to a server.
-                    sourceFiles('${release_prefix}-deliverable-list*.properties')
+                    sourceFiles('${release_code}-deliverable-list*.properties')
 
                     // Sets the destination folder.
                     remoteDirectory('${brms_staging_path}/')
@@ -87,7 +87,7 @@ def jobDefinition = job("${RELEASE_CODE}-stage-bxms-patch") {
                 transferSet {
 
                     // Sets the files to upload to a server.
-                    sourceFiles('${release_prefix}-deliverable-list*.properties')
+                    sourceFiles('${release_code}-deliverable-list*.properties')
 
                     // Sets the destination folder.
                     remoteDirectory('${bpms_staging_path}/')
@@ -97,5 +97,5 @@ def jobDefinition = job("${RELEASE_CODE}-stage-bxms-patch") {
     }
 }
 
-JobTemplate.addCommonConfiguration(jobDefinition, CI_PROPERTIES_FILE, RELEASE_CODE)
+JobTemplate.addCommonConfiguration(jobDefinition, CI_PROPERTIES_FILE)
 JobTemplate.addIpToolingScmConfiguration(jobDefinition)

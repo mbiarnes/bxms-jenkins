@@ -4,7 +4,7 @@ package org.jboss.bxms.jenkins
 class JobTemplate {
 
 
-    static void addCommonConfiguration(job, CI_PROPERTIES_FILE, PRODUCT_NAME, NODE_LABEL="release-pipeline"){
+    static void addCommonConfiguration(job, CI_PROPERTIES_FILE, NODE_LABEL="release-pipeline"){
 
         job.with {
 
@@ -102,6 +102,27 @@ class JobTemplate {
 
                         // Specifies a local directory (relative to the workspace root) where the Git repository will be checked out.
                         relativeTargetDirectory('bxms-tooling')
+                    }
+                }
+
+                // Adds a Git SCM source.
+                git {
+
+                    // Adds a remote.
+                    remote {
+
+                        // Sets the remote URL.
+                        url("ssh://jb-ip-tooling-jenkins@code.engineering.redhat.com:22/bxms-jenkins")
+                    }
+
+                    // Specify the branches to examine for changes and to build.
+                    branch("master")
+
+                    // Adds additional behaviors.
+                    extensions {
+
+                        // Specifies a local directory (relative to the workspace root) where the Git repository will be checked out.
+                        relativeTargetDirectory('bxms-jenkins')
                     }
                 }
             }

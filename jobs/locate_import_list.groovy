@@ -24,5 +24,5 @@ def jobDefinition = job("${RELEASE_CODE}-locate-import-list") {
     }
 }
 
-JobTemplate.addCommonConfiguration(jobDefinition, CI_PROPERTIES_FILE, RELEASE_CODE)
+JobTemplate.addCommonConfiguration(jobDefinition, CI_PROPERTIES_FILE)
 JobTemplate.addIpToolingScmConfiguration(jobDefinition)

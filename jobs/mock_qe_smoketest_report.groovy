@@ -29,7 +29,7 @@ def jobDefinition = job("${RELEASE_CODE}-mock-qe-smoketest-report") {
             // KEY=value pairs, one per line (Java properties file format) to be used as message properties.
             messageProperties("label=bxms-ci\n" +
                     "CI_USER=bxms-qe-service-user\n" +
-                    "EVENT_TYPE=\${release_prefix}-qe-smoketest-report\n")
+                    "EVENT_TYPE=\${release_code}-qe-smoketest-report\n")
 
             // Content of CI message to be sent.
             messageContent(report_string)
@@ -37,5 +37,5 @@ def jobDefinition = job("${RELEASE_CODE}-mock-qe-smoketest-report") {
     }
 }
 
-JobTemplate.addCommonConfiguration(jobDefinition, CI_PROPERTIES_FILE, RELEASE_CODE)
+JobTemplate.addCommonConfiguration(jobDefinition, CI_PROPERTIES_FILE)
 JobTemplate.addIpToolingScmConfiguration(jobDefinition)

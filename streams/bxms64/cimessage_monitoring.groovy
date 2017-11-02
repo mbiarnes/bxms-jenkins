@@ -1,1 +1,0 @@
-../../jobs/cimessage_monitoring.groovy

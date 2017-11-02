@@ -8,20 +8,16 @@ import java.io.File
  */
 class ReleasePipelineJobBuilder {
 
-    String product_name
+    String release_code
     String ci_properties_file
     String cfg_file
-    String ip_makefile
-    String product_root_component
-    String bpms_deliverable_list_file
-    String repo_builder_script
     String pipelineSeqFile
 
     Job build(DslFactory dslFactory) {
-      File file =new File("streams/"+product_name+"/"+pipelineSeqFile)
+      File file =new File("streams/"+release_code+"/"+pipelineSeqFile)
       String file_content=file.text
       String stageSeq=getStageSeq(file_content)
-      String product_job_prefix=product_name + "-release-pipeline/"+product_name+"-"
+      String product_job_prefix=release_code + "-release-pipeline/"+release_code+"-"
       String pipelineScript='''
         def stageSeq='''+stageSeq+'''
         def product_job_prefix="'''+product_job_prefix+'''"
@@ -53,9 +49,9 @@ class ReleasePipelineJobBuilder {
         }
       '''
       
-        dslFactory.folder(product_name + "-release-pipeline")
-        dslFactory.pipelineJob(product_name + "-release-pipeline/a-" + product_name + "-release-pipeline") {
-            it.description "This job is job for run " + product_name + "release pipeline. To change the  parameter of the release pipeline, Please go to streams/product_name/env.properties"
+        dslFactory.folder(release_code + "-release-pipeline")
+        dslFactory.pipelineJob(release_code + "-release-pipeline/a-" + release_code + "-release-pipeline") {
+            it.description "This job is job for run " + release_code + "release pipeline. To change the  parameter of the release pipeline, Please go to streams/release_code/env.properties"
             logRotator {
                 numToKeep 8
             }
@@ -63,7 +59,7 @@ class ReleasePipelineJobBuilder {
             environmentVariables {
 
                 // The name of the product, e.g., bxms64.
-                env("PRODUCT_NAME", product_name)
+                env("release_code", release_code)
 
                 // Release pipeline CI properties file
                 env("CI_PROPERTIES_FILE",ci_properties_file)

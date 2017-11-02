@@ -2,10 +2,8 @@ import org.jboss.bxms.jenkins.JobTemplate
 
 // Create product tag script
 String shellScript = """
-#unset Jenkins WORKSPACE variable
+#unset Jenkins WORKSPACE variable to avoid clash with ip-tooling
 unset WORKSPACE
-export M3_HOME=/jboss-prod/tools/maven-3.3.9-prod
-export PATH=\$M3_HOME/bin:\$PATH
 
 echo -e \"Host code.engineering.redhat.com \\n\\
         HostName code.engineering.redhat.com \\n\\
@@ -68,5 +66,5 @@ def jobDefinition = job("${RELEASE_CODE}-create-product-tag") {
     }
 }
 
-JobTemplate.addCommonConfiguration(jobDefinition, CI_PROPERTIES_FILE, RELEASE_CODE, "bxms-nightly")
+JobTemplate.addCommonConfiguration(jobDefinition, CI_PROPERTIES_FILE, "bxms-nightly")
 JobTemplate.addIpToolingScmConfiguration(jobDefinition)

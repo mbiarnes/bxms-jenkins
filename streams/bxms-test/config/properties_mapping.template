@@ -1,0 +1,101 @@
+#property load from cfg file
+product_name=common:product_name
+availability=common:availability
+product_version=common:product_version
+release_milestone=common:release_milestone
+release_engineer=common:release_engineer
+release_estimation=common:release_estimation
+qe_contactor=common:qe_contactor
+upstream_tag=common:upstream_tag
+eap_version=common:base
+upstream_handover_url=common:upstream_handover_url
+product_artifact_version=ip-brms:version
+ip_bom_version=jboss-integration-platform-bom:version
+kie_version=drools:version
+mvel_version=mvel-2.3.2:version
+brew_tag=common:tag
+brew_target=common:target
+makefile=common:makefile
+cutoff_date=common:cutoff_date
+
+#other properties
+release_code=bxms-test
+#This prop defines the abbreviate number used in qe smoketest url, Please use: 6.4, 7.0, 7.0.LA
+qe_smoketest_job_abbr=7.0.LA
+candidate_version={product_version}{availability}.{release_milestone}
+shipped_file_deliver_version={product_version}{availability}
+brms_product_name=BRMS
+bpms_product_name=BPMS
+release_type=default
+release_status=
+share_config_dir=/jboss-prod/config
+repository_builder_script=regen_bxms_repo_builder.sh
+product_root_component=bxms-maven-repo-root
+rcm_staging_base=http://rcm-guest.app.eng.bos.redhat.com/rcm-guest/staging
+rcm_candidate_base=http://download.devel.redhat.com/devel/candidates
+release_jira_base=https://projects.engineering.redhat.com/browse/
+release_jira_id=
+resolve_issue_list=
+product_cfg_sha=
+#Jenkins milestone maven repo folder
+jenkins_cache_repo=bxms-7-milestone
+
+#config file
+release_stream_path=bxms-jenkins/streams/{release_code}
+handover_template={release_stream_path}/config/release-handover.template
+release_notes_template={release_stream_path}/config/release-notes.template
+brms_deliverable_template={release_stream_path}/config/brms-deliverable.properties
+bpms_deliverable_template={release_stream_path}/config/bpms-deliverable.properties
+
+release_handover_basename={release_stream_path}/release-history/release-handover
+release_notes_
+
+
+#brew build
+product_assembly_brew_url=
+product_assembly_nvr=
+product_assembly_maven_repo_url=
+bxms_patch_brew_url=
+bxms_patch_nvr=
+bxms_patch_maven_repo_url=
+brewchain_build_url=
+
+#pvt report
+brms_smoketest_cfg=http://git.app.eng.bos.redhat.com/git/integration-platform-config.git/plain/{release_code}-release/{release_code}-pvt-config.yaml
+bpms_smoketest_cfg=http://git.app.eng.bos.redhat.com/git/integration-platform-config.git/plain/{release_code}-release/{release_code}-pvt-config.yaml
+brms_pvt_report_basename={share_config_dir}/{release_code}-pvt-report-brms
+bpms_pvt_report_basename={share_config_dir}/{release_code}-pvt-report-bpms
+archive_pvt_report_basename=bxms-jenkins/stream/{release_code}/release-history/{release_code}-pvt-report
+
+#staging, candidate folder
+brms_staging_folder=jboss-brms
+bpms_staging_folder=jboss-bpmsuite
+brms_staging_path={brms_staging_folder}/{brms_product_name}-{release_milestone_version}
+bpms_staging_path={bpms_staging_folder}/{bpms_product_name}-{release_milestone_version}
+
+#qe properties
+brms_staging_properties_name={release_code}-deliverable-list-staging.properties
+brms_candidate_properties_name={release_code}-deliverable-list.properties
+brms_staging_properties_url={rcm_staging_base}/{brms_staging_path}/{brms_staging_properties_name}
+brms_candidate_properties_url={rcm_staging_base}/{brms_staging_path}/{brms_candidate_properties_name}
+bpms_staging_properties_url={rcm_staging_base}/{bpms_staging_path}/{brms_staging_properties_name}
+bpms_candidate_properties_url={rcm_staging_base}/{brms_staging_path}/{brms_candidate_properties_name}
+qe_smoketest_report_path={share_config_dir}/{release_code}-qe-smoketest-report.adoc
+qe_smoketest_job_url=https://bxms-qe-jenkins.rhev-ci-vms.eng.rdu2.redhat.com/job/BxMS/job/BxMS-prod-{qe_smoketest_job_abbr}/job/smoke/
+
+#maven offline repository
+bxms_maven_repo_name=jboss-brms-bpmsuite-{release_milestone_version}-maven-repository.zip
+bxms_incr_maven_repo_name=jboss-brms-bpmsuite-{release_milestone_version}-incremental-maven-repository.zip
+maven_repo_report_url={rcm_staging_base}/{bpms_staging_path}/maven-repository-report/
+
+#Misc
+brms_release_notes_path=brms-{product_version}{availability}-release-notes.html
+brms_release_notes_url={rcm_staging_base}/{brms_staging_path}/brms-{product_version}{availability}-release-notes.html
+bpms_release_notes_path=bpmsuite-{product_version}{availability}-release-notes.html
+bpms_release_notes_url={rcm_staging_base}/{bpms_staging_path}/bpmsuite-{product_version}{availability}-release-notes.html
+
+# Find the customer portoal software ID for the latest available release in https://access.redhat.com/jbossnetwork/restricted/listSoftware.html
+software_id=52491
+bxms_release_notes_url=
+dev_maven_repo=/jboss-prod/m2/bxms-dev-repo
+

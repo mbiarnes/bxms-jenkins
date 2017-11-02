@@ -7,7 +7,7 @@ BRMS & BPMSuite \${product_version} \${release_milestone} {color:#d04437}is now 
 The BxMS \${product_version} \${release_milestone} Release is ready for QA. 
 
 Candidate download URL:
-Handover: [\${rcm_candidate_base}/\${bpms_staging_path}/\${release_prefix}-handover.html]
+Handover: [\${rcm_candidate_base}/\${bpms_staging_path}/\${release_code}-handover.html]
 
 [\${rcm_candidate_base}/\${brms_staging_path}/]
 
@@ -52,5 +52,5 @@ def jobDefinition = job("${RELEASE_CODE}-trigger-qe-handover-test") {
     }
 }
 
-JobTemplate.addCommonConfiguration(jobDefinition, CI_PROPERTIES_FILE, RELEASE_CODE)
+JobTemplate.addCommonConfiguration(jobDefinition, CI_PROPERTIES_FILE)
 JobTemplate.addIpToolingScmConfiguration(jobDefinition)

@@ -1,0 +1,46 @@
+<html>
+  <head></head>
+  <body>
+    <p>
+      In order to better meet customer expectations, micro releases for Red Hat JBoss BRMS 6 and Red Hat JBoss BPM Suite 6 have been discontinued and replaced with updates delivered on a repeating schedule, targeting as estimative a new release every 6 weeks. 
+    </p>
+    <p>
+      Each new update will contain a number of bug fixes for customer reported issues and potentially a number of security fixes. We expect that the updates will substantially reduce the number of individual patches that we produce and that customers must manage to keep their installations up to date.
+    </p>
+    <p>
+      For more information see the following Red Hat Knowledgebase article:
+      <a href="https://access.redhat.com/articles/1455733">Maintenance Release Changes in BRMS and BPM Suite 6.1+</a>
+    </p>
+    <p>
+      This update includes all fixes and changes from
+      <a href="https://access.redhat.com/jbossnetwork/restricted/softwareDetail.html?softwareId=${software_id}">JBoss BPM Suite ${product_deliver_version}</a>
+    </p>
+    <p> This update includes fixes for the following security related issues:</p>
+    <table cellpadding="3" cellspacing="5" style="margin:30px">
+      <tr>
+        <th>ID </th>
+        <th>Summary</th>
+        <th> </th>
+      </tr>
+      <!--table_1_appending_mark-->
+    </table>
+    <p>This update includes the following bug fixes or changes:</p>
+    <table cellpadding="3" cellspacing="5" style="margin:30px">
+      <tr>
+        <th>ID </th>
+        <th>Summary</th>
+        <th> </th>
+      </tr>
+      <!--table_2_appending_mark-->
+    </table>
+    <h2>Installation</h2>
+    <p>Unzip the file and use <em>apply-updates.[sh|bat]</em> script to automatically apply the patch. Linux/Unix users need to use apply-updates.sh, Windows users apply-updates.bat.</p>
+    <p>There is <em>blacklist.txt</em> file in the root of the patch directory. Users can edit the file and add paths to files that they don't want to update. Instead of overwriting those files, new files with".new" extension are created.
+    </p>
+    <p>For maven repository, please unzip <em>${product_version}-maven-repository need to be add-in</em>(it is provided as a separate zip) directly into the maven repository.The core engine has been updated to version "<em>${kie_version}</em>" and the BOM to version "<em>${product_artifact_version}</em>"- make sure to update your maven project accordingly to it.
+    </p>
+    <p>More detailed information about how to apply a patch is fully described in our
+    <a href="https://access.redhat.com/documentation/en/red-hat-jboss-bpm-suite/6.4/single/installation-guide/#applying_patches_in_red_hat_jboss_bpm_suite_6.3">Red Hat JBoss BPM Suite 6.4 Installation Guide</a>
+    </p>
+  </body>
+</html>

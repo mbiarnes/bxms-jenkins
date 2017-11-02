@@ -1,0 +1,1 @@
+../../../jobs/update_product_jira.groovy

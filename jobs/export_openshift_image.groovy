@@ -128,6 +128,6 @@ def jobDefinition = job("${RELEASE_CODE}-export-openshift-images") {
     }
 
 }
-JobTemplate.addCommonConfiguration(jobDefinition, CI_PROPERTIES_FILE, RELEASE_CODE)
+JobTemplate.addCommonConfiguration(jobDefinition, CI_PROPERTIES_FILE)
 
 

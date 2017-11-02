@@ -1,0 +1,1 @@
+../../../jobs/create_release_notes.groovy

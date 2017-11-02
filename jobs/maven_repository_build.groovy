@@ -44,7 +44,7 @@ sed -e "s=\${rcm_staging_base}/\${brms_staging_folder}=\${rcm_candidate_base}/\$
 make CFG=${IP_CONFIG_FILE} MAVEN_REPOSITORY_BUILDER_SCRIPT=\${repository_builder_script} -f \${makefile} repository
 #if [ "\$release_type" = "default" ];then
 #TODO rename the maven repository zip to make it consistent with others
-#    cd workspace/\${release_prefix}-repository/archive
+#    cd workspace/\${release_code}-repository/archive
 #    for file in jboss-brms-bpmsuite-*
 #    do
 #      mv "\$file" "\${file/\${product_version}.\${release_milestone}/\${product_deliver_version}}"
@@ -98,7 +98,7 @@ def jobDefinition = job("${RELEASE_CODE}-maven-repository-build") {
     publishers {
 
         //Archives artifacts with each build.
-        archiveArtifacts('workspace/${release_prefix}-repository/archive/**/*')
+        archiveArtifacts('workspace/${release_code}-repository/archive/**/*')
 
         // Send artifacts to an SSH server (using SFTP) and/or execute commands over SSH.
         publishOverSsh {
@@ -114,10 +114,10 @@ def jobDefinition = job("${RELEASE_CODE}-maven-repository-build") {
                     transferSet {
 
                         // Sets the files to upload to a server.
-                        sourceFiles('workspace/${release_prefix}-repository/archive/*.zip,workspace/bxms-repository/archive/*.text,workspace/bxms-repository/archive/*.md5')
+                        sourceFiles('workspace/${release_code}-repository/archive/*.zip,workspace/bxms-repository/archive/*.text,workspace/bxms-repository/archive/*.md5')
 
                         // Sets the first part of the file path that should not be created on the remote server.
-                        removePrefix('workspace/${release_prefix}-repository/archive/')
+                        removePrefix('workspace/${release_code}-repository/archive/')
 
                         // Sets the destination folder.
                         remoteDirectory('${product_stage_folder}/${product_name}-${product_version}')
@@ -132,10 +132,10 @@ def jobDefinition = job("${RELEASE_CODE}-maven-repository-build") {
                     transferSet {
 
                         // Sets the files to upload to a server.
-                        sourceFiles('workspace/${release_prefix}-repository/archive/*.zip,workspace/${release_prefix}-repository/archive/*.text,workspace/${release_prefix}-repository/archive/*.md5')
+                        sourceFiles('workspace/${release_code}-repository/archive/*.zip,workspace/${release_code}-repository/archive/*.text,workspace/${release_code}-repository/archive/*.md5')
 
                         // Sets the first part of the file path that should not be created on the remote server.
-                        removePrefix('workspace/${release_prefix}-repository/archive/')
+                        removePrefix('workspace/${release_code}-repository/archive/')
 
                         // Sets the destination folder.
                         remoteDirectory('${brms_staging_path}')
@@ -152,10 +152,10 @@ def jobDefinition = job("${RELEASE_CODE}-maven-repository-build") {
                     transferSet {
 
                         // Sets the files to upload to a server.
-                        sourceFiles('workspace/${release_prefix}-repository/archive/*.zip,workspace/${release_prefix}-repository/archive/*.text,workspace/${release_prefix}-repository/archive/*.md5')
+                        sourceFiles('workspace/${release_code}-repository/archive/*.zip,workspace/${release_code}-repository/archive/*.text,workspace/${release_code}-repository/archive/*.md5')
 
                         // Sets the first part of the file path that should not be created on the remote server.
-                        removePrefix('workspace/${release_prefix}-repository/archive/')
+                        removePrefix('workspace/${release_code}-repository/archive/')
 
                         // Sets the destination folder.
                         remoteDirectory('${bpms_staging_path}')
@@ -172,7 +172,7 @@ def jobDefinition = job("${RELEASE_CODE}-maven-repository-build") {
                     transferSet {
 
                         // Sets the files to upload to a server.
-                        sourceFiles('${release_prefix}-deliverable-list*.properties')
+                        sourceFiles('${release_code}-deliverable-list*.properties')
 
                         // Sets the destination _path.
                         remoteDirectory('${brms_staging_path}')
@@ -182,7 +182,7 @@ def jobDefinition = job("${RELEASE_CODE}-maven-repository-build") {
                     transferSet {
 
                         // Sets the files to upload to a server.
-                        sourceFiles('${release_prefix}-deliverable-list*.properties')
+                        sourceFiles('${release_code}-deliverable-list*.properties')
 
                         remoteDirectory('${bpms_staging_path}')
                     }
@@ -192,5 +192,5 @@ def jobDefinition = job("${RELEASE_CODE}-maven-repository-build") {
     }
 }
 
-JobTemplate.addCommonConfiguration(jobDefinition, CI_PROPERTIES_FILE, RELEASE_CODE)
+JobTemplate.addCommonConfiguration(jobDefinition, CI_PROPERTIES_FILE)
 JobTemplate.addIpToolingScmConfiguration(jobDefinition)

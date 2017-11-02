@@ -2,21 +2,21 @@ import org.jboss.bxms.jenkins.*
 
 //Establish the parametize release pipeline
 new ReleasePipelineSeedJobBuilder(
-        release_code: "brms-64",
+        release_code: "brms64",
         ci_properties_file:"/jboss-prod/config/brms-64-ci.properties",
         cfg_file:"brms-64.cfg",
 ).build(this)
 
 new ReleasePipelineSeedJobBuilder(
-        release_code: "brms",
-        ci_properties_file:"/jboss-prod/config/brms-ci.properties",
-        cfg_file:"brms.cfg",
+        release_code: "bxms70la",
+        ci_properties_file:"/jboss-prod/config/bxms-70la-ci.properties",
+        cfg_file:"bxms-70la.cfg",
 ).build(this)
 
 new ReleasePipelineJobBuilder(
-        product_name: "bxms70",
-        ci_properties_file:"/jboss-prod/config/brms-ci.properties",
-        cfg_file:"brms.cfg",
+        release_code: "bxms70la",
+        ci_properties_file:"/jboss-prod/config/bxms-70la-ci.properties",
+        cfg_file:"bxms-70la.cfg",
         pipelineSeqFile:"release_pipeline_seq.cfg"
 ).build(this)
 
@@ -32,60 +32,68 @@ new ReleasePipelineSeedJobBuilder(
         cfg_file:"bxms-test.cfg",
 ).build(this)
 
-new GeneralSeedJobBuilder(
-        stream_name: "utility"
+new ReleasePipelineJobBuilder(
+        release_code: "bxms-test",
+        ci_properties_file:"/jboss-prod/config/bxms-test-ci.properties",
+        cfg_file:"bxms-test.cfg",
+        pipelineSeqFile:"release_pipeline_seq.cfg"
 ).build(this)
 
 new GeneralSeedJobBuilder(
-        stream_name: "codereview"
+        release_code: "utility"
+).build(this)
+
+new GeneralSeedJobBuilder(
+        release_code: "codereview"
 ).build(this)
 
 //Release code is the prefix for cfg file
 new JenkinsStandaloneJobBuilder(
-        job_name: "bxms64",
-        release_code: "brms-64",
+        release_code: "brms64",
+        cfg_file:"brms-64.cfg",
         job_type: "milestone"
 ).build(this)
 
 new JenkinsAllJobBuilder(
-        job_name: "bxms64",
-        release_code: "brms-64",
+        cfg_file:"brms-64.cfg",
+        release_code: "brms64",
         job_type: "milestone"
 ).build(this)
 
 
 new JenkinsStandaloneJobBuilder(
-        job_name: "bxms70",
-        release_code: "brms",
+        cfg_file:"bxms-70la.cfg",
+        release_code: "bxms70la",
         job_type: "milestone"
 ).build(this)
 
 new JenkinsAllJobBuilder(
-        job_name: "bxms70",
-        release_code: "brms",
+        cfg_file:"bxms-70la.cfg",
+        release_code: "bxms70la",
         job_type: "milestone"
 ).build(this)
 
 new JenkinsAllJobBuilderPipeline(
-        job_name: "bxms70",
-        release_code: "brms",
+        cfg_file:"bxms-70la.cfg",
+        release_code: "bxms70la",
         job_type: "milestone"
 ).build(this)
 
+//Nightly build
 new JenkinsStandaloneJobBuilder(
-        job_name: "bxms70",
+        cfg_file:"bxms.cfg",
         release_code: "bxms",
         job_type: "nightly"
 ).build(this)
 
 new JenkinsAllJobBuilder(
-        job_name: "bxms70",
+        cfg_file:"bxms.cfg",
         release_code: "bxms",
         job_type: "nightly"
 ).build(this)
 
 new JenkinsAllJobBuilderPipeline(
-        job_name: "bxms70",
+        cfg_file:"bxms.cfg",
         release_code: "bxms",
         job_type: "nightly"
 ).build(this)

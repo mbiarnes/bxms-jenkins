@@ -22,11 +22,11 @@ import java.io.StringReader
 class JenkinsAllJobBuilderPipeline {
     String release_code
     String job_type
-    String job_name
+    String cfg_file
 
     Job build(DslFactory dslFactory) {
 
-      String urlString ="https://code.engineering.redhat.com/gerrit/gitweb?p=integration-platform-config.git;a=blob_plain;f=" + release_code + ".cfg"
+      String urlString ="https://code.engineering.redhat.com/gerrit/gitweb?p=integration-platform-config.git;a=blob_plain;f=" + cfg_file
       URL cfg_url = urlString.toURL()
       BufferedReader configReader = newReader(cfg_url.getHost(), cfg_url.getFile())
       Ini _ini_cfg = new Ini().read(configReader)
@@ -55,12 +55,10 @@ class JenkinsAllJobBuilderPipeline {
       ${result}
       """
 
-      dslFactory.folder(job_name + "-jenkins-" + job_type + "-pipeline")
-      String _cfg = release_code + ".cfg"
-      if (job_type.equals("nightly"))
-          _cfg = release_code + "-dev.cfg"
+      dslFactory.folder(release_code + "-jenkins-" + job_type + "-pipeline")
+      String _cfg = cfg_file
 
-      dslFactory.pipelineJob(job_name + "-jenkins-" + job_type + "-pipeline/a_" + job_name + "-build-pipeline") {
+      dslFactory.pipelineJob(release_code + "-jenkins-" + job_type + "-pipeline/a_" + release_code + "-build-pipeline") {
             it.description "This job is pipeline job for " + release_code + " " +  job_type + ". "
             logRotator {
                 numToKeep 8
@@ -220,7 +218,8 @@ ArrayList<String> kahnTopological(HashMap<String,String[]> packagesMap){
   }
 
   if (allEdges!=0) {
-    throw new IOException("There has circles in dependent map!"+allEdges)
+
+    throw new IOException("There has circles in " +cfg_file + " buildrequires map, Debug information:\n" + packagesMapIndegree)
   }
   return resultAL
 }
@@ -265,7 +264,7 @@ String getPipelineCode(ArrayList<String> jobsArr,HashMap<String,String[]> packag
   stageNameStr=stageNameStr+"]"
 //  stageNameStr="['','','','']"
   String result='''
-  def job_name="'''+job_name+'''"
+  def release_code="'''+release_code+'''"
   def job_type="'''+job_type+'''"
   def stageNames='''+stageNameList+'''
   node{
@@ -283,17 +282,17 @@ String getPipelineCode(ArrayList<String> jobsArr,HashMap<String,String[]> packag
           branches["${insidej}"]={
             stage(stageNames.get(insidecount).get(insidej)){
                   if(flag==1 && runStageAfter ==1){
-                    build job : job_name + "-jenkins-" + job_type + "-pipeline/" + job_name + "-" + stageNames.get(insidecount).get(insidej)
+                    build job : release_code + "-jenkins-" + job_type + "-pipeline/" + release_code + "-" + stageNames.get(insidecount).get(insidej)
 
                   }
                   if(yourchoose.matches(stageNames.get(insidecount).get(insidej)) ){
                       flag=1
-                      build job : job_name + "-jenkins-" + job_type + "-pipeline/" + job_name + "-" + stageNames.get(insidecount).get(insidej)
+                      build job : release_code + "-jenkins-" + job_type + "-pipeline/" + release_code + "-" + stageNames.get(insidecount).get(insidej)
 
                   }else if(yourchoose.matches(stageNames.get(insidecount).get(insidej)+"_runStageAfter")){
                       runStageAfter=1
                       flag=1
-                      build job : job_name + "-jenkins-" + job_type + "-pipeline/" + job_name + "-" + stageNames.get(insidecount).get(insidej)
+                      build job : release_code + "-jenkins-" + job_type + "-pipeline/" + release_code + "-" + stageNames.get(insidecount).get(insidej)
                       
                   }
 

@@ -116,7 +116,7 @@ def jobDefinition = job("${RELEASE_CODE}-send-review-notification-mail") {
                 }
                 triggers/'gerritProjects'/'com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.data.GerritProject'/'filePaths'/'com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.data.FilePath' << {
                     'compareType' 'REG_EXP'
-                    'pattern' "${RELEASE_CODE}-release/.*-handover.adoc"
+                    'pattern' "stream/${RELEASE_CODE}/release-history/*"
                 }
             }
         }
@@ -152,4 +152,4 @@ def jobDefinition = job("${RELEASE_CODE}-send-review-notification-mail") {
     }
 }
 JobTemplate.addIpToolingScmConfiguration(jobDefinition)
-JobTemplate.addCommonConfiguration(jobDefinition, CI_PROPERTIES_FILE, RELEASE_CODE)
+JobTemplate.addCommonConfiguration(jobDefinition, CI_PROPERTIES_FILE)

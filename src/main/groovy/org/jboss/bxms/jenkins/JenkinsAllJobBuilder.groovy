@@ -9,13 +9,11 @@ import javaposse.jobdsl.dsl.Job
 class JenkinsAllJobBuilder {
     String release_code
     String job_type
-    String job_name
+    String cfg_file
 
     Job build(DslFactory dslFactory) {
 
-        String _cfg = release_code + ".cfg"
-        if (job_type.equals("nightly"))
-            _cfg = release_code + "-dev.cfg"
+        String _cfg = cfg_file
 
         //Use .m2/repository as local repo
         String shellScript = """
@@ -24,8 +22,8 @@ DEP_REPO=`pwd`/workspace/.m2
 MVN_DEP_REPO=nexus-release::default::file://\${DEP_REPO} LOCAL=1 CFG=./${_cfg} POMMANIPEXT=brms-bom make -f Makefile.BRMS bxms-maven-repo-root
 """
 
-        dslFactory.folder(job_name + "-jenkins-" + job_type + "-pipeline")
-        dslFactory.job(job_name + "-jenkins-" + job_type + "-pipeline/" + job_name + "-all") {
+        dslFactory.folder(release_code + "-jenkins-" + job_type + "-pipeline")
+        dslFactory.job(release_code + "-jenkins-" + job_type + "-pipeline/" + release_code + "-all") {
             it.description "This job is a seed job for generating " + release_code + " " +  job_type + " jenkins full build."
             logRotator {
                 numToKeep 8

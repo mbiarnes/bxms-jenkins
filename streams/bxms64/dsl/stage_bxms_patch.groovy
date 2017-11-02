@@ -1,0 +1,1 @@
+../../../jobs/stage_bxms_patch.groovy

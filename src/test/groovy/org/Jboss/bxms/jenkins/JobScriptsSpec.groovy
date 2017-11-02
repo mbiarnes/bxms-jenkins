@@ -22,7 +22,7 @@ import spock.lang.Unroll
 class JobScriptsSpec extends Specification {
 
     // add in a sample environment for testing
-    def enviMap = ['RELEASE_CODE':'bxms-test', 'CI_PROPERTIES_FILE':'brms-test-jenkins-ci.properties', 'IP_CONFIG_FILE':'bxms-test.cfg']
+    def enviMap = ['RELEASE_CODE':'bxms-test', 'pipelineSeqFile':'release_pipeline_seq.cfg', 'CI_PROPERTIES_FILE':'bxms-test-jenkins-ci.properties', 'IP_CONFIG_FILE':'bxms-test.cfg']
 
     @Shared
     @ClassRule

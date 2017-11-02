@@ -1,1 +1,0 @@
-../../jobs/init_release.groovy

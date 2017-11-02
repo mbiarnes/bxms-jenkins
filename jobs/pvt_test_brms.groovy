@@ -2,9 +2,9 @@ import org.jboss.bxms.jenkins.JobTemplate
 
 // PVT script.
 String shellScript = """cd pvt
-/jboss-prod/tools/maven-3.3.9-prod/bin/mvn -Dmaven.repo.local=/jboss-prod/m2/bxms-dev-repo \
-    surefire-report:report -B -Dproduct.config=\${brms_smoketest_cfg} -Dproduct.version=\${product_deliver_version} \
-    -Dproduct.target=\${product_file_deliver_version} -Dreport.filepath=\${brms_pvt_report_basename} clean package
+/jboss-prod/tools/maven-3.3.9-prod/bin/mvn -Dmaven.repo.local=\${dev_maven_repo} \
+    surefire-report:report -B -Dproduct.config=\${brms_smoketest_cfg} -Dproduct.version=\${release_milestone_version} \
+    -Dproduct.target=\${shipped_file_deliver_version} -Dreport.filepath=\${brms_pvt_report_basename} clean package
 
 """
 
@@ -75,4 +75,4 @@ def jobDefinition = job("${RELEASE_CODE}-pvt-test-brms") {
     // Adds post-build actions to the job.
 }
 
-JobTemplate.addCommonConfiguration(jobDefinition, CI_PROPERTIES_FILE, RELEASE_CODE)
+JobTemplate.addCommonConfiguration(jobDefinition, CI_PROPERTIES_FILE)
