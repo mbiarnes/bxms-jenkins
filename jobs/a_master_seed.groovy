@@ -47,7 +47,8 @@ new GeneralSeedJobBuilder(
         release_code: "codereview"
 ).build(this)
 
-//Release code is the prefix for cfg file
+//Release code is identical to the folder name in streams/
+//Generate the milestone jobs for 6.4
 new JenkinsStandaloneJobBuilder(
         release_code: "brms64",
         cfg_file:"brms-64.cfg",
@@ -61,6 +62,7 @@ new JenkinsAllJobBuilder(
 ).build(this)
 
 
+//Generate the milestone jobs for 6.4
 new JenkinsStandaloneJobBuilder(
         cfg_file:"bxms-70la.cfg",
         release_code: "bxms70la",

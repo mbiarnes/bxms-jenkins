@@ -68,6 +68,7 @@ bpms_pvt_report_basename={share_config_dir}/{release_code}-pvt-report-bpms
 archive_pvt_report_basename=bxms-jenkins/stream/{release_code}/release-history/{release_code}-pvt-report
 
 #staging, candidate folder
+release_milestone_version={product_version}{availability}.{release_milestone}
 brms_staging_folder=jboss-brms
 bpms_staging_folder=jboss-bpmsuite
 brms_staging_path={brms_staging_folder}/{brms_product_name}-{release_milestone_version}
