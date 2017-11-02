@@ -71,7 +71,7 @@ http://download.eng.pnq.redhat.com/released/JBEAP-7/
 - Upstream handover: *${upstream_handover_url}*
 
 - For a full list of components and their associated versions, please look at the brms.cfg:
-link:${release_prefix}.cfg[Components and Versions]
+link:${build_cfg}[Components and Versions]
 
 == Build
 
@@ -83,7 +83,7 @@ ${load:qe_smoketest_report_path}
 
 === Package Checking Summary
 
-link:${release_prefix}-pvt-report-bpms.html[Package Checking Details Report(BPMS)]
+link:${release_code}-pvt-report-bpms.html[Package Checking Details Report(BPMS)]
 
 link:${maven_repo_report_url}[Maven Repository Report]
 

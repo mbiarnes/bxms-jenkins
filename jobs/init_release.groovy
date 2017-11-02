@@ -38,6 +38,7 @@ if [ ! -f ${CI_PROPERTIES_FILE} ];then
     python ip-tooling/jenkins_ci_property_loader.py -m bxms-jenkins/streams/${RELEASE_CODE}/config/properties-mapping.template -i ${IP_CONFIG_FILE} -o ${CI_PROPERTIES_FILE}
     appendProp "product_cfg_sha" \$remote_product_cfg_sha    
     appendProp "ci_properties_file" ${CI_PROPERTIES_FILE}    
+    appendProp "build_cfg" ${IP_CONFIG_FILE}    
 fi
 source ${CI_PROPERTIES_FILE}
 shipped_file_deliver_version=\${release_milestone_version} 

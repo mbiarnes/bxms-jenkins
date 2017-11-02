@@ -38,6 +38,7 @@ release_jira_base=https://projects.engineering.redhat.com/browse/
 release_jira_id=
 resolve_issue_list=
 product_cfg_sha=
+build_cfg=
 #Jenkins milestone maven repo folder
 jenkins_cache_repo=bxms-7-milestone
 
