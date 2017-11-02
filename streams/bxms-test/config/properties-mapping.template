@@ -48,8 +48,6 @@ brms_deliverable_template={release_stream_path}/config/brms-deliverable.properti
 bpms_deliverable_template={release_stream_path}/config/bpms-deliverable.properties
 
 release_handover_basename={release_stream_path}/release-history/release-handover
-release_notes_
-
 
 #brew build
 product_assembly_brew_url=
