@@ -51,9 +51,9 @@ http://download.eng.pnq.redhat.com/released/JBEAP-7/
 == BRMS & BPM Suite Download
 
 
-- http://download.devel.redhat.com/devel/candidates/BPMS/BPMS-${product_deliver_version}
+- http://download.devel.redhat.com/devel/candidates/BPMS/BPMS-${release_milestone_version}
 
-- http://download.devel.redhat.com/devel/candidates/BRMS/BRMS-${product_deliver_version}
+- http://download.devel.redhat.com/devel/candidates/BRMS/BRMS-${release_milestone_version}
 
 
 == Components

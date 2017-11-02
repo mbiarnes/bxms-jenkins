@@ -17,7 +17,6 @@ def jobDefinition = job("${RELEASE_CODE}-mock-qe-smoketest-report") {
         // Sends JMS message.
         ciMessageBuilder {
             overrides {
-                topic("default")
             }
 
             // JMS selector to choose messages that will fire the trigger.

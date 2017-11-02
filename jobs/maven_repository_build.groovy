@@ -28,12 +28,12 @@ if ! wget \${brms_candidate_properties_url} -O \${brms_candidate_properties_name
   echo " \${brms_candidate_properties_url} isn't available yet"
 fi
 #append the maven repo url into the properties
-bxms_maven_repo_name=jboss-bpmsuite-\${product_file_deliver_version}-maven-repository.zip
+bxms_maven_repo_name=jboss-bpmsuite-\${shipped_file_deliver_version}-maven-repository.zip
 appendProp "bxms.maven.repo.latest.url" \${rcm_staging_base}/\${bpms_staging_path}/\${bxms_maven_repo_name} \$brms_staging_properties_name
 
 
 if [ \$release_type = "patch" ];then
-    bxms_maven_repo_name=jboss-bpmsuite-{product_file_deliver_version}-incremental-maven-repository.zip
+    bxms_maven_repo_name=jboss-bpmsuite-{shipped_file_deliver_version}-incremental-maven-repository.zip
     appendProp "bxms.maven.incremental.repo.latest.url" \${rcm_staging_base}/\${bpms_staging_path}/\${bxms_incr_maven_repo_name} \$brms_staging_properties_name
 fi
 
@@ -47,7 +47,7 @@ make CFG=${IP_CONFIG_FILE} MAVEN_REPOSITORY_BUILDER_SCRIPT=\${repository_builder
 #    cd workspace/\${release_code}-repository/archive
 #    for file in jboss-brms-bpmsuite-*
 #    do
-#      mv "\$file" "\${file/\${product_version}.\${release_milestone}/\${product_deliver_version}}"
+#      mv "\$file" "\${file/\${product_version}.\${release_milestone}/\${release_milestone_version}}"
 #    done
 #fi
 """

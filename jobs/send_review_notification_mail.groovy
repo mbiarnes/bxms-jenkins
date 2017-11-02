@@ -134,7 +134,7 @@ def jobDefinition = job("${RELEASE_CODE}-send-review-notification-mail") {
             replyToList('${release_engineer}')
 
             // Sets the default email subject that will be used for each email that is sent.
-            defaultSubject('[ACTION REQUIRED] [BxMS Release CI] ${product_name} ${product_deliver_version} ${release_milestone}  Release Handover Review')
+            defaultSubject('[ACTION REQUIRED] [BxMS Release CI] ${product_name} ${release_milestone_version} ${release_milestone}  Release Handover Review')
 
             // Sets the default email content that will be used for each email that is sent.
             defaultContent(mailContent)

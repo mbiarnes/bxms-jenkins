@@ -13,7 +13,7 @@
     </p>
     <p>
       This update includes all fixes and changes from
-      <a href="https://access.redhat.com/jbossnetwork/restricted/softwareDetail.html?softwareId=${software_id}">JBoss BPM Suite ${product_deliver_version}</a>
+      <a href="https://access.redhat.com/jbossnetwork/restricted/softwareDetail.html?softwareId=${software_id}">JBoss BPM Suite ${release_milestone_version}</a>
     </p>
     <p> This update includes fixes for the following security related issues:</p>
     <table cellpadding="3" cellspacing="5" style="margin:30px">

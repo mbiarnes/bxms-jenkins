@@ -19,11 +19,11 @@ if [ \${release_type} = "intpack" ];then
       --deliverable \${intpack_deliverable_template} --output \${product_name}-\${product_version}
     cp ${IP_CONFIG_FILE} \${product_name}-\${product_version}
 else
-    ip-tooling/maven-to-stage.py --version=\${product_artifact_version} --override-version \${product_file_deliver_version} --maven-repo \${product_assembly_maven_repo_url} \
+    ip-tooling/maven-to-stage.py --version=\${product_artifact_version} --override-version \${shipped_file_deliver_version} --maven-repo \${product_assembly_maven_repo_url} \
       --deliverable \${brms_deliverable_template} --output \${brms_product_name} \
       --release-url=\${rcm_staging_base}/\${brms_staging_path} --output-deliverable-list \${brms_staging_properties_name}
       
-    ip-tooling/maven-to-stage.py --version=\${product_artifact_version} --override-version \${product_file_deliver_version} --maven-repo \${product_assembly_maven_repo_url} \
+    ip-tooling/maven-to-stage.py --version=\${product_artifact_version} --override-version \${shipped_file_deliver_version} --maven-repo \${product_assembly_maven_repo_url} \
       --deliverable \${bpms_deliverable_template} --output \${bpms_product_name} \
       --release-url=\${rcm_staging_base}/\${bpms_staging_path} --output-deliverable-list \${brms_staging_properties_name}
     cp ${IP_CONFIG_FILE} \${brms_product_name}

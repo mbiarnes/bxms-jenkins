@@ -40,12 +40,12 @@ if [ ! -f ${CI_PROPERTIES_FILE} ];then
     appendProp "ci_properties_file" ${CI_PROPERTIES_FILE}    
 fi
 source ${CI_PROPERTIES_FILE}
-product_file_deliver_version=\${product_deliver_version} 
+shipped_file_deliver_version=\${release_milestone_version} 
 #Uploading to rcm staging folder
 if [ \${release_milestone:0:2} = "CR" ];then
-    product_file_deliver_version=\${product_version}\${availability}
+    shipped_file_deliver_version=\${product_version}\${availability}
 fi
-appendProp "product_file_deliver_version" \$product_file_deliver_version
+appendProp "shipped_file_deliver_version" \$shipped_file_deliver_version
 
 #Use kerbose to create the release JIRA
 kinit -k -t \${HOME}/bxms-release.keytab bxms-release/prod-ci@REDHAT.COM

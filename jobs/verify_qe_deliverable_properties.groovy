@@ -51,12 +51,12 @@ def validateProperties(propfile, keyword):
 
         assertEqual('\$kie_version', dic['bxms.maven.repo.latest.url'])
         assertEqual('\$product_artifact_version', dic['BXMS_VERSION'])
-#        assertContain(dic['brms.business-central.standalone.latest.url'], '\$product_deliver_version')
-        assertContain(dic['brms.collection.latest.url'], '\$product_deliver_version')
-        assertContain(dic['brms.execution-server.ee7.latest.url'], '\$product_deliver_version')
-        assertContain(dic['bpms.collection.latest.url'], '\$product_deliver_version')
-        assertContain(dic['bpms.execution-server.ee7.latest.url'], '\$product_deliver_version')
-#        assertContain(dic['bxms.execution-server.jws.latest.url'], '\$product_deliver_version')
+#        assertContain(dic['brms.business-central.standalone.latest.url'], '\$release_milestone_version')
+        assertContain(dic['brms.collection.latest.url'], '\$release_milestone_version')
+        assertContain(dic['brms.execution-server.ee7.latest.url'], '\$release_milestone_version')
+        assertContain(dic['bpms.collection.latest.url'], '\$release_milestone_version')
+        assertContain(dic['bpms.execution-server.ee7.latest.url'], '\$release_milestone_version')
+#        assertContain(dic['bxms.execution-server.jws.latest.url'], '\$release_milestone_version')
         if ret != 0:
             print propfile + ' Validation No Pass'
             sys.exit(1)
