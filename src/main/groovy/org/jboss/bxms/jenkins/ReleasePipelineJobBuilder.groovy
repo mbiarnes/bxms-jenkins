@@ -14,10 +14,9 @@ class ReleasePipelineJobBuilder {
     String pipelineSeqFile
 
     Job build(DslFactory dslFactory) {
-        File file =new File("streams/"+release_code+"/"+pipelineSeqFile)
-      String file_content=file.text
+      def file_content=dslFactory.readFileFromWorkspace('streams/'+release_code+'/'+pipelineSeqFile)
       String stageSeq=getStageSeq(file_content)
-      String product_job_prefix=release_code + "-release-pipeline/"+release_code+"-"
+      String product_job_prefix=release_code+"-"
       String pipelineScript='''
         def stageSeq='''+stageSeq+'''
         def product_job_prefix="'''+product_job_prefix+'''"
@@ -48,7 +47,7 @@ class ReleasePipelineJobBuilder {
 
         }
       '''
-      
+
         dslFactory.folder(release_code + "-release-pipeline")
         dslFactory.pipelineJob(release_code + "-release-pipeline/a-" + release_code + "-release-pipeline") {
             it.description "This job is job for run " + release_code + "release pipeline. To change the  parameter of the release pipeline, Please go to streams/release_code/env.properties"
