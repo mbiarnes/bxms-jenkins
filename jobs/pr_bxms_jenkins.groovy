@@ -56,7 +56,7 @@ job('bxms-test-release-pipline/bxms_jenkins_teststream_masterbranch_codereview')
    steps{
         // shell script to check latest version of PME and update accordingly
        dsl {
-           external ('streams/bxms-test/*')
+           external ('streams/bxms-test/dsl/*')
            additionalClasspath 'src/main/groovy'
            //For SEED_JOB strategy, PR will create job in codereview/ folder instead of JENKINS_ROOT
            lookupStrategy 'SEED_JOB'

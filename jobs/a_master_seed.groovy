@@ -4,7 +4,7 @@ import org.jboss.bxms.jenkins.*
 new ReleasePipelineSeedJobBuilder(
         release_code: "bxms64",
         ci_properties_file:"/jboss-prod/config/brms-64-ci.properties",
-        cfg_file:"brms-64.cfg",
+        cfg_file:"bxms-64.cfg",
 ).build(this)
 
 new ReleasePipelineSeedJobBuilder(
@@ -51,60 +51,28 @@ new GeneralSeedJobBuilder(
 ).build(this)
 
 //Release code is identical to the folder name in streams/
-//Generate the milestone jobs for 6.4
-new JenkinsStandaloneJobBuilder(
-        release_code: "bxms64",
-        cfg_file:"brms-64.cfg",
-        job_type: "milestone"
-).build(this)
+def JenkinsJobsBuilder(_release_code, _cfg_file, _job_type){
+    new JenkinsStandaloneJobBuilder(
+            release_code: _release_code,
+            cfg_file:_cfg_file,
+            job_type: _job_type
+    ).build(this)
 
-new JenkinsAllJobBuilder(
-        cfg_file:"brms-64.cfg",
-        release_code: "bxms64",
-        job_type: "milestone"
-).build(this)
+    new JenkinsAllJobBuilder(
+            release_code: _release_code,
+            cfg_file:_cfg_file,
+            job_type: _job_type
+    ).build(this)
 
-new JenkinsAllJobBuilderPipeline(
-        cfg_file:"brms-64.cfg",
-        release_code: "bxms64",
-        job_type: "milestone"
-).build(this)
-
-
-//Generate the milestone jobs for 6.4
-new JenkinsStandaloneJobBuilder(
-        cfg_file:"bxms-70la.cfg",
-        release_code: "bxms70la",
-        job_type: "milestone"
-).build(this)
-
-new JenkinsAllJobBuilder(
-        cfg_file:"bxms-70la.cfg",
-        release_code: "bxms70la",
-        job_type: "milestone"
-).build(this)
-
-new JenkinsAllJobBuilderPipeline(
-        cfg_file:"bxms-70la.cfg",
-        release_code: "bxms70la",
-        job_type: "milestone"
-).build(this)
-
-//Nightly build
-new JenkinsStandaloneJobBuilder(
-        cfg_file:"bxms.cfg",
-        release_code: "bxms70",
-        job_type: "nightly"
-).build(this)
-
-new JenkinsAllJobBuilder(
-        cfg_file:"bxms.cfg",
-        release_code: "bxms70",
-        job_type: "nightly"
-).build(this)
-
-new JenkinsAllJobBuilderPipeline(
-        cfg_file:"bxms.cfg",
-        release_code: "bxms70",
-        job_type: "nightly"
-).build(this)
+    new JenkinsAllJobBuilderPipeline(
+            release_code: _release_code,
+            cfg_file:_cfg_file,
+            job_type: _job_type
+    ).build(this)
+}
+JenkinsJobsBuilder("bxms64", "bxms-64.cfg", "milestone" )
+JenkinsJobsBuilder("bxms64", "bxms-64.cfg", "nightly" )
+JenkinsJobsBuilder("bxms70la", "bxms-70la.cfg", "milestone" )
+JenkinsJobsBuilder("bxms70la", "bxms-70la.cfg", "nightly" )
+JenkinsJobsBuilder("intpack-fuse63-bxms64", "intpack-fuse63-bxms64.cfg", "milestone" )
+JenkinsJobsBuilder("intpack-fuse63-bxms64", "intpack-fuse63-bxms64.cfg", "nightly" )

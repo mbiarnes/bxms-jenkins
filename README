@@ -19,16 +19,16 @@ repositories {
 }
 
 
-File structure:
-
+File structure description:
 .
 ├── build
 ├── build.gradle
 ├── bxms-jenkins.iml
-├── config
-│   ├── bpms-deliverable.properties
-│   ├── bpms-pvt-config.yaml
-│   ├── bpmsuite-image-stream.json
+├── config                                           #Config file used in release
+                                                        pipeline
+│   ├── bpms-deliverable.properties                  #bpms deliverable file
+│   ├── bpms-pvt-config.yaml                         #pvt config
+│   ├── bpmsuite-image-stream.json                   
 │   ├── brms-deliverable.properties
 │   ├── brms-pvt-config.yaml
 │   ├── properties-mapping.template
