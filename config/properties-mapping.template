@@ -1,7 +1,11 @@
 #property load from cfg file
 product_name=common:product_name
-availability=common:availability
+release_code=common:release_code
+version_major=common:version_major
+version_minor=common:version_minor
+version_micro=common:version_micro
 product_version=common:product_version
+availability=common:availability
 release_milestone=common:release_milestone
 release_engineer=common:release_engineer
 release_estimation=common:release_estimation
@@ -12,23 +16,18 @@ upstream_handover_url=common:upstream_handover_url
 product_artifact_version=ip-brms:version
 ip_bom_version=jboss-integration-platform-bom:version
 kie_version=drools:version
-mvel_version=mvel-2.3.2:version
 brew_tag=common:tag
 brew_target=common:target
 makefile=common:makefile
 cutoff_date=common:cutoff_date
 
-#other properties
-release_code=bxms-test
-#This prop defines the abbreviate number used in qe smoketest url, Please use: 6.4, 7.0, 7.0.LA
-qe_smoketest_job_abbr=7.0.LA
 release_milestone_version={product_version}{availability}.{release_milestone}
 #In CR release shipped_file deliver version shouldn't contain ER/CR in the filename
 shipped_file_deliver_version={release_milestone_version}
 brms_product_name=BRMS
 bpms_product_name=BPMS
 release_type=default
-release_status=
+
 share_config_dir=/jboss-prod/config
 repository_builder_script=regen_bxms_repo_builder.sh
 product_root_component=bxms-maven-repo-root
@@ -38,8 +37,12 @@ release_jira_base=https://projects.engineering.redhat.com/browse/
 release_jira_id=
 resolve_issue_list=
 product_cfg_sha=
+build_cfg=
 #Jenkins milestone maven repo folder
-jenkins_cache_repo=bxms-7-milestone
+jenkins_cache_repo=bxms-{version_major}.{version_minor}-milestone
+#running/close, used as a token of activate some of the release pipeline
+brew_status=
+release_status=
 
 #config file
 release_stream_path=bxms-jenkins/streams/{release_code}
@@ -60,11 +63,14 @@ bxms_patch_nvr=
 bxms_patch_maven_repo_url=
 brewchain_build_url=
 
+
 #pvt report
-brms_smoketest_cfg=http://git.app.eng.bos.redhat.com/git/integration-platform-config.git/plain/{release_code}-release/{release_code}-pvt-config.yaml
-bpms_smoketest_cfg=http://git.app.eng.bos.redhat.com/git/integration-platform-config.git/plain/{release_code}-release/{release_code}-pvt-config.yaml
+brms_smoketest_cfg=http://git.app.eng.bos.redhat.com/git/bxms-jenkins.git/plain/config/brms-pvt-config.yaml
+bpms_smoketest_cfg=http://git.app.eng.bos.redhat.com/git/bxms-jenkins.git/plain/config/bpms-pvt-config.yaml
 brms_pvt_report_basename={share_config_dir}/{release_code}-pvt-report-brms
+brms_pvt_report_adoc_path={share_config_dir}/{release_code}-pvt-report-brms.adoc
 bpms_pvt_report_basename={share_config_dir}/{release_code}-pvt-report-bpms
+bpms_pvt_report_adoc_path={share_config_dir}/{release_code}-pvt-report-bpms.adoc
 
 #staging, candidate folder
 release_milestone_version={product_version}{availability}.{release_milestone}
@@ -81,7 +87,7 @@ brms_candidate_properties_url={rcm_staging_base}/{brms_staging_path}/{brms_candi
 bpms_staging_properties_url={rcm_staging_base}/{bpms_staging_path}/{brms_staging_properties_name}
 bpms_candidate_properties_url={rcm_staging_base}/{brms_staging_path}/{brms_candidate_properties_name}
 qe_smoketest_report_path={share_config_dir}/{release_code}-qe-smoketest-report.adoc
-qe_smoketest_job_url=https://bxms-qe-jenkins.rhev-ci-vms.eng.rdu2.redhat.com/job/BxMS/job/BxMS-prod-{qe_smoketest_job_abbr}/job/smoke/
+qe_smoketest_job_url=https://bxms-qe-jenkins.rhev-ci-vms.eng.rdu2.redhat.com/job/BxMS/job/BxMS-prod-{version_major}.{version_minor}/job/smoke/
 
 #maven offline repository
 bxms_maven_repo_name=jboss-brms-bpmsuite-{release_milestone_version}-maven-repository.zip

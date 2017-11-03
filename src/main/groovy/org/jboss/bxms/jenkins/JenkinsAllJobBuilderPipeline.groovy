@@ -111,9 +111,6 @@ class JenkinsAllJobBuilderPipeline {
               }
             }
 
-            // triggers {
-            //     upstream('a-master-seed', 'SUCCESS')
-            // }
         }
     }
     BufferedReader newReader(String hostname, String file)
@@ -260,11 +257,11 @@ String getPipelineCode(ArrayList<String> jobsArr,HashMap<String,String[]> packag
   stageNameList=stageNameList+"]]"
   // inside list to used to parellel run stages
   //stageNameList="[[''],['','',''],['','']]"
-  String stageNameStr="['"+jobsArr.get(0)+"','"+jobsArr.get(0)+"_chainbuild'"
+  String stageNameStr="['"+ jobsArr.get(0) + "_chainbuild','" + jobsArr.get(0)
   for (int i=1;i< jobsArr.size() ;i++  ) {
-    stageNameStr=stageNameStr+",'"+jobsArr.get(i)+"','"+jobsArr.get(i)+"_chainbuild'"
+    stageNameStr=stageNameStr+"','"+ jobsArr.get(i)+"_chainbuild', '" + jobsArr.get(i)
   }
-  stageNameStr=stageNameStr+"]"
+  stageNameStr=stageNameStr+"']"
 //  stageNameStr="['','','','']"
   String result='''
   def release_code="'''+release_code+'''"

@@ -11,7 +11,7 @@ class ReleasePipelineJobBuilder {
     String release_code
     String ci_properties_file
     String cfg_file
-    String pipelineSeqFile
+    String pipelineSeqFile="release-pipeline.ini"
 
     Job build(DslFactory dslFactory) {
       def file_content=dslFactory.readFileFromWorkspace('streams/'+release_code+'/'+pipelineSeqFile)
@@ -93,11 +93,11 @@ class ReleasePipelineJobBuilder {
             definition{
               cps{
                 script(pipelineScript)
+                //running in sandbox and  make sure adding
+                // "new hudson.model.ChoiceParameterDefinition java.lang.String java.lang.String[] java.lang.String"
+                // into Jenkins->Configuration->In-process Script Approval ->Signatures already approved box
+                sandbox()
               }
-            }
-
-            triggers {
-                upstream('a-master-seed', 'SUCCESS')
             }
         }
 

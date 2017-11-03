@@ -33,7 +33,7 @@ if [ -f ${CI_PROPERTIES_FILE} ];then
         rm -vf ${CI_PROPERTIES_FILE}
     fi
 fi
-if [ ! -f ${CI_PROPERTIES_FILE} ];then
+if [ ! -f ${CI_PROPERTIES_FILE} ];then   
     #Loading env from cfg file
     python ip-tooling/jenkins_ci_property_loader.py -m bxms-jenkins/streams/${RELEASE_CODE}/config/properties-mapping.template -i ${IP_CONFIG_FILE} -o ${CI_PROPERTIES_FILE}
     appendProp "product_cfg_sha" \$remote_product_cfg_sha    
