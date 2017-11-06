@@ -41,11 +41,9 @@ def JenkinsJobsBuilder(_release_code, _cfg_file, _job_type){
     ).build(this)
 }
 JenkinsJobsBuilder("bxms64", "bxms-64.cfg", "milestone" )
-JenkinsJobsBuilder("bxms64", "bxms-64.cfg", "nightly" )
+JenkinsJobsBuilder("bxms64", "bxms-64-dev.cfg", "nightly" )
 JenkinsJobsBuilder("bxms70la", "bxms-70la.cfg", "milestone" )
-JenkinsJobsBuilder("bxms70la", "bxms-70la.cfg", "nightly" )
 JenkinsJobsBuilder("intpack-fuse63-bxms64", "intpack-fuse63-bxms64.cfg", "milestone" )
-JenkinsJobsBuilder("intpack-fuse63-bxms64", "intpack-fuse63-bxms64.cfg", "nightly" )
 
 new GeneralSeedJobBuilder(
         release_code: "utility"

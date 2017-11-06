@@ -17,6 +17,7 @@ class GeneralSeedJobBuilder {
             logRotator {
                 numToKeep 8
             }
+            label("service-node")
             // Adds environment variables to the build.
             scm {
                 // Adds a Git SCM source.
