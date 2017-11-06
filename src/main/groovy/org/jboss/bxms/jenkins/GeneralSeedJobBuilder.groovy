@@ -49,9 +49,6 @@ class GeneralSeedJobBuilder {
             triggers {
                 scm 'H/5 * * * *'
             }
-            triggers {
-                upstream('a-master-seed', 'SUCCESS')
-            }
         }
     }
 }
