@@ -16,9 +16,8 @@ def ReleasePipelineBuilder(_release_code, _cfg_file, _properties_file) {
             ci_properties_file:_properties_file,
     ).build(this)
 }
-ReleasePipelineBuilder("bxms64", "bxms-64.cfg", "/jboss-prod/config/bxms-64-ci.properties" )
-ReleasePipelineBuilder("bxms70la", "bxms-70la.cfg", "/jboss-prod/config/bxms-70la-ci.properties" )
-ReleasePipelineBuilder("intpack-fuse63-bxms64", "intpack-fuse63-bxms64.cfg", "/jboss-prod/config/intpack-fuse63-bxms64-ci.properties" )
+ReleasePipelineBuilder("bxms", "bxms.cfg", "/jboss-prod/config/bxms-ci.properties" )
+ReleasePipelineBuilder("bxms-test", "bxms-test.cfg", "/jboss-prod/config/bxms-test-ci.properties" )
 
 //Release code is identical to the folder name in streams/
 def JenkinsJobsBuilder(_release_code, _cfg_file, _job_type){
@@ -40,10 +39,8 @@ def JenkinsJobsBuilder(_release_code, _cfg_file, _job_type){
             job_type: _job_type
     ).build(this)
 }
-JenkinsJobsBuilder("bxms64", "bxms-64.cfg", "milestone" )
-JenkinsJobsBuilder("bxms64", "bxms-64-dev.cfg", "nightly" )
-JenkinsJobsBuilder("bxms70la", "bxms-70la.cfg", "milestone" )
-JenkinsJobsBuilder("intpack-fuse63-bxms64", "intpack-fuse63-bxms64.cfg", "milestone" )
+JenkinsJobsBuilder("bxms", "bxms.cfg", "milestone" )
+JenkinsJobsBuilder("bxms", "bxms-dev.cfg", "nightly" )
 
 new GeneralSeedJobBuilder(
         release_code: "utility"

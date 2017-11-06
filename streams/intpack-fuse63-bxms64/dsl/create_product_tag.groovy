@@ -1,1 +1,0 @@
-../../../jobs/create_product_tag.groovy
