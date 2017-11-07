@@ -14,12 +14,21 @@ class JenkinsAllJobBuilder {
     Job build(DslFactory dslFactory) {
 
         String _cfg = cfg_file
+        Map<String, String> maven_repo_map=["intpack-fuse63-bxms64":"/jboss-prod/m2/bxms-6.4-", "bxms64":"/jboss-prod/m2/bxms-6.4-", "bxms70la":"/jboss-prod/m2/bxms-7-", "bxms":"/jboss-prod/m2/bxms-7-", "bxms-test":"/jboss-prod/m2/bxms-7-"]
+        String maven_repo = maven_repo_map [release_code] + job_type
 
         //Use .m2/repository as local repo
         String shellScript = """
 unset WORKSPACE
-DEP_REPO=`pwd`/workspace/.m2
-MVN_DEP_REPO=nexus-release::default::file://\${DEP_REPO} LOCAL=1 CFG=./${_cfg} POMMANIPEXT=brms-bom make -f Makefile.BRMS bxms-maven-repo-root
+    DEP_REPO=`pwd`/workspace/.m2deploy
+    MVN_LOCAL_REPO=${maven_repo}
+if [ "\$LOCAL_REPO" = "true" ];then
+    MVN_LOCAL_REPO=`pwd`/workspace/.m2
+else
+    MVN_LOCAL_REPO=${maven_repo}
+fi
+
+MVN_DEP_REPO=nexus-release::default::file://\${DEP_REPO} LOCAL=1 CFG=./${_cfg} POMMANIPEXT=bxms-bom make -f Makefile.BRMS brms-installer bpms-installer
 """
 
         dslFactory.folder(release_code + "-jenkins-" + job_type + "-pipeline")
@@ -27,6 +36,10 @@ MVN_DEP_REPO=nexus-release::default::file://\${DEP_REPO} LOCAL=1 CFG=./${_cfg} P
             it.description "This job is a seed job for generating " + release_code + " " +  job_type + " jenkins full build."
             logRotator {
                 numToKeep 8
+            }
+            parameters {
+                // Defines a simple text parameter, where users can enter a string value.
+                booleanParam('LOCAL_REPO', false, 'It will be slower but cleaner since it do not use jenkins cached repo')
             }
             label("bxms-nightly")
             multiscm {

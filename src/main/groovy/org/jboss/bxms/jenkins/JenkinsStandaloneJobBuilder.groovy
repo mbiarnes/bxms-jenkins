@@ -28,7 +28,7 @@ class JenkinsStandaloneJobBuilder {
     String cfg_file
 
     Map<String, String> maven_repo_map=["intpack-fuse63-bxms64":"/jboss-prod/m2/bxms-6.4-", "bxms64":"/jboss-prod/m2/bxms-6.4-", "bxms70la":"/jboss-prod/m2/bxms-7-", "bxms":"/jboss-prod/m2/bxms-7-", "bxms-test":"/jboss-prod/m2/bxms-7-"]
-
+    Map<String, String> repo_group_map=["milestone":"MEAD", "nightly":"MEAD+JENKINS+JBOSS+CENTRAL"]
     Job build(DslFactory dslFactory) {
         String urlString ="https://code.engineering.redhat.com/gerrit/gitweb?p=integration-platform-config.git;a=blob_plain;f=" + cfg_file
         URL cfg_url = urlString.toURL()
@@ -38,6 +38,7 @@ class JenkinsStandaloneJobBuilder {
 
         dslFactory.folder(release_code + "-jenkins-" + job_type + "-pipeline")
         String maven_repo = maven_repo_map [release_code] + job_type
+        String repo_group = repo_group_map [job_type]
         String _cfg = cfg_file
 
         for (String section_name : sections.keySet())
@@ -48,7 +49,7 @@ class JenkinsStandaloneJobBuilder {
 
                 String shellScript = """
 unset WORKSPACE
-MVN_DEP_REPO=nexus-release::default::file://${maven_repo} LOCAL=1 CFG=${_cfg} MVN_LOCAL_REPO=${maven_repo} POMMANIPEXT=brms-bom make DEBUG=\$DEBUG ${section_name}
+MVN_DEP_REPO=nexus-release::default::file://${maven_repo} REPO_GROUP=${repo_group} LOCAL=1 CFG=${_cfg} MVN_LOCAL_REPO=${maven_repo} POMMANIPEXT=bxms-bom make DEBUG=\$DEBUG ${section_name}
 """
                 dslFactory.job(release_code + "-jenkins-" + job_type + "-pipeline/" + release_code + "-" + section_name ) {
                     it.description "This job is a seed job for generating " + release_code + " " + job_type + " jenkins build."

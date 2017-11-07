@@ -269,7 +269,7 @@ String getPipelineCode(ArrayList<String> jobsArr,HashMap<String,String[]> packag
   def stageNames='''+stageNameList+'''
   node ('release-pipeline'){
       stage("Stage0"){
-        choice = new ChoiceParameterDefinition('Choose Single Build or Chainbuild:','''+ stageNameStr+''' as String[], 'Eg: Choose a brms-bom to run a standalone job, Choose brms-bom-chainbuild to run chaibuild build')
+        choice = new ChoiceParameterDefinition('Choose Single Build or Chainbuild:','''+ stageNameStr+''' as String[], 'Eg: Choose a bxms-bom to run a standalone job, Choose bxms-bom-chainbuild to run chaibuild build')
         yourchoose=input message: 'Build Strategy', parameters: [choice]
       }
       int flag=0
