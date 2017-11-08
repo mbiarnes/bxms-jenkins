@@ -14,7 +14,6 @@ job('bxms_ip_config_codereview'){
 
         // Defines a simple text parameter, where users can enter a string value.
         stringParam(parameterName = "GERRIT_REFSPEC", defaultValue = "refs/heads/master", description = "Parameter passed by Gerrit code review trigger")
-
         stringParam(parameterName = "GERRIT_BRANCH", defaultValue = "master", description = "Parameter passed by Gerrit code review trigger")
 
     }
