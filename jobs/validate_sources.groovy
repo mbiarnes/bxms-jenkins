@@ -1,9 +1,11 @@
-def shell_script = '''
-echo \"Validating upstreams in ${IP_CONFIG_FILE}\"
-VALIDATE_ONLY=true LOCAL=1 CFG=./${IP_CONFIG_FILE} MVN_LOCAL_REPO=/jboss-prod/m2/bxms-dev-repo POMMANIPEXT=bxms-bom make -f Makefile.BRMS brms-installer bpms-installer
-'''
 
-job('bxms_ip_config_validation') {
+def shell_script = """
+cfg=${IP_CONFIG_FILE}
+echo "Validating upstreams in ${IP_CONFIG_FILE}"
+VALIDATE_ONLY=true LOCAL=1 CFG=./${IP_CONFIG_FILE} MVN_LOCAL_REPO=/jboss-prod/m2/bxms-dev-repo POMMANIPEXT=bxms-bom make -f Makefile.BRMS brms-installer bpms-installer
+"""
+
+job('bxms-validate-upstream-sources') {
     description("Validate if upstream source configuration is proper")
 
     multiscm {
