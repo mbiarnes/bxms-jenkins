@@ -1,9 +1,12 @@
 def shell_script = """
+# Workaround for variable name conflict between Jenkins and ip-tooling 
+unset WORKSPACE
+
 changed_cfgs=`git diff --name-only HEAD HEAD~1 | grep -i ^bxms.\\*\\.cfg`
 for cfg in \${changed_cfgs[*]}
 do
     echo "Changes found in \${cfg}, validating..."
-    VALIDATE_ONLY=true LOCAL=1 CFG=./\${cfg} MVN_LOCAL_REPO=/jboss-prod/m2/bxms-dev-repo POMMANIPEXT=bxms-bom make -f Makefile.BRMS brms-installer bpms-installer
+    VALIDATE_ONLY=true LOCAL=1 REPO_GROUP=MEAD+JENKINS+JBOSS+CENTRAL @CFG=./\${cfg} MVN_LOCAL_REPO=/jboss-prod/m2/bxms-dev-repo POMMANIPEXT=bxms-bom make -f Makefile.BRMS brms-installer bpms-installer
 done
 """
 
