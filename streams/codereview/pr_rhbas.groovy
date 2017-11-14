@@ -1,10 +1,16 @@
-def shell_script = '''export MAVEN_OPTS="-Xms512m -Xmx8096m -Dgwt-plugin.localWorkers='3' -XX:+UseConcMarkSweepGC -XX:-UseGCOverheadLimit"
+def shell_script = """wget http://git.app.eng.bos.redhat.com/git/integration-platform-tooling.git/plain/jssecacerts
+export _KEYSTORE=`pwd`/jssecacerts
+export MAVEN_OPTS="-Djavax.net.ssl.trustStore=${_KEYSTORE} -Djavax.net.ssl.trustStorePassword=changeit -Djavax.net.ssl.trustStoreType=jks -Djavax.net.ssl.keyStore=${_KEYSTORE} -Djavax.net.ssl.keyStorePassword=changeit -Djavax.net.ssl.keyStoreType=jks -Xms512m -Xmx3096m -XX:MaxPermSize=1024m -Dgwt-plugin.localWorkers='3' -XX:+UseConcMarkSweepGC -XX:-UseGCOverheadLimit"
 export M3_HOME=/jboss-prod/tools/maven-3.3.9-prod
 export PATH=$M3_HOME/bin:$PATH
-mvn -Dmaven.repo.local=/jboss-prod/m2/bxms-dev-repo clean install
-'''
-job('bxms_licenses_builder_codereview'){
-    description("Monitor the code change in bxms-licenses-builder")
+mvn -DdependencyManagement=org.jboss.brms.component.management:brms-dependency-management-all:7.0.0.redhat-SNAPSHOT \\
+\t-Denforce-skip=false -Dfull=true -DoverrideTransitive=false -Dproject.meta.skip=true \\
+    -DpropertyManagement=org.jboss.brms.component.management:brms-dependency-management-all:7.0.0.redhat-SNAPSHOT \\
+    -Drepo-reporting-removal=true -Dversion.override=7.0.0 -Dversion.suffix=redhat-SNAPSHOT -Dversion.suffix.snapshot=true \\
+    -DversionOverride=true -DversionSuffixSnapshot=true -Dvictims.updates=offline -B -Dmaven.repo.local=/jboss-prod/m2/bxms-dev-repo -s /jboss-prod/m2/bxms-dev-repo-settings.xml clean package
+"""
+job('rhbas_codereview'){
+    description("Monitor the code change in rhbas")
 
     parameters {
 
@@ -14,31 +20,33 @@ job('bxms_licenses_builder_codereview'){
         stringParam(parameterName = "GERRIT_BRANCH", defaultValue = "master", description = "Parameter passed by Gerrit code review trigger")
 
     }
-
     scm {
         // Adds a Git SCM source.
         git {
             // Adds a remote.
             remote {
                 // Sets the remote URL.
-                url("ssh://jb-ip-tooling-jenkins@code.engineering.redhat.com:22/bxms-licenses-builder")
+                url("ssh://jb-ip-tooling-jenkins@code.engineering.redhat.com:22/kiegroup/rhbas")
                 name("origin")
                 refspec("+refs/heads/*:refs/remotes/origin/* \$GERRIT_REFSPEC")
-            }
 
+            }
             // Specify the branches to examine for changes and to build.
             branch("\$GERRIT_BRANCH")
             extensions {
                 choosingStrategy {
                     gerritTrigger()
                 }
+
             }
+
+
         }
     }
    triggers{
        gerrit{
 
-           project("bxms-licenses-builder", "ant:**")
+           project("kiegroup/rhbas", "master")
            events {
                patchsetCreated()
            }

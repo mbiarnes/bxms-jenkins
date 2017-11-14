@@ -1,1 +1,0 @@
-../../jobs/pr_bxms7_assembly.groovy

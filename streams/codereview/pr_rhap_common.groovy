@@ -1,16 +1,16 @@
-def shell_script = '''wget http://git.app.eng.bos.redhat.com/git/integration-platform-tooling.git/plain/jssecacerts
+def shell_script = """wget http://git.app.eng.bos.redhat.com/git/integration-platform-tooling.git/plain/jssecacerts
 export _KEYSTORE=`pwd`/jssecacerts
 export MAVEN_OPTS="-Djavax.net.ssl.trustStore=${_KEYSTORE} -Djavax.net.ssl.trustStorePassword=changeit -Djavax.net.ssl.trustStoreType=jks -Djavax.net.ssl.keyStore=${_KEYSTORE} -Djavax.net.ssl.keyStorePassword=changeit -Djavax.net.ssl.keyStoreType=jks -Xms512m -Xmx3096m -XX:MaxPermSize=1024m -Dgwt-plugin.localWorkers='3' -XX:+UseConcMarkSweepGC -XX:-UseGCOverheadLimit"
 export M3_HOME=/jboss-prod/tools/maven-3.3.9-prod
 export PATH=$M3_HOME/bin:$PATH
-mvn  -Pbrms -DdependencyManagement=org.jboss.brms.component.management:brms-dependency-management-all:7.0.0.redhat-SNAPSHOT \\
+mvn -DdependencyManagement=org.jboss.brms.component.management:brms-dependency-management-all:7.0.0.redhat-SNAPSHOT \\
 \t-Denforce-skip=false -Dfull=true -DoverrideTransitive=false -Dproject.meta.skip=true \\
     -DpropertyManagement=org.jboss.brms.component.management:brms-dependency-management-all:7.0.0.redhat-SNAPSHOT \\
     -Drepo-reporting-removal=true -Dversion.override=7.0.0 -Dversion.suffix=redhat-SNAPSHOT -Dversion.suffix.snapshot=true \\
-    -DversionOverride=true -DversionSuffixSnapshot=true -Dvictims.updates=offline -B -Dmaven.repo.local=/jboss-prod/m2/bxms-7.0-nightly -s /jboss-prod/m2/bxms-7.0-nightly-settings.xml clean package
-'''
-job('bxms7_assembly_codereview'){
-    description("Monitor the code change in bxms-assembly")
+    -DversionOverride=true -DversionSuffixSnapshot=true -Dvictims.updates=offline -B -Dmaven.repo.local=/jboss-prod/m2/bxms-dev-repo -s /jboss-prod/m2/bxms-dev-repo-settings.xml clean package
+"""
+job('rhap_common_codereview'){
+    description("Monitor the code change in rhap-common")
 
     parameters {
 
@@ -26,7 +26,7 @@ job('bxms7_assembly_codereview'){
             // Adds a remote.
             remote {
                 // Sets the remote URL.
-                url("ssh://jb-ip-tooling-jenkins@code.engineering.redhat.com:22/ip")
+                url("ssh://jb-ip-tooling-jenkins@code.engineering.redhat.com:22/kiegroup/rhap-common")
                 name("origin")
                 refspec("+refs/heads/*:refs/remotes/origin/* \$GERRIT_REFSPEC")
 
@@ -46,7 +46,7 @@ job('bxms7_assembly_codereview'){
    triggers{
        gerrit{
 
-           project("ip", "master")
+           project("kiegroup/rhap-common", "master")
            events {
                patchsetCreated()
            }
@@ -70,7 +70,7 @@ job('bxms7_assembly_codereview'){
     // Adds post-build actions to the job.
     publishers {
         //Archives artifacts with each build.
-        archiveArtifacts('brms-bpmsuite/*/target/*.zip')
+        archiveArtifacts('target/*.zip')
     }
 }
 
