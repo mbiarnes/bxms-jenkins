@@ -3,10 +3,8 @@ export _KEYSTORE=`pwd`/jssecacerts
 export MAVEN_OPTS="-Djavax.net.ssl.trustStore=\${_KEYSTORE} -Djavax.net.ssl.trustStorePassword=changeit -Djavax.net.ssl.trustStoreType=jks -Djavax.net.ssl.keyStore=\${_KEYSTORE} -Djavax.net.ssl.keyStorePassword=changeit -Djavax.net.ssl.keyStoreType=jks -Xms512m -Xmx3096m -XX:MaxPermSize=1024m"
 export M3_HOME=/jboss-prod/tools/maven-3.3.9-prod
 export PATH=\$M3_HOME/bin:\$PATH
-mvn  -DdependencyManagement=org.jboss.brms.component.management:brms-dependency-management-all:7.0.0.redhat-SNAPSHOT \\
-\t -DoverrideTransitive=false -DpropertyManagement=org.jboss.brms.component.management:brms-dependency-management-all:7.0.0.redhat-SNAPSHOT \\
-    -Drepo-reporting-removal=true -Dversion.override=7.0.0 -Dversion.suffix=redhat-SNAPSHOT -Dversion.suffix.snapshot=true \\
-    -DversionOverride=true -DversionSuffixSnapshot=true -Dvictims.updates=offline -B -Dmaven.repo.local=/jboss-prod/m2/bxms-dev-repo -s /jboss-prod/m2/bxms-dev-repo-settings.xml clean package
+mvn  -Dversion.override=7.0.0 -Dversion.suffix=redhat-SNAPSHOT -Dversion.suffix.snapshot=true \\
+    -DversionOverride=true -DversionSuffixSnapshot=true -Dvictims.updates=offline -B -U -s /jboss-prod/m2/bxms-dev-repo-settings.xml clean package
 """
 job('rhdm_codereview'){
     description("Monitor the code change in rhdm")
@@ -69,7 +67,7 @@ job('rhdm_codereview'){
     // Adds post-build actions to the job.
     publishers {
         //Archives artifacts with each build.
-        archiveArtifacts('target/*.zip')
+        archiveArtifacts('target/*.zip,target/*-standalone.jar')
     }
 }
 
