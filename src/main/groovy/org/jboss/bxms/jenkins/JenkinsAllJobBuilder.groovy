@@ -21,11 +21,11 @@ class JenkinsAllJobBuilder {
         String shellScript = """
 unset WORKSPACE
     DEP_REPO=`pwd`/workspace/.m2deploy
-    _local_repo==${maven_repo}
+    _local_repo=${maven_repo}
 if [ "\$LOCAL_REPO" = "true" ];then
-    _local_repo==`pwd`/workspace/.m2
+    _local_repo=`pwd`/workspace/.m2
 else
-    _local_repo==${maven_repo}
+    _local_repo=${maven_repo}
 fi
 
 MVN_DEP_REPO=nexus-release::default::file://\${DEP_REPO} LOCAL=1 CFG=./${_cfg} MVN_LOCAL_REPO=\${_local_repo} POMMANIPEXT=bxms-bom make -f Makefile.BRMS brms-installer bpms-installer

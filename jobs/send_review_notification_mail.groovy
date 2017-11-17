@@ -40,8 +40,8 @@ String mailContent = '''<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
                                     <tr> 
                                         <td class="text-paragraph-pattern-container mobile-resize-text " style="padding: 0px; border-collapse: collapse; padding: 0 0 10px 0"> 
                                             <p style="margin: 10px 0 0 0">Release handover is <font color="#ff0000">waiting for review</font> in remote: <a href="${handover_pr}" class="external-link" rel="nofollow" style="color: #3b73af; text-decoration: none">${handover_pr}</a></p> 
-                                            <p style="margin: 10px 0 0 0">Staging folder URL: <br /> <a href="${rcm_staging_base}/${brms_staging_path}/" class="external-link" rel="nofollow" style="color: #3b73af; text-decoration: none">${rcm_staging_base}/${brms_staging_path}/</a></p> 
-                                            <p style="margin: 10px 0 0 0"><a href="${rcm_staging_base}/${bpms_staging_path}/" class="external-link" rel="nofollow" style="color: #3b73af; text-decoration: none">${rcm_staging_base}/${bpms_staging_path}/</a></p> 
+                                            <p style="margin: 10px 0 0 0">Staging folder URL: <br /> <a href="${rcm_staging_base}/${product1_staging_path}/" class="external-link" rel="nofollow" style="color: #3b73af; text-decoration: none">${rcm_staging_base}/${product1_staging_path}/</a></p> 
+                                            <p style="margin: 10px 0 0 0"><a href="${rcm_staging_base}/${product2_staging_path}/" class="external-link" rel="nofollow" style="color: #3b73af; text-decoration: none">${rcm_staging_base}/${product2_staging_path}/</a></p> 
                                         </td> 
                                     </tr> 
                                 </table> 
@@ -88,8 +88,8 @@ def shellScript = """
 set +x
 jira_comment="Release handover is {color:#ff0000}waiting for review{color}  in \${handover_pr} \n
 Staging folder URL: \n
-[\${rcm_staging_base}/\${brms_staging_path}/]\n
-[\${rcm_staging_base}/\${bpms_staging_path}/]"
+[\${rcm_staging_base}/\${product1_staging_path}/]\n
+[\${rcm_staging_base}/\${product2_staging_path}/]"
 kinit -k -t \${HOME}/bxms-release.keytab bxms-release/prod-ci@REDHAT.COM
 ip-tooling/jira_helper.py -c ${IP_CONFIG_FILE} -f -a "\${jira_comment}"
 """

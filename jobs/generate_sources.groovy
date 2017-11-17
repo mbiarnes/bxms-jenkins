@@ -8,18 +8,12 @@ kinit -k -t \${HOME}/bxms-release.keytab bxms-release/prod-ci@REDHAT.COM
 unset WORKSPACE
 
 # Make sources
-make CFG=${CI_PROPERTIES_FILE} SOURCES=1 SRCDIR=src -f Makefile.BRMS kie-wb-distributions kie-docs droolsjbpm-integration ip-brms
-make CFG=common.cfg SOURCES=1 SRCDIR=src -f Makefile.COMMON mvel-2.3.2 xmlpull-1.1.4
+make CFG=${CI_PROPERTIES_FILE} SOURCES=1 SRCDIR=src -f Makefile.BRMS \${product_root_component}
+make CFG=common.cfg SOURCES=1 SRCDIR=src -f Makefile.COMMON mvel-2.4.0
 
 
 ## Prepare sources for delivery ##
 cd workspace
-
-# Remove SOA component management
-rm -rf src/bpms-brms
-
-# Remove docs
-rm -rf src/kie-docs*
 
 # Remove settings.xml
 # TODO It's a fast fix. It should be more generic.
@@ -75,7 +69,7 @@ def jobDefinition = job("${RELEASE_CODE}-generate-sources") {
                     removePrefix('workspace/')
 
                     // Sets the destination path.
-                    remoteDirectory('${brms_staging_path}')
+                    remoteDirectory('${product1_staging_path}')
                 }
 
                 // Adds a transfer set.
@@ -88,7 +82,7 @@ def jobDefinition = job("${RELEASE_CODE}-generate-sources") {
                     removePrefix('workspace/')
 
                     // Sets the destination path.
-                    remoteDirectory('${bpms_staging_path}')
+                    remoteDirectory('${product2_staging_path}')
                 }
             }
         }

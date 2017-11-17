@@ -3,19 +3,17 @@ import org.jboss.bxms.jenkins.JobTemplate
 // PVT script.
 String shellScript = """cd pvt
 /jboss-prod/tools/maven-3.3.9-prod/bin/mvn -Dmaven.repo.local=\${dev_maven_repo} \
-    surefire-report:report -B -Dproduct.config=\${brms_smoketest_cfg} -Dproduct.version=\${release_milestone_version} \
-    -Dproduct.target=\${shipped_file_deliver_version} -Dreport.filepath=\${brms_pvt_report_basename} clean package
+    surefire-report:report -B -Dproduct.config=\${product2_smoketest_cfg} -Dproduct.version=\${product2_milestone_version} \
+    -Dproduct.target=\${product2_shipped_file_deliver_version} -Dreport.filepath=\${product2_pvt_report_basename} clean package
 
 """
 
 // Creates or updates a free style job.
-def jobDefinition = job("${RELEASE_CODE}-pvt-test-brms") {
+def jobDefinition = job("${RELEASE_CODE}-pvt-test-rhbas") {
 
     // Sets a description for the job.
     description("This job is responsible for executing product validation tests.")
 
-
-            // Adds a Git SCM source.
     multiscm {
 
         // Adds a Git SCM source.
@@ -64,7 +62,7 @@ def jobDefinition = job("${RELEASE_CODE}-pvt-test-brms") {
             branch('*/master')
         }
     }
-   
+
     // Adds build steps to the jobs.
     steps {
 

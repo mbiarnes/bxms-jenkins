@@ -21,35 +21,33 @@ function appendProp(){
     sed -i "/^\$1/d" \$3 && echo "\$1=\$2" >> \$3
 }
 
-if ! wget \${brms_staging_properties_url} -O \${brms_staging_properties_name} 2>/dev/null ;then
-    echo " \${brms_staging_properties_url} isn't available yet"  
+if ! wget \${product1_staging_properties_url} -O \${product1_staging_properties_name} 2>/dev/null ;then
+    echo " \${product1_staging_properties_url} isn't available yet"  
 fi 
-if ! wget \${brms_candidate_properties_url} -O \${brms_candidate_properties_name} 2>/dev/null ;then
-  echo " \${brms_candidate_properties_url} isn't available yet"
+if ! wget \${product1_candidate_properties_url} -O \${product1_candidate_properties_name} 2>/dev/null ;then
+  echo " \${product1_candidate_properties_url} isn't available yet"
 fi
 #append the maven repo url into the properties
-bxms_maven_repo_name=jboss-bpmsuite-\${shipped_file_deliver_version}-maven-repository.zip
-appendProp "bxms.maven.repo.latest.url" \${rcm_staging_base}/\${bpms_staging_path}/\${bxms_maven_repo_name} \$brms_staging_properties_name
+appendProp "rhdm.maven.repo.latest.url" \${rcm_staging_base}/\${product1_staging_path}/\${product1_maven_repo_name} \$product1_staging_properties_name
+appendProp "rhbas.maven.repo.latest.url" \${rcm_staging_base}/\${product2_staging_path}/\${product2_maven_repo_name} \$product2_staging_properties_name
 
 
 if [ \$release_type = "patch" ];then
-    bxms_maven_repo_name=jboss-bpmsuite-{shipped_file_deliver_version}-incremental-maven-repository.zip
-    appendProp "bxms.maven.incremental.repo.latest.url" \${rcm_staging_base}/\${bpms_staging_path}/\${bxms_incr_maven_repo_name} \$brms_staging_properties_name
+    rhdm_incr_maven_repo_name=rhdm-{shipped_file_deliver_version}-incremental-maven-repository.zip
+    rhbas_incr_maven_repo_name=rhbas-{shipped_file_deliver_version}-incremental-maven-repository.zip
+    appendProp "rhdm.maven.incremental.repo.latest.url" \${rcm_staging_base}/\${product1_staging_path}/\${rhdm_incr_maven_repo_name} \$product1_staging_properties_name
+    appendProp "rhbas.maven.incremental.repo.latest.url" \${rcm_staging_base}/\${product2_staging_path}/\${rhbas_incr_maven_repo_name} \$product2_staging_properties_name
 fi
 
-sed -e "s=\${rcm_staging_base}/\${brms_staging_folder}=\${rcm_candidate_base}/\${brms_product_name}=g" \
-        -e "s=\${rcm_staging_base}/\${bpms_staging_folder}=\${rcm_candidate_base}/\${bpms_product_name}=g" \
-        \${brms_staging_properties_name} > \${brms_candidate_properties_name}
+sed -e "s=\${rcm_staging_base}/\${product1_staging_folder}=\${rcm_candidate_base}/\${product1_product_name}=g" \
+        \${product1_staging_properties_name} > \${product1_candidate_properties_name}
+
+sed -e "s=\${rcm_staging_base}/\${product2_staging_folder}=\${rcm_candidate_base}/\${product2_product_name}=g" \
+        \${product2_staging_properties_name} > \${product2_candidate_properties_name}
         
-make CFG=${IP_CONFIG_FILE} MAVEN_REPOSITORY_BUILDER_SCRIPT=\${repository_builder_script} -f \${makefile} repository
-#if [ "\$release_type" = "default" ];then
-#TODO rename the maven repository zip to make it consistent with others
-#    cd workspace/\${release_code}-repository/archive
-#    for file in jboss-brms-bpmsuite-*
-#    do
-#      mv "\$file" "\${file/\${product_version}.\${release_milestone}/\${release_milestone_version}}"
-#    done
-#fi
+PROJECT_NAME=\${product1_staging_folder} make CFG=${IP_CONFIG_FILE} MAVEN_REPOSITORY_BUILDER_SCRIPT=\${repository_builder_script} -f \${makefile} repository
+PROJECT_NAME=\${product2_staging_folder} make CFG=${IP_CONFIG_FILE} MAVEN_REPOSITORY_BUILDER_SCRIPT=\${repository_builder_script} -f \${makefile} repository
+
 """
 
 // Creates or updates a free style job.
@@ -138,14 +136,14 @@ def jobDefinition = job("${RELEASE_CODE}-maven-repository-build") {
                         removePrefix('workspace/${release_code}-repository/archive/')
 
                         // Sets the destination folder.
-                        remoteDirectory('${brms_staging_path}')
+                        remoteDirectory('${product1_staging_path}')
 
                         // Specifies a command to execute on the remote server.
                         execCommand('unzip ' +
-                                '-o ~/staging/${brms_staging_path}/maven-repository-report.zip ' +
-                                '-d ~/staging/${brms_staging_path}' +
+                                '-o ~/staging/${product1_staging_path}/maven-repository-report.zip ' +
+                                '-d ~/staging/${product1_staging_path}' +
                                 '&& rm ' +
-                                '-f ~/staging/${brms_staging_path}/maven-repository-report.zip')
+                                '-f ~/staging/${product1_staging_path}/maven-repository-report.zip')
                     }
 
                     // Adds a transfer set.
@@ -158,14 +156,14 @@ def jobDefinition = job("${RELEASE_CODE}-maven-repository-build") {
                         removePrefix('workspace/${release_code}-repository/archive/')
 
                         // Sets the destination folder.
-                        remoteDirectory('${bpms_staging_path}')
+                        remoteDirectory('${product2_staging_path}')
 
                         // Specifies a command to execute on the remote server.
                         execCommand('unzip ' +
-                                '-o ~/staging/${bpms_staging_path}/maven-repository-report.zip ' +
-                                '-d ~/staging/${bpms_staging_path}/ ' +
+                                '-o ~/staging/${product2_staging_path}/maven-repository-report.zip ' +
+                                '-d ~/staging/${product2_staging_path}/ ' +
                                 '&& rm ' +
-                                '-f ~/staging/${bpms_staging_path}/maven-repository-report.zip')
+                                '-f ~/staging/${product2_staging_path}/maven-repository-report.zip')
                     }
 
                     // Adds a transfer set.
@@ -175,7 +173,7 @@ def jobDefinition = job("${RELEASE_CODE}-maven-repository-build") {
                         sourceFiles('${release_code}-deliverable-list*.properties')
 
                         // Sets the destination _path.
-                        remoteDirectory('${brms_staging_path}')
+                        remoteDirectory('${product1_staging_path}')
                     }
 
                     // Adds a transfer set.
@@ -184,7 +182,7 @@ def jobDefinition = job("${RELEASE_CODE}-maven-repository-build") {
                         // Sets the files to upload to a server.
                         sourceFiles('${release_code}-deliverable-list*.properties')
 
-                        remoteDirectory('${bpms_staging_path}')
+                        remoteDirectory('${product2_staging_path}')
                     }
                 }
             }

@@ -32,7 +32,7 @@ def jobDefinition = job("${RELEASE_CODE}-trigger-qe-smoke-test") {
                     "EVENT_TYPE=\${release_code}-qe-smoketest-trigger\n")
 
             // Content of CI message to be sent.
-            messageContent('${brms_staging_properties_url}')
+            messageContent('${product1_staging_properties_url}')
         }
     }
 }
