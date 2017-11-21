@@ -11,7 +11,7 @@ echo -e \"Host code.engineering.redhat.com \\n\\
 chmod 600 ~/.ssh/config
 tag_version=\${product_name}-\${product_version}\${availability}.\${release_milestone}
 MVN_LOCAL_REPO=/jboss-prod/m2/bxms-dev-repo RELEASE_TAG=\${tag_version} LOCAL=1 CFG=./${IP_CONFIG_FILE} \
-    REPO_GROUP=MEAD make POMMANIPEXT=bxms-bom -f \${makefile} \${product_root_component} 2>&1
+    REPO_GROUP=MEAD make POMMANIPEXT=bxms-bom -f \${makefile} \${product1_lowcase} \${product2_lowcase} 2>&1
 
 sed -i '/^product_tag=/d' ${CI_PROPERTIES_FILE} && echo \"product_tag=\${tag_version}\" >> ${CI_PROPERTIES_FILE}
 

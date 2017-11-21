@@ -8,7 +8,7 @@ kinit -k -t \${HOME}/bxms-release.keytab bxms-release/prod-ci@REDHAT.COM
 unset WORKSPACE
 
 # Make sources
-make CFG=${CI_PROPERTIES_FILE} SOURCES=1 SRCDIR=src -f Makefile.BRMS \${product_root_component}
+make CFG=${CI_PROPERTIES_FILE} SOURCES=1 SRCDIR=src -f Makefile.BRMS \${product1_lowcase} \${product2_lowcase}
 make CFG=common.cfg SOURCES=1 SRCDIR=src -f Makefile.COMMON mvel-2.4.0
 
 
