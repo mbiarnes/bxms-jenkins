@@ -2,16 +2,13 @@ import org.jboss.bxms.jenkins.JobTemplate
 def shellScript = """# Disable bash tracking mode, too much noise.
 kinit -k -t \${HOME}/bxms-release.keytab bxms-release/prod-ci@REDHAT.COM
 jira_comment1= "Hi, All
-BRMS & BPMSuite \${product_version} \${release_milestone} {color:#d04437}is now available{color}.
+\${product1_name} \${product1_version} \${product1_milestone} {color:#d04437}is now available{color}.
+Download URL: [\${rcm_candidate_base}/\${product1_staging_path}/]
+Handover: [\${rcm_candidate_base}/\${product1_staging_path}/\${release_code}-handover.html]
 
-The BxMS \${product_version} \${release_milestone} Release is ready for QA. 
-
-Candidate download URL:
-Handover: [\${rcm_candidate_base}/\${bpms_staging_path}/\${release_code}-handover.html]
-
-[\${rcm_candidate_base}/\${brms_staging_path}/]
-
-[\${rcm_candidate_base}/\${bpms_staging_path}/]
+\${product2_name} \${product2_version} \${product2_milestone} {color:#d04437}is now available{color}.
+Download URL: [\${rcm_candidate_base}/\${product2_staging_path}/]
+Handover: [\${rcm_candidate_base}/\${product2_staging_path}/\${release_code}-handover.html]
 
 "
 
@@ -47,7 +44,7 @@ def jobDefinition = job("${RELEASE_CODE}-trigger-qe-handover-test") {
                     "EVENT_TYPE=brms-64-qe-handover-trigger\n")
 
             // Content of CI message to be sent.
-            messageContent('${brms_properties_url}')
+            messageContent('${product1_properties_url}')
         }
     }
 }

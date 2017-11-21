@@ -7,16 +7,14 @@ asciidoctor \${qe_handover_basename}.adoc
 
 git config --global user.email "jb-ip-tooling-jenkins@redhat.com"
 git config --global user.name "bxms-prod"
-#Skip providing pvt test report for intpack and patch release
-if [ \${release_type} != "intpack" ] || [ \$release_type != "patch" ] ;then
-    if [ -f \${brms_pvt_report_basename}.html ];then
-        cp \${brms_pvt_report_basename}.html \${archive_pvt_report_basename}-brms.html
-    fi
-    if [ -f \${bpms_pvt_report_basename}.html ];then
-        cp \${bpms_pvt_report_basename}.html \${archive_pvt_report_basename}-bpms.html
-    fi
-    git add .
+
+if [ -f \${product1_pvt_report_basename}.html ];then
+    cp \${product1_pvt_report_basename}.html \${archive_pvt_report_basename}-brms.html
 fi
+if [ -f \${product2_pvt_report_basename}.html ];then
+    cp \${product2_pvt_report_basename}.html \${archive_pvt_report_basename}-bpms.html
+fi
+git add .
 
 cd bxms-jenkins
 #sed -i 's/releaseci_trigger=true/releaseci_trigger=false/g' ${CI_PROPERTIES_FILE}
@@ -59,21 +57,6 @@ def jobDefinition = job("${RELEASE_CODE}-create-handover") {
                 // Adds a target server.
                 verbose(true)
 
-                if (RELEASE_CODE == "intpack-fuse63-bxms64") {
-
-                    transferSet {
-
-                        // Sets the files to upload to a server.
-                        sourceFiles('${release_handover_basename}.html')
-
-                        // Sets the first part of the file path that should not be created on the remote server.
-                        removePrefix('${release_stream_path}/release-history')
-
-                        // Sets the destination folder.
-                        remoteDirectory('${product_stage_folder}/${product_name}-${product_version}')
-                    }
-
-                } else {
                     // Adds a transfer set.
                     transferSet {
 
@@ -84,7 +67,7 @@ def jobDefinition = job("${RELEASE_CODE}-create-handover") {
                         removePrefix('release_stream_path}/release-history')
 
                         // Sets the destination folder.
-                        remoteDirectory('${brms_staging_path}')
+                        remoteDirectory('${product1_staging_path}')
                     }
 
                     // Adds a transfer set.
@@ -97,10 +80,9 @@ def jobDefinition = job("${RELEASE_CODE}-create-handover") {
                         removePrefix('${release_stream_path}/release-history')
 
                         // Sets the destination folder.
-                        remoteDirectory('${bpms_staging_path}')
+                        remoteDirectory('${product2_staging_path}')
                     }
                 }
-            }
         }
     }
 }

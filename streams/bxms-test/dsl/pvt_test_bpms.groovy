@@ -1,1 +1,1 @@
-../../../jobs/pvt_test_bpms.groovy
+../../../jobs/pvt_test_rhbas.groovy

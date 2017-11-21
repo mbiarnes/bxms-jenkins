@@ -8,36 +8,33 @@ function appendProp(){
         echo "Param  is not allow empty"
         exit 1
     fi
-    sed -i "/^\$1/d" \${brms_staging_properties_name} && echo "\$1=\$2" >> \${brms_staging_properties_name}
+    sed -i "/^\$1/d" \${product1_staging_properties_name} && echo "\$1=\$2" >> \${product1_staging_properties_name}
+    sed -i "/^\$1/d" \${product2_staging_properties_name} && echo "\$1=\$2" >> \${product2_staging_properties_name}
 }
 
-if ! wget \${brms_staging_properties_url} -O \${brms_staging_properties_name} 2>/dev/null ;then
-    echo " \${brms_staging_properties_url} isn't available yet"  
+if ! wget \${product1_staging_properties_url} -O \${product1_staging_properties_name} 2>/dev/null ;then
+    echo " \${product1_staging_properties_url} isn't available yet"  
 fi
-if [ \${release_type} = "intpack" ];then
-    ip-tooling/maven-to-stage.py --version=\${product_artifact_version} --override-version \${product_version} --maven-repo \${product_assembly_maven_repo_url} \
-      --deliverable \${intpack_deliverable_template} --output \${product_name}-\${product_version}
-    cp ${IP_CONFIG_FILE} \${product_name}-\${product_version}
-else
-    ip-tooling/maven-to-stage.py --version=\${product_artifact_version} --override-version \${shipped_file_deliver_version} --maven-repo \${product_assembly_maven_repo_url} \
-      --deliverable \${brms_deliverable_template} --output \${brms_product_name} \
-      --release-url=\${rcm_staging_base}/\${brms_staging_path} --output-deliverable-list \${brms_staging_properties_name}
-      
-    ip-tooling/maven-to-stage.py --version=\${product_artifact_version} --override-version \${shipped_file_deliver_version} --maven-repo \${product_assembly_maven_repo_url} \
-      --deliverable \${bpms_deliverable_template} --output \${bpms_product_name} \
-      --release-url=\${rcm_staging_base}/\${bpms_staging_path} --output-deliverable-list \${brms_staging_properties_name}
-    cp ${IP_CONFIG_FILE} \${brms_product_name}
-    cp ${IP_CONFIG_FILE} \${bpms_product_name}
+ip-tooling/maven-to-stage.py --version=\${product1_artifact_version} --override-version \${product1_shipped_file_deliver_version} --maven-repo \${product_assembly_maven_repo_url} \
+  --deliverable \${product1_deliverable_template} --output \${product1_product_name} \
+  --release-url=\${rcm_staging_base}/\${product1_staging_path} --output-deliverable-list \${product1_staging_properties_name}
+cp ${IP_CONFIG_FILE} \${product1_product_name}
+  
+ip-tooling/maven-to-stage.py --version=\${product2_artifact_version} --override-version \${product2_shipped_file_deliver_version} --maven-repo \${product_assembly_maven_repo_url} \
+  --deliverable \${product2_deliverable_template} --output \${product2_product_name} \
+  --release-url=\${rcm_staging_base}/\${product2_staging_path} --output-deliverable-list \${product2_staging_properties_name}
+cp ${IP_CONFIG_FILE} \${product2_product_name}
 
-    #append the other properties per qe's requirement
-    appendProp "build.config" \${rcm_staging_base}/\${brms_staging_path}/${IP_CONFIG_FILE} 
-    appendProp "DROOLSJBPM_VERSION" \${kie_version} 
-    appendProp "BXMS_VERSION" \${product_artifact_version} 
-    
-    sed -e "s=\${rcm_staging_base}/\${brms_staging_folder}=\${rcm_candidate_base}/\${brms_product_name}=g" \
-        -e "s=\${rcm_staging_base}/\${bpms_staging_folder}=\${rcm_candidate_base}/\${bpms_product_name}=g" \
-        \${brms_staging_properties_name} > \${brms_candidate_properties_name}
-fi
+#append the other properties per qe's requirement
+appendProp "build.config" \${rcm_staging_base}/\${product1_staging_path}/${IP_CONFIG_FILE} 
+appendProp "DROOLSJBPM_VERSION" \${kie_version} 
+appendProp "BXMS_VERSION" \${product_artifact_version} 
+
+sed -e "s=\${rcm_staging_base}/\${product1_staging_folder}=\${rcm_candidate_base}/\${product1_product_name}=g" \
+    \${product1_staging_properties_name} > \${product1_candidate_properties_name}
+sed -e "s=\${rcm_staging_base}/\${product2_staging_folder}=\${rcm_candidate_base}/\${product2_product_name}=g" \
+    \${product2_staging_properties_name} > \${product2_candidate_properties_name}
+
 """
 
 // Creates or updates a free style job.
@@ -73,32 +70,6 @@ def jobDefinition = job("${RELEASE_CODE}-stage-brew-build") {
             // Adds a target server.
             server('publish server') {
 
-                if (RELEASE_CODE == "intpack-fuse63-bxms64") {
-
-                    // Adds a target server.
-                    verbose(true)
-
-                    // Adds a transfer set.
-                    transferSet {
-
-                        // Sets the files to upload to a server.
-                        sourceFiles('${product_name}-${product_version}/*.*')
-
-                        // Sets the destination folder.
-                        remoteDirectory('${product_stage_folder}')
-                    }
-
-                    // Adds a transfer set.
-                    transferSet {
-
-                        // Sets the files to upload to a server.
-                        sourceFiles('${release_code}.cfg')
-
-                        // Sets the destination folder.
-                        remoteDirectory('${product_stage_folder}/${product_name}-${product_version}/')
-                    }
-
-                } else {
                     // Adds a target server.
                     verbose(true)
 
@@ -108,9 +79,9 @@ def jobDefinition = job("${RELEASE_CODE}-stage-brew-build") {
                         // Sets the files to upload to a server.
                         sourceFiles('')
                         // Sets the destination folder.
-                        remoteDirectory('${brms_staging_path}')
+                        remoteDirectory('${product1_staging_path}')
                         execCommand('if [ "${CLEAN_STAGING_ARTIFACTS}" = "true" ];then \n' +
-                                        'rm -vrf  ~/staging/${brms_staging_path}/* ~/staging/${bpms_staging_path}/* \n' +
+                                        'rm -vrf  ~/staging/${product1_staging_path}/* ~/staging/${product2_staging_path}/* \n' +
                                     'fi')
                     }
                     // Adds a target server.
@@ -120,33 +91,23 @@ def jobDefinition = job("${RELEASE_CODE}-stage-brew-build") {
                     transferSet {
 
                         // Sets the files to upload to a server.
-                        sourceFiles('${brms_product_name}/*.*')
-                        removePrefix('${brms_product_name}/')
+                        sourceFiles('${product1_product_name}/*.*')
+                        removePrefix('${product1_product_name}/')
 
                         // Sets the destination folder.
-                        remoteDirectory('${brms_staging_path}')
+                        remoteDirectory('${product1_staging_path}')
                     }
 
                     // Adds a transfer set.
                     transferSet {
 
                         // Sets the files to upload to a server.
-                        sourceFiles('${bpms_product_name}/*.*')
-                        removePrefix('${bpms_product_name}/')
+                        sourceFiles('${product2_product_name}/*.*')
+                        removePrefix('${product2_product_name}/')
 
 
                         // Sets the destination folder.
-                        remoteDirectory('${bpms_staging_path}')
-                    }
-
-                    // Adds a transfer set.
-                    transferSet {
-
-                        // Sets the files to upload to a server.
-                        sourceFiles('${IP_CONFIG_FILE},${release_code}-deliverable-list*.properties')
-
-                        // Sets the destination folder.
-                        remoteDirectory('${brms_staging_path}')
+                        remoteDirectory('${product2_staging_path}')
                     }
 
                     // Adds a transfer set.
@@ -156,10 +117,18 @@ def jobDefinition = job("${RELEASE_CODE}-stage-brew-build") {
                         sourceFiles('${IP_CONFIG_FILE},${release_code}-deliverable-list*.properties')
 
                         // Sets the destination folder.
-                        remoteDirectory('${bpms_staging_path}')
+                        remoteDirectory('${product1_staging_path}')
                     }
 
-                }
+                    // Adds a transfer set.
+                    transferSet {
+
+                        // Sets the files to upload to a server.
+                        sourceFiles('${IP_CONFIG_FILE},${release_code}-deliverable-list*.properties')
+
+                        // Sets the destination folder.
+                        remoteDirectory('${product2_staging_path}')
+                    }
 
             }
         }

@@ -1,4 +1,4 @@
-= BRMS and BPM Suite ${product_version} ${release_milestone}
+= ${product2_name} {product_version} ${product2_milestone}
 
 :Author Initials: SJR
 :toc:
@@ -17,28 +17,26 @@ Please allow [red]#10-15 minutes# for GlobalSync to occur should the release fol
 
 [options="header,footer",align="center",frame="all"] 
 |=====================================================================
-|Product Name: |BRMS and BPM Suite
+|Product Name: |Red Hat Decision Manager
 
 |Product Version |${product_version}
 
-|Build: |${release_milestone}
+|Build: |${product2_milestone}
 
 |Engineer: |${release_engineer}
 
 |Resolved issues (ON_QA) |${resolve_issue_list}
 
-|Release Notes | link:${brms_release_notes_url}[BRMS]
-
-link:${bpms_release_notes_url}[BPMS]
+|Release Notes | link:${${product2_lowcase}_release_notes_url}[${product2_name}]
 
 |=====================================================================
 
 == Special instructions/Notes
 
 
-- BRMS/BPM SUITE ${product_version} ${release_milestone} is dependencies have been aligned to *${eap_version}*
+- ${product2_name} ${product_version} ${product2_milestone} is dependencies have been aligned to *${eap_version}*
 
-- Please unzip the jboss-brms/jboss-brms-business-central-eap7.zip into the latest of EAP 7.0.x. the latest EAP 7.0.x can be downloaded from:
+- Please unzip the ${product2_lowcase}-business-central-eap7.zip into the latest of EAP 7.0.x. the latest EAP 7.0.x can be downloaded from:
 http://download.eng.pnq.redhat.com/released/JBEAP-7/
 
 
@@ -48,19 +46,17 @@ http://download.eng.pnq.redhat.com/released/JBEAP-7/
 - http://download.lab.bos.redhat.com/brewroot/repos/${brew_tag}/latest/maven/ 
 
 
-== BRMS & BPM Suite Download
+== ${product2_name} Download
 
 
-- http://download.devel.redhat.com/devel/candidates/BPMS/BPMS-${release_milestone_version}
-
-- http://download.devel.redhat.com/devel/candidates/BRMS/BRMS-${release_milestone_version}
+- http://download.devel.redhat.com/devel/candidates/${product2_name}/${product2_name}-${product2_milestone_version}
 
 
 == Components
 
-- Product tag: *${product_name}-${product_version}.${release_milestone}*
+- Product tag: *${product2_name}.${product2_milestone_version}_${product2_name}.${product2_milestone_version}*
 
-- Product version in Maven repo: *${product_artifact_version}*
+- Product version in Maven repo: *${product2_artifact_version}*
 
 - KIE version: *${kie_version}*
 
@@ -70,7 +66,7 @@ http://download.eng.pnq.redhat.com/released/JBEAP-7/
 
 - Upstream handover: *${upstream_handover_url}*
 
-- For a full list of components and their associated versions, please look at the brms.cfg:
+- For a full list of components and their associated versions, please look at the build configuration:
 link:${build_cfg}[Components and Versions]
 
 == Build
@@ -83,8 +79,8 @@ ${load:qe_smoketest_report_path}
 
 === Package Checking Summary
 
-link:${release_code}-pvt-report-bpms.html[Package Checking Details Report(BPMS)]
+link:${release_code}-pvt-report-${product2_lowcase}.html[Package Checking Details Report(${product2_name})]
 
 link:${maven_repo_report_url}[Maven Repository Report]
 
-${load:bpms_pvt_report_adoc_path}
+${load:${product2_lowcase}_pvt_report_adoc_path}

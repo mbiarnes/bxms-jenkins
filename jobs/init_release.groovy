@@ -41,12 +41,19 @@ if [ ! -f ${CI_PROPERTIES_FILE} ];then
     appendProp "build_cfg" ${IP_CONFIG_FILE}    
 fi
 source ${CI_PROPERTIES_FILE}
-shipped_file_deliver_version=\${release_milestone_version} 
+product1_shipped_file_deliver_version=\${product1_milestone_version} 
+product2_shipped_file_deliver_version=\${product2_milestone_version} 
 #Uploading to rcm staging folder
-if [ \${release_milestone:0:2} = "CR" ];then
-    shipped_file_deliver_version=\${product_version}\${availability}
+if [ \${milestone:0:2} = "CR" ];then
+    product1_shipped_file_deliver_version=\${product1_version}\${availability}
+    product2_shipped_file_deliver_version=\${product2_version}\${availability}
+    product1_lowcase=`echo \$product1_name | tr '[:upper:]' '[:lower:]'`
+    product2_lowcase=`echo \$product2_name | tr '[:upper:]' '[:lower:]'`
 fi
-appendProp "shipped_file_deliver_version" \$shipped_file_deliver_version
+appendProp "product1_shipped_file_deliver_version" \$product1_shipped_file_deliver_version
+appendProp "product1_lowcase" \$product1_lowcase
+appendProp "product2_shipped_file_deliver_version" \$product2_shipped_file_deliver_version
+appendProp "product2_lowcase" \$product2_lowcase
 
 #Use kerbose to create the release JIRA
 kinit -k -t \${HOME}/bxms-release.keytab bxms-release/prod-ci@REDHAT.COM

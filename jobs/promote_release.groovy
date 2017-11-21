@@ -17,7 +17,7 @@ def jobDefinition = job("${RELEASE_CODE}-promote-release") {
     triggers{
         gerrit{
 
-            project("integration-platform-config", "ant:**")
+            project("bxms-jenkins", "ant:**")
             events {
                 changeMerged()
             }
@@ -27,7 +27,7 @@ def jobDefinition = job("${RELEASE_CODE}-promote-release") {
                 }
                 triggers/'gerritProjects'/'com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.data.GerritProject'/'filePaths'/'com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.data.FilePath' << {
                     'compareType' 'REG_EXP'
-                    'pattern' '*-release/*-handover.adoc'
+                    'pattern' 'stream/bxms-test/release-history/*-handover.adoc'
                 }
             }
         }
@@ -52,8 +52,8 @@ def jobDefinition = job("${RELEASE_CODE}-promote-release") {
 
                     // Specifies a command to execute on the remote server.
                     execCommand('kinit -k -t ~/bxms-release.keytab bxms-release/prod-ci@REDHAT.COM\n' +
-                            '/mnt/redhat/scripts/rel-eng/utility/bus-clients/stage-mw-release ${brms_product_name}-${release_milestone_version}\n' +
-                            '/mnt/redhat/scripts/rel-eng/utility/bus-clients/stage-mw-release ${bpms_product_name}-${release_milestone_version}')
+                            '/mnt/redhat/scripts/rel-eng/utility/bus-clients/stage-mw-release ${product1_product_name}-${product1_milestone_version}\n' +
+                            '/mnt/redhat/scripts/rel-eng/utility/bus-clients/stage-mw-release ${product2_product_name}-${product2_milestone_version}')
                 }
             }
         }

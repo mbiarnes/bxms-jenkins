@@ -2,11 +2,11 @@ import org.jboss.bxms.jenkins.JobTemplate
 
 // Generate html release notes (Note that don't replace ''')
 def shellScript ='''#!/bin/sh
-bpms_jql_cve_search="(project = RHBRMS OR project = RHBPMS) AND 'Target Release' = ${product_version}.GA AND labels = security AND (Status = closed or Status = VERIFIED)"
-bpms_jql_bugfix_search="(project = RHBRMS OR project = RHBPMS) AND 'Target Release' = ${product_version}.GA AND (status = VERIFIED or status = closed) AND summary !~ 'CVE*'"
+product2_jql_cve_search="(project = RHBRMS OR project = RHBPMS) AND 'Target Release' = ${product_version}.GA AND labels = security AND (Status = closed or Status = VERIFIED)"
+product2_jql_bugfix_search="(project = RHBRMS OR project = RHBPMS) AND 'Target Release' = ${product_version}.GA AND (status = VERIFIED or status = closed) AND summary !~ 'CVE*'"
 
-brms_jql_cve_search="(project = RHBRMS OR project = RHBPMS) AND 'Target Release' = ${product_version}.GA AND labels = security AND (status = VERIFIED or status = closed) AND component not in ('Form Modeler', 'jBPM Core', 'jBPM Designer') "
-brms_jql_bugfix_search="(project = RHBRMS OR project = RHBPMS) AND 'Target Release' = ${product_version}.GA AND (status = VERIFIED or status = closed) AND component not in ('Form Modeler', 'jBPM Core', 'jBPM Designer') AND summary !~ 'CVE*'"
+product1_jql_cve_search="(project = RHBRMS OR project = RHBPMS) AND 'Target Release' = ${product_version}.GA AND labels = security AND (status = VERIFIED or status = closed) AND component not in ('Form Modeler', 'jBPM Core', 'jBPM Designer') "
+product1_jql_bugfix_search="(project = RHBRMS OR project = RHBPMS) AND 'Target Release' = ${product_version}.GA AND (status = VERIFIED or status = closed) AND component not in ('Form Modeler', 'jBPM Core', 'jBPM Designer') AND summary !~ 'CVE*'"
 
 kinit -k -t \${HOME}/bxms-release.keytab bxms-release/prod-ci@REDHAT.COM
 function generate_release_notes () {
@@ -38,8 +38,8 @@ function generate_release_notes () {
     done < ./jql_search_data.txt
 }
 
-generate_release_notes ${brms_release_notes_path} "${brms_jql_cve_search}" "${brms_jql_bugfix_search}"
-generate_release_notes ${bpms_release_notes_path} "${bpms_jql_cve_search}" "${bpms_jql_bugfix_search}"
+generate_release_notes ${product1_release_notes_path} "${product1_jql_cve_search}" "${product1_jql_bugfix_search}"
+generate_release_notes ${product2_release_notes_path} "${product2_jql_cve_search}" "${product2_jql_bugfix_search}"
 
 '''
 
@@ -70,19 +70,19 @@ def jobDefinition = job("${RELEASE_CODE}-release-notes") {
                 transferSet {
 
                     // Sets the files to upload to a server.
-                    sourceFiles('${brms_release_notes_path}')
+                    sourceFiles('${product1_release_notes_path}')
 
                     // Sets the destination folder.
-                    remoteDirectory('${brms_staging_path}/')
+                    remoteDirectory('${product1_staging_path}/')
                 }
                 // Adds a transfer set.
                 transferSet {
 
                     // Sets the files to upload to a server.
-                    sourceFiles('${bpms_release_notes_path}')
+                    sourceFiles('${product2_release_notes_path}')
 
                     // Sets the destination folder.
-                    remoteDirectory('${bpms_staging_path}/')
+                    remoteDirectory('${product2_staging_path}/')
                 }
             }
         }

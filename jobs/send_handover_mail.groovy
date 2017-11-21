@@ -3,9 +3,13 @@ import org.jboss.bxms.jenkins.JobTemplate
 // reviewNotificationMail.
 def mailContent = """Hello,
 
-BxMS 7.0.0 ER1 is now available, the handover can be found below:
+\$product1 \${product1_milestone_version} is now available, the handover can be found below:
 
-http://download.eng.brq.redhat.com/devel/candidates/BRMS/BRMS-7.0.0.ER1/brms-handover.html
+\$rcm_candidate_base/\$product1_name/\$product1_name-\${product1_milestone_version}/\${product1_lowcase}-handover.html
+
+\$product2 \${product2_milestone_version} is now available, the handover can be found below:
+
+\$rcm_candidate_base/\$product2_name/\$product2_name-\${product2_milestone_version}/\${product2_lowcase}-handover.html
 
 Kind regards,
 
@@ -30,7 +34,7 @@ def jobDefinition = job("${RELEASE_CODE}-send-handover-mail") {
             replyToList('bxms-prod@redhat.com')
 
             // Sets the default email subject that will be used for each email that is sent.
-            defaultSubject('${product_name} ${product_version} ${release_milestone} is now available.')
+            defaultSubject('${product1_name} ${product1_version} ${product1_milestone} is now available.')
 
             // Sets the default email content that will be used for each email that is sent.
             defaultContent(mailContent)

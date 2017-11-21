@@ -3,8 +3,8 @@ String shellScript = """
 if [ "\$release_status" = "closed" ];then
         return 0
 fi
-wget \${brms_staging_properties_url} -O \${brms_staging_properties_name} 
-wget \${brms_candidate_properties_url} -O \${brms_candidate_properties_name}
+wget \${product1_staging_properties_url} -O \${product1_staging_properties_name} 
+wget \${product1_candidate_properties_url} -O \${product1_candidate_properties_name}
 
 python -c "import sys,os
 from urllib2 import urlopen
@@ -32,7 +32,7 @@ def assertContain(actual, expect):
         print 'ERROR Actual is ' + actual + ' , Expect is ' + expect
         ret=1
 
-def validateProperties(propfile, keyword):
+def validateProperties(propfile, keyword, product_name):
     ret = 0
     dic = {}
     if os.path.isfile(propfile):
@@ -42,21 +42,27 @@ def validateProperties(propfile, keyword):
             str2 = str2.replace('\\n', '')
             dic[str1] = str2
         tmpFile.close()
-        isvalidurl(dic['brms.collection.latest.url'],keyword)
-        isvalidurl(dic['bpms.collection.latest.url'],keyword)
-        isvalidurl(dic['brms.execution-server.ee7.latest.url'],keyword)
-        isvalidurl(dic['bpms.execution-server.ee7.latest.url'],keyword)
-        isvalidurl(dic['bxms.maven.repo.latest.url'],keyword)        
-        isvalidurl(dic['build.config'],keyword)
-
-        assertEqual('\$kie_version', dic['bxms.maven.repo.latest.url'])
-        assertEqual('\$product_artifact_version', dic['BXMS_VERSION'])
-#        assertContain(dic['brms.business-central.standalone.latest.url'], '\$release_milestone_version')
-        assertContain(dic['brms.collection.latest.url'], '\$release_milestone_version')
-        assertContain(dic['brms.execution-server.ee7.latest.url'], '\$release_milestone_version')
-        assertContain(dic['bpms.collection.latest.url'], '\$release_milestone_version')
-        assertContain(dic['bpms.execution-server.ee7.latest.url'], '\$release_milestone_version')
-#        assertContain(dic['bxms.execution-server.jws.latest.url'], '\$release_milestone_version')
+        if [ "\$product_name" = "rhdm" ];then
+            isvalidurl(dic['rhdm.addons.latest.url'],keyword)
+            isvalidurl(dic['rhdm.kieserver.ee7.latest.url'],keyword)
+            isvalidurl(dic['rhdm.maven.repo.latest.url'],keyword)        
+            isvalidurl(dic['build.config'],keyword)
+            assertEqual('\$kie_version', dic['rhdm.maven.repo.latest.url'])
+            assertEqual('\$product1_artifact_version', dic['RHDM_VERSION'])
+            assertContain(dic['rhdm.business-central.standalone.latest.url'], '\$product1_milestone_version')
+            assertContain(dic['rhdm.addons.latest.url'], '\$product1_milestone_version')
+            assertContain(dic['rhdm.kieserver.ee7.latest.url'], '\$product1_milestone_version')
+        elif [ "\$prodduct_name" = "rhbas" ];then
+            isvalidurl(dic['rhbas.addons.latest.url'],keyword)
+            isvalidurl(dic['rhbas.kieserver.ee7.latest.url'],keyword)
+            isvalidurl(dic['rhbas.maven.repo.latest.url'],keyword)        
+            isvalidurl(dic['build.config'],keyword)
+            assertEqual('\$kie_version', dic['rhbas.maven.repo.latest.url'])
+            assertEqual('\$product2_artifact_version', dic['RHBAS_VERSION'])
+            assertContain(dic['rhbas.business-central.standalone.latest.url'], '\$product2_milestone_version')
+            assertContain(dic['rhbas.addons.latest.url'], '\$product2_milestone_version')
+            assertContain(dic['rhbas.kieserver.ee7.latest.url'], '\$product2_milestone_version')
+        fi
         if ret != 0:
             print propfile + ' Validation No Pass'
             sys.exit(1)
@@ -65,8 +71,10 @@ def validateProperties(propfile, keyword):
     else:
         return 1
 
-validateProperties('\$brms_staging_properties_name', 'rcm-guest')    
-validateProperties('\${brms_candidate_properties_name}', 'candidates')
+validateProperties('\$product1_staging_properties_name', 'rcm-guest','rhdm')    
+validateProperties('\${product1_candidate_properties_name}', 'candidates','rhdm')
+validateProperties('\$product2_staging_properties_name', 'rcm-guest','rhbas')    
+validateProperties('\${product2_candidate_properties_name}', 'candidates','rhbas')
 "
 """
 // Creates or updates a free style job.
@@ -82,7 +90,7 @@ def jobDefinition = job("${RELEASE_CODE}-verify-deliverable-properties") {
     triggers{
         gerrit{
 
-            project("integration-platform-config", "ant:**")
+            project("bxms-jenkins", "ant:**")
             events {
                 patchsetCreated()
             }
@@ -91,8 +99,8 @@ def jobDefinition = job("${RELEASE_CODE}-verify-deliverable-properties") {
                     'serverName' 'code.engineering.redhat.com'
                 }
                 triggers/'gerritProjects'/'com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.data.GerritProject'/'filePaths'/'com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.data.FilePath' << {
-                    "compareType" "REG_EXP"
-                    "pattern" RELEASE_CODE + "-release/.*-handover.adoc"
+                    'compareType' 'REG_EXP'
+                    'pattern' 'stream/bxms-test/release-history/*-handover.adoc'
                 }
             }
         }
