@@ -63,7 +63,7 @@ dependencies {
     testPlugins 'org.jenkins-ci.plugins:cloudbees-folder:5.0'
     testPlugins 'org.jenkins-ci.plugins:jms-messaging:1.0.31@hpi'
   	testPlugins 'org.jenkins-ci.plugins.workflow:workflow-aggregator:2.4'
-    //testPlugins 'com.redhat.jenkins.plugins:redhat-ci-plugin:1.4.10@hpi'
+    testPlugins 'com.redhat.jenkins.plugins:redhat-ci-plugin:1.4.10@hpi'
     //this is an example of a third party plugin which could be put in the lib dir
 
 }

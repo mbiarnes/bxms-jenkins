@@ -29,6 +29,7 @@ ip_bom_version=jboss-integration-platform-bom:version
 kie_version=drools:version
 brew_tag=common:tag
 brew_target=common:target
+brew_importtag=common:importtag
 makefile=common:makefile
 cutoff_date=common:cutoff_date
 

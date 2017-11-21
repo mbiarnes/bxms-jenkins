@@ -85,7 +85,7 @@ function importToMead()
         local v=\$(getVersion \$_artifact)
         local gavpath=\$(echo \$(echo "\$g" | sed "s|\\.|/|g")/\$a/\$v)
         local _mavenrepo="/jboss-prod/m2/\${jenkins_cache_repo}"
-        local _importtag=\$brew_tag
+        local _importtag=\$brew_importtag
         local _importowner="bxms-release/prod-ci"
         echo ":) Importing \$g:\$a:\$v into \$_importtag by \$_importowner"
         import-maven --owner=\$_importowner --tag=\$_importtag \$(find \$_mavenrepo/\$gavpath  -name '*.jar' -o -name '*.pom')
@@ -118,7 +118,7 @@ function importToMeadFromLog()
 
 kinit -k -t \${HOME}/bxms-release.keytab bxms-release/prod-ci@REDHAT.COM
 echo "Scanning missing artifact..."
-ip-tooling/MEAD_check_artifact.sh \$brew_tag /jboss-prod/m2/\${jenkins_cache_repo} 2>&1 | tee /tmp/mead_check.log
+ip-tooling/MEAD_check_artifact.sh \$brew_target /jboss-prod/m2/\${jenkins_cache_repo} 2>&1 | tee /tmp/mead_check.log
 # echo "`tail -n 5 /tmp/mead_check.log`" > /tmp/mead_check.log # For debug purpose
 sed "/redhat-/d" /tmp/mead_check.log
 importToMeadFromLog /tmp/mead_check.log
@@ -135,6 +135,7 @@ def jobDefinition = job("${RELEASE_CODE}-locate-import-list") {
 
         // Runs a shell script (defaults to sh, but this is configurable) for building the project.
         shell(shellScript)
+        
     }
     publishers {
         postBuildTask {

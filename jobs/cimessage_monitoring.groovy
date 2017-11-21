@@ -22,14 +22,14 @@ if [ "\$CI_TYPE" = "brew-tag" ];then
         fi
         
         brew_tag_name=`echo \$CI_MESSAGE| python -c "import sys, json; print json.load(sys.stdin)['tag']['name']"` 1>/dev/null 
-        if [ "\$brew_tag_name" != "\$brew_target" ];then
+        if [ "\$brew_tag_name" != "\$brew_tag" ];then
             exit 0
         fi        
         version=`echo \$CI_MESSAGE| python -c "import sys, json; print json.load(sys.stdin)['build']['version']"` 1>/dev/null
         release=`echo \$CI_MESSAGE| python -c "import sys, json; print json.load(sys.stdin)['build']['release']"` 1>/dev/null
         task_id=`echo \$CI_MESSAGE| python -c "import sys, json; print json.load(sys.stdin)['build']['task_id']"` 1>/dev/null
         nvr=`echo \$CI_MESSAGE| python -c "import sys, json; print json.load(sys.stdin)['build']['nvr']"` 1>/dev/null
-    if [ "\$CI_NAME" = "org.jboss.ip-brms-bpmsuite-assembly" ];then
+    if [ "\$CI_NAME" = "org.kie.rhap-rhbas" ];then
         product_assembly_maven_repo_url="http://download.eng.bos.redhat.com/brewroot/packages/\${name}/\${version}/\${release}/maven/"
         product_assembly_brew_url="https://brewweb.engineering.redhat.com/brew/taskinfo?taskID=\${task_id}"
         product_nvr="\$nvr"
@@ -49,7 +49,8 @@ if [ "\$CI_TYPE" = "brew-tag" ];then
     elif [ "\$CI_NAME" = "org.jboss.ip-bxms-maven-repo-root" ];then
         #Trigger maven repo to build
         echo "maven-repo-root build has been completed"
-        ip-tooling/jira_helper.py -c ${IP_CONFIG_FILE} -a "All brew build completed: \$brewchain_build_url. Ready to trigger maven repo build" -f
+        
+        ip-tooling/jira_helper.py -c ${IP_CONFIG_FILE} -a "Maven repo root build completed. Ready to trigger maven repo build" -f
     fi
 elif [ "\$label" = "bxms-ci" ];then
     if [ "\$release_status" = "closed" ];then
@@ -116,7 +117,7 @@ def jobDefinition = job("${RELEASE_CODE}-monitoring-cimessage") {
 
     triggers{
         ciBuildTrigger {
-            selector("label='bxms-ci' OR (CI_TYPE='brew-tag' AND ( CI_NAME='org.jboss.ip-bxms-maven-repo-root' OR label='bxms-ci' OR CI_NAME='org.jboss.ip-brms-bpmsuite-assembly' OR CI_NAME='org.jboss.brms-bpmsuite.patching-patching-tools-parent')) OR (new='FAILED' AND method='chainmaven' AND (target='jb-bxms-7.0-maven-candidate' OR target='jb-bxms-6.4-candidate'))")
+            selector("label='bxms-ci' OR (CI_TYPE='brew-tag' AND ( CI_NAME='org.jboss.ip-bxms-maven-repo-root' OR label='bxms-ci' OR CI_NAME='org.kie.rhap-rhdm' OR CI_NAME='org.kie.rhap-rhbas' OR CI_NAME='org.jboss.brms-bpmsuite.patching-patching-tools-parent')) OR (new='FAILED' AND method='chainmaven' AND (target='jb-bxms-7.0-maven-candidate' OR target='jb-bxms-6.4-candidate'))")
             providerName('CI Publish')
         }
     }
