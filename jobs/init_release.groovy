@@ -19,10 +19,10 @@ if [ "\${CLEAN_CONFIG}" = "true" ];then
 fi
 #If build new versions, then remove the jenkins properties files
 if [ -f ${CI_PROPERTIES_FILE} ];then
-    new_version="`grep 'product_version=' ${IP_CONFIG_FILE}`"
-    new_milestone="`grep 'release_milestone=' ${IP_CONFIG_FILE}`"
-    old_version="`grep 'product_version=' ${IP_CONFIG_FILE}`"
-    old_milestone="`grep 'release_milestone=' ${IP_CONFIG_FILE}`"
+    new_version="`grep 'product1_version=' ${IP_CONFIG_FILE}`"
+    new_milestone="`grep 'product1_milestone=' ${IP_CONFIG_FILE}`"
+    old_version="`grep 'product1_version=' ${CI_PROPERTIES_FILE}`"
+    old_milestone="`grep 'product1_milestone=' ${CI_PROPERTIES_FILE}`"
     
     export `grep "product_cfg_sha" ${CI_PROPERTIES_FILE}`
     
@@ -42,13 +42,13 @@ if [ ! -f ${CI_PROPERTIES_FILE} ];then
 fi
 source ${CI_PROPERTIES_FILE}
 product1_shipped_file_deliver_version=\${product1_milestone_version} 
-product2_shipped_file_deliver_version=\${product2_milestone_version} 
+product2_shipped_file_deliver_version=\${product2_milestone_version}
+product1_lowcase=`echo \$product1_name | tr '[:upper:]' '[:lower:]'`
+product2_lowcase=`echo \$product2_name | tr '[:upper:]' '[:lower:]'` 
 #Uploading to rcm staging folder
 if [ \${milestone:0:2} = "CR" ];then
     product1_shipped_file_deliver_version=\${product1_version}\${availability}
-    product2_shipped_file_deliver_version=\${product2_version}\${availability}
-    product1_lowcase=`echo \$product1_name | tr '[:upper:]' '[:lower:]'`
-    product2_lowcase=`echo \$product2_name | tr '[:upper:]' '[:lower:]'`
+    product2_shipped_file_deliver_version=\${product2_version}\${availability}    
 fi
 appendProp "product1_shipped_file_deliver_version" \$product1_shipped_file_deliver_version
 appendProp "product1_lowcase" \$product1_lowcase

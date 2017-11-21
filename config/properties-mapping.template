@@ -41,7 +41,7 @@ release_type=default
 
 share_config_dir=/jboss-prod/config
 repository_builder_script=regen_bxms_repo_builder.sh
-product_root_component="rhdm rhbas"
+product_root_component=rhdm rhbas
 rcm_staging_base=http://rcm-guest.app.eng.bos.redhat.com/rcm-guest/staging
 rcm_candidate_base=http://download.devel.redhat.com/devel/candidates
 release_jira_base=https://projects.engineering.redhat.com/browse/
