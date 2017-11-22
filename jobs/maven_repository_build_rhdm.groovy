@@ -23,41 +23,26 @@ if ! wget \${product1_staging_properties_url} -O \${product1_staging_properties_
     echo " \${product1_staging_properties_url} isn't available yet"
     touch  \${product1_staging_properties_name}
 fi
-if ! wget \${product2_staging_properties_url} -O \${product2_staging_properties_name} 2>/dev/null ;then
-    echo " \${product2_staging_properties_url} isn't available yet"
-    touch  \${product2_staging_properties_name}
-fi 
 if ! wget \${product1_candidate_properties_url} -O \${product1_candidate_properties_name} 2>/dev/null ;then
   echo " \${product1_candidate_properties_url} isn't available yet"
   touch  \${product1_staging_properties_name}
 fi
-if ! wget \${product2_candidate_properties_url} -O \${product2_candidate_properties_name} 2>/dev/null ;then
-  echo " \${product2_candidate_properties_url} isn't available yet"
-  touch  \${product2_staging_properties_name}
-fi
 #append the maven repo url into the properties
 appendProp "rhdm.maven.repo.latest.url" \${rcm_staging_base}/\${product1_staging_path}/\${product1_maven_repo_name} \$product1_staging_properties_name
-appendProp "rhbas.maven.repo.latest.url" \${rcm_staging_base}/\${product2_staging_path}/\${product2_maven_repo_name} \$product2_staging_properties_name
 appendProp "rhdm.maven.repo.latest.url" \${rcm_candidate_base}/\${product1_candidate_path}/\${product1_maven_repo_name} \$product1_candidate_properties_name
-appendProp "rhbas.maven.repo.latest.url" \${rcm_candidate_base}/\${product2_candidate_path}/\${product2_maven_repo_name} \$product2_candidate_properties_name
 
 
 if [ \$release_type = "patch" ];then
     rhdm_incr_maven_repo_name=rhdm-{shipped_file_deliver_version}-incremental-maven-repository.zip
-    rhbas_incr_maven_repo_name=rhbas-{shipped_file_deliver_version}-incremental-maven-repository.zip
     appendProp "rhdm.maven.incremental.repo.latest.url" \${rcm_staging_base}/\${product1_staging_path}/\${rhdm_incr_maven_repo_name} \$product1_staging_properties_name
-    appendProp "rhbas.maven.incremental.repo.latest.url" \${rcm_staging_base}/\${product2_staging_path}/\${rhbas_incr_maven_repo_name} \$product2_staging_properties_name
     appendProp "rhdm.maven.incremental.repo.latest.url" \${rcm_candidate_base}/\${product1_candidate_path}/\${rhdm_incr_maven_repo_name} \$product1_candidate_properties_name
-    appendProp "rhbas.maven.incremental.repo.latest.url" \${rcm_candidate_base}/\${product2_candidate_path}/\${rhbas_incr_maven_repo_name} \$product2_candidate_properties_name
 fi
 
 PROJECT_NAME=\${product1_name} make CFG=${IP_CONFIG_FILE} BUILDER_SCRIPT=\${repository_builder_script} -f \${makefile} repository
-#PROJECT_NAME=\${product2_name} make CFG=${IP_CONFIG_FILE} BUILDER_SCRIPT=\${repository_builder_script} -f \${makefile} repository
-
 """
 
 // Creates or updates a free style job.
-def jobDefinition = job("${RELEASE_CODE}-maven-repository-build") {
+def jobDefinition = job("${RELEASE_CODE}-maven-repository-build-rhdm") {
 
     // Sets a description for the job.
     description("This job is responsible for building the offline maven repository zip for MRRC.")
@@ -102,7 +87,7 @@ def jobDefinition = job("${RELEASE_CODE}-maven-repository-build") {
     publishers {
 
         //Archives artifacts with each build.
-        archiveArtifacts('workspace/${release_code}-repository/archive/**/*')
+        archiveArtifacts('workspace/${product1_lowcase}-repository/archive/**/*')
 
         // Send artifacts to an SSH server (using SFTP) and/or execute commands over SSH.
         publishOverSsh {
@@ -114,32 +99,13 @@ def jobDefinition = job("${RELEASE_CODE}-maven-repository-build") {
                 verbose(true)
 
                 // Adds a transfer set.
-                if (RELEASE_CODE == "intpack-fuse63-bxms64") {
                     transferSet {
 
                         // Sets the files to upload to a server.
-                        sourceFiles('workspace/${release_code}-repository/archive/*.zip,workspace/bxms-repository/archive/*.text,workspace/bxms-repository/archive/*.md5')
+                        sourceFiles('workspace/${product1_lowcase}-repository/archive/*.zip,workspace/${product1_lowcase}-repository/archive/*.text,workspace/${product1_lowcase}-repository/archive/*.md5')
 
                         // Sets the first part of the file path that should not be created on the remote server.
-                        removePrefix('workspace/${release_code}-repository/archive/')
-
-                        // Sets the destination folder.
-                        remoteDirectory('${product_stage_folder}/${product_name}-${product_version}')
-
-                        // Specifies a command to execute on the remote server.
-                        execCommand('unzip ' +
-                                '-o ~/staging/${product_stage_folder}/${product_name}-${product_version}/maven-repository-report.zip ' +
-                                '-d ~/staging/${product_stage_folder}/${product_name}-${product_version}/ && rm ' +
-                                '-f ~/staging/${product_stage_folder}/${product_name}-${product_version}/maven-repository-report.zip')
-                    }
-                } else {
-                    transferSet {
-
-                        // Sets the files to upload to a server.
-                        sourceFiles('workspace/${release_code}-repository/archive/*.zip,workspace/${release_code}-repository/archive/*.text,workspace/${release_code}-repository/archive/*.md5')
-
-                        // Sets the first part of the file path that should not be created on the remote server.
-                        removePrefix('workspace/${release_code}-repository/archive/')
+                        removePrefix('workspace/${product1_lowcase}-repository/archive/')
 
                         // Sets the destination folder.
                         remoteDirectory('${product1_staging_path}')
@@ -156,42 +122,12 @@ def jobDefinition = job("${RELEASE_CODE}-maven-repository-build") {
                     transferSet {
 
                         // Sets the files to upload to a server.
-                        sourceFiles('workspace/${release_code}-repository/archive/*.zip,workspace/${release_code}-repository/archive/*.text,workspace/${release_code}-repository/archive/*.md5')
-
-                        // Sets the first part of the file path that should not be created on the remote server.
-                        removePrefix('workspace/${release_code}-repository/archive/')
-
-                        // Sets the destination folder.
-                        remoteDirectory('${product2_staging_path}')
-
-                        // Specifies a command to execute on the remote server.
-                        execCommand('unzip ' +
-                                '-o ~/staging/${product2_staging_path}/maven-repository-report.zip ' +
-                                '-d ~/staging/${product2_staging_path}/ ' +
-                                '&& rm ' +
-                                '-f ~/staging/${product2_staging_path}/maven-repository-report.zip')
-                    }
-
-                    // Adds a transfer set.
-                    transferSet {
-
-                        // Sets the files to upload to a server.
-                        sourceFiles('${release_code}-deliverable-list*.properties')
+                        sourceFiles('${product1_lowcase}-deliverable-list*.properties')
 
                         // Sets the destination _path.
                         remoteDirectory('${product1_staging_path}')
                     }
-
-                    // Adds a transfer set.
-                    transferSet {
-
-                        // Sets the files to upload to a server.
-                        sourceFiles('${release_code}-deliverable-list*.properties')
-
-                        remoteDirectory('${product2_staging_path}')
-                    }
                 }
-            }
         }
     }
 }

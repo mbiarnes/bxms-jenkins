@@ -75,7 +75,7 @@ job('bxms-ip-config-codereview'){
                }
                triggers/'gerritProjects'/'com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.data.GerritProject'/'filePaths'/'com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.data.FilePath' << {
                    'compareType' 'REG_EXP'
-                   'pattern' 'bxms*'
+                   'pattern' 'bxms*.cfg'
                }
            }
        }
