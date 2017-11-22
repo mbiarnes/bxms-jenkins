@@ -20,14 +20,26 @@ function appendProp(){
 }
 
 if ! wget \${product1_staging_properties_url} -O \${product1_staging_properties_name} 2>/dev/null ;then
-    echo " \${product1_staging_properties_url} isn't available yet"  
+    echo " \${product1_staging_properties_url} isn't available yet"
+    touch  \${product1_staging_properties_name}
+fi
+if ! wget \${product2_staging_properties_url} -O \${product2_staging_properties_name} 2>/dev/null ;then
+    echo " \${product2_staging_properties_url} isn't available yet"
+    touch  \${product2_staging_properties_name}
 fi 
 if ! wget \${product1_candidate_properties_url} -O \${product1_candidate_properties_name} 2>/dev/null ;then
   echo " \${product1_candidate_properties_url} isn't available yet"
+  touch  \${product1_staging_properties_name}
+fi
+if ! wget \${product2_candidate_properties_url} -O \${product2_candidate_properties_name} 2>/dev/null ;then
+  echo " \${product2_candidate_properties_url} isn't available yet"
+  touch  \${product2_staging_properties_name}
 fi
 #append the maven repo url into the properties
 appendProp "rhdm.maven.repo.latest.url" \${rcm_staging_base}/\${product1_staging_path}/\${product1_maven_repo_name} \$product1_staging_properties_name
 appendProp "rhbas.maven.repo.latest.url" \${rcm_staging_base}/\${product2_staging_path}/\${product2_maven_repo_name} \$product2_staging_properties_name
+appendProp "rhdm.maven.repo.latest.url" \${rcm_candidate_base}/\${product1_candidate_path}/\${product1_maven_repo_name} \$product1_candidate_properties_name
+appendProp "rhbas.maven.repo.latest.url" \${rcm_candidate_base}/\${product2_candidate_path}/\${product2_maven_repo_name} \$product2_candidate_properties_name
 
 
 if [ \$release_type = "patch" ];then
@@ -35,16 +47,12 @@ if [ \$release_type = "patch" ];then
     rhbas_incr_maven_repo_name=rhbas-{shipped_file_deliver_version}-incremental-maven-repository.zip
     appendProp "rhdm.maven.incremental.repo.latest.url" \${rcm_staging_base}/\${product1_staging_path}/\${rhdm_incr_maven_repo_name} \$product1_staging_properties_name
     appendProp "rhbas.maven.incremental.repo.latest.url" \${rcm_staging_base}/\${product2_staging_path}/\${rhbas_incr_maven_repo_name} \$product2_staging_properties_name
+    appendProp "rhdm.maven.incremental.repo.latest.url" \${rcm_candidate_base}/\${product1_candidate_path}/\${rhdm_incr_maven_repo_name} \$product1_candidate_properties_name
+    appendProp "rhbas.maven.incremental.repo.latest.url" \${rcm_candidate_base}/\${product2_candidate_path}/\${rhbas_incr_maven_repo_name} \$product2_candidate_properties_name
 fi
 
-sed -e "s=\${rcm_staging_base}/\${product1_staging_folder}=\${rcm_candidate_base}/\${product1_product_name}=g" \
-        \${product1_staging_properties_name} > \${product1_candidate_properties_name}
-
-sed -e "s=\${rcm_staging_base}/\${product2_staging_folder}=\${rcm_candidate_base}/\${product2_product_name}=g" \
-        \${product2_staging_properties_name} > \${product2_candidate_properties_name}
-        
-PROJECT_NAME=\${product1_staging_folder} make CFG=${IP_CONFIG_FILE} MAVEN_REPOSITORY_BUILDER_SCRIPT=\${repository_builder_script} -f \${makefile} repository
-PROJECT_NAME=\${product2_staging_folder} make CFG=${IP_CONFIG_FILE} MAVEN_REPOSITORY_BUILDER_SCRIPT=\${repository_builder_script} -f \${makefile} repository
+PROJECT_NAME=\${product1_name} make CFG=${IP_CONFIG_FILE} BUILDER_SCRIPT=\${repository_builder_script} -f \${makefile} repository
+#PROJECT_NAME=\${product2_name} make CFG=${IP_CONFIG_FILE} BUILDER_SCRIPT=\${repository_builder_script} -f \${makefile} repository
 
 """
 

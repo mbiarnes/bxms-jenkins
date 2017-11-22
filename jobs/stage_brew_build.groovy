@@ -16,23 +16,24 @@ if ! wget \${product1_staging_properties_url} -O \${product1_staging_properties_
     echo " \${product1_staging_properties_url} isn't available yet"  
 fi
 ip-tooling/maven-to-stage.py --version=\${product1_artifact_version} --override-version \${product1_shipped_file_deliver_version} --maven-repo \${product_assembly_maven_repo_url} \
-  --deliverable \${product1_deliverable_template} --output \${product1_product_name} \
+  --deliverable \${product1_deliverable_template} --output \${product1_name} \
   --release-url=\${rcm_staging_base}/\${product1_staging_path} --output-deliverable-list \${product1_staging_properties_name}
-cp ${IP_CONFIG_FILE} \${product1_product_name}
+cp ${IP_CONFIG_FILE} \${product1_name}
   
 ip-tooling/maven-to-stage.py --version=\${product2_artifact_version} --override-version \${product2_shipped_file_deliver_version} --maven-repo \${product_assembly_maven_repo_url} \
-  --deliverable \${product2_deliverable_template} --output \${product2_product_name} \
+  --deliverable \${product2_deliverable_template} --output \${product2_name} \
   --release-url=\${rcm_staging_base}/\${product2_staging_path} --output-deliverable-list \${product2_staging_properties_name}
-cp ${IP_CONFIG_FILE} \${product2_product_name}
+cp ${IP_CONFIG_FILE} \${product2_name}
 
 #append the other properties per qe's requirement
 appendProp "build.config" \${rcm_staging_base}/\${product1_staging_path}/${IP_CONFIG_FILE} 
 appendProp "DROOLSJBPM_VERSION" \${kie_version} 
-appendProp "BXMS_VERSION" \${product_artifact_version} 
+appendProp "RHDM_VERSION" \${product1_artifact_version} 
+appendProp "RHBAS_VERSION" \${product2_artifact_version} 
 
-sed -e "s=\${rcm_staging_base}/\${product1_staging_folder}=\${rcm_candidate_base}/\${product1_product_name}=g" \
+sed -e "s=\${rcm_staging_base}/\${product1_staging_folder}=\${rcm_candidate_base}/\${product1_name}=g" \
     \${product1_staging_properties_name} > \${product1_candidate_properties_name}
-sed -e "s=\${rcm_staging_base}/\${product2_staging_folder}=\${rcm_candidate_base}/\${product2_product_name}=g" \
+sed -e "s=\${rcm_staging_base}/\${product2_staging_folder}=\${rcm_candidate_base}/\${product2_name}=g" \
     \${product2_staging_properties_name} > \${product2_candidate_properties_name}
 
 """
@@ -91,8 +92,8 @@ def jobDefinition = job("${RELEASE_CODE}-stage-brew-build") {
                     transferSet {
 
                         // Sets the files to upload to a server.
-                        sourceFiles('${product1_product_name}/*.*')
-                        removePrefix('${product1_product_name}/')
+                        sourceFiles('${product1_name}/*.*')
+                        removePrefix('${product1_name}/')
 
                         // Sets the destination folder.
                         remoteDirectory('${product1_staging_path}')
@@ -102,8 +103,8 @@ def jobDefinition = job("${RELEASE_CODE}-stage-brew-build") {
                     transferSet {
 
                         // Sets the files to upload to a server.
-                        sourceFiles('${product2_product_name}/*.*')
-                        removePrefix('${product2_product_name}/')
+                        sourceFiles('${product2_name}/*.*')
+                        removePrefix('${product2_name}/')
 
 
                         // Sets the destination folder.
@@ -114,7 +115,7 @@ def jobDefinition = job("${RELEASE_CODE}-stage-brew-build") {
                     transferSet {
 
                         // Sets the files to upload to a server.
-                        sourceFiles('${IP_CONFIG_FILE},${release_code}-deliverable-list*.properties')
+                        sourceFiles('${IP_CONFIG_FILE},${product1_lowcase}-deliverable-list*.properties')
 
                         // Sets the destination folder.
                         remoteDirectory('${product1_staging_path}')
@@ -124,7 +125,7 @@ def jobDefinition = job("${RELEASE_CODE}-stage-brew-build") {
                     transferSet {
 
                         // Sets the files to upload to a server.
-                        sourceFiles('${IP_CONFIG_FILE},${release_code}-deliverable-list*.properties')
+                        sourceFiles('${IP_CONFIG_FILE},${product2_lowcase}-deliverable-list*.properties')
 
                         // Sets the destination folder.
                         remoteDirectory('${product2_staging_path}')

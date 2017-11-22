@@ -8,18 +8,18 @@ wget \${product1_candidate_properties_url} -O \${product1_candidate_properties_n
 
 ip-tooling/maven-to-stage.py --version=\${product1_artifact_version} --override-version \${product1_version} \
    --deliverable \${product1_deliverable_template} --maven-repo \${bxms_patch_maven_repo_url} \
-   --output \${product1_product_name}\
+   --output \${product1_name}\
    --release-url=\${rcm_staging_base}/\${product1_staging_path} --output-deliverable-list \${product1_staging_properties_name}
    
 ip-tooling/maven-to-stage.py --version=\${product2_artifact_version} --override-version \${product2_version} \
    --deliverable \${product2_deliverable_template} --maven-repo \${bxms_patch_maven_repo_url} \
-   --output \${product2_product_name}\
+   --output \${product2_name}\
    --release-url=\${rcm_staging_base}/\${product2_staging_path} --output-deliverable-list \${product2_staging_properties_name}
 
-sed -e "s=\${rcm_staging_base}/\${product1_staging_folder}=\${rcm_candidate_base}/\${product1_product_name}=g" \
+sed -e "s=\${rcm_staging_base}/\${product1_staging_folder}=\${rcm_candidate_base}/\${product1_name}=g" \
     \${product1_staging_properties_name} > \${product1_candidate_properties_name}
 
-sed -e "s=\${rcm_staging_base}/\${product2_staging_folder}=\${rcm_candidate_base}/\${product2_product_name}=g" \
+sed -e "s=\${rcm_staging_base}/\${product2_staging_folder}=\${rcm_candidate_base}/\${product2_name}=g" \
     \${product2_staging_properties_name} > \${product2_candidate_properties_name}
 
 """
@@ -58,8 +58,8 @@ def jobDefinition = job("${RELEASE_CODE}-stage-bxms-patch") {
                 transferSet {
 
                     // Sets the files to upload to a server.
-                    sourceFiles('${product1_product_name}/*.*')
-                    removePrefix('${product1_product_name}/')
+                    sourceFiles('${product1_name}/*.*')
+                    removePrefix('${product1_name}/')
 
                     // Sets the destination folder.
                     remoteDirectory('${product1_staging_path}')
@@ -69,8 +69,8 @@ def jobDefinition = job("${RELEASE_CODE}-stage-bxms-patch") {
                 transferSet {
 
                     // Sets the files to upload to a server.
-                    sourceFiles('${product2_product_name}/*.*')
-                    removePrefix('${product2_product_name}/')
+                    sourceFiles('${product2_name}/*.*')
+                    removePrefix('${product2_name}/')
 
                     // Sets the destination folder.
                     remoteDirectory('${product2_staging_path}')
