@@ -1,6 +1,6 @@
 BxMS DSL script:
 
-BxMS DSL controlls Jenkins job and release pipelinefor BxMS product CI which is in https://brms-bpms-jenkins.rhev-ci-vms.eng.rdu2.redhat.com/
+BxMS DSL controlls Jenkins job and release pipelinefor BxMS product CI which is in https://rhdm-rhbas-jenkins.rhev-ci-vms.eng.rdu2.redhat.com/
 
 All the job dsl are located in jobs/*.groovy
 
@@ -26,11 +26,11 @@ File structure description:
 ├── bxms-jenkins.iml
 ├── config                                           #Config file used in release
                                                         pipeline
-│   ├── bpms-deliverable.properties                  #bpms deliverable file
-│   ├── bpms-pvt-config.yaml                         #pvt config
-│   ├── bpmsuite-image-stream.json                   
-│   ├── brms-deliverable.properties
-│   ├── brms-pvt-config.yaml
+│   ├── rhbas-deliverable.properties                  #rhbas deliverable file
+│   ├── rhbas-pvt-config.yaml                         #pvt config
+│   ├── rhbasuite-image-stream.json                   
+│   ├── rhdm-deliverable.properties
+│   ├── rhdm-pvt-config.yaml
 │   ├── properties-mapping.template
 │   ├── release-handover.template
 │   └── release-notes.template

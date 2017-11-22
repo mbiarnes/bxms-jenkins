@@ -1,1 +1,0 @@
-../../../jobs/validate_sources.groovy

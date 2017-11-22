@@ -3,11 +3,9 @@ import org.jboss.bxms.jenkins.JobTemplate
 // incremental repository
 def incrementalRepositoryString = null
 
-if (RELEASE_CODE == "bxms64") {
-
-    incrementalRepositoryString = "http://rcm-guest.app.eng.bos.redhat.com/rcm-guest/staging/jboss-brms/BRMS-6.4.0.CR2/jboss-brms-bpmsuite-6.4.0.GA-maven-repository/maven-repository"
-
-}
+//if (RELEASE_CODE == "bxms64") {
+//    incrementalRepositoryString = "http://rcm-guest.app.eng.bos.redhat.com/rcm-guest/staging/jboss-brms/BRMS-6.4.0.CR2/jboss-brms-bpmsuite-6.4.0.GA-maven-repository/maven-repository"
+//}
 // Repository builder script
 def shellScript = """
 kinit -k -t \${HOME}/bxms-release.keytab bxms-release/prod-ci@REDHAT.COM

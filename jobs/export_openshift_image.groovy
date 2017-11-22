@@ -17,13 +17,12 @@ fi
 if [ ! -e download_list.properties ]
 then
         echo  """#Format G:A::classifier:package_type 
-org.jboss.ip:jboss-bpmsuite::business-central-eap7:zip
-org.jboss.ip:jboss-bpmsuite::business-central-monitoring-ee7:zip
-org.jboss.ip:jboss-bpmsuite::smart-router:jar
-org.jboss.ip:jboss-bpmsuite::execution-server-ee7:zip
-org.jboss.ip:jboss-bpmsuite::execution-server-controller-ee7:zip""" >>download_list.properties
+org.kie.rhap:rhbas::business-central-standalone:jar:rhbas.business-central.standalone.latest.url
+org.kie.rhap:rhbas::business-central-eap7:zip:rhbas.business-central-eap7.latest.url
+org.kie.rhap:rhbas::add-ons:zip:rhbas.addons.latest.url
+org.kie.rhap:rhbas::execution-server-ee7:zip:rhbas.execution-server.ee7.latest.url""" >>download_list.properties
 fi
-maven_repo_url="http://download-node-02.eng.bos.redhat.com/brewroot/repos/jb-bxms-7.0-maven-build/latest/maven/"
+maven_repo_url="http://download-node-02.eng.bos.redhat.com/brewroot/repos/\${brew_target}/latest/maven/"
 ./maven-to-stage.py --version=${product_artifact_version} --override-version ${product_version}${availability} --deliverable download_list.properties --maven-repo ${maven_repo_url} --output BPMS-${product_version}${availability}
 
 rm -f download_list.properties maven-to-stage.py

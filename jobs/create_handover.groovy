@@ -9,10 +9,10 @@ git config --global user.email "jb-ip-tooling-jenkins@redhat.com"
 git config --global user.name "bxms-prod"
 
 if [ -f \${product1_pvt_report_basename}.html ];then
-    cp \${product1_pvt_report_basename}.html \${archive_pvt_report_basename}-brms.html
+    cp \${product1_pvt_report_basename}.html \${archive_pvt_report_basename}-rhdm.html
 fi
 if [ -f \${product2_pvt_report_basename}.html ];then
-    cp \${product2_pvt_report_basename}.html \${archive_pvt_report_basename}-bpms.html
+    cp \${product2_pvt_report_basename}.html \${archive_pvt_report_basename}-rhbas.html
 fi
 git add .
 

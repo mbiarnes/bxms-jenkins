@@ -41,7 +41,7 @@ def jobDefinition = job("${RELEASE_CODE}-trigger-qe-handover-test") {
             // KEY=value pairs, one per line (Java properties file format) to be used as message properties.
             messageProperties("label=bxms-ci\n" +
                     "CI_TYPE=custom\n" +
-                    "EVENT_TYPE=brms-64-qe-handover-trigger\n")
+                    "EVENT_TYPE=rhap-qe-handover-trigger\n")
 
             // Content of CI message to be sent.
             messageContent('${product1_properties_url}')

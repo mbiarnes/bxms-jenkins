@@ -17,9 +17,7 @@ cd workspace
 
 # Remove settings.xml
 # TODO It's a fast fix. It should be more generic.
-rm -f src/errai-parent*/settings.xml
-rm -f src/brms-bpmsuite-assembly*/settings.xml
-rm -f src/xmlpull-parent*/settings.xml
+#rm -f src/errai-parent*/settings.xml
 
 # Create sources archive
 zip -r sources.zip src/

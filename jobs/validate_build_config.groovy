@@ -4,10 +4,10 @@ def shell_script = """
 unset WORKSPACE
 
 echo "Validating upstreams in ${IP_CONFIG_FILE}"
-VALIDATE_ONLY=true LOCAL=1 CFG=./${IP_CONFIG_FILE} REPO_GROUP=MEAD+JENKINS+JBOSS+CENTRAL MVN_LOCAL_REPO=/jboss-prod/m2/bxms-dev-repo POMMANIPEXT=bxms-bom make -f Makefile.BRMS brms-installer bpms-installer
+VALIDATE_ONLY=true LOCAL=1 CFG=./${IP_CONFIG_FILE} REPO_GROUP=MEAD+JENKINS+JBOSS+CENTRAL MVN_LOCAL_REPO=/jboss-prod/m2/\${dev_maven_repo} POMMANIPEXT=bxms-bom make -f Makefile.BRMS rhdm-installer rhbas-installer
 """
 
-job('bxms-validate-upstream-sources') {
+job('bxms-validate-build-config') {
     description("Validate if upstream source configuration is proper")
 
     multiscm {
@@ -46,10 +46,6 @@ job('bxms-validate-upstream-sources') {
     wrappers {
         preBuildCleanup()
     }
-    // Adds post-build actions to the job.
-    publishers {
-        //Archives artifacts with each build.
-        archiveArtifacts('brms-bpmsuite/*/target/*.zip')
-    }
+
 }
 
