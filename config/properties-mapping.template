@@ -90,12 +90,12 @@ product2_staging_path={product2_lowcase}/{product2_name}-{product2_milestone_ver
 
 #qe properties
 product1_staging_properties_name={product1_lowcase}-deliverable-list-staging.properties
-product1_candidate_properties_name={product2_lowcase}-deliverable-list.properties
+product1_candidate_properties_name={product1_lowcase}-deliverable-list.properties
 product1_staging_properties_url={rcm_staging_base}/{product1_staging_path}/{product1_staging_properties_name}
 product1_candidate_properties_url={rcm_staging_base}/{product1_staging_path}/{product1_candidate_properties_name}
 
-product2_staging_properties_name={product2_name}-deliverable-list-staging.properties
-product2_candidate_properties_name={product2_name}-deliverable-list.properties
+product2_staging_properties_name={product2_lowcase}-deliverable-list-staging.properties
+product2_candidate_properties_name={product2_lowcase}-deliverable-list.properties
 product2_staging_properties_url={rcm_staging_base}/{product2_staging_path}/{product2_staging_properties_name}
 product2_candidate_properties_url={rcm_staging_base}/{product2_staging_path}/{product2_candidate_properties_name}
 qe_smoketest_report_path={share_config_dir}/{release_code}-qe-smoketest-report.adoc
