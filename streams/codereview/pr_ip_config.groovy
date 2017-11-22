@@ -6,7 +6,7 @@ changed_cfgs=`git diff --name-only HEAD HEAD~1 | grep -i ^bxms.\\*\\.cfg`
 for cfg in \${changed_cfgs[*]}
 do
     echo "Changes found in \${cfg}, validating..."
-    VALIDATE_ONLY=true LOCAL=1 REPO_GROUP=MEAD+JENKINS+JBOSS+CENTRAL @CFG=./\${cfg} MVN_LOCAL_REPO=/jboss-prod/m2/bxms-dev-repo POMMANIPEXT=bxms-bom make -f Makefile.BRMS rhdm-installer rhbas-installer
+    VALIDATE_ONLY=true LOCAL=1 REPO_GROUP=MEAD+JENKINS+JBOSS+CENTRAL CFG=./\${cfg} MVN_LOCAL_REPO=/jboss-prod/m2/bxms-dev-repo POMMANIPEXT=bxms-bom make -f Makefile.BRMS rhdm-installer rhbas-installer
 done
 """
 

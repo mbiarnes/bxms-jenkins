@@ -83,14 +83,14 @@ product2_pvt_report_basename={share_config_dir}/{release_code}-pvt-report-rhbas
 product2_pvt_report_adoc_path={share_config_dir}/{release_code}-pvt-report-rhbas.adoc
 
 #staging, candidate folder
-product1_staging_folder=rhdm
-product2_staging_folder=rhbas
-product1_staging_path={product1_staging_folder}/{product1_name}-{product1_milestone_version}
-product2_staging_path={product2_staging_folder}/{product2_name}-{product2_milestone_version}
+product1_lowcase=rhdm
+product2_lowcase=rhbas
+product1_staging_path={product1_lowcase}/{product1_name}-{product1_milestone_version}
+product2_staging_path={product2_lowcase}/{product2_name}-{product2_milestone_version}
 
 #qe properties
-product1_staging_properties_name={product1_name}-deliverable-list-staging.properties
-product1_candidate_properties_name={product1_name}-deliverable-list.properties
+product1_staging_properties_name={product1_lowcase}-deliverable-list-staging.properties
+product1_candidate_properties_name={product2_lowcase}-deliverable-list.properties
 product1_staging_properties_url={rcm_staging_base}/{product1_staging_path}/{product1_staging_properties_name}
 product1_candidate_properties_url={rcm_staging_base}/{product1_staging_path}/{product1_candidate_properties_name}
 

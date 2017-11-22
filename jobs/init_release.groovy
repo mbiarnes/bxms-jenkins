@@ -43,17 +43,13 @@ fi
 source ${CI_PROPERTIES_FILE}
 product1_shipped_file_deliver_version=\${product1_milestone_version} 
 product2_shipped_file_deliver_version=\${product2_milestone_version}
-product1_lowcase=`echo \$product1_name | tr '[:upper:]' '[:lower:]'`
-product2_lowcase=`echo \$product2_name | tr '[:upper:]' '[:lower:]'` 
 #Uploading to rcm staging folder
 if [ \${milestone:0:2} = "CR" ];then
     product1_shipped_file_deliver_version=\${product1_version}\${availability}
     product2_shipped_file_deliver_version=\${product2_version}\${availability}    
 fi
 appendProp "product1_shipped_file_deliver_version" \$product1_shipped_file_deliver_version
-appendProp "product1_lowcase" \$product1_lowcase
 appendProp "product2_shipped_file_deliver_version" \$product2_shipped_file_deliver_version
-appendProp "product2_lowcase" \$product2_lowcase
 
 #Use kerbose to create the release JIRA
 kinit -k -t \${HOME}/bxms-release.keytab bxms-release/prod-ci@REDHAT.COM
