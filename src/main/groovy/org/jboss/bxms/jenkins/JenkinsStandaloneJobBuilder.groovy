@@ -116,7 +116,7 @@ MVN_DEP_REPO=nexus-release::default::file://${maven_repo} REPO_GROUP=${repo_grou
                         archiveJunit("**/TEST-*.xml")
                         archiveArtifacts{
                             onlyIfSuccessful(false)
-                            allowEmpty(true)
+                            allowEmpty(false)
                             pattern("**/target/*.log")
                         }
                     }
