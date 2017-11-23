@@ -84,7 +84,14 @@ MVN_DEP_REPO=nexus-release::default::file://\${DEP_REPO} LOCAL=1 CFG=./${_cfg} M
                 // Runs a shell script (defaults to sh, but this is configurable) for building the project.
                 shell(shellScript)
             }
-
+            publishers {
+                archiveJunit("**/TEST-*.xml")
+                archiveArtifacts{
+                    onlyIfSuccessful(false)
+                    allowEmpty(true)
+                    pattern("**/target/*.log")
+                }
+            }
         }
     }
 }

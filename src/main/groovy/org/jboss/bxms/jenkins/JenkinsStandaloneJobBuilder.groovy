@@ -112,7 +112,14 @@ MVN_DEP_REPO=nexus-release::default::file://${maven_repo} REPO_GROUP=${repo_grou
                         // Runs a shell script (defaults to sh, but this is configurable) for building the project.
                         shell(shellScript)
                     }
-
+                    publishers {
+                        archiveJunit("**/TEST-*.xml")
+                        archiveArtifacts{
+                            onlyIfSuccessful(false)
+                            allowEmpty(true)
+                            pattern("**/target/*.log")
+                        }
+                    }
                 }
             }
 
