@@ -88,8 +88,8 @@ MVN_DEP_REPO=nexus-release::default::file://\${DEP_REPO} LOCAL=1 CFG=./${_cfg} M
                 archiveJunit("**/TEST-*.xml")
                 archiveArtifacts{
                     onlyIfSuccessful(false)
-                    allowEmpty(false)
-                    pattern("**/target/*.log")
+                    allowEmpty(true)
+                    pattern("**/*.log")
                 }
             }
         }
