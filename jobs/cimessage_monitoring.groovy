@@ -105,6 +105,8 @@ adoc_file.close()
     fi
 elif [ "\$new" = "FAILED" ];then
     ip-tooling/jira_helper.py -c ${IP_CONFIG_FILE} -a "Brewchain failed: \$brewchain_build_url " -f
+    web_hook=`grep "register_web_hook" ${CI_PROPERTIES_FILE} |cut -d "=" -f2`
+    curl -X POST -d 'STOP' -k \$web_hook
 else
     echo "ERROR!Not triggered by CI!"
     exit 1
