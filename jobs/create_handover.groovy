@@ -18,7 +18,7 @@ git add .
 
 cd bxms-jenkins
 #sed -i 's/releaseci_trigger=true/releaseci_trigger=false/g' ${CI_PROPERTIES_FILE}
-commit_msg="Prepare handover PR \${product_name} \${product_version} \${release_milestone}"
+commit_msg="Prepare handover PR \${product1_name} \${product1_version} \${product1_milestone}"
 
 git commit -m "\${commit_msg}"
 git push origin HEAD:refs/for/master 2>&1| tee b.log 

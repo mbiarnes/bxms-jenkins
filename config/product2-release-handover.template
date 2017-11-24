@@ -1,4 +1,4 @@
-= ${product2_name} {product_version} ${product2_milestone}
+= ${product2_name} {product2_version} ${product2_milestone}
 
 :Author Initials: SJR
 :toc:
@@ -19,7 +19,7 @@ Please allow [red]#10-15 minutes# for GlobalSync to occur should the release fol
 |=====================================================================
 |Product Name: |Red Hat Decision Manager
 
-|Product Version |${product_version}
+|Product Version |${product2_version}
 
 |Build: |${product2_milestone}
 
@@ -34,7 +34,7 @@ Please allow [red]#10-15 minutes# for GlobalSync to occur should the release fol
 == Special instructions/Notes
 
 
-- ${product2_name} ${product_version} ${product2_milestone} is dependencies have been aligned to *${eap_version}*
+- ${product2_name} ${product2_version} ${product2_milestone} is dependencies have been aligned to *${eap_version}*
 
 - Please unzip the ${product2_lowcase}-business-central-eap7.zip into the latest of EAP 7.0.x. the latest EAP 7.0.x can be downloaded from:
 http://download.eng.pnq.redhat.com/released/JBEAP-7/
