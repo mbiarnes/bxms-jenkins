@@ -6,7 +6,7 @@ fi
 wget \${product1_staging_properties_url} -O \${product1_staging_properties_name} 
 wget \${product1_candidate_properties_url} -O \${product1_candidate_properties_name}
 
-python -c "import sys,os
+python -c "import sys,os,re
 from urllib2 import urlopen
 ret=0
 def isvalidurl(url, inc_str):
@@ -14,11 +14,11 @@ def isvalidurl(url, inc_str):
     try:
         code = urlopen(url).code
     except IOError:
-        print 'ERROR ', url + 'is invalid!'
+        print 'ERROR ', url + ' is invalid!'
         ret=1
         return 1
     if (code / 100 >= 4):
-        print 'ERROR ', url + 'is invalid!'
+        print 'ERROR ', url + ' is invalid!'
         ret=1
     assertContain(url, inc_str)
 
@@ -33,7 +33,6 @@ def assertContain(actual, expect):
         ret=1
 
 def validateProperties(propfile, keyword, product_name):
-    ret = 0
     dic = {}
     if os.path.isfile(propfile):
         tmpFile = open(propfile, 'r')
@@ -42,27 +41,28 @@ def validateProperties(propfile, keyword, product_name):
             str2 = str2.replace('\\n', '')
             dic[str1] = str2
         tmpFile.close()
-        if [ "\$product_name" = "rhdm" ];then
+        if re.match('rhdm-.*', propfile) is not None:
             isvalidurl(dic['rhdm.addons.latest.url'],keyword)
-            isvalidurl(dic['rhdm.kieserver.ee7.latest.url'],keyword)
+            isvalidurl(dic['rhdm.kie-server.ee7.latest.url'],keyword)
             isvalidurl(dic['rhdm.maven.repo.latest.url'],keyword)        
             isvalidurl(dic['build.config'],keyword)
             assertEqual('\$kie_version', dic['rhdm.maven.repo.latest.url'])
             assertEqual('\$product1_artifact_version', dic['RHDM_VERSION'])
-            assertContain(dic['rhdm.business-central.standalone.latest.url'], '\$product1_milestone_version')
+            assertContain(dic['rhdm.decision-central.standalone.latest.url'], '\$product1_milestone_version')
             assertContain(dic['rhdm.addons.latest.url'], '\$product1_milestone_version')
-            assertContain(dic['rhdm.kieserver.ee7.latest.url'], '\$product1_milestone_version')
-        elif [ "\$prodduct_name" = "rhbas" ];then
+            assertContain(dic['rhdm.kie-server.ee7.latest.url'], '\$product1_milestone_version')
+
+        if re.match('rhdm-.*', propfile) is not None:
             isvalidurl(dic['rhbas.addons.latest.url'],keyword)
-            isvalidurl(dic['rhbas.kieserver.ee7.latest.url'],keyword)
+            isvalidurl(dic['rhbas.kie-server.ee7.latest.url'],keyword)
             isvalidurl(dic['rhbas.maven.repo.latest.url'],keyword)        
             isvalidurl(dic['build.config'],keyword)
             assertEqual('\$kie_version', dic['rhbas.maven.repo.latest.url'])
             assertEqual('\$product2_artifact_version', dic['RHBAS_VERSION'])
             assertContain(dic['rhbas.business-central.standalone.latest.url'], '\$product2_milestone_version')
             assertContain(dic['rhbas.addons.latest.url'], '\$product2_milestone_version')
-            assertContain(dic['rhbas.kieserver.ee7.latest.url'], '\$product2_milestone_version')
-        fi
+            assertContain(dic['rhbas.kie-server.ee7.latest.url'], '\$product2_milestone_version')
+        
         if ret != 0:
             print propfile + ' Validation No Pass'
             sys.exit(1)

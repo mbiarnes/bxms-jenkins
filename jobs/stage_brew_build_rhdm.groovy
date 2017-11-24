@@ -9,37 +9,29 @@ function appendProp(){
         exit 1
     fi
     sed -i "/^\$1/d" \${product1_staging_properties_name} && echo "\$1=\$2" >> \${product1_staging_properties_name}
-    sed -i "/^\$1/d" \${product2_staging_properties_name} && echo "\$1=\$2" >> \${product2_staging_properties_name}
 }
 
 if ! wget \${product1_staging_properties_url} -O \${product1_staging_properties_name} 2>/dev/null ;then
     echo " \${product1_staging_properties_url} isn't available yet"  
 fi
-ip-tooling/maven-to-stage.py --version=\${product1_artifact_version} --override-version \${product1_shipped_file_deliver_version} --maven-repo \${product_assembly_maven_repo_url} \
+ip-tooling/maven-to-stage.py --version=\${product1_artifact_version} --override-version \${product1_shipped_file_deliver_version} --maven-repo \${product1_assembly_maven_repo_url} \
   --deliverable \${product1_deliverable_template} --output \${product1_name} \
   --release-url=\${rcm_staging_base}/\${product1_staging_path} --output-deliverable-list \${product1_staging_properties_name}
 cp ${IP_CONFIG_FILE} \${product1_name}
   
-ip-tooling/maven-to-stage.py --version=\${product2_artifact_version} --override-version \${product2_shipped_file_deliver_version} --maven-repo \${product_assembly_maven_repo_url} \
-  --deliverable \${product2_deliverable_template} --output \${product2_name} \
-  --release-url=\${rcm_staging_base}/\${product2_staging_path} --output-deliverable-list \${product2_staging_properties_name}
-cp ${IP_CONFIG_FILE} \${product2_name}
-
 #append the other properties per qe's requirement
 appendProp "build.config" \${rcm_staging_base}/\${product1_staging_path}/${IP_CONFIG_FILE} 
-appendProp "DROOLSJBPM_VERSION" \${kie_version} 
+appendProp "KIE_VERSION" \${kie_version} 
 appendProp "RHDM_VERSION" \${product1_artifact_version} 
 appendProp "RHBAS_VERSION" \${product2_artifact_version} 
 
 sed -e "s=\${rcm_staging_base}/\${product1_staging_folder}=\${rcm_candidate_base}/\${product1_name}=g" \
     \${product1_staging_properties_name} > \${product1_candidate_properties_name}
-sed -e "s=\${rcm_staging_base}/\${product2_staging_folder}=\${rcm_candidate_base}/\${product2_name}=g" \
-    \${product2_staging_properties_name} > \${product2_candidate_properties_name}
 
 """
 
 // Creates or updates a free style job.
-def jobDefinition = job("${RELEASE_CODE}-stage-brew-build") {
+def jobDefinition = job("${RELEASE_CODE}-stage-brew-build-rhdm") {
 
     // Sets a description for the job.
     description("This job is responsible for staging the Brew release deliverables to the RCM staging area.")
@@ -82,7 +74,7 @@ def jobDefinition = job("${RELEASE_CODE}-stage-brew-build") {
                         // Sets the destination folder.
                         remoteDirectory('${product1_staging_path}')
                         execCommand('if [ "${CLEAN_STAGING_ARTIFACTS}" = "true" ];then \n' +
-                                        'rm -vrf  ~/staging/${product1_staging_path}/* ~/staging/${product2_staging_path}/* \n' +
+                                        'rm -vrf  ~/staging/${product1_staging_path}/* \n' +
                                     'fi')
                     }
                     // Adds a target server.
@@ -103,34 +95,11 @@ def jobDefinition = job("${RELEASE_CODE}-stage-brew-build") {
                     transferSet {
 
                         // Sets the files to upload to a server.
-                        sourceFiles('${product2_name}/*.*')
-                        removePrefix('${product2_name}/')
-
-
-                        // Sets the destination folder.
-                        remoteDirectory('${product2_staging_path}')
-                    }
-
-                    // Adds a transfer set.
-                    transferSet {
-
-                        // Sets the files to upload to a server.
                         sourceFiles('${IP_CONFIG_FILE},${product1_lowcase}-deliverable-list*.properties')
 
                         // Sets the destination folder.
                         remoteDirectory('${product1_staging_path}')
                     }
-
-                    // Adds a transfer set.
-                    transferSet {
-
-                        // Sets the files to upload to a server.
-                        sourceFiles('${IP_CONFIG_FILE},${product2_lowcase}-deliverable-list*.properties')
-
-                        // Sets the destination folder.
-                        remoteDirectory('${product2_staging_path}')
-                    }
-
             }
         }
     }

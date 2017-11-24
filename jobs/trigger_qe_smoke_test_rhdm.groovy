@@ -30,7 +30,6 @@ def jobDefinition = job("${RELEASE_CODE}-trigger-qe-smoke-test-rhdm") {
             messageProperties("label=bxms-ci\n" +
                     "CI_TYPE=custom\n" +
                     "EVENT_TYPE=rhdm-70-brew-qe-trigger\n")
-
             // Content of CI message to be sent.
             messageContent('${product1_staging_properties_url}')
         }

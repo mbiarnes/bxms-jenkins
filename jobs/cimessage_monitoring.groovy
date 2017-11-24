@@ -30,16 +30,26 @@ if [ "\$CI_TYPE" = "brew-tag" ];then
         task_id=`echo \$CI_MESSAGE| python -c "import sys, json; print json.load(sys.stdin)['build']['task_id']"` 1>/dev/null
         nvr=`echo \$CI_MESSAGE| python -c "import sys, json; print json.load(sys.stdin)['build']['nvr']"` 1>/dev/null        
     if [ "\$CI_NAME" = "org.kie.rhap-rhbas" ];then
-        product_assembly_maven_repo_url="http://download.eng.bos.redhat.com/brewroot/packages/\${name}/\${version}/\${release}/maven/"
-        product_assembly_brew_url="https://brewweb.engineering.redhat.com/brew/taskinfo?taskID=\${task_id}"
-        product_nvr="\$nvr"
-        appendProp "product_assembly_maven_repo_url" \$product_assembly_maven_repo_url
-        appendProp "product_assembly_brew_url" \$product_assembly_brew_url
-        appendProp "product_nvr" \$product_nvr
+        product2_assembly_maven_repo_url="http://download.eng.bos.redhat.com/brewroot/packages/\${name}/\${version}/\${release}/maven/"
+        product2_assembly_brew_url="https://brewweb.engineering.redhat.com/brew/taskinfo?taskID=\${task_id}"
+        product2_nvr="\$nvr"
+        appendProp "product2_assembly_maven_repo_url" \$product2_assembly_maven_repo_url
+        appendProp "product2_assembly_brew_url" \$product2_assembly_brew_url
+        appendProp "product2_nvr" \$product2_nvr
         web_hook=`grep "register_web_hook" ${CI_PROPERTIES_FILE} |cut -d "=" -f2`
         curl -X POST -d 'OK' -k \$web_hook
         ip-tooling/jira_helper.py -c ${IP_CONFIG_FILE} -a "Product Assembly Build Completed: \$product_assembly_brew_url Build nvr: \$product_nvr " -f
 
+    elif [ "\$CI_NAME" = "org.kie.rhap-rhdm" ];then
+        product1_assembly_maven_repo_url="http://download.eng.bos.redhat.com/brewroot/packages/\${name}/\${version}/\${release}/maven/"
+        product1_assembly_brew_url="https://brewweb.engineering.redhat.com/brew/taskinfo?taskID=\${task_id}"
+        product1_nvr="\$nvr"
+        appendProp "product1_assembly_maven_repo_url" \$product1_assembly_maven_repo_url
+        appendProp "product1_assembly_brew_url" \$product1_assembly_brew_url
+        appendProp "product1_nvr" \$product1_nvr
+        web_hook=`grep "register_web_hook" ${CI_PROPERTIES_FILE} |cut -d "=" -f2`
+        curl -X POST -d 'OK' -k \$web_hook
+        ip-tooling/jira_helper.py -c ${IP_CONFIG_FILE} -a "Product Assembly Build Completed: \$product_assembly_brew_url Build nvr: \$product_nvr " -f
     elif [ "\$CI_NAME" = "org.jboss.brms-bpmsuite.patching-patching-tools-parent" ];then
         bxms_patch_maven_repo_url="http://download.eng.bos.redhat.com/brewroot/packages/\${name}/\${version}/\${release}/maven/"
         bxms_patch_brew_url="https://brewweb.engineering.redhat.com/brew/taskinfo?taskID=\${task_id}"
@@ -103,7 +113,7 @@ adoc_file.close()
         echo "Something else triggered this job"
         echo "\$CI_MESSAGE"
     fi
-elif [ "\$new" = "FAILED" ];then
+elif [ "\$new" = "FAILED" ] && [ "\$method" = "chainmaven" ];then
     ip-tooling/jira_helper.py -c ${IP_CONFIG_FILE} -a "Brewchain failed: \$brewchain_build_url " -f
     web_hook=`grep "register_web_hook" ${CI_PROPERTIES_FILE} |cut -d "=" -f2`
     curl -X POST -d 'STOP' -k \$web_hook
