@@ -113,7 +113,9 @@ MVN_DEP_REPO=nexus-release::default::file://${maven_repo} REPO_GROUP=${repo_grou
                         shell(shellScript)
                     }
                     publishers {
-                        archiveJunit("**/TEST-*.xml")
+                        archiveJunit("**/TEST-*.xml"){
+                            allowEmptyResults(true)
+                        }
                         archiveArtifacts{
                             onlyIfSuccessful(false)
                             allowEmpty(true)

@@ -85,7 +85,9 @@ MVN_DEP_REPO=nexus-release::default::file://\${DEP_REPO} LOCAL=1 CFG=./${_cfg} M
                 shell(shellScript)
             }
             publishers {
-                archiveJunit("**/TEST-*.xml")
+                archiveJunit("**/TEST-*.xml"){
+                    allowEmptyResults(true)
+                }
                 archiveArtifacts{
                     onlyIfSuccessful(false)
                     allowEmpty(true)
