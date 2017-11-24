@@ -17,7 +17,7 @@ function appendProp() {
 }
 kinit -k -t \${HOME}/bxms-release.keytab bxms-release/prod-ci@REDHAT.COM
 if [ "\$CI_TYPE" = "brew-tag" ];then
-        if [ "\$brew_status" != "running" ];then
+        if [ "\$brew_status" != "target" ];then
                 exit 0
         fi
         
@@ -123,7 +123,7 @@ def jobDefinition = job("${RELEASE_CODE}-monitoring-cimessage") {
 
     triggers{
         ciBuildTrigger {
-            selector("label='bxms-ci' OR (CI_TYPE='brew-tag' AND ( CI_NAME='org.jboss.ip-bxms-maven-repo-root' OR label='bxms-ci' OR CI_NAME='org.kie.rhap-rhdm' OR CI_NAME='org.kie.rhap-rhbas' OR CI_NAME='org.jboss.brms-bpmsuite.patching-patching-tools-parent')) OR (new='FAILED' AND method='chainmaven' AND (target='jb-bxms-7.0-maven-candidate' OR target='jb-bxms-6.4-candidate'))")
+            selector("label='bxms-ci' OR (CI_TYPE='brew-tag' AND ( CI_NAME='org.jboss.ip-bxms-maven-repo-root' OR CI_NAME='org.kie.rhap-rhdm' OR CI_NAME='org.kie.rhap-rhbas' OR CI_NAME='org.jboss.brms-bpmsuite.patching-patching-tools-parent')) OR (new='FAILED' AND method='chainmaven' AND target='jb-bxms-7.0-maven-candidate')")
             providerName('CI Publish')
         }
     }
