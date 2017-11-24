@@ -61,10 +61,10 @@ elif [ "\$label" = "bxms-ci" ];then
     if [ "\$release_status" = "closed" ];then
         exit 0
     fi
-    if [[ "\$CI_NAME" =~ smoketest-trigger\$ ]];then
+    if [[ "\$EVENT_TYPE" =~ 70-brew-qe-trigger\$ ]];then
         echo "Triggered by  bxms-prod ci message "
         echo "\$CI_MESSAGE"
-    elif [[ "\$EVENT_TYPE" =~ smoketest-report\$ ]];then
+    elif [[ "\$EVENT_TYPE" =~ qe-smoke-results\$ ]];then
         echo "QE smoketest report:\$CI_MESSAGE"
         #Json to adoc
         echo \${CI_MESSAGE}| python -c "import sys, json;
