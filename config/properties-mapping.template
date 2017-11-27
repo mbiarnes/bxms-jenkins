@@ -57,7 +57,7 @@ release_status=
 
 #config file
 release_stream_path=bxms-jenkins/streams/{release_code}
-handover_template={release_stream_path}/config/release-handover.template
+handover_template_basename={release_stream_path}/config/release-handover
 release_notes_template={release_stream_path}/config/release-notes.template
 product1_deliverable_template={release_stream_path}/config/rhdm-deliverable.properties
 product2_deliverable_template={release_stream_path}/config/rhbas-deliverable.properties

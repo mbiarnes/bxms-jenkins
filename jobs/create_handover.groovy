@@ -2,17 +2,20 @@ import org.jboss.bxms.jenkins.JobTemplate
 
 // Create handover script
 def shellScript = """
-python ip-tooling/template_helper.py -i \${handover_template} -p ${CI_PROPERTIES_FILE} -o \${qe_handover_basename}.adoc
-asciidoctor \${qe_handover_basename}.adoc
+python ip-tooling/template_helper.py -i \${handover_template_basename}-\${product1_lowcase}.template -p ${CI_PROPERTIES_FILE} -o \${release_handover_basename}-\${product1_lowcase}.adoc
+asciidoctor \${release_handover_basename}-\${product1_lowcase}.adoc
+
+python ip-tooling/template_helper.py -i \${handover_template_basename}-\${product2_lowcase}.template -p ${CI_PROPERTIES_FILE} -o \${release_handover_basename}-\${product2_lowcase}.adoc
+asciidoctor \${release_handover_basename}-\${product2_lowcase}.adoc
 
 git config --global user.email "jb-ip-tooling-jenkins@redhat.com"
 git config --global user.name "bxms-prod"
 
 if [ -f \${product1_pvt_report_basename}.html ];then
-    cp \${product1_pvt_report_basename}.html \${archive_pvt_report_basename}-rhdm.html
+    cp \${product1_pvt_report_basename}.html \${archive_pvt_report_basename}-\${product1_lowcase}.html
 fi
 if [ -f \${product2_pvt_report_basename}.html ];then
-    cp \${product2_pvt_report_basename}.html \${archive_pvt_report_basename}-rhbas.html
+    cp \${product2_pvt_report_basename}.html \${archive_pvt_report_basename}-\${product2_lowcase}.html
 fi
 git add .
 
@@ -61,7 +64,7 @@ def jobDefinition = job("${RELEASE_CODE}-create-handover") {
                     transferSet {
 
                         // Sets the files to upload to a server.
-                        sourceFiles('${archive_pvt_report_basename}-*,${release_handover_basename}.html')
+                        sourceFiles('${archive_pvt_report_basename}-{product1_lowcase},${release_handover_basename}-{product1_lowcase}.html')
 
                         // Sets the first part of the file path that should not be created on the remote server.
                         removePrefix('release_stream_path}/release-history')
@@ -74,7 +77,7 @@ def jobDefinition = job("${RELEASE_CODE}-create-handover") {
                     transferSet {
 
                         // Sets the files to upload to a server.
-                        sourceFiles('${archive_pvt_report_basename}-*,${release_handover_basename}.html')
+                        sourceFiles('${archive_pvt_report_basename}-{product2_lowcase},${release_handover_basename}-{product2_lowcase}.html')
 
                         // Sets the first part of the file path that should not be created on the remote server.
                         removePrefix('${release_stream_path}/release-history')
