@@ -32,8 +32,8 @@ class ReleasePipelineJobBuilder {
                     hook = registerWebhook()
                     echo "Waiting for trigger on ${hook.getURL()}."
                     sh "sed -i \'/^register_web_hook=/d\' ${CI_PROPERTIES_FILE} && echo \\\"register_web_hook=${hook.getURL()}\\\" >>${CI_PROPERTIES_FILE}"
-                    data = waitForWebhook hook
-                    if(data != "OK"){
+                    String data = waitForWebhook hook
+                    if(data.trim != "OK"){
                       error("CI trigger return FAIL,force job stop...")
                     }
                   }else if(stageSeq.get(insidei).get(insidej).matches("Input")){
