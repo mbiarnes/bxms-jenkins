@@ -22,7 +22,7 @@ if [ "\$CI_TYPE" = "brew-tag" ];then
         fi
         
         brew_tag_name=`echo \$CI_MESSAGE| python -c "import sys, json; print json.load(sys.stdin)['tag']['name']"` 1>/dev/null 
-        if [ "\$brew_tag_name" != "\$brew_tag" ];then
+        if [ "\$brew_tag_name" != "\$brew_target" ];then
             exit 0
         fi        
         version=`echo \$CI_MESSAGE| python -c "import sys, json; print json.load(sys.stdin)['build']['version']"` 1>/dev/null
