@@ -26,7 +26,7 @@ def jobDefinition = job("${RELEASE_CODE}-mock-qe-smoketest-report") {
             messageType("Custom")
 
             // KEY=value pairs, one per line (Java properties file format) to be used as message properties.
-            messageProperties("label=bxms-ci\n" +
+            messageProperties("label=rhap-ci\n" +
                     "CI_TYPE=customer\n" +
                     "EVENT_TYPE=\${product1_lowcase}-70-brew-qe-smoke-results\n")
 

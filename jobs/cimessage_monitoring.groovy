@@ -17,7 +17,7 @@ function appendProp() {
 }
 kinit -k -t \${HOME}/bxms-release.keytab bxms-release/prod-ci@REDHAT.COM
 if [ "\$CI_TYPE" = "brew-tag" ];then
-        if [ "\$brew_status" != "target" ];then
+        if [ "\$brew_status" != "running" ];then
                 exit 0
         fi
         
@@ -67,7 +67,7 @@ if [ "\$CI_TYPE" = "brew-tag" ];then
         curl -X POST -d 'OK' -k \$web_hook
         ip-tooling/jira_helper.py -c ${IP_CONFIG_FILE} -a "Maven repo root build completed. Ready to trigger maven repo build" -f
     fi
-elif [ "\$label" = "bxms-ci" ];then
+elif [ "\$label" = "rhap-ci" ];then
     if [ "\$release_status" = "closed" ];then
         exit 0
     fi
@@ -135,7 +135,7 @@ def jobDefinition = job("${RELEASE_CODE}-monitoring-cimessage") {
 
     triggers{
         ciBuildTrigger {
-            selector("label='bxms-ci' OR (CI_TYPE='brew-tag' AND ( CI_NAME='org.jboss.ip-bxms-maven-repo-root' OR CI_NAME='org.kie.rhap-rhdm' OR CI_NAME='org.kie.rhap-rhbas' OR CI_NAME='org.jboss.brms-bpmsuite.patching-patching-tools-parent')) OR (new='FAILED' AND method='chainmaven' AND target='jb-bxms-7.0-maven-candidate')")
+            selector("label='rhap-ci' OR (CI_TYPE='brew-tag' AND ( CI_NAME='org.jboss.ip-bxms-maven-repo-root' OR CI_NAME='org.kie.rhap-rhdm' OR CI_NAME='org.kie.rhap-rhbas' OR CI_NAME='org.jboss.brms-bpmsuite.patching-patching-tools-parent')) OR (new='FAILED' AND method='chainmaven' AND target='jb-bxms-7.0-maven-candidate')")
             providerName('CI Publish')
         }
     }

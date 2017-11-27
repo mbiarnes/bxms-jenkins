@@ -27,7 +27,7 @@ def jobDefinition = job("${RELEASE_CODE}-trigger-qe-smoke-test-rhbas") {
             messageType("Custom")
 
             // KEY=value pairs, one per line (Java properties file format) to be used as message properties.
-            messageProperties("label=bxms-ci\n" +
+            messageProperties("label=rhap-ci\n" +
                     "CI_TYPE=custom\n" +
                     "EVENT_TYPE=rhbas-70-brew-qe-trigger\n")
 

@@ -27,7 +27,7 @@ def jobDefinition = job("${RELEASE_CODE}-trigger-qe-smoke-test-rhdm") {
             messageType("Custom")
 
             // KEY=value pairs, one per line (Java properties file format) to be used as message properties.
-            messageProperties("label=bxms-ci\n" +
+            messageProperties("label=rhap-ci\n" +
                     "CI_TYPE=custom\n" +
                     "EVENT_TYPE=rhdm-70-brew-qe-trigger\n")
             // Content of CI message to be sent.
