@@ -2,9 +2,9 @@
 # Sample PVT Configuration File.
 #
 
-product: BPMS
+product: RHBAS
 version: 7.0.0.ER3
-distrepo: http://download-node-02.eng.bos.redhat.com/rcm-guest/staging/rhbas/BPMS-%{version}/
+distrepo: http://download-node-02.eng.bos.redhat.com/rcm-guest/staging/rhbas/RHBAS-%{version}/
 tests:
   org.jboss.pvt.generic.NoSignatureCheckTest:
     resources: ['rhbas-%{target}-kie-server-ee7.zip', 'rhbas-%{target}-business-central-eap7.zip', 'rhbas-%{target}-add-ons.zip']

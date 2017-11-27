@@ -9,24 +9,21 @@ echo -e \"Host code.engineering.redhat.com \\n\\
         HostName code.engineering.redhat.com \\n\\
         User jb-ip-tooling-jenkins\" > ~/.ssh/config
 chmod 600 ~/.ssh/config
-tag_version=\${product_name}-\${product_version}\${availability}.\${release_milestone}
-MVN_LOCAL_REPO=/jboss-prod/m2/bxms-dev-repo RELEASE_TAG=\${tag_version} LOCAL=1 CFG=./${IP_CONFIG_FILE} \
+MVN_LOCAL_REPO=/jboss-prod/m2/bxms-dev-repo RELEASE_TAG=\${product_release_tag} LOCAL=1 CFG=./${IP_CONFIG_FILE} \
     REPO_GROUP=MEAD make POMMANIPEXT=bxms-bom -f \${makefile} \${product1_lowcase} \${product2_lowcase} 2>&1
-
-sed -i '/^product_tag=/d' ${CI_PROPERTIES_FILE} && echo \"product_tag=\${tag_version}\" >> ${CI_PROPERTIES_FILE}
 
 #need to verify if all tags are created succesfully
 EXIST_MISSING_TAG=0
-echo \"Verifying \${tag_version} tag...\"
+echo \"Verifying \${product_release_tag} tag...\"
 
 #extract all tag locations from the log file
 cat ${IP_CONFIG_FILE} | grep -Eo \"https://code.engineering.redhat.com.*\\.git\"| awk -F\"/\" '{print \$5\"/\"\$6}' | grep -Eo \".*\\.git\" > tags_location.txt
 
 while read -r line;do
    # curl the tag url; if find return HTTP/1.1 200 OK; if not,return HTTP/1.1 404 Not found
-   curl -Is \"http://git.app.eng.bos.redhat.com/git/\${line}/tag/?h=\${tag_version}\" | head -n 1 > curl_result
+   curl -Is \"http://git.app.eng.bos.redhat.com/git/\${line}/tag/?h=\${product_release_tag}\" | head -n 1 > curl_result
    if grep -q \"404\" curl_result;then
-      echo \"Missing \${tag_version} tag in \${line}. Please perform some checking...\"
+      echo \"Missing \${product_release_tag} tag in \${line}. Please perform some checking...\"
       EXIST_MISSING_TAG=1
    fi
 done < tags_location.txt

@@ -62,6 +62,7 @@ release_notes_template={release_stream_path}/config/release-notes.template
 product1_deliverable_template={release_stream_path}/config/rhdm-deliverable.properties
 product2_deliverable_template={release_stream_path}/config/rhbas-deliverable.properties
 archive_pvt_report_basename={release_stream_path}/release-history/{release_code}-pvt-report
+product_release_tag={product1_name}-{product1_milestone_version}_{product2_name}-{product2_milestone_version}
 
 release_handover_basename={release_stream_path}/release-history/release-handover
 

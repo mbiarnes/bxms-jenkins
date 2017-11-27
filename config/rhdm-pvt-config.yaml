@@ -2,9 +2,9 @@
 # Sample PVT Configuration File.
 #
 
-product: BRMS
+product: RHDM
 version: 7.0.0.DR1
-distrepo: http://download-node-02.eng.bos.redhat.com/rcm-guest/staging/rhdm/BRMS-%{version}/
+distrepo: http://download-node-02.eng.bos.redhat.com/rcm-guest/staging/rhdm/RHDM-%{version}/
 tests:
   org.jboss.pvt.generic.NoSignatureCheckTest:
     resources: ['rhdm-%{target}-kie-server-ee7.zip', 'rhdm-%{target}-decision-central-eap7.zip', 'rhdm-%{target}-add-ons.zip']

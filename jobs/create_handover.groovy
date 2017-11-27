@@ -17,9 +17,10 @@ fi
 if [ -f \${product2_pvt_report_basename}.html ];then
     cp \${product2_pvt_report_basename}.html \${archive_pvt_report_basename}-\${product2_lowcase}.html
 fi
-git add .
 
 cd bxms-jenkins
+git add --all
+
 #sed -i 's/releaseci_trigger=true/releaseci_trigger=false/g' ${CI_PROPERTIES_FILE}
 commit_msg="Prepare handover PR \${product1_name} \${product1_version} \${product1_milestone}"
 
@@ -64,10 +65,10 @@ def jobDefinition = job("${RELEASE_CODE}-create-handover") {
                     transferSet {
 
                         // Sets the files to upload to a server.
-                        sourceFiles('${archive_pvt_report_basename}-{product1_lowcase},${release_handover_basename}-{product1_lowcase}.html')
+                        sourceFiles('${archive_pvt_report_basename}-${product1_lowcase}.html,${release_handover_basename}-${product1_lowcase}.html')
 
                         // Sets the first part of the file path that should not be created on the remote server.
-                        removePrefix('release_stream_path}/release-history')
+                        removePrefix('${release_stream_path}/release-history')
 
                         // Sets the destination folder.
                         remoteDirectory('${product1_staging_path}')
@@ -77,7 +78,7 @@ def jobDefinition = job("${RELEASE_CODE}-create-handover") {
                     transferSet {
 
                         // Sets the files to upload to a server.
-                        sourceFiles('${archive_pvt_report_basename}-{product2_lowcase},${release_handover_basename}-{product2_lowcase}.html')
+                        sourceFiles('${archive_pvt_report_basename}-${product2_lowcase}.html,${release_handover_basename}-${product2_lowcase}.html')
 
                         // Sets the first part of the file path that should not be created on the remote server.
                         removePrefix('${release_stream_path}/release-history')

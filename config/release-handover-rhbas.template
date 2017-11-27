@@ -1,4 +1,4 @@
-= ${product2_name} {product2_version} ${product2_milestone}
+= ${product2_name} ${product2_version} ${product2_milestone}
 
 :Author Initials: SJR
 :toc:
@@ -26,8 +26,6 @@ Please allow [red]#10-15 minutes# for GlobalSync to occur should the release fol
 |Engineer: |${release_engineer}
 
 |Resolved issues (ON_QA) |${resolve_issue_list}
-
-|Release Notes | link:${${product2_lowcase}_release_notes_url}[${product2_name}]
 
 |=====================================================================
 
@@ -83,4 +81,4 @@ link:${release_code}-pvt-report-${product2_lowcase}.html[Package Checking Detail
 
 link:${maven_repo_report_url}[Maven Repository Report]
 
-${load:${product2_lowcase}_pvt_report_adoc_path}
+${load:product2_pvt_report_adoc_path}
