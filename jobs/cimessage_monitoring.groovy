@@ -47,8 +47,8 @@ if [ "\$CI_TYPE" = "brew-tag" ];then
         appendProp "product1_assembly_maven_repo_url" \$product1_assembly_maven_repo_url
         appendProp "product1_assembly_brew_url" \$product1_assembly_brew_url
         appendProp "product1_nvr" \$product1_nvr
-        web_hook=`grep "register_web_hook" ${CI_PROPERTIES_FILE} |cut -d "=" -f2`
-        curl -X POST -d 'OK' -k \$web_hook
+        #web_hook=`grep "register_web_hook" ${CI_PROPERTIES_FILE} |cut -d "=" -f2`
+        #curl -X POST -d 'OK' -k \$web_hook
         ip-tooling/jira_helper.py -c ${IP_CONFIG_FILE} -a "Product Assembly Build Completed: \$product1_assembly_brew_url Build nvr: \$product1_nvr " -f
     elif [ "\$CI_NAME" = "org.jboss.brms-bpmsuite.patching-patching-tools-parent" ];then
         bxms_patch_maven_repo_url="http://download.eng.bos.redhat.com/brewroot/packages/\${name}/\${version}/\${release}/maven/"
@@ -63,8 +63,8 @@ if [ "\$CI_TYPE" = "brew-tag" ];then
     elif [ "\$CI_NAME" = "org.jboss.ip-bxms-maven-repo-root" ];then
         #Trigger maven repo to build
         echo "maven-repo-root build has been completed"
-        web_hook=`grep "register_web_hook" ${CI_PROPERTIES_FILE} |cut -d "=" -f2`
-        curl -X POST -d 'OK' -k \$web_hook
+        #web_hook=`grep "register_web_hook" ${CI_PROPERTIES_FILE} |cut -d "=" -f2`
+        #curl -X POST -d 'OK' -k \$web_hook
         ip-tooling/jira_helper.py -c ${IP_CONFIG_FILE} -a "Maven repo root build completed. Ready to trigger maven repo build" -f
     fi
 elif [ "\$label" = "rhap-ci" ];then
