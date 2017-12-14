@@ -61,7 +61,9 @@ class ReleasePipelineJobBuilder {
                     branch("master")
                 }
             }
-
+            parameters {
+                choiceParam('STARTSTAGE', getAllStage(file_content), 'choose the stage to start,default the first one.')
+            }
             definition{
               cps{
                 script(pipelineScript)
@@ -76,7 +78,7 @@ class ReleasePipelineJobBuilder {
 
     }
     String getPipelineScript(String file_content,String product_job_prefix){
-      String pipelineScript="node('release-pipeline')\n{\n"
+      String pipelineScript="def startstage=\"\${STARTSTAGE}\"\ndef flag=0\nnode('release-pipeline')\n{\n"
       String[] lineSeq=file_content.split('\n')
       for (int j=0;j<lineSeq.size();j++) {
         if (lineSeq[j].matches("steps(.*)")) {
@@ -85,7 +87,7 @@ class ReleasePipelineJobBuilder {
           pipelineScript=pipelineScript+" def branches"+j+"=[:]\n"
           for(int i=0;i<stages.size();i++){
             String stageName=getStageName(stages[i])
-            pipelineScript=pipelineScript+"  branches"+j+"["+i+"]={\n   stage('"+stageName+"'){\n"
+            pipelineScript=pipelineScript+"  branches"+j+"["+i+"]={\n   stage('"+stageName+"'){\n     if(startstage.matches('"+stageName+"')){flag=1}\n      if(flag==1){\n"
             if(isParaExists(stages[i])){
               pipelineScript=pipelineScript+"    build(job : '"+product_job_prefix+stageName+"',parameters: "+ getStagePara(stages[i])+")\n"
             }else if(!isParaExists(stages[i])){
@@ -97,7 +99,7 @@ class ReleasePipelineJobBuilder {
                 pipelineScript=pipelineScript+"    build job :'"+ product_job_prefix + stageName+"'\n"
               }
             }
-            pipelineScript=pipelineScript+"\n    }\n    }\n"
+            pipelineScript=pipelineScript+"     }\n    }\n    }\n"
           }
           pipelineScript=pipelineScript+"  parallel branches"+j+"\n"
 
@@ -114,6 +116,22 @@ class ReleasePipelineJobBuilder {
       }else{
         return false
       }
+    }
+    def getAllStage(String file_content){
+      def result=[]
+      String[] lineSeq=file_content.split('\n')
+      for (int j=0;j<lineSeq.size();j++) {
+        if (lineSeq[j].matches("steps(.*)")) {
+          String rightline=lineSeq[j].substring(lineSeq[j].indexOf(":")+1)
+          String[] stages=rightline.split(' ')
+          for(int i=0;i<stages.size();i++){
+            String stageName=getStageName(stages[i])
+            if(!stageName.matches("Input") && !stageName.matches("Pause"))
+            result.add(stageName)
+          }
+        }
+      }
+      return result
     }
 
     String getStagePara(String arr){
