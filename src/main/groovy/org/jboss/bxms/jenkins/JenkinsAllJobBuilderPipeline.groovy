@@ -281,21 +281,23 @@ String getPipelineCode(ArrayList<String> jobsArr,HashMap<String,String[]> packag
           def insidej=j
           branches["${insidej}"]={
             stage(stageNames.get(insidecount).get(insidej)){
-                  if(flag==1 && runStageAfter ==1){
-                    build job : release_code + "-" + stageNames.get(insidecount).get(insidej)
-
-                  }
                   if(yourchoose.matches(stageNames.get(insidecount).get(insidej)) ){
                       flag=1
-                      build job : release_code + "-" + stageNames.get(insidecount).get(insidej)
-
                   }else if(yourchoose.matches(stageNames.get(insidecount).get(insidej)+"_chainbuild")){
                       runStageAfter=1
                       flag=1
-                      build job : release_code + "-" + stageNames.get(insidecount).get(insidej)
-                      
                   }
-
+                  if((flag==1 && runStageAfter ==1)|| yourchoose.matches(stageNames.get(insidecount).get(insidej))){
+                    try{
+                      build job : release_code + "-" + stageNames.get(insidecount).get(insidej)
+                    }catch(err){
+                      if(currentBuild.result == 'UNSTABLE'){
+                        currentBuild.result = 'SUCCESS'
+                      }else{
+                        error("Job ${stageNames.get(insidecount).get(insidej)} Build FAILED!")
+                      }
+                    }
+                  }
             }
           }
         }
