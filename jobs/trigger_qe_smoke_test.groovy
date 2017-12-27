@@ -2,17 +2,38 @@ import org.jboss.bxms.jenkins.JobTemplate
 
 def shellScript = """
 kinit -k -t \${HOME}/bxms-release.keytab bxms-release/prod-ci@REDHAT.COM
+case "\\${PRODUCT_NAME}" in 
+    RHDM )
+        prod_staging_path=\${product1_staging_path}
+        ;;
+    RHBAS )
+        prod_staging_path=\${product2_staging_path}
+        ;;
+esac
+
+echo "prod_staging_path=\$prod_staging_path" > /tmp/prod_staging_path
+
 ip-tooling/jira_helper.py -c ${IP_CONFIG_FILE} -a "QE smoketest is triggered by CI message. Build URL:\${qe_smoketest_job_url}" -f
 """
 // Creates or updates a free style job.
-def jobDefinition = job("${RELEASE_CODE}-trigger-qe-smoke-test-rhbas") {
+def jobDefinition = job("${RELEASE_CODE}-trigger-qe-smoke-test-rhdm") {
 
     // Sets a description for the job.
     description("This job is responsible for triggering QE smoke test.")
 
+    parameters {
+        stringParam(parameterName = "PRODUCT_NAME", defaultValue = "",
+                description = "Specify product name to switch between configurations.")
+    }
+
     // Adds build steps to the jobs.
     steps {
         shell(shellScript)
+
+        // Inject environment variables for $prod_staging_path
+        environmentVariables {
+            propertiesFile("/tmp/prod_staging_path")
+        }
 
         // Sends JMS message.
         ciMessageBuilder {
@@ -27,12 +48,11 @@ def jobDefinition = job("${RELEASE_CODE}-trigger-qe-smoke-test-rhbas") {
             messageType("Custom")
 
             // KEY=value pairs, one per line (Java properties file format) to be used as message properties.
-            messageProperties("label=rhap-ci\n" +
-                    "CI_TYPE=custom\n" +
-                    "EVENT_TYPE=rhbas-70-brew-qe-trigger\n")
-
+            messageProperties('label=rhap-ci\n' +
+                    'CI_TYPE=custom\n' +
+                    'EVENT_TYPE=`echo ${PRODUCT_NAME,,}`-70-brew-qe-trigger\n')
             // Content of CI message to be sent.
-            messageContent('${product2_staging_properties_url}')
+            messageContent('${product1_staging_properties_url}')
         }
     }
 }

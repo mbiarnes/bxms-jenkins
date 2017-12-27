@@ -11,6 +11,33 @@ def shellScript = """
 kinit -k -t \${HOME}/bxms-release.keytab bxms-release/prod-ci@REDHAT.COM
 ip-tooling/jira_helper.py -c ${IP_CONFIG_FILE} -a "Maven repository build started: Build url:\${BUILD_URL}" -f
 
+case "\${PRODUCT_NAME}" in 
+    RHDM )
+        prod_staging_properties_url=\${product1_staging_properties_url}
+        prod_staging_properties_name=\${product1_staging_properties_name}
+        prod_staging_path=\${product1_staging_path}
+        prod_artifact_version=\${product1_artifact_version}
+        prod_shipped_file_deliver_version=\${product1_shipped_file_deliver_version}
+        prod_assembly_maven_repo_url=\${product1_assembly_maven_repo_url}
+        prod_deliverable_template=\${product1_deliverable_template}
+        prod_staging_folder=\${product1_staging_folder}
+        prod_candidate_properties_name=\${product1_candidate_properties_name}
+        ;;
+    RHBAS )
+        prod_staging_properties_url=\${product2_staging_properties_url}
+        prod_staging_properties_name=\${product2_staging_properties_name}
+        prod_staging_path=\${product2_staging_path}
+        prod_shipped_file_deliver_version=\${product2_shipped_file_deliver_version}
+        prod_assembly_maven_repo_url=\${product2_assembly_maven_repo_url}
+        prod_deliverable_template=\${product2_deliverable_template}
+        prod_artifact_version=\${product2_artifact_version}
+        prod_staging_folder=\${product2_staging_folder}
+        prod_candidate_properties_name=\${product2_candidate_properties_name}
+        ;;
+esac
+
+echo "prod_staging_path=\$prod_staging_path" > /tmp/prod_staging_path
+
 function appendProp(){
     if [ -z "\$1" ] || [ -z "\$2" ] || [ -z "\$3" ];then
         echo "Param  is not allow empty"
@@ -19,30 +46,30 @@ function appendProp(){
     sed -i "/^\$1/d" \$3 && echo "\$1=\$2" >> \$3
 }
 
-if ! wget \${product1_staging_properties_url} -O \${product1_staging_properties_name} 2>/dev/null ;then
-    echo " \${product1_staging_properties_url} isn't available yet"
-    touch  \${product1_staging_properties_name}
+if ! wget \${prod_staging_properties_url} -O \${prod_staging_properties_name} 2>/dev/null ;then
+    echo " \${prod_staging_properties_url} isn't available yet"
+    touch  \${prod_staging_properties_name}
 fi
-if ! wget \${product1_candidate_properties_url} -O \${product1_candidate_properties_name} 2>/dev/null ;then
-  echo " \${product1_candidate_properties_url} isn't available yet"
-  touch  \${product1_staging_properties_name}
+if ! wget \${prod_candidate_properties_url} -O \${prod_candidate_properties_name} 2>/dev/null ;then
+  echo " \${prod_candidate_properties_url} isn't available yet"
+  touch  \${prod_staging_properties_name}
 fi
 #append the maven repo url into the properties
-appendProp "rhdm.maven.repo.latest.url" \${rcm_staging_base}/\${product1_staging_path}/\${product1_maven_repo_name} \$product1_staging_properties_name
-appendProp "rhdm.maven.repo.latest.url" \${rcm_candidate_base}/\${product1_candidate_path}/\${product1_maven_repo_name} \$product1_candidate_properties_name
+appendProp "rhdm.maven.repo.latest.url" \${rcm_staging_base}/\${prod_staging_path}/\${prod_maven_repo_name} \$prod_staging_properties_name
+appendProp "rhdm.maven.repo.latest.url" \${rcm_candidate_base}/\${prod_candidate_path}/\${prod_maven_repo_name} \$prod_candidate_properties_name
 
 
 if [ \$release_type = "patch" ];then
     rhdm_incr_maven_repo_name=rhdm-{shipped_file_deliver_version}-incremental-maven-repository.zip
-    appendProp "rhdm.maven.incremental.repo.latest.url" \${rcm_staging_base}/\${product1_staging_path}/\${rhdm_incr_maven_repo_name} \$product1_staging_properties_name
-    appendProp "rhdm.maven.incremental.repo.latest.url" \${rcm_candidate_base}/\${product1_candidate_path}/\${rhdm_incr_maven_repo_name} \$product1_candidate_properties_name
+    appendProp "rhdm.maven.incremental.repo.latest.url" \${rcm_staging_base}/\${prod_staging_path}/\${rhdm_incr_maven_repo_name} \$prod_staging_properties_name
+    appendProp "rhdm.maven.incremental.repo.latest.url" \${rcm_candidate_base}/\${prod_candidate_path}/\${rhdm_incr_maven_repo_name} \$prod_candidate_properties_name
 fi
 
-PROJECT_NAME=\${product1_name} make CFG=${IP_CONFIG_FILE} BUILDER_SCRIPT=\${repository_builder_script} -f \${makefile} repository
+PROJECT_NAME=\${prod_name} make CFG=${IP_CONFIG_FILE} BUILDER_SCRIPT=\${repository_builder_script} -f \${makefile} repository
 """
 
 // Creates or updates a free style job.
-def jobDefinition = job("${RELEASE_CODE}-maven-repository-build-rhdm") {
+def jobDefinition = job("${RELEASE_CODE}-maven-repository-build") {
 
     // Sets a description for the job.
     description("This job is responsible for building the offline maven repository zip for MRRC.")
@@ -66,6 +93,8 @@ def jobDefinition = job("${RELEASE_CODE}-maven-repository-build-rhdm") {
         stringParam(parameterName = "INCREMENTAL_REPO_FOR", defaultValue = incrementalRepositoryString,
                 description = "List of repositories to exclude. They can be online repository urls or online available zip files in format <url to the zip>:<relative path to repo root inside the zip<. Each repository is supposed to be put on a new line.")
 
+        stringParam(parameterName = "PRODUCT_NAME", defaultValue = "",
+                description = "Specify product name to switch between configurations.")
     }
 
     // Adds build steps to the jobs.
@@ -73,6 +102,10 @@ def jobDefinition = job("${RELEASE_CODE}-maven-repository-build-rhdm") {
 
         // Runs a shell script (defaults to sh, but this is configurable) for building the project.
         shell(shellScript)
+        // Inject environment variables for $prod_staging_path
+        environmentVariables {
+            propertiesFile("/tmp/prod_staging_path")
+        }
     }
 
     wrappers {
@@ -87,7 +120,7 @@ def jobDefinition = job("${RELEASE_CODE}-maven-repository-build-rhdm") {
     publishers {
 
         //Archives artifacts with each build.
-        archiveArtifacts('workspace/${product1_lowcase}-repository/archive/**/*')
+        archiveArtifacts('workspace/${prod_lowcase}-repository/archive/**/*')
 
         // Send artifacts to an SSH server (using SFTP) and/or execute commands over SSH.
         publishOverSsh {
@@ -102,30 +135,30 @@ def jobDefinition = job("${RELEASE_CODE}-maven-repository-build-rhdm") {
                     transferSet {
 
                         // Sets the files to upload to a server.
-                        sourceFiles('workspace/${product1_lowcase}-repository/archive/*.zip,workspace/${product1_lowcase}-repository/archive/*.text,workspace/${product1_lowcase}-repository/archive/*.md5')
+                        sourceFiles('workspace/`echo ${PRODUCT_NAME,,}`-repository/archive/*.zip,workspace/${prod_lowcase}-repository/archive/*.text,workspace/${prod_lowcase}-repository/archive/*.md5')
 
                         // Sets the first part of the file path that should not be created on the remote server.
-                        removePrefix('workspace/${product1_lowcase}-repository/archive/')
+                        removePrefix('workspace/`echo ${PRODUCT_NAME,,}`-repository/archive/')
 
                         // Sets the destination folder.
-                        remoteDirectory('${product1_staging_path}')
+                        remoteDirectory('${prod_staging_path}')
 
                         // Specifies a command to execute on the remote server.
                         execCommand('unzip ' +
-                                '-o ~/staging/${product1_staging_path}/maven-repository-report.zip ' +
-                                '-d ~/staging/${product1_staging_path}' +
+                                '-o ~/staging/${prod_staging_path}/maven-repository-report.zip ' +
+                                '-d ~/staging/${prod_staging_path}' +
                                 '&& rm ' +
-                                '-f ~/staging/${product1_staging_path}/maven-repository-report.zip')
+                                '-f ~/staging/${prod_staging_path}/maven-repository-report.zip')
                     }
 
                     // Adds a transfer set.
                     transferSet {
 
                         // Sets the files to upload to a server.
-                        sourceFiles('${product1_lowcase}-deliverable-list*.properties')
+                        sourceFiles('`echo ${PRODUCT_NAME,,}`-deliverable-list*.properties')
 
                         // Sets the destination _path.
-                        remoteDirectory('${product1_staging_path}')
+                        remoteDirectory('${prod_staging_path}')
                     }
                 }
         }
