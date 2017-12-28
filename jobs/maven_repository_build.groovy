@@ -51,17 +51,17 @@ if ! wget \${prod_candidate_properties_url} -O \${prod_candidate_properties_name
   touch  \${prod_staging_properties_name}
 fi
 #append the maven repo url into the properties
-appendProp "`echo \${PRODUCT_NAME,,}`.maven.repo.latest.url" \${rcm_staging_base}/\${prod_staging_path}/\${prod_maven_repo_name} \$prod_staging_properties_name
-appendProp "`echo \${PRODUCT_NAME,,}`.maven.repo.latest.url" \${rcm_candidate_base}/\${prod_candidate_path}/\${prod_maven_repo_name} \$prod_candidate_properties_name
+appendProp "\${PRODUCT_NAME,,}.maven.repo.latest.url" \${rcm_staging_base}/\${prod_staging_path}/\${prod_maven_repo_name} \$prod_staging_properties_name
+appendProp "\${PRODUCT_NAME,,}.maven.repo.latest.url" \${rcm_candidate_base}/\${prod_candidate_path}/\${prod_maven_repo_name} \$prod_candidate_properties_name
 
 
 if [ \$release_type = "patch" ];then
-    incr_maven_repo_name=`echo \${PRODUCT_NAME,,}`-{shipped_file_deliver_version}-incremental-maven-repository.zip
-    appendProp "`echo \${PRODUCT_NAME,,}`.maven.incremental.repo.latest.url" \${rcm_staging_base}/\${prod_staging_path}/\${incr_maven_repo_name} \$prod_staging_properties_name
-    appendProp "`echo \${PRODUCT_NAME,,}`.maven.incremental.repo.latest.url" \${rcm_candidate_base}/\${prod_candidate_path}/\${incr_maven_repo_name} \$prod_candidate_properties_name
+    incr_maven_repo_name=\${PRODUCT_NAME,,}-{shipped_file_deliver_version}-incremental-maven-repository.zip
+    appendProp "\${PRODUCT_NAME,,}.maven.incremental.repo.latest.url" \${rcm_staging_base}/\${prod_staging_path}/\${incr_maven_repo_name} \$prod_staging_properties_name
+    appendProp "\${PRODUCT_NAME,,}.maven.incremental.repo.latest.url" \${rcm_candidate_base}/\${prod_candidate_path}/\${incr_maven_repo_name} \$prod_candidate_properties_name
 fi
 
-PROJECT_NAME=`echo \${PRODUCT_NAME,,}` make CFG=${IP_CONFIG_FILE} BUILDER_SCRIPT=\${repository_builder_script} -f \${makefile} repository
+PROJECT_NAME=\${PRODUCT_NAME,,} make CFG=${IP_CONFIG_FILE} BUILDER_SCRIPT=\${repository_builder_script} -f \${makefile} repository
 """
 
 // Creates or updates a free style job.
@@ -116,7 +116,7 @@ def jobDefinition = job("${RELEASE_CODE}-maven-repository-build") {
     publishers {
 
         //Archives artifacts with each build.
-        archiveArtifacts('workspace/`echo \${PRODUCT_NAME,,}`-repository/archive/**/*')
+        archiveArtifacts('workspace/\${PRODUCT_NAME,,}-repository/archive/**/*')
 
         // Send artifacts to an SSH server (using SFTP) and/or execute commands over SSH.
         publishOverSsh {
@@ -131,7 +131,7 @@ def jobDefinition = job("${RELEASE_CODE}-maven-repository-build") {
                     transferSet {
 
                         // Sets the files to upload to a server.
-                        sourceFiles('workspace/`echo ${PRODUCT_NAME,,}`-repository/archive/*.zip,workspace/`echo \${PRODUCT_NAME,,}`-repository/archive/*.text,workspace/`echo \${PRODUCT_NAME,,}`-repository/archive/*.md5')
+                        sourceFiles('workspace/`echo ${PRODUCT_NAME,,}`-repository/archive/*.zip,workspace/\${PRODUCT_NAME,,}-repository/archive/*.text,workspace/\${PRODUCT_NAME,,}-repository/archive/*.md5')
 
                         // Sets the first part of the file path that should not be created on the remote server.
                         removePrefix('workspace/`echo ${PRODUCT_NAME,,}`-repository/archive/')
