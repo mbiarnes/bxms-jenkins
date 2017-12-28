@@ -22,6 +22,7 @@ case "\${PRODUCT_NAME}" in
         prod_deliverable_template=\${product1_deliverable_template}
         prod_staging_folder=\${product1_staging_folder}
         prod_candidate_properties_name=\${product1_candidate_properties_name}
+        prod_candidate_path=\${product1_candidate_path}
         ;;
     RHBAS )
         prod_staging_properties_url=\${product2_staging_properties_url}
@@ -60,12 +61,12 @@ appendProp "`echo \${PRODUCT_NAME,,}`.maven.repo.latest.url" \${rcm_candidate_ba
 
 
 if [ \$release_type = "patch" ];then
-    rhdm_incr_maven_repo_name=rhdm-{shipped_file_deliver_version}-incremental-maven-repository.zip
-    appendProp "`echo \${PRODUCT_NAME,,}`.maven.incremental.repo.latest.url" \${rcm_staging_base}/\${prod_staging_path}/\${rhdm_incr_maven_repo_name} \$prod_staging_properties_name
-    appendProp "`echo \${PRODUCT_NAME,,}`.maven.incremental.repo.latest.url" \${rcm_candidate_base}/\${prod_candidate_path}/\${rhdm_incr_maven_repo_name} \$prod_candidate_properties_name
+    incr_maven_repo_name=`echo \${PRODUCT_NAME,,}`-{shipped_file_deliver_version}-incremental-maven-repository.zip
+    appendProp "`echo \${PRODUCT_NAME,,}`.maven.incremental.repo.latest.url" \${rcm_staging_base}/\${prod_staging_path}/\${incr_maven_repo_name} \$prod_staging_properties_name
+    appendProp "`echo \${PRODUCT_NAME,,}`.maven.incremental.repo.latest.url" \${rcm_candidate_base}/\${prod_candidate_path}/\${incr_maven_repo_name} \$prod_candidate_properties_name
 fi
 
-PROJECT_NAME=\${prod_name} make CFG=${IP_CONFIG_FILE} BUILDER_SCRIPT=\${repository_builder_script} -f \${makefile} repository
+PROJECT_NAME=`echo \${PRODUCT_NAME,,}` make CFG=${IP_CONFIG_FILE} BUILDER_SCRIPT=\${repository_builder_script} -f \${makefile} repository
 """
 
 // Creates or updates a free style job.
