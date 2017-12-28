@@ -33,6 +33,7 @@ case "\${PRODUCT_NAME}" in
 esac
 
 echo "prod_staging_path=\$prod_staging_path" > /tmp/prod_staging_path
+echo "prod_name_lowercase=\${PRODUCT_NAME,,}" >> /tmp/prod_staging_path
 
 function appendProp(){
     if [ -z "\$1" ] || [ -z "\$2" ] || [ -z "\$3" ];then
@@ -116,7 +117,7 @@ def jobDefinition = job("${RELEASE_CODE}-maven-repository-build") {
     publishers {
 
         //Archives artifacts with each build.
-        archiveArtifacts('workspace/${PRODUCT_NAME,,}-repository/archive/**/*')
+        archiveArtifacts('workspace/${prod_name_lowercase}-repository/archive/**/*')
 
         // Send artifacts to an SSH server (using SFTP) and/or execute commands over SSH.
         publishOverSsh {
@@ -131,10 +132,10 @@ def jobDefinition = job("${RELEASE_CODE}-maven-repository-build") {
                     transferSet {
 
                         // Sets the files to upload to a server.
-                        sourceFiles('workspace/`echo ${PRODUCT_NAME,,}`-repository/archive/*.zip,workspace/${PRODUCT_NAME,,}-repository/archive/*.text,workspace/${PRODUCT_NAME,,}-repository/archive/*.md5')
+                        sourceFiles('workspace/`echo ${prod_name_lowercase}`-repository/archive/*.zip,workspace/${prod_name_lowercase}-repository/archive/*.text,workspace/${prod_name_lowercase}-repository/archive/*.md5')
 
                         // Sets the first part of the file path that should not be created on the remote server.
-                        removePrefix('workspace/`echo ${PRODUCT_NAME,,}`-repository/archive/')
+                        removePrefix('workspace/`echo ${prod_name_lowercase}`-repository/archive/')
 
                         // Sets the destination folder.
                         remoteDirectory('${prod_staging_path}')
@@ -151,7 +152,7 @@ def jobDefinition = job("${RELEASE_CODE}-maven-repository-build") {
                     transferSet {
 
                         // Sets the files to upload to a server.
-                        sourceFiles('`echo ${PRODUCT_NAME,,}`-deliverable-list*.properties')
+                        sourceFiles('`echo ${prod_name_lowercase}`-deliverable-list*.properties')
 
                         // Sets the destination _path.
                         remoteDirectory('${prod_staging_path}')
