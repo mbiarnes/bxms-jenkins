@@ -2,18 +2,14 @@ import org.jboss.bxms.jenkins.JobTemplate
 
 def shellScript = """
 kinit -k -t \${HOME}/bxms-release.keytab bxms-release/prod-ci@REDHAT.COM
-case "\\${PRODUCT_NAME}" in 
+case "\${PRODUCT_NAME}" in 
     RHDM )
-        prod_staging_path=\${product1_staging_path}
         prod_staging_properties_url=\${product1_staging_properties_url}
         ;;
     RHBAS )
-        prod_staging_path=\${product2_staging_path}
         prod_staging_properties_url=\${product2_staging_properties_url}
         ;;
 esac
-
-echo "prod_staging_path=\$prod_staging_path" > /tmp/prod_staging_path
 
 ip-tooling/jira_helper.py -c ${IP_CONFIG_FILE} -a "QE smoketest is triggered by CI message. Build URL:\${qe_smoketest_job_url}" -f
 """
@@ -31,11 +27,6 @@ def jobDefinition = job("${RELEASE_CODE}-trigger-qe-smoke-test-rhdm") {
     // Adds build steps to the jobs.
     steps {
         shell(shellScript)
-
-        // Inject environment variables for $prod_staging_path
-        environmentVariables {
-            propertiesFile("/tmp/prod_staging_path")
-        }
 
         // Sends JMS message.
         ciMessageBuilder {
