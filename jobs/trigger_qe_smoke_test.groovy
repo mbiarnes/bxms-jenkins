@@ -5,9 +5,11 @@ kinit -k -t \${HOME}/bxms-release.keytab bxms-release/prod-ci@REDHAT.COM
 case "\\${PRODUCT_NAME}" in 
     RHDM )
         prod_staging_path=\${product1_staging_path}
+        prod_staging_properties_url=\${product1_staging_properties_url}
         ;;
     RHBAS )
         prod_staging_path=\${product2_staging_path}
+        prod_staging_properties_url=\${product2_staging_properties_url}
         ;;
 esac
 
@@ -52,7 +54,7 @@ def jobDefinition = job("${RELEASE_CODE}-trigger-qe-smoke-test-rhdm") {
                     'CI_TYPE=custom\n' +
                     'EVENT_TYPE=`echo ${PRODUCT_NAME,,}`-70-brew-qe-trigger\n')
             // Content of CI message to be sent.
-            messageContent('${product1_staging_properties_url}')
+            messageContent('${prod_staging_properties_url}')
         }
     }
 }

@@ -55,14 +55,14 @@ if ! wget \${prod_candidate_properties_url} -O \${prod_candidate_properties_name
   touch  \${prod_staging_properties_name}
 fi
 #append the maven repo url into the properties
-appendProp "rhdm.maven.repo.latest.url" \${rcm_staging_base}/\${prod_staging_path}/\${prod_maven_repo_name} \$prod_staging_properties_name
-appendProp "rhdm.maven.repo.latest.url" \${rcm_candidate_base}/\${prod_candidate_path}/\${prod_maven_repo_name} \$prod_candidate_properties_name
+appendProp "`echo \${PRODUCT_NAME,,}`.maven.repo.latest.url" \${rcm_staging_base}/\${prod_staging_path}/\${prod_maven_repo_name} \$prod_staging_properties_name
+appendProp "`echo \${PRODUCT_NAME,,}`.maven.repo.latest.url" \${rcm_candidate_base}/\${prod_candidate_path}/\${prod_maven_repo_name} \$prod_candidate_properties_name
 
 
 if [ \$release_type = "patch" ];then
     rhdm_incr_maven_repo_name=rhdm-{shipped_file_deliver_version}-incremental-maven-repository.zip
-    appendProp "rhdm.maven.incremental.repo.latest.url" \${rcm_staging_base}/\${prod_staging_path}/\${rhdm_incr_maven_repo_name} \$prod_staging_properties_name
-    appendProp "rhdm.maven.incremental.repo.latest.url" \${rcm_candidate_base}/\${prod_candidate_path}/\${rhdm_incr_maven_repo_name} \$prod_candidate_properties_name
+    appendProp "`echo \${PRODUCT_NAME,,}`.maven.incremental.repo.latest.url" \${rcm_staging_base}/\${prod_staging_path}/\${rhdm_incr_maven_repo_name} \$prod_staging_properties_name
+    appendProp "`echo \${PRODUCT_NAME,,}`.maven.incremental.repo.latest.url" \${rcm_candidate_base}/\${prod_candidate_path}/\${rhdm_incr_maven_repo_name} \$prod_candidate_properties_name
 fi
 
 PROJECT_NAME=\${prod_name} make CFG=${IP_CONFIG_FILE} BUILDER_SCRIPT=\${repository_builder_script} -f \${makefile} repository
@@ -120,7 +120,7 @@ def jobDefinition = job("${RELEASE_CODE}-maven-repository-build") {
     publishers {
 
         //Archives artifacts with each build.
-        archiveArtifacts('workspace/${prod_lowcase}-repository/archive/**/*')
+        archiveArtifacts('workspace/`echo \${PRODUCT_NAME,,}`-repository/archive/**/*')
 
         // Send artifacts to an SSH server (using SFTP) and/or execute commands over SSH.
         publishOverSsh {
@@ -135,7 +135,7 @@ def jobDefinition = job("${RELEASE_CODE}-maven-repository-build") {
                     transferSet {
 
                         // Sets the files to upload to a server.
-                        sourceFiles('workspace/`echo ${PRODUCT_NAME,,}`-repository/archive/*.zip,workspace/${prod_lowcase}-repository/archive/*.text,workspace/${prod_lowcase}-repository/archive/*.md5')
+                        sourceFiles('workspace/`echo ${PRODUCT_NAME,,}`-repository/archive/*.zip,workspace/`echo \${PRODUCT_NAME,,}`-repository/archive/*.text,workspace/`echo \${PRODUCT_NAME,,}`-repository/archive/*.md5')
 
                         // Sets the first part of the file path that should not be created on the remote server.
                         removePrefix('workspace/`echo ${PRODUCT_NAME,,}`-repository/archive/')
