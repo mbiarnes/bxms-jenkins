@@ -25,7 +25,7 @@ cd pvt
 """
 
 // Creates or updates a free style job.
-def jobDefinition = job("${RELEASE_CODE}-pvt-test-rhdm") {
+def jobDefinition = job("${RELEASE_CODE}-pvt-test") {
 
     // Sets a description for the job.
     description("This job is responsible for executing product validation tests.")

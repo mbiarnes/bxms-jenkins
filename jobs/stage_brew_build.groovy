@@ -138,5 +138,5 @@ def jobDefinition = job("${RELEASE_CODE}-stage-brew-build") {
     }
 }
 
-JobTemplate.addCommonConfiguration(jobDefinition, CI_PROPERTIES_FILE)
+JobTemplate.addCommonConfiguration(jobDefinition, CI_PROPERTIES_FILE, "release-pipeline && exclusive")
 JobTemplate.addIpToolingScmConfiguration(jobDefinition)
