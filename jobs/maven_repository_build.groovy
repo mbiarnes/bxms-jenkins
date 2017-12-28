@@ -116,7 +116,7 @@ def jobDefinition = job("${RELEASE_CODE}-maven-repository-build") {
     publishers {
 
         //Archives artifacts with each build.
-        archiveArtifacts('workspace/\${PRODUCT_NAME,,}-repository/archive/**/*')
+        archiveArtifacts('workspace/${PRODUCT_NAME,,}-repository/archive/**/*')
 
         // Send artifacts to an SSH server (using SFTP) and/or execute commands over SSH.
         publishOverSsh {
@@ -131,7 +131,7 @@ def jobDefinition = job("${RELEASE_CODE}-maven-repository-build") {
                     transferSet {
 
                         // Sets the files to upload to a server.
-                        sourceFiles('workspace/`echo ${PRODUCT_NAME,,}`-repository/archive/*.zip,workspace/\${PRODUCT_NAME,,}-repository/archive/*.text,workspace/\${PRODUCT_NAME,,}-repository/archive/*.md5')
+                        sourceFiles('workspace/`echo ${PRODUCT_NAME,,}`-repository/archive/*.zip,workspace/${PRODUCT_NAME,,}-repository/archive/*.text,workspace/${PRODUCT_NAME,,}-repository/archive/*.md5')
 
                         // Sets the first part of the file path that should not be created on the remote server.
                         removePrefix('workspace/`echo ${PRODUCT_NAME,,}`-repository/archive/')
