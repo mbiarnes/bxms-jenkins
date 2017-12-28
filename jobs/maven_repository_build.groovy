@@ -23,6 +23,7 @@ case "\${PRODUCT_NAME}" in
         prod_staging_folder=\${product1_staging_folder}
         prod_candidate_properties_name=\${product1_candidate_properties_name}
         prod_candidate_path=\${product1_candidate_path}
+        prod_maven_repo_name=\${product1_maven_repo_name}
         ;;
     RHBAS )
         prod_staging_properties_url=\${product2_staging_properties_url}
@@ -34,6 +35,7 @@ case "\${PRODUCT_NAME}" in
         prod_artifact_version=\${product2_artifact_version}
         prod_staging_folder=\${product2_staging_folder}
         prod_candidate_properties_name=\${product2_candidate_properties_name}
+        prod_maven_repo_name=\${product2_maven_repo_name}
         ;;
 esac
 
