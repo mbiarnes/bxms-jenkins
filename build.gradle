@@ -17,25 +17,25 @@ sourceSets {
 
 repositories {
     mavenCentral()
-    jcenter()
     // add in a local repository to store third party plugins if there is any
     // Note that flat dir does not support maven pom files
     //flatDir(dirs: 'lib')
     maven {
         url 'https://repo.jenkins-ci.org/public/'
         flatDir(dirs: 'lib')
-
     }
 
 }
 
 configurations {
     testPlugins {}
+
+    // see JENKINS-45512
+    testCompile {
+        exclude group: 'xalan'
+        //exclude group: 'xerces'
+    }
 }
-
-// According to the example there is a bug in xalan dependency
-configurations.all*.exclude group: 'xalan'
-
 
 dependencies {
     compile "ca.szc.configparser:java-configparser:0.1"
@@ -55,17 +55,14 @@ dependencies {
     testCompile "org.jenkins-ci.plugins:job-dsl:${jobDslVersion}"
     testCompile "org.jenkins-ci.plugins:job-dsl:${jobDslVersion}@jar"
     testCompile 'org.jenkins-ci.plugins:structs:1.2@jar'
-    testCompile 'org.jenkins-ci.plugins:cloudbees-folder:5.0@jar'
-//testCompile 'org.jenkins-ci.plugins.workflow:workflow-aggregator:2.4'
+    testCompile 'org.jenkins-ci.plugins:cloudbees-folder:6.1.2@jar'
+
     // plugins to install in test instance
-
     testPlugins 'com.coravy.hudson.plugins.github:github:1.19.0'
-    testPlugins 'org.jenkins-ci.plugins:cloudbees-folder:5.0'
-    testPlugins 'org.jenkins-ci.plugins:jms-messaging:1.0.31@hpi'
+    testPlugins 'org.jenkins-ci.plugins:cloudbees-folder:6.1.2'
+    testPlugins 'org.jenkins-ci.plugins:jms-messaging:1.0.30@hpi'
   	testPlugins 'org.jenkins-ci.plugins.workflow:workflow-aggregator:2.4'
-    testPlugins 'com.redhat.jenkins.plugins:redhat-ci-plugin:1.4.10@hpi'
-    //this is an example of a third party plugin which could be put in the lib dir
-
+    testPlugins 'com.redhat.jenkins.plugins:redhat-ci-plugin:1.5.0@hpi'
 }
 
 task resolveTestPlugins(type: Copy) {
