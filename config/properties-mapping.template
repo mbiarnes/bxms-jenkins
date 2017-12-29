@@ -50,6 +50,7 @@ resolve_issue_list=
 product_cfg_sha=
 build_cfg=
 #Jenkins milestone maven repo folder
+jenkins_cache_url=http://rhap-repo.usersys.redhat.com
 jenkins_cache_repo=bxms-{product1_version_major}.{product1_version_minor}-nightly
 #running/close, used as a token of activate some of the release pipeline
 brew_status=

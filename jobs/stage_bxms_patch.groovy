@@ -6,12 +6,12 @@ def shellScript = """
 wget \${product1_staging_properties_url} -O \${product1_staging_properties_name} 
 wget \${product1_candidate_properties_url} -O \${product1_candidate_properties_name}
 
-ip-tooling/maven-to-stage.py --version=\${product1_artifact_version} --override-version \${product1_version} \
+ip-tooling/maven-artifact-handler.py --version=\${product1_artifact_version} --override-version \${product1_version} \
    --deliverable \${product1_deliverable_template} --maven-repo \${bxms_patch_maven_repo_url} \
    --output \${product1_name}\
    --release-url=\${rcm_staging_base}/\${product1_staging_path} --output-deliverable-list \${product1_staging_properties_name}
    
-ip-tooling/maven-to-stage.py --version=\${product2_artifact_version} --override-version \${product2_version} \
+ip-tooling/maven-artifact-handler.py --version=\${product2_artifact_version} --override-version \${product2_version} \
    --deliverable \${product2_deliverable_template} --maven-repo \${bxms_patch_maven_repo_url} \
    --output \${product2_name}\
    --release-url=\${rcm_staging_base}/\${product2_staging_path} --output-deliverable-list \${product2_staging_properties_name}
