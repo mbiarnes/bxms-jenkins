@@ -18,6 +18,7 @@ def ReleasePipelineBuilder(_release_code, _cfg_file, _properties_file) {
 }
 ReleasePipelineBuilder("bxms", "bxms.cfg", "/jboss-prod/config/bxms-ci.properties" )
 ReleasePipelineBuilder("bxms-test", "bxms-test.cfg", "/jboss-prod/config/bxms-test-ci.properties" )
+ReleasePipelineBuilder("bxms-nightly", "bxms-dev.cfg", "/jboss-prod/config/bxms-nightly-ci.properties")
 
 //Release code is identical to the folder name in streams/
 def JenkinsJobsBuilder(_release_code, _cfg_file, _job_type){

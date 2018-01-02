@@ -5,13 +5,13 @@ mkdir jboss-bpmsuite-${product_version}-openshift
 cd jboss-bpmsuite-${product_version}-openshift
 
 #download the zip package
-if [ ! -e maven-to-stage.py ];
+if [ ! -e maven-artifact-handler.py ];
 then
-    if ! wget http://git.app.eng.bos.redhat.com/git/integration-platform-tooling.git/plain/maven-to-stage.py
+    if ! wget http://git.app.eng.bos.redhat.com/git/integration-platform-tooling.git/plain/maven-artifact-handler.py
     then
         exit 1;
     fi
-chmod +x maven-to-stage.py
+chmod +x maven-artifact-handler.py
 fi
 
 if [ ! -e download_list.properties ]
@@ -23,9 +23,9 @@ org.kie.rhap:rhbas::add-ons:zip:rhbas.addons.latest.url
 org.kie.rhap:rhbas::execution-server-ee7:zip:rhbas.execution-server.ee7.latest.url""" >>download_list.properties
 fi
 maven_repo_url="http://download-node-02.eng.bos.redhat.com/brewroot/repos/\${brew_target}/latest/maven/"
-./maven-to-stage.py --version=${product_artifact_version} --override-version ${product_version}${availability} --deliverable download_list.properties --maven-repo ${maven_repo_url} --output BPMS-${product_version}${availability}
+./maven-artifact-handler.py --version=${product_artifact_version} --override-version ${product_version}${availability} --deliverable download_list.properties --maven-repo ${maven_repo_url} --output BPMS-${product_version}${availability}
 
-rm -f download_list.properties maven-to-stage.py
+rm -f download_list.properties maven-artifact-handler.py
 if [ $? -ne 0 ]
 then
     echo "Failed to remove files"

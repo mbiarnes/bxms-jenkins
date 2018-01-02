@@ -42,8 +42,8 @@ function appendProp(){
 if ! wget \${prod_staging_properties_url} -O \${prod_staging_properties_name} 2>/dev/null ;then
     echo " \${prod_staging_properties_url} isn't available yet"  
 fi
-ip-tooling/maven-artifact-handler.py --version=\${prod_artifact_version} --override-version \${prod_shipped_file_deliver_version} --maven-repo \${prod_assembly_maven_repo_url} \
-  --deliverable \${prod_deliverable_template} --output \${PRODUCT_NAME} \
+ip-tooling/maven-artifact-handler.py --version=\${prod_artifact_version} --override-version \${prod_shipped_file_deliver_version} --maven-repo \${jenkins_cache_url}/\${jenkins_cache_repo} \
+  --deliverable \${prod_deliverable_template} \
   --release-url=\${rcm_staging_base}/\${prod_staging_path} --output-deliverable-list \${prod_staging_properties_name}
 cp ${IP_CONFIG_FILE} \${PRODUCT_NAME}
   
@@ -58,7 +58,7 @@ sed -e "s=\${rcm_staging_base}/\${prod_staging_folder}=\${rcm_candidate_base}/\$
 """
 
 // Creates or updates a free style job.
-def jobDefinition = job("${RELEASE_CODE}-stage-brew-build") {
+def jobDefinition = job("${RELEASE_CODE}-generate-nightly-qe-properties") {
 
     // Sets a description for the job.
     description("This job is responsible for staging the Brew release deliverables to the RCM staging area.")
@@ -77,64 +77,11 @@ def jobDefinition = job("${RELEASE_CODE}-stage-brew-build") {
 
         // Runs a shell script (defaults to sh, but this is configurable) for building the project.
         shell(shellScript)
-        // Inject environment variables for $prod_staging_path
-        environmentVariables {
-            propertiesFile("/tmp/prod_staging_path")
-        }
     }
     wrappers {
         // Deletes files from the workspace before the build starts.
         preBuildCleanup()
 
-    }
-    // Adds post-build actions to the job.
-    publishers {
-
-        // Send artifacts to an SSH server (using SFTP) and/or execute commands over SSH.
-        publishOverSsh {
-
-            // Adds a target server.
-            server('publish server') {
-
-                    // Adds a target server.
-                    verbose(true)
-
-                    // Adds a transfer set.
-                    transferSet {
-
-                        // Sets the files to upload to a server.
-                        sourceFiles('')
-                        // Sets the destination folder.
-                        remoteDirectory('${prod_staging_path}')
-                        execCommand('if [ "${CLEAN_STAGING_ARTIFACTS}" = "true" ];then \n' +
-                                        'rm -vrf  ~/staging/${prod_staging_path}/* \n' +
-                                    'fi')
-                    }
-                    // Adds a target server.
-                    verbose(true)
-
-                    // Adds a transfer set.
-                    transferSet {
-
-                        // Sets the files to upload to a server.
-                        sourceFiles('${PRODUCT_NAME}/*.*')
-                        removePrefix('${PRODUCT_NAME}/')
-
-                        // Sets the destination folder.
-                        remoteDirectory('${prod_staging_path}')
-                    }
-
-                    // Adds a transfer set.
-                    transferSet {
-
-                        // Sets the files to upload to a server.
-                        sourceFiles('${IP_CONFIG_FILE}, `echo ${PRODUCT_NAME,,}`-deliverable-list*.properties')
-
-                        // Sets the destination folder.
-                        remoteDirectory('${prod_staging_path}')
-                    }
-            }
-        }
     }
 }
 

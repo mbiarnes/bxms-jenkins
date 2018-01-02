@@ -31,8 +31,8 @@ fi
 MVN_DEP_REPO=nexus-release::default::file://\${DEP_REPO} LOCAL=1 CFG=./${_cfg} MVN_LOCAL_REPO=\${_local_repo} POMMANIPEXT=bxms-bom make -f Makefile.BRMS rhdm-installer rhbas-installer
 """
 
-        dslFactory.folder(release_code + "-jenkins-" + job_type + "-pipeline")
-        dslFactory.job(release_code + "-jenkins-" + job_type + "-pipeline/" + release_code + "-all") {
+        dslFactory.folder(release_code + "-nightly-release-pipeline")
+        dslFactory.job(release_code + "-nightly-release-pipeline/" + release_code + "-all") {
             it.description "This job is a seed job for generating " + release_code + " " +  job_type + " jenkins full build."
             logRotator {
                 numToKeep 8
