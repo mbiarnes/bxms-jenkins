@@ -49,11 +49,8 @@ class JenkinsAllJobBuilderPipeline {
       }
       // get the squence of jobs
       ArrayList<String> jobsArr=kahnTopological(packagesMap)
-      String result=getPipelineCode(jobsArr,packagesMap)
-
-      String pipelineScript="""
-      ${result}
-      """
+      String pipelineScript=getPipelineCode(jobsArr,packagesMap)
+      def choosOptScript=getChooseOpt(jobsArr)
 
       dslFactory.folder(release_code + "-jenkins-" + job_type + "-pipeline")
       String _cfg = cfg_file
@@ -100,7 +97,10 @@ class JenkinsAllJobBuilderPipeline {
                     }
                 }
             }
-
+            parameters {
+                booleanParam('RUNSTAGEAFTER', true, 'Uncheck to just run the stage alone without the stages after.')
+                choiceParam('STARTSTAGE', choosOptScript, 'choose the stage to start,default the first one.')
+            }
             definition{
               cps {
                 script(pipelineScript)
@@ -176,136 +176,130 @@ class JenkinsAllJobBuilderPipeline {
     }
 
 // func to turn cfg requirement relationship into oneline steps use kahn
-ArrayList<String> kahnTopological(HashMap<String,String[]> packagesMap){
-  ArrayList<String> resultAL=new ArrayList<String>()
-  Map packagesMapIndegree=new HashMap()
-  ArrayList<String> zeroIndegreeArr=new ArrayList<String>()
-  int allEdges=0
-  for (String keyName : packagesMap.keySet()) {
-    if (packagesMap.get(keyName).size()==0) {
-      zeroIndegreeArr.add(keyName)
+    ArrayList<String> kahnTopological(HashMap<String,String[]> packagesMap){
+        ArrayList<String> resultAL=new ArrayList<String>()
+        Map packagesMapIndegree=new HashMap()
+        ArrayList<String> zeroIndegreeArr=new ArrayList<String>()
+        int allEdges=0
+        for (String keyName : packagesMap.keySet()) {
+          if (packagesMap.get(keyName).size()==0) {
+            zeroIndegreeArr.add(keyName)
 
-    }
-    allEdges+=packagesMap.get(keyName).size()
-    packagesMapIndegree.put(keyName,packagesMap.get(keyName).size())
-  }
-
-  while(zeroIndegreeArr.size()>0){
-    String current=zeroIndegreeArr.get(0)
-    zeroIndegreeArr.remove(0)
-    resultAL.add(current)
-    ArrayList<String> currentPkgChild =new ArrayList<String>()
-    for (Map.Entry<String, String[]> entry : packagesMap.entrySet()) {
-      int flag=0
-      for (ele in entry.getValue()) {
-        if(ele.matches(current)){
-          flag=1
-          break
-        }
-      }
-      if (flag ==1) {
-        currentPkgChild.add(entry.getKey())
-      }
-    }
-    for (int i=0;i<currentPkgChild.size() ;i++ ) {
-      int indegree=packagesMapIndegree.get(currentPkgChild.get(i))-1
-      allEdges=allEdges-1
-      packagesMapIndegree.put(currentPkgChild.get(i),indegree)
-      if (indegree == 0) {
-        zeroIndegreeArr.add(currentPkgChild.get(i))
-      }
-    }
-  }
-
-  if (allEdges!=0) {
-
-    throw new IOException("There has circles in " +cfg_file + " buildrequires map, Debug information:\n" + packagesMapIndegree)
-  }
-  return resultAL
-}
-
-// func to get the pipeline code of input cfg file
-String getPipelineCode(ArrayList<String> jobsArr,HashMap<String,String[]> packagesMap) {
-
-  //result=result+jobsArr.get(0)
-  String stageNameList="[['"+jobsArr.get(0)+"'"
-  ArrayList<String> tempList=new ArrayList<String>()
-  tempList.add(jobsArr.get(0))
-  for (int i=1;i<jobsArr.size() ;i++ ) {
-    if (packagesMap.get(jobsArr.get(i)).size() !=0) {
-      int flag=0
-      for (int j=0;j< packagesMap.get(jobsArr.get(i)).length;j++ ) {
-        if(tempList.contains(packagesMap.get(jobsArr.get(i))[j])){
-          for (int k=0;k<tempList.size() ;k++ ) {
-            tempList.remove(k)
           }
-          flag=1
-          break
+          allEdges+=packagesMap.get(keyName).size()
+          packagesMapIndegree.put(keyName,packagesMap.get(keyName).size())
         }
-      }
-      if (flag==0) {
-        stageNameList=stageNameList+",'"+jobsArr.get(i)+"'"
-      }else{
-        stageNameList=stageNameList+"],['"+jobsArr.get(i)+"'"
-      }
-      tempList.add(jobsArr.get(i))
-    }else{
-      stageNameList=stageNameList+",'"+jobsArr.get(i)+"'"
-      tempList.add(jobsArr.get(i))
-    }
-  }
-  stageNameList=stageNameList+"]]"
-  // inside list to used to parellel run stages
-  //stageNameList="[[''],['','',''],['','']]"
-  String stageNameStr="['"+ jobsArr.get(0) + "_chainbuild','" + jobsArr.get(0)
-  for (int i=1;i< jobsArr.size() ;i++  ) {
-    stageNameStr=stageNameStr+"','"+ jobsArr.get(i)+"_chainbuild', '" + jobsArr.get(i)
-  }
-  stageNameStr=stageNameStr+"']"
-//  stageNameStr="['','','','']"
-  String result='''
-  def release_code="'''+release_code+'''"
-  def job_type="'''+job_type+'''"
-  def stageNames='''+stageNameList+'''
-  node ('release-pipeline'){
-      stage("Stage0"){
-        choice = new ChoiceParameterDefinition('Choose Single Build or Chainbuild:','''+ stageNameStr+''' as String[], 'Eg: Choose a bxms-bom to run a standalone job, Choose bxms-bom-chainbuild to run chaibuild build')
-        yourchoose=input message: 'Build Strategy', parameters: [choice]
-      }
-      int flag=0
-      int runStageAfter=0
-      for(int count=0;count<stageNames.size();count++){
-        def insidecount=count
-        def branches=[:]
-        for(int j=0;j<stageNames.get(insidecount).size();j++){
-          def insidej=j
-          branches["${insidej}"]={
-            stage(stageNames.get(insidecount).get(insidej)){
-                  if(yourchoose.matches(stageNames.get(insidecount).get(insidej)) ){
-                      flag=1
-                  }else if(yourchoose.matches(stageNames.get(insidecount).get(insidej)+"_chainbuild")){
-                      runStageAfter=1
-                      flag=1
-                  }
-                  if((flag==1 && runStageAfter ==1)|| yourchoose.matches(stageNames.get(insidecount).get(insidej))){
-                    try{
-                      build job : release_code + "-" + stageNames.get(insidecount).get(insidej)
-                    }catch(err){
-                      if(currentBuild.result == 'UNSTABLE'){
-                        currentBuild.result = 'SUCCESS'
-                      }else{
-                        error("Job ${stageNames.get(insidecount).get(insidej)} Build FAILED!")
-                      }
-                    }
-                  }
+
+        while(zeroIndegreeArr.size()>0){
+          String current=zeroIndegreeArr.get(0)
+          zeroIndegreeArr.remove(0)
+          resultAL.add(current)
+          ArrayList<String> currentPkgChild =new ArrayList<String>()
+          for (Map.Entry<String, String[]> entry : packagesMap.entrySet()) {
+            int flag=0
+            for (ele in entry.getValue()) {
+              if(ele.matches(current)){
+                flag=1
+                break
+              }
+            }
+            if (flag ==1) {
+              currentPkgChild.add(entry.getKey())
             }
           }
+        for (int i=0;i<currentPkgChild.size() ;i++ ) {
+          int indegree=packagesMapIndegree.get(currentPkgChild.get(i))-1
+          allEdges=allEdges-1
+          packagesMapIndegree.put(currentPkgChild.get(i),indegree)
+          if (indegree == 0) {
+            zeroIndegreeArr.add(currentPkgChild.get(i))
+          }
         }
-        parallel branches
       }
 
+      if (allEdges!=0) {
+
+        throw new IOException("There has circles in " +cfg_file + " buildrequires map, Debug information:\n" + packagesMapIndegree)
+      }
+      return resultAL
     }
-  '''
-  return result
-  }
+    // func to get the choose options.
+    def getChooseOpt(ArrayList<String> jobsArr){
+      def result=[]
+      for (int i=0;i< jobsArr.size() ;i++  ) {
+        result.add(jobsArr.get(i))
+      }
+      return result
+    }
+    // func to get the pipeline code of input cfg file
+    String getPipelineCode(ArrayList<String> jobsArr,HashMap<String,String[]> packagesMap) {
+
+      //result=result+jobsArr.get(0)
+      String stageNameList="[['"+jobsArr.get(0)+"'"
+      ArrayList<String> tempList=new ArrayList<String>()
+      tempList.add(jobsArr.get(0))
+      for (int i=1;i<jobsArr.size() ;i++ ) {
+        if (packagesMap.get(jobsArr.get(i)).size() !=0) {
+          int flag=0
+          for (int j=0;j< packagesMap.get(jobsArr.get(i)).length;j++ ) {
+            if(tempList.contains(packagesMap.get(jobsArr.get(i))[j])){
+              for (int k=0;k<tempList.size() ;k++ ) {
+                tempList.remove(k)
+              }
+              flag=1
+              break
+            }
+          }
+          if (flag==0) {
+            stageNameList=stageNameList+",'"+jobsArr.get(i)+"'"
+          }else{
+            stageNameList=stageNameList+"],['"+jobsArr.get(i)+"'"
+          }
+          tempList.add(jobsArr.get(i))
+        }else{
+          stageNameList=stageNameList+",'"+jobsArr.get(i)+"'"
+          tempList.add(jobsArr.get(i))
+        }
+      }
+      stageNameList=stageNameList+"]]"
+      // inside list to used to parellel run stages
+      //stageNameList="[[''],['','',''],['','']]"
+      String result='''
+      def release_code="'''+release_code+'''"
+      def stageNames='''+stageNameList+'''
+      def runStageAfter="${RUNSTAGEAFTER}"
+      def yourchoose="${STARTSTAGE}"
+      node ('release-pipeline'){
+          int flag=0
+          for(int count=0;count<stageNames.size();count++){
+            def insidecount=count
+            def branches=[:]
+            for(int j=0;j<stageNames.get(insidecount).size();j++){
+              def insidej=j
+              branches["${insidej}"]={
+                stage(stageNames.get(insidecount).get(insidej)){
+                      if(yourchoose.matches(stageNames.get(insidecount).get(insidej)) ){
+                          flag=1
+                      }
+                      if((flag==1 && runStageAfter.matches("true"))|| yourchoose.matches(stageNames.get(insidecount).get(insidej))){
+                        try{
+                          build job : release_code + "-" + stageNames.get(insidecount).get(insidej)
+                        }catch(err){
+                          if(currentBuild.result == 'UNSTABLE'){
+                            currentBuild.result = 'SUCCESS'
+                          }else{
+                            error("Job ${stageNames.get(insidecount).get(insidej)} Build FAILED!")
+                          }
+                        }
+                      }
+                }
+              }
+            }
+            parallel branches
+          }
+
+        }
+      '''
+      return result
+    }
 }
