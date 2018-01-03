@@ -14,7 +14,6 @@ case "\${PRODUCT_NAME}" in
         prod_deliverable_template=\${product1_deliverable_template}
         prod_staging_path=\${product1_staging_path}
         prod_staging_folder=\${product1_staging_folder}
-        prod_candidate_properties_name=\${product1_candidate_properties_name}
         ;;
     RHBAS )
         prod_staging_properties_name=\${product2_staging_properties_name}
@@ -25,11 +24,8 @@ case "\${PRODUCT_NAME}" in
         prod_deliverable_template=\${product2_deliverable_template}
         prod_staging_path=\${product2_staging_path}
         prod_staging_folder=\${product2_staging_folder}
-        prod_candidate_properties_name=\${product2_candidate_properties_name}
         ;;
 esac
-
-echo "prod_staging_path=\$prod_staging_path" > /tmp/prod_staging_path
 
 function appendProp(){
     if [ -z "\$1" ] || [ -z "\$2" ];then
@@ -48,12 +44,8 @@ ip-tooling/maven-artifact-handler.py --version=\${prod_artifact_version} --overr
 cp ${IP_CONFIG_FILE} \${PRODUCT_NAME}
   
 #append the other properties per qe's requirement
-appendProp "build.config" \${rcm_staging_base}/\${prod_staging_path}/\${IP_CONFIG_FILE} 
 appendProp "KIE_VERSION" \${kie_version} 
 appendProp "\${PRODUCT_NAME}""_VERSION" \${prod_artifact_version}
-
-sed -e "s=\${rcm_staging_base}/\${prod_staging_folder}=\${rcm_candidate_base}/\${PRODUCT_NAME}=g" \
-    \${prod_staging_properties_name} > \${prod_candidate_properties_name}
 
 """
 
