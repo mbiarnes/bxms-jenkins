@@ -32,7 +32,7 @@ MVN_DEP_REPO=nexus-release::default::file://\${DEP_REPO} LOCAL=1 CFG=./${_cfg} M
 """
 
         dslFactory.folder(release_code + "-nightly-release-pipeline")
-        dslFactory.job(release_code + "-nightly-release-pipeline/" + release_code + "-all") {
+        dslFactory.job(release_code + "-nightly-release-pipeline/x-" + release_code + "-all") {
             it.description "This job is a seed job for generating " + release_code + " " +  job_type + " jenkins full build."
             logRotator {
                 numToKeep 8

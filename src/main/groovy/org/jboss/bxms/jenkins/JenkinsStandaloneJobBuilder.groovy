@@ -51,7 +51,7 @@ class JenkinsStandaloneJobBuilder {
 unset WORKSPACE
 MVN_DEP_REPO=nexus-release::default::file://${maven_repo} REPO_GROUP=${repo_group} LOCAL=1 CFG=${_cfg} MVN_LOCAL_REPO=${maven_repo} POMMANIPEXT=bxms-bom make DEBUG=\$DEBUG ${section_name}
 """
-                dslFactory.job(release_code + "-nightly-release-pipeline/" + release_code + "-" + section_name ) {
+                dslFactory.job(release_code + "-nightly-release-pipeline/y-" + release_code + "-" + section_name ) {
                     it.description "This job is a seed job for generating " + release_code + " " + job_type + " jenkins build."
                     logRotator {
                         numToKeep 8
