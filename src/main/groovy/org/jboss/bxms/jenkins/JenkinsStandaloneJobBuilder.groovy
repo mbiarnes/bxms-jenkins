@@ -36,7 +36,7 @@ class JenkinsStandaloneJobBuilder {
         Ini _ini_cfg = new Ini().read(configReader)
         Map<String,Map<String,String>> sections = _ini_cfg.getSections()
 
-        dslFactory.folder(release_code + "-nightly-release-pipeline")
+        dslFactory.folder(release_code + "-" + job_type + "-release-pipeline")
         String maven_repo = maven_repo_map [release_code] + job_type
         String repo_group = repo_group_map [job_type]
         String _cfg = cfg_file
@@ -51,7 +51,7 @@ class JenkinsStandaloneJobBuilder {
 unset WORKSPACE
 MVN_DEP_REPO=nexus-release::default::file://${maven_repo} REPO_GROUP=${repo_group} LOCAL=1 CFG=${_cfg} MVN_LOCAL_REPO=${maven_repo} POMMANIPEXT=bxms-bom make DEBUG=\$DEBUG ${section_name}
 """
-                dslFactory.job(release_code + "-nightly-release-pipeline/y-" + release_code + "-" + section_name ) {
+                dslFactory.job(release_code + "-" + job_type + "-release-pipeline/y-" + release_code + "-" + section_name ) {
                     it.description "This job is a seed job for generating " + release_code + " " + job_type + " jenkins build."
                     logRotator {
                         numToKeep 8

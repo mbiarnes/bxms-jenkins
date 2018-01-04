@@ -52,10 +52,10 @@ class JenkinsAllJobBuilderPipeline {
       String pipelineScript=getPipelineCode(jobsArr,packagesMap)
       def choosOptScript=getChooseOpt(jobsArr)
 
-      dslFactory.folder(release_code + "-jenkins-" + job_type + "-pipeline")
+      dslFactory.folder(release_code + "-" + job_type + "-release-pipeline")
       String _cfg = cfg_file
 
-      dslFactory.pipelineJob(release_code + "-jenkins-" + job_type + "-pipeline/a_" + release_code + "-build-pipeline") {
+      dslFactory.pipelineJob(release_code + "-" + job_type + "-release-pipeline/b-" + release_code + "-jenkinsbuild-pipeline") {
             it.description "This job is pipeline job for " + release_code + " " +  job_type + ". "
             logRotator {
                 numToKeep 8
