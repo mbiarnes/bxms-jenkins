@@ -33,6 +33,8 @@ brew_importtag=common:importtag
 makefile=common:makefile
 cutoff_date=common:cutoff_date
 
+product1_milestone_version={product1_version}{availability}.{product1_milestone}
+product2_milestone_version={product2_version}{availability}.{product2_milestone}
 #In CR release shipped_file deliver version shouldn't contain ER/CR in the filename
 product1_shipped_file_deliver_version={product1_version}{availability}
 product2_shipped_file_deliver_version={product2_version}{availability}
