@@ -38,7 +38,7 @@ function appendProp(){
 if ! wget \${prod_staging_properties_url} -O \${prod_staging_properties_name} 2>/dev/null ;then
     echo " \${prod_staging_properties_url} isn't available yet"  
 fi
-ip-tooling/maven-artifact-handler.py --version=\${prod_artifact_version} --override-version \${prod_shipped_file_deliver_version} --maven-repo \${jenkins_cache_url}/\${jenkins_cache_repo} \
+ip-tooling/maven-artifact-handler.py --version=\${prod_artifact_version} --maven-repo \${jenkins_cache_url}/\${jenkins_cache_repo} \
   --deliverable \${prod_deliverable_template} \
   --release-url=\${rcm_staging_base}/\${prod_staging_path} --output-deliverable-list \${prod_staging_properties_name}
 cp ${IP_CONFIG_FILE} \${PRODUCT_NAME}
