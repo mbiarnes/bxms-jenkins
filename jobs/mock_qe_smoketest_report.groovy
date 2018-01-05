@@ -10,6 +10,10 @@ def jobDefinition = job("${RELEASE_CODE}-mock-qe-smoketest-report") {
     // Sets a description for the job.
     description("This job is responsible for mocking a CI message triggered returned the smoketest result from QE.")
 
+    parameters {
+        stringParam(parameterName = "PRODUCT_NAME", defaultValue = "rhdm",
+                description = "Specify product name to switch between configurations.")
+    }
     // Adds build steps to the jobs.
     steps {
         shell(shellScript)
@@ -17,18 +21,19 @@ def jobDefinition = job("${RELEASE_CODE}-mock-qe-smoketest-report") {
         // Sends JMS message.
         ciMessageBuilder {
             overrides {
+                topic('VirtualTopic.qe.ci.ba.$PRODUCT_NAME.70.brew.smoke.results')
             }
 
             // JMS selector to choose messages that will fire the trigger.
-            providerName("CI Publish")
+            providerName("Red Hat UMB")
 
             // Type of CI message to be sent.
             messageType("Custom")
 
             // KEY=value pairs, one per line (Java properties file format) to be used as message properties.
-            messageProperties("label=rhap-ci\n" +
-                    "CI_TYPE=customer\n" +
-                    "EVENT_TYPE=\${product1_lowcase}-70-brew-qe-smoke-results\n")
+            messageProperties('label=rhap-ci\n' +
+                    'CI_TYPE=customer\n' +
+                    'EVENT_TYPE=$PRODUCT_NAME-70-brew-qe-smoke-results\n')
 
             // Content of CI message to be sent.
             messageContent(report_string)

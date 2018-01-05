@@ -2,7 +2,7 @@ import org.jboss.bxms.jenkins.JobTemplate
 
 def shellScript = """
 kinit -k -t \${HOME}/bxms-release.keytab bxms-release/prod-ci@REDHAT.COM
-case "\${PRODUCT_NAME}" in 
+case "\${PRODUCT_NAME}" in
     RHDM )
         prod_staging_properties_url=\${product1_staging_properties_url}
         ;;
@@ -31,11 +31,11 @@ def jobDefinition = job("${RELEASE_CODE}-trigger-qe-smoke-test-rhdm") {
         // Sends JMS message.
         ciMessageBuilder {
             overrides {
-                topic("default")
+                topic('VirtualTopic.qe.ci.ba.${PRODUCT_NAME}.70.brew.trigger')
             }
 
             // JMS selector to choose messages that will fire the trigger.
-            providerName("CI Publish")
+            providerName("Red Hat UMB")
 
             // Type of CI message to be sent.
             messageType("Custom")
@@ -43,7 +43,7 @@ def jobDefinition = job("${RELEASE_CODE}-trigger-qe-smoke-test-rhdm") {
             // KEY=value pairs, one per line (Java properties file format) to be used as message properties.
             messageProperties('label=rhap-ci\n' +
                     'CI_TYPE=custom\n' +
-                    'EVENT_TYPE=`echo ${PRODUCT_NAME,,}`-70-brew-qe-trigger\n')
+                    'EVENT_TYPE=$PRODUCT_NAME-70-brew-qe-trigger\n')
             // Content of CI message to be sent.
             messageContent('${prod_staging_properties_url}')
         }
