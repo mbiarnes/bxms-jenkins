@@ -86,17 +86,21 @@ class ReleasePipelineJobBuilder {
           String[] stages=rightline.split(' ')
           pipelineScript=pipelineScript+" def branches"+j+"=[:]\n"
           for(int i=0;i<stages.size();i++){
-            String stageName=getStageName(stages[i])
+              String stageName=getStageName(stages[i])
+              String fullJobName = stageName
+              if (! fullJobName.endsWith("pipeline")) {
+                  fullJobName = product_job_prefix + stageName
+              }
             pipelineScript=pipelineScript+"  branches"+j+"["+i+"]={\n   stage('"+stageName+"'){\n     if(startstage.matches('"+stageName+"')){flag=1}\n      if(flag==1){\n"
             if(isParaExists(stages[i])){
-              pipelineScript=pipelineScript+"    build(job : '"+product_job_prefix+stageName+"',parameters: "+ getStagePara(stages[i])+")\n"
+              pipelineScript=pipelineScript+"    build(job : '"+ fullJobName +"',parameters: "+ getStagePara(stages[i])+")\n"
             }else if(!isParaExists(stages[i])){
               if(stageName.matches("Input")){
                 pipelineScript=pipelineScript+"    input 'continue the work?'\n    echo 'continue to next stage.'\n"
               }else if(stageName.matches("Pause")){
                 pipelineScript=pipelineScript+"\n    hook = registerWebhook()\n    echo 'Waiting for trigger on \${hook.getURL()}.'\n    sh \"sed -i \'/^register_web_hook=/d\' \${CI_PROPERTIES_FILE} && echo \\\"register_web_hook=\${hook.getURL()}\\\" >>\${CI_PROPERTIES_FILE}\"\n    data = waitForWebhook hook\n    if(data.trim() != \"OK\"){\n     error(\"CI trigger return FAIL,force job stop...\")\n    }\n"
               }else{
-                pipelineScript=pipelineScript+"    build job :'"+ product_job_prefix + stageName+"'\n"
+                pipelineScript=pipelineScript+"    build job :'"+ fullJobName +"'\n"
               }
             }
             pipelineScript=pipelineScript+"     }\n    }\n    }\n"

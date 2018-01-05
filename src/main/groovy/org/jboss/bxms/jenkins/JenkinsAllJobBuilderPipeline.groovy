@@ -283,7 +283,7 @@ class JenkinsAllJobBuilderPipeline {
                       }
                       if((flag==1 && runStageAfter.matches("true"))|| yourchoose.matches(stageNames.get(insidecount).get(insidej))){
                         try{
-                          build job : release_code + "-" + stageNames.get(insidecount).get(insidej)
+                          build job : "y-" + release_code + "-" + stageNames.get(insidecount).get(insidej)
                         }catch(err){
                           if(currentBuild.result == 'UNSTABLE'){
                             currentBuild.result = 'SUCCESS'
