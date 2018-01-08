@@ -2,15 +2,35 @@ import org.jboss.bxms.jenkins.JobTemplate
 
 shellScript = """
 # Kerberos authentication
-kinit -k -t \${HOME}/bxms-release.keytab bxms-release/prod-ci@REDHAT.COM
+#kinit -k -t \${HOME}/bxms-release.keytab bxms-release/prod-ci@REDHAT.COM
 
-# Workaround for variable name conflict between Jenkins and ip-tooling 
+case "\${PRODUCT_NAME}" in
+    RHDM )
+        prod_staging_properties_url=\${product1_staging_properties_url}
+        prod_staging_properties_name=\${product1_staging_properties_name}
+        prod_candidate_properties_url=\${product1_candidate_properties_url}
+        prod_candidate_properties_name=\${product1_candidate_properties_name}
+        prod_staging_path=\${product1_staging_path}
+        prod_candidate_path=\${product1_candidate_path}
+        prod_sources_name=\${product1_sources_name}
+        ;;
+    RHBAS )
+        prod_staging_properties_url=\${product2_staging_properties_url}
+        prod_staging_properties_name=\${product2_staging_properties_name}
+        prod_candidate_properties_url=\${product2_candidate_properties_url}
+        prod_candidate_properties_name=\${product2_candidate_properties_name}
+        prod_staging_path=\${product2_staging_path}
+        prod_candidate_path=\${product2_candidate_path}
+        prod_sources_name=\${product2_sources_name}
+        ;;
+esac
+
+# Workaround for variable name conflict between Jenkins and ip-tooling
 unset WORKSPACE
 
 # Make sources
-make CFG=${IP_CONFIG_FILE} SOURCES=1 POMMANIPEXT=bxms-bom SRCDIR=src -f Makefile.BRMS \${product1_lowcase} \${product2_lowcase}
+make CFG=${IP_CONFIG_FILE} SOURCES=1 POMMANIPEXT=bxms-bom SRCDIR=src -f Makefile.BRMS \${PRODUCT_NAME,,}
 make CFG=common.cfg SOURCES=1 SRCDIR=src -f Makefile.COMMON mvel-2.4.0
-
 
 ## Prepare sources for delivery ##
 cd workspace
@@ -20,7 +40,20 @@ cd workspace
 #rm -f src/errai-parent*/settings.xml
 
 # Create sources archive
-zip -r sources.zip src/
+zip -r prod_sources_name.zip src/
+
+if ! wget \${prod_staging_properties_url} -O \${prod_staging_properties_name} 2>/dev/null ;then
+    echo " \${prod_staging_properties_url} isn't available yet"
+    touch  \${prod_staging_properties_name}
+fi
+if ! wget \${prod_candidate_properties_url} -O \${prod_candidate_properties_name} 2>/dev/null ;then
+  echo " \${prod_candidate_properties_url} isn't available yet"
+  touch  \${prod_staging_properties_name}
+fi
+
+appendProp "\${PRODUCT_NAME,,}.sources.latest.url" \${rcm_staging_base}/\${prod_staging_path}/\${prod_sources_name} \$prod_staging_properties_name
+appendProp "\${PRODUCT_NAME,,}.sources.latest.url" \${rcm_candidate_base}/\${prod_candidate_path}/\${prod_sources_name} \$prod_candidate_properties_name
+
 """
 
 // Creates or updates a free style job.
@@ -28,7 +61,10 @@ def jobDefinition = job("${RELEASE_CODE}-generate-sources") {
 
     // Sets a description for the job.
     description("This job is responsible for generating product sources.")
-
+    parameters {
+      stringParam(parameterName = "PRODUCT_NAME", defaultValue = "",
+            description = "Specify product name to switch between configurations.")
+    }
     // Adds pre/post actions to the job.
     wrappers {
 
@@ -61,26 +97,13 @@ def jobDefinition = job("${RELEASE_CODE}-generate-sources") {
                 transferSet {
 
                     // Sets the files to upload to a server.
-                    sourceFiles('workspace/sources.zip')
+                    sourceFiles('workspace/${prod_sources_name}')
 
                     // Sets the first part of the file path that should not be created on the remote server.
                     removePrefix('workspace/')
 
                     // Sets the destination path.
-                    remoteDirectory('${product1_staging_path}')
-                }
-
-                // Adds a transfer set.
-                transferSet {
-
-                    // Sets the files to upload to a server.
-                    sourceFiles('workspace/sources.zip')
-
-                    // Sets the first part of the file path that should not be created on the remote server.
-                    removePrefix('workspace/')
-
-                    // Sets the destination path.
-                    remoteDirectory('${product2_staging_path}')
+                    remoteDirectory('${prod_staging_path}')
                 }
             }
         }

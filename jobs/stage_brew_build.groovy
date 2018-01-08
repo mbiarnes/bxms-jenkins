@@ -2,9 +2,8 @@ import org.jboss.bxms.jenkins.JobTemplate
 
 def shellScript = """
 set -x
-#kinit -k -t \${HOME}/bxms-release.keytab bxms-release/prod-ci@REDHAT.COM
 
-case "\${PRODUCT_NAME}" in 
+case "\${PRODUCT_NAME}" in
     RHDM )
         prod_staging_properties_name=\${product1_staging_properties_name}
         prod_staging_properties_url=\${product1_staging_properties_url}
@@ -15,6 +14,8 @@ case "\${PRODUCT_NAME}" in
         prod_staging_path=\${product1_staging_path}
         prod_staging_folder=\${product1_staging_folder}
         prod_candidate_properties_name=\${product1_candidate_properties_name}
+        prod_public_version_properties_name="RHDM_PUBLIC_VERSION"
+        prod_public_version_properties_value=\${product1_milestone_version}
         ;;
     RHBAS )
         prod_staging_properties_name=\${product2_staging_properties_name}
@@ -26,6 +27,8 @@ case "\${PRODUCT_NAME}" in
         prod_staging_path=\${product2_staging_path}
         prod_staging_folder=\${product2_staging_folder}
         prod_candidate_properties_name=\${product2_candidate_properties_name}
+        prod_public_version_properties_name="RHBA_PUBLIC_VERSION"
+        prod_public_version_properties_value=\${product2_milestone_version}
         ;;
 esac
 
@@ -40,16 +43,20 @@ function appendProp(){
 }
 
 if ! wget \${prod_staging_properties_url} -O \${prod_staging_properties_name} 2>/dev/null ;then
-    echo " \${prod_staging_properties_url} isn't available yet"  
+    echo " \${prod_staging_properties_url} isn't available yet"
 fi
 ip-tooling/maven-artifact-handler.py --version=\${prod_artifact_version} --override-version \${prod_shipped_file_deliver_version} --maven-repo \${prod_assembly_maven_repo_url} \
   --deliverable \${prod_deliverable_template} --output \${PRODUCT_NAME} \
   --release-url=\${rcm_staging_base}/\${prod_staging_path} --output-deliverable-list \${prod_staging_properties_name}
 cp ${IP_CONFIG_FILE} \${PRODUCT_NAME}
-  
+
 #append the other properties per qe's requirement
-appendProp "build.config" \${rcm_staging_base}/\${prod_staging_path}/\${IP_CONFIG_FILE} 
-appendProp "KIE_VERSION" \${kie_version} 
+appendProp "build.config" \${rcm_staging_base}/\${prod_staging_path}/\${IP_CONFIG_FILE}
+appendProp "KIE_VERSION" \${kie_version}
+appendProp \$prod_public_version_properties_name \${prod_public_version_properties_value}
+appendProp "APPFORMER_VERSION" \${appformer_version}
+appendProp "ERRAI_VERSION" \${errai_version}
+appendProp "MVEL_VERSION" \${mvel_version}
 appendProp "\${PRODUCT_NAME}""_VERSION" \${prod_artifact_version}
 
 sed -e "s=\${rcm_staging_base}/\${prod_staging_folder}=\${rcm_candidate_base}/\${PRODUCT_NAME}=g" \
