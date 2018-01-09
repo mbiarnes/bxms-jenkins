@@ -1,4 +1,5 @@
 import org.jboss.bxms.jenkins.JobTemplate
+import org.apache.commons.lang.RandomStringUtils
 
 def shellScript = """# Disable bash tracking mode, too much noise.
 set -x
@@ -20,15 +21,15 @@ if [ "\$CI_TYPE" = "brew-tag" ];then
         if [ "\$brew_status" != "running" ];then
                 exit 0
         fi
-        
-        brew_tag_name=`echo \$CI_MESSAGE| python -c "import sys, json; print json.load(sys.stdin)['tag']['name']"` 1>/dev/null 
+
+        brew_tag_name=`echo \$CI_MESSAGE| python -c "import sys, json; print json.load(sys.stdin)['tag']['name']"` 1>/dev/null
         if [ "\$brew_tag_name" != "\$brew_target" ];then
             exit 0
-        fi        
+        fi
         version=`echo \$CI_MESSAGE| python -c "import sys, json; print json.load(sys.stdin)['build']['version']"` 1>/dev/null
         release=`echo \$CI_MESSAGE| python -c "import sys, json; print json.load(sys.stdin)['build']['release']"` 1>/dev/null
         task_id=`echo \$CI_MESSAGE| python -c "import sys, json; print json.load(sys.stdin)['build']['task_id']"` 1>/dev/null
-        nvr=`echo \$CI_MESSAGE| python -c "import sys, json; print json.load(sys.stdin)['build']['nvr']"` 1>/dev/null        
+        nvr=`echo \$CI_MESSAGE| python -c "import sys, json; print json.load(sys.stdin)['build']['nvr']"` 1>/dev/null
     if [ "\$CI_NAME" = "org.kie.rhap-rhbas" ];then
         product2_assembly_maven_repo_url="http://download.eng.bos.redhat.com/brewroot/packages/\${name}/\${version}/\${release}/maven/"
         product2_assembly_brew_url="https://brewweb.engineering.redhat.com/brew/taskinfo?taskID=\${task_id}"
@@ -123,6 +124,10 @@ else
 fi
 
 """
+int randomStringLength = 32
+String charset = (('a'..'z') + ('A'..'Z') + ('0'..'9')).join()
+String randomString = RandomStringUtils.random(randomStringLength, charset.toCharArray())
+print randomString
 // Creates or updates a free style job.
 def jobDefinition = job("${RELEASE_CODE}-monitoring-cimessage") {
 
@@ -135,8 +140,11 @@ def jobDefinition = job("${RELEASE_CODE}-monitoring-cimessage") {
 
     triggers{
         ciBuildTrigger {
+            overrides {
+              topic("Consumer.rh-jenkins-ci-plugin.${randomString}.VirtualTopic.qe.ci.>")
+            }
             selector("label='rhap-ci' OR (CI_TYPE='brew-tag' AND ( CI_NAME='org.jboss.ip-bxms-maven-repo-root' OR CI_NAME='org.kie.rhap-rhdm' OR CI_NAME='org.kie.rhap-rhbas' OR CI_NAME='org.jboss.brms-bpmsuite.patching-patching-tools-parent')) OR (new='FAILED' AND method='chainmaven' AND target='jb-bxms-7.0-maven-candidate')")
-            providerName('CI Publish')
+            //providerName('CI Publish')
         }
     }
 }
