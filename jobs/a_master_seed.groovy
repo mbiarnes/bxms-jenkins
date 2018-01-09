@@ -41,7 +41,7 @@ def JenkinsStandaloneJobsBuilder(_release_code, _cfg_file, _job_type){
     ).build(this)
 }
 JenkinsStandaloneJobsBuilder("bxms", "bxms.cfg", "milestone" )
-JenkinsStandaloneJobsBuilder("bxms", "bxms-dev.cfg", "nightly" )
+JenkinsStandaloneJobsBuilder("bxms", "/jboss-prod/config/bxms-dev.cfg", "nightly" )
 
 new GeneralSeedJobBuilder(
         release_code: "utility"

@@ -28,7 +28,7 @@ else
     _local_repo=${maven_repo}
 fi
 
-MVN_DEP_REPO=nexus-release::default::file://\${DEP_REPO} LOCAL=1 CFG=./${_cfg} MVN_LOCAL_REPO=\${_local_repo} POMMANIPEXT=bxms-bom make -f Makefile.BRMS rhdm-installer rhbas-installer
+MVN_DEP_REPO=nexus-release::default::file://\${DEP_REPO} LOCAL=1 CFG=${_cfg} MVN_LOCAL_REPO=\${_local_repo} POMMANIPEXT=bxms-bom make -f Makefile.BRMS rhdm-installer rhbas-installer
 """
 
         dslFactory.folder(release_code + "-" + job_type + "-release-pipeline")
