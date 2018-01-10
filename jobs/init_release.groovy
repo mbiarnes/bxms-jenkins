@@ -60,7 +60,7 @@ echo "https://projects.engineering.redhat.com/browse/\$jira_id"
 appendProp "release_jira_id" \$jira_id
 
 if [ "${CI_PROPERTIES_FILE}" -eq "/jboss-prod/config/bxms-nightly-ci.properties" ]; then
-    sed -i s/SNAPSHOT/`date -u +'%Y%m%d'`/g integration-platform-config/bxms-dev.cfg
+    sed -i s/-SNAPSHOT/-`date -u +'%Y%m%d'`/g integration-platform-config/bxms-dev.cfg
     cp integration-platform-config/bxms-dev.cfg /jboss-prod/config
 fi
 """

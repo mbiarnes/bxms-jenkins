@@ -19,11 +19,12 @@ class JenkinsStandaloneJobBuilder {
     Map<String, String> maven_repo_map=["intpack-fuse63-bxms64":"/jboss-prod/m2/bxms-6.4-", "bxms64":"/jboss-prod/m2/bxms-6.4-", "bxms70la":"/jboss-prod/m2/bxms-7.0-", "bxms":"/jboss-prod/m2/bxms-7.0-", "bxms-test":"/jboss-prod/m2/bxms-7.0-"]
     Map<String, String> repo_group_map=["milestone":"MEAD", "nightly":"MEAD+JENKINS+JBOSS+CENTRAL"]
     Job build(DslFactory dslFactory) {
-        if (cfg_file.contains("/")) {
-            String[] cfg_file_paths = cfg_file.split("/");
-            cfg_file = cfg_file_paths[cfg_file_paths.length - 1];
+        String cfg_filename = cfg_file
+        if (cfg_file.contains("\\/")) {
+            String[] cfg_file_paths = cfg_file.split("/")
+            cfg_filename = cfg_file_paths[cfg_file_paths.length - 1]
         }
-        String urlString ="https://code.engineering.redhat.com/gerrit/gitweb?p=integration-platform-config.git;a=blob_plain;f=" + cfg_file
+        String urlString ="https://code.engineering.redhat.com/gerrit/gitweb?p=integration-platform-config.git;a=blob_plain;f=" + cfg_filename
         URL cfg_url = urlString.toURL()
         BufferedReader configReader = newReader(cfg_url.getHost(), cfg_url.getFile())
         Ini _ini_cfg = new Ini().read(configReader)
