@@ -11,7 +11,7 @@ def shellScript = """
 kinit -k -t \${HOME}/bxms-release.keytab bxms-release/prod-ci@REDHAT.COM
 ip-tooling/jira_helper.py -c ${IP_CONFIG_FILE} -a "Maven repository build started: Build url:\${BUILD_URL}" -f
 
-case "\${PRODUCT_NAME}" in 
+case "\${PRODUCT_NAME}" in
     RHDM )
         prod_staging_properties_url=\${product1_staging_properties_url}
         prod_staging_properties_name=\${product1_staging_properties_name}
@@ -162,5 +162,6 @@ def jobDefinition = job("${RELEASE_CODE}-maven-repository-build") {
     }
 }
 
+//Make sure that label is exclusive to avoid multiple job run into the same workspace
 JobTemplate.addCommonConfiguration(jobDefinition, CI_PROPERTIES_FILE, "release-pipeline && exclusive")
 JobTemplate.addIpToolingScmConfiguration(jobDefinition)
