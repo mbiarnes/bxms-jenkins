@@ -39,20 +39,21 @@ cutoff_date=common:cutoff_date
 product1_milestone_version={product1_version}{availability}.{product1_milestone}
 product2_milestone_version={product2_version}{availability}.{product2_milestone}
 #In CR release shipped_file deliver version shouldn't contain ER/CR in the filename
-product1_shipped_file_deliver_version={product1_version}{availability}
-product2_shipped_file_deliver_version={product2_version}{availability}
+product1_shipped_file_deliver_version={product1_milestone_version}
+product2_shipped_file_deliver_version={product2_milestone_version}
 release_type=default
 
 share_config_dir=/jboss-prod/config
 repository_builder_script=regen_bxms_repo_builder.sh
-rcm_staging_base=http://rhap-repo.usersys.redhat.com/m2/bxms-7.0-nightly/org/kie/rhap
+rcm_staging_base=http://rcm-guest.app.eng.bos.redhat.com/rcm-guest/staging
+rcm_candidate_base=http://download.devel.redhat.com/devel/candidates
 release_jira_base=https://projects.engineering.redhat.com/browse/
 release_jira_id=
 resolve_issue_list=
 product_cfg_sha=
 build_cfg=
 #Jenkins milestone maven repo folder
-jenkins_cache_url=http://rhap-repo.usersys.redhat.com
+jenkins_cache_url=http://rhap-repo.usersys.redhat.com/m2
 jenkins_cache_repo=bxms-{product1_version_major}.{product1_version_minor}-nightly
 #running/close, used as a token of activate some of the release pipeline
 brew_status=
@@ -89,8 +90,10 @@ product2_pvt_report_adoc_path={share_config_dir}/{release_code}-pvt-report-rhbas
 #staging, candidate folder
 product1_lowcase=rhdm
 product2_lowcase=rhbas
-product1_staging_path={product1_lowcase}/{product1_version}{availability}
-product2_staging_path={product2_lowcase}/{product2_version}{availability}
+product1_staging_path={product1_lowcase}/{product1_name}-{product1_milestone_version}
+product2_staging_path={product2_lowcase}/{product2_name}-{product2_milestone_version}
+product1_nightly_path=org/kie/rhap/{product1_lowcase}
+product2_nightly_path=org/kie/rhap/{product2_lowcase}
 
 #qe properties
 product1_staging_properties_name={product1_lowcase}-deliverable-list-staging.properties
