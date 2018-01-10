@@ -1,0 +1,1 @@
+../../../jobs/openshift_test.groovy
