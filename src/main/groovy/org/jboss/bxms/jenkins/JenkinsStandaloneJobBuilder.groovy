@@ -1,23 +1,12 @@
 package org.jboss.bxms.jenkins
 
+import ca.szc.configparser.Ini
 import javaposse.jobdsl.dsl.DslFactory
 import javaposse.jobdsl.dsl.Job
-import ca.szc.configparser.Ini
 
-import java.net.InetSocketAddress
-import java.net.Socket
-import java.security.KeyManagementException
-import java.security.NoSuchAlgorithmException
+import javax.net.ssl.*
 import java.security.SecureRandom
 import java.security.cert.X509Certificate
-import javax.net.ssl.SSLContext
-import javax.net.ssl.SSLSocket
-import javax.net.ssl.SSLSocketFactory
-import javax.net.ssl.TrustManager
-import javax.net.ssl.X509TrustManager
-import java.io.StringReader
-
-
 
 /**
  *  Create BxMS release/build pipeline stream with Parameter
@@ -30,6 +19,10 @@ class JenkinsStandaloneJobBuilder {
     Map<String, String> maven_repo_map=["intpack-fuse63-bxms64":"/jboss-prod/m2/bxms-6.4-", "bxms64":"/jboss-prod/m2/bxms-6.4-", "bxms70la":"/jboss-prod/m2/bxms-7.0-", "bxms":"/jboss-prod/m2/bxms-7.0-", "bxms-test":"/jboss-prod/m2/bxms-7.0-"]
     Map<String, String> repo_group_map=["milestone":"MEAD", "nightly":"MEAD+JENKINS+JBOSS+CENTRAL"]
     Job build(DslFactory dslFactory) {
+        if (cfg_file.contains("/")) {
+            String[] cfg_file_paths = cfg_file.split("/");
+            cfg_file = cfg_file_paths[cfg_file_paths.length - 1];
+        }
         String urlString ="https://code.engineering.redhat.com/gerrit/gitweb?p=integration-platform-config.git;a=blob_plain;f=" + cfg_file
         URL cfg_url = urlString.toURL()
         BufferedReader configReader = newReader(cfg_url.getHost(), cfg_url.getFile())
