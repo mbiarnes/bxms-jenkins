@@ -45,6 +45,7 @@ class JenkinsStandaloneJobBuilder {
 unset WORKSPACE
 if [ "${cfg_file}" != "${cfg_filename}" ]; then
     cp ${cfg_file} .
+    sed -i "s#cfg=bxms-dev\\.cfg#cfg=bxms-dev.cfg,cfg.url.template=file://`pwd`/{0}#g" ${cfg_filename}
 fi
 MVN_DEP_REPO=nexus-release::default::file://${maven_repo} REPO_GROUP=${repo_group} LOCAL=1 CFG=${_cfg} MVN_LOCAL_REPO=${maven_repo} POMMANIPEXT=bxms-bom make DEBUG=\$DEBUG ${section_name}
 """
