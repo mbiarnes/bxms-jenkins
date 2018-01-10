@@ -21,7 +21,7 @@ class JenkinsStandaloneJobBuilder {
     Job build(DslFactory dslFactory) {
         String cfg_filename = cfg_file
         if (cfg_file.contains("/")) {
-            String[] cfg_file_paths = cfg_file.split("/")
+            String[] cfg_file_paths = cfg_file.tokenize("/")
             cfg_filename = cfg_file_paths[cfg_file_paths.length - 1]
         }
         String urlString ="https://code.engineering.redhat.com/gerrit/gitweb?p=integration-platform-config.git;a=blob_plain;f=" + cfg_filename
