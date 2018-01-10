@@ -27,6 +27,9 @@ eap_version=common:base
 upstream_handover_url=common:upstream_handover_url
 ip_bom_version=jboss-integration-platform-bom:version
 kie_version=drools:version
+appformer_version=appformer:version
+errai_version=errai:version
+mvel_version=mvel-2.4.0:version
 brew_tag=common:tag
 brew_target=common:target
 brew_importtag=common:importtag
@@ -108,8 +111,10 @@ product2_incr_maven_repo_name=rhbas-{product1_milestone_version}-incremental-mav
 maven_repo_report_url={rcm_staging_base}/{product2_staging_path}/maven-repository-report/
 
 #Misc
+product1_sources_name=rhdm-{product1_milestone_version}-sources.zip
 product1_release_notes_path=rhdm-{product1_version}{availability}-release-notes.html
 product1_release_notes_url={rcm_staging_base}/{product1_staging_path}/rhdm-{product1_version}{availability}-release-notes.html
+product2_sources_name=rhbas-{product2_milestone_version}-sources.zip
 product2_release_notes_path=rhbas-{product1_version}{availability}-release-notes.html
 product2_release_notes_url={rcm_staging_base}/{product2_staging_path}/rhbas-{product1_version}{availability}-release-notes.html
 
