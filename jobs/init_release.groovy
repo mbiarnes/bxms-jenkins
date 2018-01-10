@@ -59,8 +59,10 @@ jira_id=\${jira_id/Selected Result:/}
 echo "https://projects.engineering.redhat.com/browse/\$jira_id"
 appendProp "release_jira_id" \$jira_id
 
-if [ "${CI_PROPERTIES_FILE}" == "/jboss-prod/config/bxms-nightly-ci.properties" ]; then
-    sed -i "s/-SNAPSHOT/-`date -u +'%Y%m%d'`/g" bxms-dev.cfg
+if [ "\${release_code}" == "bxms-nightly" ]; then
+    build_date=\$(date -u +'%Y%m%d')
+    appendProp "build_date" \${build_date}
+    sed -i "s/-SNAPSHOT/-\${build_date}/g" bxms-dev.cfg
     cp bxms-dev.cfg /jboss-prod/config
 fi
 """

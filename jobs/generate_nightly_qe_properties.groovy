@@ -1,52 +1,43 @@
 import org.jboss.bxms.jenkins.JobTemplate
 
 def shellScript = """
+
 set -x
 #kinit -k -t \${HOME}/bxms-release.keytab bxms-release/prod-ci@REDHAT.COM
-
-case "\${PRODUCT_NAME}" in 
-    RHDM )
-        prod_staging_properties_name=\${product1_staging_properties_name}
-        prod_staging_properties_url=\${product1_staging_properties_url}
-        prod_artifact_version=\${product1_artifact_version}
-        prod_shipped_file_deliver_version=\${product1_shipped_file_deliver_version}
-        prod_assembly_maven_repo_url=\${product1_assembly_maven_repo_url}
-        prod_deliverable_template=\${product1_deliverable_template}
-        prod_staging_path=\${product1_staging_path}
-        prod_staging_folder=\${product1_staging_folder}
-        ;;
-    RHBAS )
-        prod_staging_properties_name=\${product2_staging_properties_name}
-        prod_staging_properties_url=\${product2_staging_properties_url}
-        prod_artifact_version=\${product2_artifact_version}
-        prod_shipped_file_deliver_version=\${product2_shipped_file_deliver_version}
-        prod_assembly_maven_repo_url=\${product2_assembly_maven_repo_url}
-        prod_deliverable_template=\${product2_deliverable_template}
-        prod_staging_path=\${product2_staging_path}
-        prod_staging_folder=\${product2_staging_folder}
-        ;;
-esac
 
 function appendProp(){
     if [ -z "\$1" ] || [ -z "\$2" ];then
         echo "Param  is not allow empty"
         exit 1
     fi
-    sed -i "/^\$1/d" \${prod_staging_properties_name} && echo "\$1=\$2" >> \${prod_staging_properties_name}
+    sed -i "/^\$1/d" \${prod_properties_name} && echo "\$1=\$2" >> \${prod_properties_name}
 }
+prod_properties_name=\${PRODUCT_NAME,,}-\${build_date}.properties
+product_nightly_path=\${jenkins_cache_url}/\${jenkins_cache_repo}/org/kie/rhap/\${PRODUCT_NAME,,}
 
-if ! wget \${prod_staging_properties_url} -O \${prod_staging_properties_name} 2>/dev/null ;then
-    echo " \${prod_staging_properties_url} isn't available yet"  
+if [ ! -f \$prod_properties_name ]; then
+    touch \$prod_properties_name
 fi
-ip-tooling/maven-artifact-handler.py --version=\${prod_artifact_version} --maven-repo \${jenkins_cache_url}/\${jenkins_cache_repo} \
-  --deliverable \${prod_deliverable_template} \
-  --release-url=\${rcm_staging_base}/\${prod_staging_path} --output-deliverable-list \${prod_staging_properties_name}
-cp ${IP_CONFIG_FILE} \${PRODUCT_NAME}
-  
-#append the other properties per qe's requirement
-appendProp "KIE_VERSION" \${kie_version} 
-appendProp "\${PRODUCT_NAME}""_VERSION" \${prod_artifact_version}
 
+case "\${PRODUCT_NAME}" in
+    RHBAS )
+        product_nightly_path=\${jenkins_cache_url}/\${jenkins_cache_repo}/org/kie/rhap/\${PRODUCT_NAME,,}
+        product_version=\${product1_version}
+        appendProp "\${PRODUCT_NAME,,}.business-central.standalone.latest.url"    "\${product_nightly_path}/\${product_version}.redhat-\${build_date}/\${product_version}.redhat-\${build_date}-business-central-standalone.zip"
+        appendProp "\${PRODUCT_NAME,,}.business-central-eap7.latest.url"          "\${product_nightly_path}/\${product_version}.redhat-\${build_date}/\${product_version}.redhat-\${build_date}-business-central-eap7.zip"
+    ;;
+    RHDM )
+        product_version=\${product2_version}
+        appendProp "\${PRODUCT_NAME,,}.decision-central.standalone.latest.url"    "\${product_nightly_path}/\${product_version}.redhat-\${build_date}/\${product_version}.redhat-\${build_date}-decision-central-standalone.zip"
+        appendProp "\${PRODUCT_NAME,,}.decision-central-eap7.latest.url"          "\${product_nightly_path}/\${product_version}.redhat-\${build_date}/\${product_version}.redhat-\${build_date}-decision-central-eap7.zip"
+    ;;
+esac
+appendProp "\${PRODUCT_NAME,,}.kie-server.ee7.latest.url" "\${product_nightly_path}/\${product_version}.redhat-\${build_date}/\${product_version}.redhat-\${build_date}-kie-server-ee7.zip"
+appendProp "\${PRODUCT_NAME,,}.addons.latest.url"         "\${product_nightly_path}/\${product_version}.redhat-\${build_date}/\${product_version}.redhat-\${build_date}-add-ons.zip"
+appendProp "KIE_VERSION"                                    \${kie_version}
+appendProp "\${PRODUCT_NAME}_VERSION"                     \${product_version}
+#appendProp "\${PRODUCT_NAME,,}.maven.repo.latest.url"     "\${product_nightly_path}/\${product_version}.redhat-\${build_date}.pom"
+#appendProp "\${PRODUCT_NAME,,}.sources.repo.latest.url"   "\${product_nightly_path}/\${product_version}.redhat-\${build_date}-scm-source.zip"
 """
 
 // Creates or updates a free style job.
