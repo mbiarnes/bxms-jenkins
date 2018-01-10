@@ -20,7 +20,7 @@ class JenkinsStandaloneJobBuilder {
     Map<String, String> repo_group_map=["milestone":"MEAD", "nightly":"MEAD+JENKINS+JBOSS+CENTRAL"]
     Job build(DslFactory dslFactory) {
         String cfg_filename = cfg_file
-        if (cfg_file.contains("\\/")) {
+        if (cfg_file.contains("/")) {
             String[] cfg_file_paths = cfg_file.split("/")
             cfg_filename = cfg_file_paths[cfg_file_paths.length - 1]
         }
