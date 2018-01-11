@@ -287,13 +287,14 @@ class JenkinsAllJobBuilderPipeline {
                       }
                       if((flag==1 && runStageAfter.matches("true"))|| yourchoose.matches(stageNames.get(insidecount).get(insidej))){
                         try{
-                          build job : "y-" + release_code + "-" + stageNames.get(insidecount).get(insidej)
-                        }catch(err){
-                          if(currentBuild.result == 'UNSTABLE'){
-                            currentBuild.result = 'SUCCESS'
+                          def jobresult=build(job : "y-" + release_code + "-" + stageNames.get(insidecount).get(insidej), propagate: false).getResult().trim()
+                          if(jobresult == 'UNSTABLE'|| jobresult == 'SUCCESS'){
+                              currentBuild.result = 'SUCCESS'
                           }else{
-                            error("Job ${stageNames.get(insidecount).get(insidej)} Build FAILED!")
+                              currentBuild.result = 'FAILURE'
                           }
+                        }catch(err){
+                            error("Job ${stageNames.get(insidecount).get(insidej)} Trigger Build Job FAILED!")
                         }
                       }
                 }
