@@ -1,1 +1,0 @@
-../../../jobs/generate_nightly_qe_properties.groovy
