@@ -1,0 +1,1 @@
+../../../jobs/generate_qe_properties.groovy

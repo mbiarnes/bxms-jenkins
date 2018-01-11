@@ -12,7 +12,6 @@ case "\${PRODUCT_NAME}" in
         prod_assembly_maven_repo_url=\${product1_assembly_maven_repo_url}
         prod_deliverable_template=\${product1_deliverable_template}
         prod_staging_path=\${product1_staging_path}
-        prod_staging_folder=\${product1_staging_folder}
         prod_candidate_properties_name=\${product1_candidate_properties_name}
         prod_public_version_properties_name="RHDM_PUBLIC_VERSION"
         prod_public_version_properties_value=\${product1_milestone_version}
@@ -25,7 +24,6 @@ case "\${PRODUCT_NAME}" in
         prod_assembly_maven_repo_url=\${product2_assembly_maven_repo_url}
         prod_deliverable_template=\${product2_deliverable_template}
         prod_staging_path=\${product2_staging_path}
-        prod_staging_folder=\${product2_staging_folder}
         prod_candidate_properties_name=\${product2_candidate_properties_name}
         prod_public_version_properties_name="RHBA_PUBLIC_VERSION"
         prod_public_version_properties_value=\${product2_milestone_version}
@@ -34,34 +32,13 @@ esac
 
 echo "prod_staging_path=\$prod_staging_path" > /tmp/prod_staging_path
 
-function appendProp(){
-    if [ -z "\$1" ] || [ -z "\$2" ];then
-        echo "Param  is not allow empty"
-        exit 1
-    fi
-    sed -i "/^\$1/d" \${prod_staging_properties_name} && echo "\$1=\$2" >> \${prod_staging_properties_name}
-}
-
 if ! wget \${prod_staging_properties_url} -O \${prod_staging_properties_name} 2>/dev/null ;then
     echo " \${prod_staging_properties_url} isn't available yet"
 fi
 ip-tooling/maven-artifact-handler.py --version=\${prod_artifact_version} --override-version \${prod_shipped_file_deliver_version} --maven-repo \${prod_assembly_maven_repo_url} \
   --deliverable \${prod_deliverable_template} --output \${PRODUCT_NAME} \
-  --release-url=\${rcm_staging_base}/\${prod_staging_path} --output-deliverable-list \${prod_staging_properties_name}
+  --release-url=\${rcm_staging_base}/\${prod_staging_path}
 cp ${IP_CONFIG_FILE} \${PRODUCT_NAME}
-
-#append the other properties per qe's requirement
-appendProp "build.config" \${rcm_staging_base}/\${prod_staging_path}/\${IP_CONFIG_FILE}
-appendProp "KIE_VERSION" \${kie_version}
-appendProp \$prod_public_version_properties_name \${prod_public_version_properties_value}
-appendProp "APPFORMER_VERSION" \${appformer_version}
-appendProp "ERRAI_VERSION" \${errai_version}
-appendProp "MVEL_VERSION" \${mvel_version}
-appendProp "\${PRODUCT_NAME}""_VERSION" \${prod_artifact_version}
-
-sed -e "s=\${rcm_staging_base}/\${prod_staging_folder}=\${rcm_candidate_base}/\${PRODUCT_NAME}=g" \
-    \${prod_staging_properties_name} > \${prod_candidate_properties_name}
-
 """
 
 // Creates or updates a free style job.
@@ -84,7 +61,7 @@ def jobDefinition = job("${RELEASE_CODE}-stage-brew-build") {
 
         // Runs a shell script (defaults to sh, but this is configurable) for building the project.
         shell(shellScript)
-        // Inject environment variables for $prod_staging_path
+        // Inject environment variables for staging paths
         environmentVariables {
             propertiesFile("/tmp/prod_staging_path")
         }
@@ -126,16 +103,6 @@ def jobDefinition = job("${RELEASE_CODE}-stage-brew-build") {
                         // Sets the files to upload to a server.
                         sourceFiles('${PRODUCT_NAME}/*.*')
                         removePrefix('${PRODUCT_NAME}/')
-
-                        // Sets the destination folder.
-                        remoteDirectory('${prod_staging_path}')
-                    }
-
-                    // Adds a transfer set.
-                    transferSet {
-
-                        // Sets the files to upload to a server.
-                        sourceFiles('${IP_CONFIG_FILE}, `echo ${PRODUCT_NAME,,}`-deliverable-list*.properties')
 
                         // Sets the destination folder.
                         remoteDirectory('${prod_staging_path}')
