@@ -23,30 +23,30 @@ if [ -f ${CI_PROPERTIES_FILE} ];then
     new_milestone="`grep 'product1_milestone=' ${IP_CONFIG_FILE}`"
     old_version="`grep 'product1_version=' ${CI_PROPERTIES_FILE}`"
     old_milestone="`grep 'product1_milestone=' ${CI_PROPERTIES_FILE}`"
-    
+
     export `grep "product_cfg_sha" ${CI_PROPERTIES_FILE}`
-    
+
     echo "local:\$product_cfg_sha, remote: \$remote_product_cfg_sha"
     if [ "\${new_version}\${new_milestone}" != "\${old_version}\${old_milestone}" ] || \
-       [ "\${product_cfg_sha}" != "\${remote_product_cfg_sha}" ]       
+       [ "\${product_cfg_sha}" != "\${remote_product_cfg_sha}" ]
     then
         rm -vf ${CI_PROPERTIES_FILE}
     fi
 fi
-if [ ! -f ${CI_PROPERTIES_FILE} ];then   
+if [ ! -f ${CI_PROPERTIES_FILE} ];then
     #Loading env from cfg file
     python ip-tooling/jenkins_ci_property_loader.py -m bxms-jenkins/streams/${RELEASE_CODE}/config/properties-mapping.template -i ${IP_CONFIG_FILE} -o ${CI_PROPERTIES_FILE}
-    appendProp "product_cfg_sha" \$remote_product_cfg_sha    
-    appendProp "ci_properties_file" ${CI_PROPERTIES_FILE}    
-    appendProp "build_cfg" ${IP_CONFIG_FILE}    
+    appendProp "product_cfg_sha" \$remote_product_cfg_sha
+    appendProp "ci_properties_file" ${CI_PROPERTIES_FILE}
+    appendProp "build_cfg" ${IP_CONFIG_FILE}
 fi
 source ${CI_PROPERTIES_FILE}
-product1_shipped_file_deliver_version=\${product1_milestone_version} 
+product1_shipped_file_deliver_version=\${product1_milestone_version}
 product2_shipped_file_deliver_version=\${product2_milestone_version}
 #Uploading to rcm staging folder
-if [ \${milestone:0:2} = "CR" ];then
+if [ \${milestone:0:2} == "CR" ];then
     product1_shipped_file_deliver_version=\${product1_version}\${availability}
-    product2_shipped_file_deliver_version=\${product2_version}\${availability}    
+    product2_shipped_file_deliver_version=\${product2_version}\${availability}
 fi
 appendProp "product1_shipped_file_deliver_version" \$product1_shipped_file_deliver_version
 appendProp "product2_shipped_file_deliver_version" \$product2_shipped_file_deliver_version
@@ -59,11 +59,9 @@ jira_id=\${jira_id/Selected Result:/}
 echo "https://projects.engineering.redhat.com/browse/\$jira_id"
 appendProp "release_jira_id" \$jira_id
 
-if [ "\${release_code}" == "bxms-nightly" ]; then
-    build_date=\$(date -u +'%Y%m%d')
-    appendProp "build_date" \${build_date}
-    sed -i "s/-SNAPSHOT/-\${build_date}/g" bxms-dev.cfg
-    cp bxms-dev.cfg /jboss-prod/config
+if [ "${CI_PROPERTIES_FILE}" == "/jboss-prod/config/bxms-nightly-ci.properties" ]; then
+    sed -i s/-SNAPSHOT/-`date -u +'%Y%m%d'`/g integration-platform-config/bxms-dev.cfg
+    cp integration-platform-config/bxms-dev.cfg /jboss-prod/config
 fi
 """
 
