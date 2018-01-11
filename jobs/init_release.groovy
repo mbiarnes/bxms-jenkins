@@ -44,7 +44,7 @@ source ${CI_PROPERTIES_FILE}
 product1_shipped_file_deliver_version=\${product1_milestone_version}
 product2_shipped_file_deliver_version=\${product2_milestone_version}
 #Uploading to rcm staging folder
-if [ \${milestone:0:2} == "CR" ];then
+if [ "\${milestone:0:2}" == "CR" ];then
     product1_shipped_file_deliver_version=\${product1_version}\${availability}
     product2_shipped_file_deliver_version=\${product2_version}\${availability}
 fi
