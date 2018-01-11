@@ -9,8 +9,9 @@ import javaposse.jobdsl.dsl.Job
 class GeneralSeedJobBuilder {
 
     String release_code
-
+    String thisJobName
     Job build(DslFactory dslFactory) {
+    if(!(release_code.matches("codereview") && ! thisJobName.matches("a-master-seed"))){
         dslFactory.folder(release_code)
         dslFactory.job(release_code +"/z-" + release_code+ "-seed") {
             it.description "This job is a seed job for generating " + release_code + "release pipeline. To change the  parameter of the release pipeline, Please go to streams/release_code/env.properties"
@@ -50,5 +51,6 @@ class GeneralSeedJobBuilder {
                 scm 'H/5 * * * *'
             }
         }
+    }
     }
 }

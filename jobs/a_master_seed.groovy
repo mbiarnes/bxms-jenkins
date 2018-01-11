@@ -47,7 +47,9 @@ JenkinsStandaloneJobsBuilder("bxms", "/jboss-prod/config/bxms-dev.cfg", "nightly
 new GeneralSeedJobBuilder(
         release_code: "utility"
 ).build(this)
-
+def jobname="${JOB_NAME}"
+println "-------jobname:${JOB_NAME}-------"
 new GeneralSeedJobBuilder(
-        release_code: "codereview"
+        release_code: "codereview",
+        thisJobName: jobname,
 ).build(this)
