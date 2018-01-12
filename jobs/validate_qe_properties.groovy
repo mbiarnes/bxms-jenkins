@@ -45,9 +45,9 @@ def validateProperties(propfile, keyword, product_name):
             isvalidurl(dic['rhdm.addons.latest.url'],keyword)
             isvalidurl(dic['rhdm.kie-server.ee7.latest.url'],keyword)
             isvalidurl(dic['rhdm.maven.repo.latest.url'],keyword)
-            isvalidurl(dic['build.config'],"bxms")
+            isvalidurl(dic['build.config'],'bxms')
             assertEqual('\$kie_version', dic['KIE_VERSION'])
-            assertEqual('\$product1_artifact_version', dic['RHDM_VERSION'])
+            assertEqual('\$product1_milestone_version', dic['RHDM_VERSION'])
             assertContain(dic['rhdm.decision-central.standalone.latest.url'], '\$product1_milestone_version')
             assertContain(dic['rhdm.addons.latest.url'], '\$product1_milestone_version')
             assertContain(dic['rhdm.kie-server.ee7.latest.url'], '\$product1_milestone_version')
@@ -56,7 +56,7 @@ def validateProperties(propfile, keyword, product_name):
             isvalidurl(dic['rhbas.addons.latest.url'],keyword)
             isvalidurl(dic['rhbas.kie-server.ee7.latest.url'],keyword)
             isvalidurl(dic['rhbas.maven.repo.latest.url'],keyword)
-            isvalidurl(dic['build.config'],keyword)
+            isvalidurl(dic['build.config'],'bxms')
             assertEqual('\$kie_version', dic['KIE_VERSION'])
             assertEqual('\$product2_artifact_version', dic['RHBAS_VERSION'])
             assertContain(dic['rhbas.business-central.standalone.latest.url'], '\$product2_milestone_version')
@@ -72,7 +72,7 @@ def validateProperties(propfile, keyword, product_name):
         return 1
 
 validateProperties('\$product1_staging_properties_name', 'rcm-guest','rhdm')
-validateProperties('\${product1_candidate_properties_name}', 'candidates','rhdm')
+#validateProperties('\${product1_candidate_properties_name}', 'candidates','rhdm')
 "
 """
 // Creates or updates a free style job.

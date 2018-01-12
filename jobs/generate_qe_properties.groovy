@@ -26,7 +26,8 @@ if [ "\${release_code}" == "bxms-nightly" ]; then
 
     product_url_prefix="\${jenkins_cache_url}/\${jenkins_cache_repo}/org/kie/rhap/\${PRODUCT_NAME,,}/\${product_version}.redhat-\${build_date}"
     product_filename_common_prefix="\${product_version}.redhat-\${build_date}"
-    echo "properties_staging_path=\${PRODUCT_NAME,,}/\${PRODUCT_NAME}-\${product_version}.NIGHTLY" > /tmp/prod_staging_path
+    echo "properties_staging_path=\${PRODUCT_NAME,,}/\${PRODUCT_NAME}-\${
+    }.NIGHTLY" > /tmp/prod_staging_path
     echo "prod_properties_name=\${prod_properties_name}" >> /tmp/prod_staging_path
 else
     case "\${PRODUCT_NAME}" in
@@ -61,7 +62,7 @@ else
 
     echo "properties_staging_path=\${prod_staging_path}" > /tmp/prod_staging_path
     echo "prod_properties_name=\${prod_properties_name}" >> /tmp/prod_staging_path
-    echo "prod_candidate_propeties_name=\${prod_candidate_propeties_name}" >> /tmp/prod_staging_path
+    echo "prod_candidate_properties_name=\${prod_candidate_properties_name}" >> /tmp/prod_staging_path
 fi
 
 if [ ! -f \$prod_properties_name ]; then

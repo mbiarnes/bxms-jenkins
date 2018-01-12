@@ -16,7 +16,7 @@ echo "prod_staging_properties_url=\${prod_staging_properties_url}" > /tmp/prod_s
 ip-tooling/jira_helper.py -c ${IP_CONFIG_FILE} -a "QE smoketest is triggered by CI message. Build URL:\${qe_smoketest_job_url}" -f
 """
 // Creates or updates a free style job.
-def jobDefinition = job("${RELEASE_CODE}-trigger-qe-smoke-test-rhdm") {
+def jobDefinition = job("${RELEASE_CODE}-trigger-qe-smoke-test") {
 
     // Sets a description for the job.
     description("This job is responsible for triggering QE smoke test.")
