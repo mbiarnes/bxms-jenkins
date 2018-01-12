@@ -10,7 +10,7 @@ echo -e \"Host code.engineering.redhat.com \\n\\
         User jb-ip-tooling-jenkins\" > ~/.ssh/config
 chmod 600 ~/.ssh/config
 MVN_LOCAL_REPO=/jboss-prod/m2/bxms-dev-repo RELEASE_TAG=\${product_release_tag} LOCAL=1 CFG=./${IP_CONFIG_FILE} \
-    REPO_GROUP=MEAD make POMMANIPEXT=bxms-bom -f \${makefile} \${product1_lowcase} \${product2_lowcase} 2>&1
+    REPO_GROUP=MEAD make POMMANIPEXT=bxms-bom -f \${makefile} \${product1_lowcase} 2>&1
 
 #need to verify if all tags are created succesfully
 EXIST_MISSING_TAG=0

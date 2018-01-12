@@ -134,7 +134,7 @@ def jobDefinition = job("${RELEASE_CODE}-generate-qe-properties") {
                 // Adds a transfer set.
                 transferSet {
                     // Sets the files to upload to a server.
-                    sourceFiles('${IP_CONFIG_FILE}, ${prod_properties_name}')
+                    sourceFiles('${IP_CONFIG_FILE}, ${prod_properties_name}, ${prod_candidate_properties_name}')
 
                     // Sets the destination folder.
                     remoteDirectory('${properties_staging_path}')
