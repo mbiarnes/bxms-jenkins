@@ -76,7 +76,7 @@ validateProperties('\$product1_staging_properties_name', 'rcm-guest','rhdm')
 "
 """
 // Creates or updates a free style job.
-def jobDefinition = job("${RELEASE_CODE}-validate-deliverable-properties") {
+def jobDefinition = job("${RELEASE_CODE}-validate-qe-properties") {
 
     // Sets a description for the job.
     description("This job is responsible for uploading release to candidate area.")
