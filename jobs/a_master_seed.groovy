@@ -3,7 +3,7 @@ import org.jboss.bxms.jenkins.*
 //Establish the parametize release pipeline
 //Release code is identical to the folder name in streams/
 
-def ReleasePipelineBuilder(_release_code, _cfg_file, _properties_file) {
+def ReleasePipelineBuilder(_release_code, _cfg_file, _properties_file, cron_val = null) {
     new ReleasePipelineSeedJobBuilder(
             release_code: _release_code,
             cfg_file:_cfg_file,
@@ -14,11 +14,12 @@ def ReleasePipelineBuilder(_release_code, _cfg_file, _properties_file) {
             release_code: _release_code,
             cfg_file:_cfg_file,
             ci_properties_file:_properties_file,
+            cron_val: cron_val
     ).build(this)
 }
 ReleasePipelineBuilder("bxms", "bxms.cfg", "/jboss-prod/config/bxms-ci.properties" )
 ReleasePipelineBuilder("bxms-test", "bxms-test.cfg", "/jboss-prod/config/bxms-test-ci.properties" )
-ReleasePipelineBuilder("bxms-nightly", "bxms-dev.cfg", "/jboss-prod/config/bxms-nightly-ci.properties")
+ReleasePipelineBuilder("bxms-nightly", "bxms-dev.cfg", "/jboss-prod/config/bxms-nightly-ci.properties", "H 7 * * *")
 
 //Release code is identical to the folder name in streams/
 def JenkinsStandaloneJobsBuilder(_release_code, _cfg_file, _job_type){

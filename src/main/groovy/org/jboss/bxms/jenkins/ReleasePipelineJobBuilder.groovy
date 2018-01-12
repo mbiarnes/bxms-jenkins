@@ -11,6 +11,7 @@ class ReleasePipelineJobBuilder {
     String release_code
     String ci_properties_file
     String cfg_file
+    String cron_val = null
     String pipelineSeqFile="release-pipeline.ini"
 
     Job build(DslFactory dslFactory) {
@@ -18,7 +19,6 @@ class ReleasePipelineJobBuilder {
       // String stageSeq=getStageSeq(file_content)
       String product_job_prefix=release_code+"-"
       String pipelineScript=getPipelineScript(file_content,product_job_prefix)
-
 
         dslFactory.folder(release_code + "-release-pipeline")
         dslFactory.pipelineJob(release_code + "-release-pipeline/a-" + release_code + "-release-pipeline") {
@@ -72,6 +72,11 @@ class ReleasePipelineJobBuilder {
                 // into Jenkins->Configuration->In-process Script Approval ->Signatures already approved box
                 sandbox()
               }
+            }
+            if (cron_val != null) {
+                triggers {
+                    cron("$cron_val")
+                }
             }
         }
 
