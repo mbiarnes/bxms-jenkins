@@ -10,8 +10,6 @@ unset WORKSPACE
 
 # Make sources
 make CFG=${IP_CONFIG_FILE} SOURCES=1 POMMANIPEXT=bxms-bom SRCDIR=src -f Makefile.BRMS \${PRODUCT_NAME,,}
-make CFG=common.cfg SOURCES=1 SRCDIR=src -f Makefile.COMMON mvel-2.4.0
-
 
 ## Prepare sources for delivery ##
 cd workspace
@@ -24,23 +22,26 @@ case "\${PRODUCT_NAME}" in
     RHDM )
         prod_artifact_version=\${product1_artifact_version}
         prod_staging_path=\${product1_staging_path}
+        prod_sources_name=\${product1_sources_name}
         rm -rf src/jbpm-wb-\${kie_version}
+
         ;;
     RHBAS )
         prod_artifact_version=\${product2_artifact_version}
+        prod_sources_name=\${product2_sources_name}
         prod_staging_path=\${product2_staging_path}
         ;;
 esac
 
-rm -rf src/bxms-license-builder-\${prod_artifact_version} \
+rm -rf src/bxms-license-\${prod_artifact_version} \
        src/bxms-maven-repo-root-\${prod_artifact_version} \
-       src/rhap-common-\${prod_artifact_version} \
-       bxms
+       src/errai-parent-\${errai_version} \
+       src/bxms
 
 rm -rf src/kie-parent-\${kie_version}/RELEASE-README.md
 
 # Create sources archive
-zip -r \${PRODUCT_NAME}-\${prod_shipped_file_deliver_version}-sources.zip src/
+zip -r -5 --quiet \${prod_sources_name}-\${prod_shipped_file_deliver_version}-sources.zip src/
 """
 
 // Creates or updates a free style job.
@@ -69,7 +70,7 @@ def jobDefinition = job("${RELEASE_CODE}-generate-sources") {
     // Adds post-build actions to the job.
     publishers {
         //Archives artifacts with each build.
-        archiveArtifacts('workspace/sources.zip')
+        archiveArtifacts('workspace/\${prod_sources_name}.zip')
 
         // Send artifacts to an SSH server (using SFTP) and/or execute commands over SSH.
         publishOverSsh {
@@ -84,7 +85,7 @@ def jobDefinition = job("${RELEASE_CODE}-generate-sources") {
                 transferSet {
 
                     // Sets the files to upload to a server.
-                    sourceFiles('workspace/\${PRODUCT_NAME}-\${prod_shipped_file_deliver_version}-sources.zip')
+                    sourceFiles('workspace/\${prod_sources_name}')
 
                     // Sets the first part of the file path that should not be created on the remote server.
                     removePrefix('workspace/')
