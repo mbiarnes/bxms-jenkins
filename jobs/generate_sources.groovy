@@ -48,7 +48,11 @@ def jobDefinition = job("${RELEASE_CODE}-generate-sources") {
 
     // Sets a description for the job.
     description("This job is responsible for generating product sources.")
-
+    parameters {
+        // Defines a simple text parameter, where users can enter a string value.
+        stringParam(parameterName = "PRODUCT_NAME", defaultValue = "RHDM",
+                description = "Specify product name to switch between configurations.")
+    }
     // Adds pre/post actions to the job.
     wrappers {
 
