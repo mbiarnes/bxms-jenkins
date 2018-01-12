@@ -87,11 +87,12 @@ appendProp "APPFORMER_VERSION"          \${appformer_version}
 appendProp "ERRAI_VERSION"              \${errai_version}
 appendProp "MVEL_VERSION"               \${mvel_version}
 
+#Additional properties for brew release
 if [ "\${release_code}" != "bxms-nightly" ]; then
     #append the other properties per qe's requirement
     appendProp "build.config" \${product_url_prefix}/${IP_CONFIG_FILE}
     appendProp \$prod_public_version_properties_name \${prod_public_version_properties_value}
-    appendProp "\${PRODUCT_NAME,,}.maven.repo.latest.url"     "\$product_url_prefix/jboss-\${product_filename_common_prefix}-maven-repository.zip"
+    appendProp "\${PRODUCT_NAME,,}.maven.repo.latest.url"     "\$product_url_prefix/\${product_filename_common_prefix}-maven-repository.zip"
     appendProp "\${PRODUCT_NAME,,}.sources.repo.latest.url"   "\$product_url_prefix/\${prod_sources_name}.zip"
 
     sed -e "s=\${rcm_staging_base}/\${PRODUCT_NAME,,}=\${rcm_candidate_base}/\${PRODUCT_NAME}=g" \
@@ -108,7 +109,7 @@ def jobDefinition = job("${RELEASE_CODE}-generate-qe-properties") {
     // Allows to parameterize the job.
     parameters {
         // Defines a simple text parameter, where users can enter a string value.
-        stringParam(parameterName = "PRODUCT_NAME", defaultValue = "",
+        stringParam(parameterName = "PRODUCT_NAME", defaultValue = "RHDM",
                 description = "Specify product name to switch between configurations.")
     }
 

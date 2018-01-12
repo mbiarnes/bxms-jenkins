@@ -32,12 +32,9 @@ esac
 
 echo "prod_staging_path=\$prod_staging_path" > /tmp/prod_staging_path
 
-if ! wget \${prod_staging_properties_url} -O \${prod_staging_properties_name} 2>/dev/null ;then
-    echo " \${prod_staging_properties_url} isn't available yet"
-fi
 ip-tooling/maven-artifact-handler.py --version=\${prod_artifact_version} --override-version \${prod_shipped_file_deliver_version} --maven-repo \${prod_assembly_maven_repo_url} \
-  --deliverable \${prod_deliverable_template} --output \${PRODUCT_NAME} \
-  --release-url=\${rcm_staging_base}/\${prod_staging_path}
+  --deliverable \${prod_deliverable_template} --output \${PRODUCT_NAME}
+
 cp ${IP_CONFIG_FILE} \${PRODUCT_NAME}
 """
 
@@ -52,7 +49,7 @@ def jobDefinition = job("${RELEASE_CODE}-stage-brew-build") {
 
         // Defines a simple text parameter, where users can enter a string value.
         booleanParam(parameterName = "CLEAN_STAGING_ARTIFACTS", defaultValue = false, description = "WARNING, click this will force remove your artifacts in staging folder!")
-        stringParam(parameterName = "PRODUCT_NAME", defaultValue = "",
+        stringParam(parameterName = "PRODUCT_NAME", defaultValue = "RHDM",
                 description = "Specify product name to switch between configurations.")
     }
 
