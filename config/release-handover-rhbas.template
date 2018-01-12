@@ -15,7 +15,7 @@ Please allow [red]#10-15 minutes# for GlobalSync to occur should the release fol
 == Product Milestone
 
 
-[options="header,footer",align="center",frame="all"] 
+[options="header,footer",align="center",frame="all"]
 |=====================================================================
 |Product Name: |Red Hat Decision Manager
 
@@ -41,7 +41,7 @@ http://download.eng.pnq.redhat.com/released/JBEAP-7/
 == Repositories
 
 
-- http://download.lab.bos.redhat.com/brewroot/repos/${brew_tag}/latest/maven/ 
+- http://download.lab.bos.redhat.com/brewroot/repos/${brew_tag}/latest/maven/
 
 
 == ${product2_name} Download
@@ -69,7 +69,7 @@ link:${build_cfg}[Components and Versions]
 
 == Build
 
-link:${product_assembly_brew_url}[${product_assembly_nvr}]
+link:${product2_assembly_brew_url}[${product2_assembly_nvr}]
 
 == Smoke Tests
 
