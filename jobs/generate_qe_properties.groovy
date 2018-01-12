@@ -61,6 +61,7 @@ else
 
     echo "properties_staging_path=\${prod_staging_path}" > /tmp/prod_staging_path
     echo "prod_properties_name=\${prod_properties_name}" >> /tmp/prod_staging_path
+    echo "prod_candidate_propeties_name=\${prod_candidate_propeties_name}" >> /tmp/prod_staging_path
 fi
 
 if [ ! -f \$prod_properties_name ]; then

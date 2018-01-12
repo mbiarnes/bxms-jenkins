@@ -41,7 +41,9 @@ rm -rf src/bxms-license-\${prod_artifact_version} \
 rm -rf src/kie-parent-\${kie_version}/RELEASE-README.md
 
 # Create sources archive
-zip -r -5 --quiet \${prod_sources_name}-\${prod_shipped_file_deliver_version}-sources.zip src/
+zip -r -5 --quiet \${prod_sources_name}-\${prod_shipped_file_deliver_version} src/
+echo "prod_staging_path=\${prod_staging_path}" > /tmp/prod_staging_path
+echo "prod_sources_name=\${prod_sources_name}" >> /tmp/prod_staging_path
 """
 
 // Creates or updates a free style job.
@@ -65,6 +67,10 @@ def jobDefinition = job("${RELEASE_CODE}-generate-sources") {
     steps {
         // Runs a shell script (defaults to sh, but this is configurable) for building the project.
         shell(shellScript)
+        // Inject environment variables for staging paths
+        environmentVariables {
+            propertiesFile("/tmp/prod_staging_path")
+        }
     }
 
     // Adds post-build actions to the job.
