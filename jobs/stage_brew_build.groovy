@@ -5,28 +5,18 @@ set -x
 
 case "\${PRODUCT_NAME}" in
     RHDM )
-        prod_staging_properties_name=\${product1_staging_properties_name}
-        prod_staging_properties_url=\${product1_staging_properties_url}
         prod_artifact_version=\${product1_artifact_version}
         prod_shipped_file_deliver_version=\${product1_shipped_file_deliver_version}
         prod_assembly_maven_repo_url=\${product1_assembly_maven_repo_url}
         prod_deliverable_template=\${product1_deliverable_template}
         prod_staging_path=\${product1_staging_path}
-        prod_candidate_properties_name=\${product1_candidate_properties_name}
-        prod_public_version_properties_name="RHDM_PUBLIC_VERSION"
-        prod_public_version_properties_value=\${product1_milestone_version}
         ;;
     RHBAS )
-        prod_staging_properties_name=\${product2_staging_properties_name}
-        prod_staging_properties_url=\${product2_staging_properties_url}
         prod_artifact_version=\${product2_artifact_version}
         prod_shipped_file_deliver_version=\${product2_shipped_file_deliver_version}
         prod_assembly_maven_repo_url=\${product2_assembly_maven_repo_url}
         prod_deliverable_template=\${product2_deliverable_template}
         prod_staging_path=\${product2_staging_path}
-        prod_candidate_properties_name=\${product2_candidate_properties_name}
-        prod_public_version_properties_name="RHBA_PUBLIC_VERSION"
-        prod_public_version_properties_value=\${product2_milestone_version}
         ;;
 esac
 

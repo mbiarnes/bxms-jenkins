@@ -39,7 +39,6 @@ rm -rf src/bxms-license-builder-\${prod_artifact_version} \
 
 rm -rf src/kie-parent-\${kie_version}/RELEASE-README.md
 
-
 # Create sources archive
 zip -r \${PRODUCT_NAME}-\${prod_shipped_file_deliver_version}-sources.zip src/
 """
@@ -59,7 +58,6 @@ def jobDefinition = job("${RELEASE_CODE}-generate-sources") {
 
     // Adds build steps to the jobs.
     steps {
-
         // Runs a shell script (defaults to sh, but this is configurable) for building the project.
         shell(shellScript)
     }

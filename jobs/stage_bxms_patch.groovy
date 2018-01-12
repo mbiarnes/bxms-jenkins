@@ -3,25 +3,15 @@ import org.jboss.bxms.jenkins.JobTemplate
 // Staging script.
 def shellScript = """
 #Uploading to rcm staging folder
-wget \${product1_staging_properties_url} -O \${product1_staging_properties_name} 
-wget \${product1_candidate_properties_url} -O \${product1_candidate_properties_name}
 
 ip-tooling/maven-artifact-handler.py --version=\${product1_artifact_version} --override-version \${product1_version} \
    --deliverable \${product1_deliverable_template} --maven-repo \${bxms_patch_maven_repo_url} \
-   --output \${product1_name}\
-   --release-url=\${rcm_staging_base}/\${product1_staging_path} --output-deliverable-list \${product1_staging_properties_name}
-   
+   --output \${product1_name}
+
+
 ip-tooling/maven-artifact-handler.py --version=\${product2_artifact_version} --override-version \${product2_version} \
    --deliverable \${product2_deliverable_template} --maven-repo \${bxms_patch_maven_repo_url} \
-   --output \${product2_name}\
-   --release-url=\${rcm_staging_base}/\${product2_staging_path} --output-deliverable-list \${product2_staging_properties_name}
-
-sed -e "s=\${rcm_staging_base}/\${product1_staging_folder}=\${rcm_candidate_base}/\${product1_name}=g" \
-    \${product1_staging_properties_name} > \${product1_candidate_properties_name}
-
-sed -e "s=\${rcm_staging_base}/\${product2_staging_folder}=\${rcm_candidate_base}/\${product2_name}=g" \
-    \${product2_staging_properties_name} > \${product2_candidate_properties_name}
-
+   --output \${product2_name}
 """
 
 // Creates or updates a free style job.
