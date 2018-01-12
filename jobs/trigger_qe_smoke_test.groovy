@@ -20,7 +20,7 @@ def jobDefinition = job("${RELEASE_CODE}-trigger-qe-smoke-test-rhdm") {
     description("This job is responsible for triggering QE smoke test.")
 
     parameters {
-        stringParam(parameterName = "PRODUCT_NAME", defaultValue = "",
+        stringParam(parameterName = "PRODUCT_NAME", defaultValue = "RHDM",
                 description = "Specify product name to switch between configurations.")
     }
 

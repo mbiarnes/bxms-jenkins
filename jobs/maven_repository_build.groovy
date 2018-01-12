@@ -35,34 +35,9 @@ esac
 echo "prod_staging_path=\$prod_staging_path" > /tmp/prod_staging_path
 echo "prod_name_lowercase=\${PRODUCT_NAME,,}" >> /tmp/prod_staging_path
 
-function appendProp(){
-    if [ -z "\$1" ] || [ -z "\$2" ] || [ -z "\$3" ];then
-        echo "Param  is not allow empty"
-        exit 1
-    fi
-    sed -i "/^\$1/d" \$3 && echo "\$1=\$2" >> \$3
-}
+PROJECT_NAME=\${prod_name_lowercase} make CFG=${IP_CONFIG_FILE} BUILDER_SCRIPT=\${repository_builder_script} -f \${makefile} repository
+rename jboss-\${prod_name_lowercase} \${prod_name_lowercase} workspace/\${prod_name_lowercase}-repository/archive/*
 
-if ! wget \${prod_staging_properties_url} -O \${prod_staging_properties_name} 2>/dev/null ;then
-    echo " \${prod_staging_properties_url} isn't available yet"
-    touch  \${prod_staging_properties_name}
-fi
-if ! wget \${prod_candidate_properties_url} -O \${prod_candidate_properties_name} 2>/dev/null ;then
-  echo " \${prod_candidate_properties_url} isn't available yet"
-  touch  \${prod_staging_properties_name}
-fi
-#append the maven repo url into the properties
-appendProp "\${PRODUCT_NAME,,}.maven.repo.latest.url" \${rcm_staging_base}/\${prod_staging_path}/\${prod_maven_repo_name} \$prod_staging_properties_name
-appendProp "\${PRODUCT_NAME,,}.maven.repo.latest.url" \${rcm_candidate_base}/\${prod_candidate_path}/\${prod_maven_repo_name} \$prod_candidate_properties_name
-
-
-if [ \$release_type = "patch" ];then
-    incr_maven_repo_name=\${PRODUCT_NAME,,}-{shipped_file_deliver_version}-incremental-maven-repository.zip
-    appendProp "\${PRODUCT_NAME,,}.maven.incremental.repo.latest.url" \${rcm_staging_base}/\${prod_staging_path}/\${incr_maven_repo_name} \$prod_staging_properties_name
-    appendProp "\${PRODUCT_NAME,,}.maven.incremental.repo.latest.url" \${rcm_candidate_base}/\${prod_candidate_path}/\${incr_maven_repo_name} \$prod_candidate_properties_name
-fi
-
-PROJECT_NAME=\${PRODUCT_NAME,,} make CFG=${IP_CONFIG_FILE} BUILDER_SCRIPT=\${repository_builder_script} -f \${makefile} repository
 """
 
 // Creates or updates a free style job.
@@ -90,7 +65,7 @@ def jobDefinition = job("${RELEASE_CODE}-maven-repository-build") {
         stringParam(parameterName = "INCREMENTAL_REPO_FOR", defaultValue = incrementalRepositoryString,
                 description = "List of repositories to exclude. They can be online repository urls or online available zip files in format <url to the zip>:<relative path to repo root inside the zip<. Each repository is supposed to be put on a new line.")
 
-        stringParam(parameterName = "PRODUCT_NAME", defaultValue = "",
+        stringParam(parameterName = "PRODUCT_NAME", defaultValue = "RHDM",
                 description = "Specify product name to switch between configurations.")
     }
 
@@ -148,15 +123,6 @@ def jobDefinition = job("${RELEASE_CODE}-maven-repository-build") {
                                 '-f ~/staging/${prod_staging_path}/maven-repository-report.zip')
                     }
 
-                    // Adds a transfer set.
-                    transferSet {
-
-                        // Sets the files to upload to a server.
-                        sourceFiles('${prod_name_lowercase}-deliverable-list*.properties')
-
-                        // Sets the destination _path.
-                        remoteDirectory('${prod_staging_path}')
-                    }
                 }
         }
     }

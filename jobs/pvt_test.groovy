@@ -31,7 +31,7 @@ def jobDefinition = job("${RELEASE_CODE}-pvt-test") {
     description("This job is responsible for executing product validation tests.")
 
     parameters {
-        stringParam(parameterName = "PRODUCT_NAME", defaultValue = "",
+        stringParam(parameterName = "PRODUCT_NAME", defaultValue = "RHDM",
                 description = "Specify product name to switch between configurations.")
     }
 
@@ -84,7 +84,7 @@ def jobDefinition = job("${RELEASE_CODE}-pvt-test") {
             branch('*/master')
         }
     }
-   
+
     // Adds build steps to the jobs.
     steps {
 
