@@ -13,8 +13,6 @@ function appendProp(){
     sed -i "/^\$1/d" \${prod_properties_name} && echo "\$1=\$2" >> \${prod_properties_name}
 }
 
-prod_name_lowercase=\${PRODUCT_NAME,,}
-
 if [ "\${release_code}" == "bxms-nightly" ]; then
     prod_properties_name=\${PRODUCT_NAME, ,}-\${build_date}.properties
     case "\${PRODUCT_NAME}" in
@@ -71,11 +69,11 @@ fi
 
 case "\${PRODUCT_NAME}" in
     RHDM )
-        appendProp "\${PRODUCT_NAME,,}.decision-central.standalone.latest.url"    "\$product_url_prefix/\${product_filename_common_prefix}-decision-central-standalone.zip"
+        appendProp "\${PRODUCT_NAME,,}.decision-central.standalone.latest.url"    "\$product_url_prefix/\${product_filename_common_prefix}-decision-central-standalone.jar"
         appendProp "\${PRODUCT_NAME,,}.decision-central-eap7.latest.url"          "\$product_url_prefix/\${product_filename_common_prefix}-decision-central-eap7.zip"
         ;;
     RHBAS )
-        appendProp "\${PRODUCT_NAME,,}.business-central.standalone.latest.url"    "\$product_url_prefix/\${product_filename_common_prefix}-business-central-standalone.zip"
+        appendProp "\${PRODUCT_NAME,,}.business-central.standalone.latest.url"    "\$product_url_prefix/\${product_filename_common_prefix}-business-central-standalone.jar"
         appendProp "\${PRODUCT_NAME,,}.business-central-eap7.latest.url"          "\$product_url_prefix/\${product_filename_common_prefix}-business-central-eap7.zip"
 esac
 

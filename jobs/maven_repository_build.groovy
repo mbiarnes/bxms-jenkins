@@ -13,19 +13,11 @@ ip-tooling/jira_helper.py -c ${IP_CONFIG_FILE} -a "Maven repository build starte
 
 case "\${PRODUCT_NAME}" in
     RHDM )
-        prod_staging_properties_url=\${product1_staging_properties_url}
-        prod_staging_properties_name=\${product1_staging_properties_name}
-        prod_candidate_properties_url=\${product1_candidate_properties_url}
-        prod_candidate_properties_name=\${product1_candidate_properties_name}
         prod_staging_path=\${product1_staging_path}
         prod_maven_repo_name=\${product1_maven_repo_name}
         prod_candidate_path=\${product1_candidate_path}
         ;;
     RHBAS )
-        prod_staging_properties_url=\${product2_staging_properties_url}
-        prod_staging_properties_name=\${product2_staging_properties_name}
-        prod_candidate_properties_url=\${product2_candidate_properties_url}
-        prod_candidate_properties_name=\${product2_candidate_properties_name}
         prod_staging_path=\${product2_staging_path}
         prod_maven_repo_name=\${product2_maven_repo_name}
         prod_candidate_path=\${product2_candidate_path}
@@ -33,8 +25,9 @@ case "\${PRODUCT_NAME}" in
 esac
 
 echo "prod_staging_path=\$prod_staging_path" > /tmp/prod_staging_path
-echo "prod_name_lowercase=\${PRODUCT_NAME,,}" >> /tmp/prod_staging_path
 
+echo "prod_name_lowercase=\${PRODUCT_NAME,,}" >> /tmp/prod_staging_path
+prod_name_lowercase=\${PRODUCT_NAME,,}
 PROJECT_NAME=\${prod_name_lowercase} make CFG=${IP_CONFIG_FILE} BUILDER_SCRIPT=\${repository_builder_script} -f \${makefile} repository
 rename jboss-\${prod_name_lowercase} \${prod_name_lowercase} workspace/\${prod_name_lowercase}-repository/archive/*
 
