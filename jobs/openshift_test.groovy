@@ -44,4 +44,4 @@ def jobDefinition = job("${RELEASE_CODE}-openshift-test") {
 
 }
 
-JobTemplate.addCommonConfiguration(jobDefinition, CI_PROPERTIES_FILE)
+//JobTemplate.addCommonConfiguration(jobDefinition, CI_PROPERTIES_FILE)
