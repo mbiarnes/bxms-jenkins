@@ -18,9 +18,11 @@ if [ "\${release_code}" == "bxms-nightly" ]; then
     case "\${PRODUCT_NAME}" in
         RHDM )
             product_version="\${product1_version}"
+            product_artifact_version="\${product1_artifact_version}"
             ;;
         RHBAS )
             product_version="\${product2_version}"
+            product_artifact_version="\${product2_artifact_version}"
             ;;
     esac
 
@@ -35,6 +37,7 @@ else
             prod_properties_name=\${product1_staging_properties_name}
             prod_staging_properties_url=\${product1_staging_properties_url}
             product_version=\${product1_shipped_file_deliver_version}
+            product_artifact_version=\${product1_artifact_version}
 
             prod_deliverable_template=\${product1_deliverable_template}
             prod_staging_path=\${product1_staging_path}
@@ -47,6 +50,7 @@ else
             prod_properties_name=\${product2_staging_properties_name}
             prod_staging_properties_url=\${product2_staging_properties_url}
             product_version=\${product2_shipped_file_deliver_version}
+            product_artifact_version=\${product1_artifact_version}
 
             prod_deliverable_template=\${product2_deliverable_template}
             prod_staging_path=\${product2_staging_path}
@@ -72,16 +76,16 @@ fi
 case "\${PRODUCT_NAME}" in
     RHDM )
         appendProp "\${PRODUCT_NAME,,}.decision-central.standalone.latest.url"    "\$product_url_prefix/\${product_filename_common_prefix}-decision-central-standalone.jar"
-        appendProp "\${PRODUCT_NAME,,}.decision-central-eap7.latest.url"          "\$product_url_prefix/\${product_filename_common_prefix}-decision-central-eap7.zip"
+        appendProp "\${PRODUCT_NAME,,}.decision-central-eap7.latest.url"          "\$product_url_prefix/\${product_filename_common_prefix}-decision-central-eap7-deployable.zip"
         ;;
     RHBAS )
         appendProp "\${PRODUCT_NAME,,}.business-central.standalone.latest.url"    "\$product_url_prefix/\${product_filename_common_prefix}-business-central-standalone.jar"
-        appendProp "\${PRODUCT_NAME,,}.business-central-eap7.latest.url"          "\$product_url_prefix/\${product_filename_common_prefix}-business-central-eap7.zip"
+        appendProp "\${PRODUCT_NAME,,}.business-central-eap7.latest.url"          "\$product_url_prefix/\${product_filename_common_prefix}-business-central-eap7-deployable.zip"
 esac
 
 appendProp "\${PRODUCT_NAME,,}.kie-server.ee7.latest.url" "\${product_url_prefix}/\${product_filename_common_prefix}-kie-server-ee7.zip"
 appendProp "\${PRODUCT_NAME,,}.addons.latest.url"         "\${product_url_prefix}/\${product_filename_common_prefix}-add-ons.zip"
-appendProp "\${PRODUCT_NAME}_VERSION"   \${product_version}
+appendProp "\${PRODUCT_NAME}_VERSION"   \${product_artifact_version}
 appendProp "KIE_VERSION"                \${kie_version}
 appendProp "APPFORMER_VERSION"          \${appformer_version}
 appendProp "ERRAI_VERSION"              \${errai_version}

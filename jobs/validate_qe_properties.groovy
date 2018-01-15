@@ -44,10 +44,16 @@ def validateProperties(propfile, keyword, product_name):
         if re.match('rhdm-.*', propfile) is not None:
             isvalidurl(dic['rhdm.addons.latest.url'],keyword)
             isvalidurl(dic['rhdm.kie-server.ee7.latest.url'],keyword)
-            isvalidurl(dic['rhdm.maven.repo.latest.url'],keyword)
+            isvalidurl(dic['rhdm.decision-central.standalone.latest.url'],keyword)
+            isvalidurl(dic['rhdm.decision-central-eap7.latest.url'],keyword)
             isvalidurl(dic['build.config'],'bxms')
+
+            if \${release_code} != 'bxms-nightly':
+                isvalidurl(dic['rhdm.maven.repo.latest.url'],keyword)
+                isvalidurl(dic['rhdm.sources.repo.latest.url'],keyword)
+
             assertEqual('\$kie_version', dic['KIE_VERSION'])
-            assertEqual('\$product1_milestone_version', dic['RHDM_VERSION'])
+            assertEqual('\${product1_artifact_version}', dic['RHDM_VERSION'])
             assertContain(dic['rhdm.decision-central.standalone.latest.url'], '\$product1_milestone_version')
             assertContain(dic['rhdm.addons.latest.url'], '\$product1_milestone_version')
             assertContain(dic['rhdm.kie-server.ee7.latest.url'], '\$product1_milestone_version')
@@ -55,10 +61,15 @@ def validateProperties(propfile, keyword, product_name):
         if re.match('rhba-.*', propfile) is not None:
             isvalidurl(dic['rhbas.addons.latest.url'],keyword)
             isvalidurl(dic['rhbas.kie-server.ee7.latest.url'],keyword)
-            isvalidurl(dic['rhbas.maven.repo.latest.url'],keyword)
+            isvalidurl(dic['rhdm.decision-central.standalone.latest.url'],keyword)
+            isvalidurl(dic['rhdm.decision-central-eap7.latest.url'],keyword)
             isvalidurl(dic['build.config'],'bxms')
+
+            if \${release_code} != 'bxms-nightly':
+                isvalidurl(dic['rhba.maven.repo.latest.url'],keyword)
+                isvalidurl(dic['rhba.sources.repo.latest.url'],keyword)
             assertEqual('\$kie_version', dic['KIE_VERSION'])
-            assertEqual('\$product2_artifact_version', dic['RHBAS_VERSION'])
+            assertEqual('\${product2_artifact_version}', dic['RHBAS_VERSION'])
             assertContain(dic['rhbas.business-central.standalone.latest.url'], '\$product2_milestone_version')
             assertContain(dic['rhbas.addons.latest.url'], '\$product2_milestone_version')
             assertContain(dic['rhbas.kie-server.ee7.latest.url'], '\$product2_milestone_version')
