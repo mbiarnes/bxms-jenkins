@@ -1,7 +1,7 @@
 import org.jboss.bxms.jenkins.JobTemplate
 String shellScript = """
 if [ "\$release_status" = "closed" ];then
-        return 0
+        exit 0
 fi
 wget \${product1_staging_properties_url} -O \${product1_staging_properties_name}
 wget \${product1_candidate_properties_url} -O \${product1_candidate_properties_name}
@@ -48,7 +48,7 @@ def validateProperties(propfile, keyword, product_name):
             isvalidurl(dic['rhdm.decision-central-eap7.latest.url'],keyword)
             isvalidurl(dic['build.config'],'bxms')
 
-            if \${release_code} != 'bxms-nightly':
+            if '\${release_code}' != 'bxms-nightly':
                 isvalidurl(dic['rhdm.maven.repo.latest.url'],keyword)
                 isvalidurl(dic['rhdm.sources.repo.latest.url'],keyword)
 
@@ -65,7 +65,7 @@ def validateProperties(propfile, keyword, product_name):
             isvalidurl(dic['rhdm.decision-central-eap7.latest.url'],keyword)
             isvalidurl(dic['build.config'],'bxms')
 
-            if \${release_code} != 'bxms-nightly':
+            if '\${release_code}' != 'bxms-nightly':
                 isvalidurl(dic['rhba.maven.repo.latest.url'],keyword)
                 isvalidurl(dic['rhba.sources.repo.latest.url'],keyword)
             assertEqual('\$kie_version', dic['KIE_VERSION'])
