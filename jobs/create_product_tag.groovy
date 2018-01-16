@@ -64,4 +64,4 @@ def jobDefinition = job("${RELEASE_CODE}-create-product-tag") {
 }
 
 JobTemplate.addCommonConfiguration(jobDefinition, CI_PROPERTIES_FILE, "bxms-nightly")
-JobTemplate.addIpToolingScmConfiguration(jobDefinition)
+JobTemplate.addIpToolingScmConfiguration(jobDefinition,GERRIT_BRANCH , GERRIT_REFSPEC)

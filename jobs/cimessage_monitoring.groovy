@@ -150,4 +150,4 @@ def jobDefinition = job("${RELEASE_CODE}-monitoring-cimessage") {
 }
 
 JobTemplate.addCommonConfiguration(jobDefinition, CI_PROPERTIES_FILE)
-JobTemplate.addIpToolingScmConfiguration(jobDefinition)
+JobTemplate.addIpToolingScmConfiguration(jobDefinition,GERRIT_BRANCH , GERRIT_REFSPEC)

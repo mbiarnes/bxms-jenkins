@@ -38,37 +38,6 @@ def jobDefinition = job("${RELEASE_CODE}-pvt-test") {
     // Adds a Git SCM source.
     multiscm {
 
-        // Adds a Git SCM source.
-        git {
-
-            // Adds a remote.
-            remote {
-
-                // Sets the remote URL.
-                url("ssh://jb-ip-tooling-jenkins@code.engineering.redhat.com:22/integration-platform-tooling")
-            }
-
-            // Specify the branches to examine for changes and to build.
-            branch("master")
-            // Adds additional behaviors.
-            extensions {
-
-                // Specifies a local directory (relative to the workspace root) where the Git repository will be checked out.
-                relativeTargetDirectory('ip-tooling')
-            }
-        }
-        git {
-
-            // Adds a remote.
-            remote {
-
-                // Sets the remote URL.
-                url("ssh://jb-ip-tooling-jenkins@code.engineering.redhat.com:22/integration-platform-config")
-            }
-
-            // Specify the branches to examine for changes and to build.
-            branch("master")
-        }
         git {
             remote {
 
@@ -96,3 +65,4 @@ def jobDefinition = job("${RELEASE_CODE}-pvt-test") {
 }
 
 JobTemplate.addCommonConfiguration(jobDefinition, CI_PROPERTIES_FILE)
+JobTemplate.addIpToolingScmConfiguration(jobDefinition,GERRIT_BRANCH , GERRIT_REFSPEC)

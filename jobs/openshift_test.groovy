@@ -1,4 +1,4 @@
-import org.jboss.bxms.jenkins.JobTemplate
+// import org.jboss.bxms.jenkins.JobTemplate
 String shellScript = '''
     sudo oc cluster down || /bin/true
     echo -e "\\n-------\\n$(sudo oc cluster status)\\n--------\\n"
@@ -23,7 +23,7 @@ String shellScript = '''
 
 '''
 // Creates or updates a free style job.
-def jobDefinition = job("${RELEASE_CODE}-openshift-test") {
+job("${RELEASE_CODE}-openshift-test") {
 
     // Sets a description for the job.
     description("This job is responsible for test openshift images.")

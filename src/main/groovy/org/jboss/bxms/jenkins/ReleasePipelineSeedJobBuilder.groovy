@@ -11,7 +11,9 @@ class ReleasePipelineSeedJobBuilder {
     String release_code
     String ci_properties_file
     String cfg_file
-
+    String gerritBranch
+    String gerritRefspec
+    String seedJobName
     Job build(DslFactory dslFactory) {
         dslFactory.folder(release_code + "-release-pipeline")
         dslFactory.job(release_code + "-release-pipeline/z-" + release_code + "-release-pipeline-seed") {
@@ -34,6 +36,9 @@ class ReleasePipelineSeedJobBuilder {
                 // IP project configuration file
                 env("IP_CONFIG_FILE", cfg_file)
 
+                env("GERRIT_REFSPEC", gerritRefspec)
+
+                env("GERRIT_BRANCH", gerritBranch)
                 // Inject Jenkins build variables and also environment contributors and build variable contributors provided by other plugins.
                 keepBuildVariables(true)
 
@@ -41,20 +46,26 @@ class ReleasePipelineSeedJobBuilder {
                 keepSystemVariables(true)
 
             }
-            
+            parameters {
+                // Defines a simple text parameter, where users can enter a string value.
+                stringParam("GERRIT_REFSPEC", gerritRefspec, "Parameter passed by Gerrit code review trigger")
+                stringParam("GERRIT_BRANCH", gerritBranch, "Parameter passed by Gerrit code review trigger")
+            }
             scm {
                 // Adds a Git SCM source.
                 git {
 
-                    // Adds a remote.
                     remote {
 
                         // Sets the remote URL.
                         url("ssh://jb-ip-tooling-jenkins@code.engineering.redhat.com:22/bxms-jenkins")
+                        name("origin")
+                        refspec("+\$GERRIT_REFSPEC")
                     }
 
                     // Specify the branches to examine for changes and to build.
-                    branch("master")
+                    branch("\$GERRIT_BRANCH")
+
                 }
             }
 
@@ -71,9 +82,12 @@ class ReleasePipelineSeedJobBuilder {
                 }
             }
 
-            triggers {
-                upstream('a-master-seed', 'SUCCESS')
+            if(!seedJobName.matches("(.*)/(.*)")){
+                triggers {
+                    upstream('a-master-seed', 'SUCCESS')
+                }
             }
+
         }
     }
 }

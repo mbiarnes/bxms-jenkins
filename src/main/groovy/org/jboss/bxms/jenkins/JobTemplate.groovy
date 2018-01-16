@@ -42,7 +42,7 @@ class JobTemplate {
         }
     }
 
-    static void addIpToolingScmConfiguration(job, ipConfigBranch = "master") {
+    static void addIpToolingScmConfiguration(job, GERRIT_BRANCH , GERRIT_REFSPEC) {
 
         job.with {
 
@@ -113,14 +113,15 @@ class JobTemplate {
 
                         // Sets the remote URL.
                         url("ssh://jb-ip-tooling-jenkins@code.engineering.redhat.com:22/bxms-jenkins")
+                        name("origin")
+                        refspec("+${GERRIT_REFSPEC}")
                     }
 
                     // Specify the branches to examine for changes and to build.
-                    branch("master")
+                    branch(GERRIT_BRANCH)
 
                     // Adds additional behaviors.
                     extensions {
-
                         // Specifies a local directory (relative to the workspace root) where the Git repository will be checked out.
                         relativeTargetDirectory('bxms-jenkins')
                     }

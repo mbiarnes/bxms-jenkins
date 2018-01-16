@@ -9,9 +9,12 @@ import javaposse.jobdsl.dsl.Job
 class GeneralSeedJobBuilder {
 
     String release_code
-    String thisJobName
+    String thisSeedJobName
+    String gerritBranch
+    String gerritRefspec
+
     Job build(DslFactory dslFactory) {
-    if(!(release_code.matches("codereview") && ! thisJobName.matches("a-master-seed"))){
+    if(!(release_code.matches("codereview") && thisSeedJobName.matches("(.*)/(.*)"))){
         dslFactory.folder(release_code)
         dslFactory.job(release_code +"/z-" + release_code+ "-seed") {
             it.description "This job is a seed job for generating " + release_code + "release pipeline. To change the  parameter of the release pipeline, Please go to streams/release_code/env.properties"
@@ -20,18 +23,25 @@ class GeneralSeedJobBuilder {
             }
             label("service-node")
             // Adds environment variables to the build.
+            parameters {
+                // Defines a simple text parameter, where users can enter a string value.
+                stringParam("GERRIT_REFSPEC", gerritRefspec, "Parameter passed by Gerrit code review trigger")
+                stringParam("GERRIT_BRANCH", gerritBranch, "Parameter passed by Gerrit code review trigger")
+            }
             scm {
                 // Adds a Git SCM source.
                 git {
-                    // Adds a remote.
                     remote {
 
                         // Sets the remote URL.
                         url("ssh://jb-ip-tooling-jenkins@code.engineering.redhat.com:22/bxms-jenkins")
+                        name("origin")
+                        refspec("+\$GERRIT_REFSPEC")
                     }
 
                     // Specify the branches to examine for changes and to build.
-                    branch("master")
+                    branch("\$GERRIT_BRANCH")
+
                 }
             }
 

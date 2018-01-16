@@ -148,4 +148,4 @@ def jobDefinition = job("${RELEASE_CODE}-locate-import-list") {
 }
 
 JobTemplate.addCommonConfiguration(jobDefinition, CI_PROPERTIES_FILE)
-JobTemplate.addIpToolingScmConfiguration(jobDefinition)
+JobTemplate.addIpToolingScmConfiguration(jobDefinition,GERRIT_BRANCH , GERRIT_REFSPEC)

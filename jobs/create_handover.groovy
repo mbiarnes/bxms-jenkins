@@ -80,4 +80,4 @@ def jobDefinition = job("${RELEASE_CODE}-create-handover") {
 }
 
 JobTemplate.addCommonConfiguration(jobDefinition, CI_PROPERTIES_FILE)
-JobTemplate.addIpToolingScmConfiguration(jobDefinition)
+JobTemplate.addIpToolingScmConfiguration(jobDefinition,GERRIT_BRANCH , GERRIT_REFSPEC)

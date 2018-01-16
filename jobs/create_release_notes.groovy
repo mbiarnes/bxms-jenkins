@@ -12,26 +12,26 @@ kinit -k -t \${HOME}/bxms-release.keytab bxms-release/prod-ci@REDHAT.COM
 function generate_release_notes () {
     #Replace the variable from properties
     python ip-tooling/template_helper.py -i \${release_notes_template} -p \${ci_properties_file} -o \$1
-    
+
     echo "cve search link: Please click the following link"
     echo "https://issues.jboss.org/issues/?jql=$2"|sed -e "s/ /%20/g"| sed -e "s/'/%22/g"
     echo "bug fix search link: Please click the following link"
     echo "https://issues.jboss.org/issues/?jql=$3"|sed -e "s/ /%20/g"| sed -e "s/'/%22/g"
-    
+
     #Parsing the JIRA result by awk
     ./ip-tooling/release-ticketor.py --user mw-prod-ci --password ds54sdfs54df --jql "$2" $product_version.GA $cutoff_date $product_version 2>&1 | tee ./jql_search_data.txt
     wc -l ./jql_search_data.txt
     #Clear repeating lines
     cat jql_search_data.txt|awk \'!n[\$0]++\'|tee jql_search_data.txt
-    
+
     while read -r line; do
        table_1=$(echo "$line" |awk -F"- " \'{ print "<tr><td><a href=\\\"https://access.redhat.com/security/cve/\"$1\"\\\">"$1"</a></td><td>\" $2\"</td></tr>\\n"}\')
        sed -i "/<!--table_1_appending_mark-->/ a $table_1" $1
     done < jql_search_data.txt
-    
+
     ./ip-tooling/release-ticketor.py --user mw-prod-ci --password ds54sdfs54df  --jql "$3" $product_version.GA $cutoff_date $product_version 2>&1 | tee ./jql_search_data.txt
     wc -l ./jql_search_data.txt
-    
+
     while read -r line; do
        table_2=$(echo "$line" |awk -F"- " \'{ print "<tr><td><a href=\\\"https://issues.jboss.org/browse/\"$1\"\\\">"$1"</a></td><td>\"$2\"</td></tr>\\n"}\')
        sed -i "/<!--table_2_appending_mark-->/ a $table_2" $1
@@ -90,4 +90,4 @@ def jobDefinition = job("${RELEASE_CODE}-release-notes") {
 }
 
 JobTemplate.addCommonConfiguration(jobDefinition, CI_PROPERTIES_FILE)
-JobTemplate.addIpToolingScmConfiguration(jobDefinition)
+JobTemplate.addIpToolingScmConfiguration(jobDefinition,GERRIT_BRANCH , GERRIT_REFSPEC)

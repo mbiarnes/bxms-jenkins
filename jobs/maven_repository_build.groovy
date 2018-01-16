@@ -123,4 +123,4 @@ def jobDefinition = job("${RELEASE_CODE}-maven-repository-build") {
 
 //Make sure that label is exclusive to avoid multiple job run into the same workspace
 JobTemplate.addCommonConfiguration(jobDefinition, CI_PROPERTIES_FILE, "release-pipeline && exclusive")
-JobTemplate.addIpToolingScmConfiguration(jobDefinition)
+JobTemplate.addIpToolingScmConfiguration(jobDefinition,GERRIT_BRANCH , GERRIT_REFSPEC)

@@ -13,6 +13,8 @@ class ReleasePipelineJobBuilder {
     String cfg_file
     String cron_val = null
     String pipelineSeqFile="release-pipeline.ini"
+    String gerritBranch
+    String gerritRefspec
 
     Job build(DslFactory dslFactory) {
       def file_content=dslFactory.readFileFromWorkspace('streams/'+release_code+'/'+pipelineSeqFile)
@@ -45,25 +47,29 @@ class ReleasePipelineJobBuilder {
                 keepSystemVariables(true)
 
             }
-
+            parameters {
+                choiceParam('STARTSTAGE', getAllStage(file_content), 'choose the stage to start,default the first one.')
+                stringParam("GERRIT_REFSPEC", gerritRefspec, "Parameter passed by Gerrit code review trigger")
+                stringParam("GERRIT_BRANCH", gerritBranch, "Parameter passed by Gerrit code review trigger")
+            }
             scm {
                 // Adds a Git SCM source.
                 git {
 
-                    // Adds a remote.
                     remote {
 
                         // Sets the remote URL.
                         url("ssh://jb-ip-tooling-jenkins@code.engineering.redhat.com:22/bxms-jenkins")
+                        name("origin")
+                        refspec("+\$GERRIT_REFSPEC")
                     }
 
                     // Specify the branches to examine for changes and to build.
-                    branch("master")
+                    branch("\$GERRIT_BRANCH")
+
                 }
             }
-            parameters {
-                choiceParam('STARTSTAGE', getAllStage(file_content), 'choose the stage to start,default the first one.')
-            }
+
             definition{
               cps{
                 script(pipelineScript)
