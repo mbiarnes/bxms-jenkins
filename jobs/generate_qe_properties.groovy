@@ -97,7 +97,7 @@ if [ "\${release_code}" != "bxms-nightly" ]; then
     appendProp "build.config" \${product_url_prefix}/${IP_CONFIG_FILE}
     appendProp \$prod_public_version_properties_name \${prod_public_version_properties_value}
     appendProp "\${PRODUCT_NAME,,}.maven.repo.latest.url"     "\$product_url_prefix/\${product_filename_common_prefix}-maven-repository.zip"
-    appendProp "\${PRODUCT_NAME,,}.sources.repo.latest.url"   "\$product_url_prefix/\${prod_sources_name}"
+    appendProp "\${PRODUCT_NAME,,}.sources.latest.url"   "\$product_url_prefix/\${prod_sources_name}"
 
     sed -e "s=\${rcm_staging_base}/\${PRODUCT_NAME,,}=\${rcm_candidate_base}/\${PRODUCT_NAME}=g" \
     \${prod_properties_name} > \${prod_candidate_properties_name}

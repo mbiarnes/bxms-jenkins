@@ -50,7 +50,7 @@ def validateProperties(propfile, keyword, product_name):
 
             if '\${release_code}' != 'bxms-nightly':
                 isvalidurl(dic['rhdm.maven.repo.latest.url'],keyword)
-                isvalidurl(dic['rhdm.sources.repo.latest.url'],keyword)
+                isvalidurl(dic['rhdm.sources.latest.url'],keyword)
 
             assertEqual('\$kie_version', dic['KIE_VERSION'])
             assertEqual('\${product1_artifact_version}', dic['RHDM_VERSION'])
@@ -67,7 +67,7 @@ def validateProperties(propfile, keyword, product_name):
 
             if '\${release_code}' != 'bxms-nightly':
                 isvalidurl(dic['rhba.maven.repo.latest.url'],keyword)
-                isvalidurl(dic['rhba.sources.repo.latest.url'],keyword)
+                isvalidurl(dic['rhba.sources.latest.url'],keyword)
             assertEqual('\$kie_version', dic['KIE_VERSION'])
             assertEqual('\${product2_artifact_version}', dic['RHBAS_VERSION'])
             assertContain(dic['rhbas.business-central.standalone.latest.url'], '\$product2_milestone_version')
