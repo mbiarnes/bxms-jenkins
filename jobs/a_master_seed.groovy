@@ -48,7 +48,7 @@ def ReleasePipelineBuilder(_release_code, _cfg_file, _properties_file, gerritBra
 
 ReleasePipelineBuilder("bxms", "bxms.cfg", "/jboss-prod/config/bxms-ci.properties", gerritBranch , gerritRefspec ,seedJobName )
 ReleasePipelineBuilder("bxms-test", "bxms-test.cfg", "/jboss-prod/config/bxms-test-ci.properties",gerritBranch , gerritRefspec ,seedJobName )
-ReleasePipelineBuilder("bxms-nightly", "bxms-dev.cfg", "/jboss-prod/config/bxms-nightly-ci.properties", gerritBranch , gerritRefspec,seedJobName, "H 7 * * *" )
+ReleasePipelineBuilder("bxms-nightly", "bxms-dev.cfg", "/jboss-prod/config/bxms-nightly-ci.properties", gerritBranch , gerritRefspec,seedJobName, "H 17 * * *" )
 
 
 
