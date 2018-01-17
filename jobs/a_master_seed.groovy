@@ -2,27 +2,22 @@ import org.jboss.bxms.jenkins.*
 
 //Establish the parametize release pipeline
 //Release code is identical to the folder name in streams/
-def seedJobName
+def seedJobName="${JOB_NAME}"
 def gerritRefspec
 // this is a git point to the refs we used in gerritRefspec which git would fetched
 def gerritBranch="FETCH_HEAD"
-
-if(GERRIT_REFSPEC){
+// if triggered by manul, to avoid build fail
+try{
     gerritRefspec="${GERRIT_REFSPEC}"
-}else{
+}catch(e){
     gerritRefspec="refs/heads/master"
-}
-if(JOB_NAME){
-    seedJobName="${JOB_NAME}"
-}else{
-    throw new javaposse.jobdsl.dsl.DslException("Job has no name!!!Exit...");
 }
 if (!seedJobName.matches("(.*)/(.*)")) {
     gerritBranch ="master"
 }
-println "-------seedJobName:${JOB_NAME}-------"
-println "-------GERRIT_BRANCH:${GERRIT_BRANCH}-------"
-println "-------jobGERRIT_REFSPEC:${GERRIT_REFSPEC}-------"
+println "-------seedJobName:${seedJobName}-------"
+println "-------GERRIT_BRANCH:${gerritBranch}-------"
+println "-------GERRIT_REFSPEC:${gerritRefspec}-------"
 if(seedJobName == null || gerritRefspec == null || gerritBranch == null ){
     throw new javaposse.jobdsl.dsl.DslException("The JOB_NAME/GERRIT_BRANCH/GERRIT_REFSPEC parameters is not setting!Exit...");
 }
