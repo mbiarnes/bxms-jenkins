@@ -15,12 +15,19 @@ class ReleasePipelineJobBuilder {
     String pipelineSeqFile="release-pipeline.ini"
     String gerritBranch
     String gerritRefspec
+    String jobName
 
     Job build(DslFactory dslFactory) {
       def file_content=dslFactory.readFileFromWorkspace('streams/'+release_code+'/'+pipelineSeqFile)
       // String stageSeq=getStageSeq(file_content)
       String product_job_prefix=release_code+"-"
       String pipelineScript=getPipelineScript(file_content,product_job_prefix)
+      // This is used by local test to set JOB_NAME to avoid error showing
+      try{
+          jobName=JOB_NAME
+      }catch(e){
+          jobName="codereview/test"
+      }
 
         dslFactory.folder(release_code + "-release-pipeline")
         dslFactory.pipelineJob(release_code + "-release-pipeline/a-" + release_code + "-release-pipeline") {
@@ -79,7 +86,7 @@ class ReleasePipelineJobBuilder {
                 sandbox()
               }
             }
-            if (cron_val != null) {
+            if (cron_val != null && !jobName.matches("codereview/(.*)")) {
                 triggers {
                     cron("$cron_val")
                 }

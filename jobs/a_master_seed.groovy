@@ -10,9 +10,11 @@ def gerritBranch="FETCH_HEAD"
 try{
     gerritRefspec="${GERRIT_REFSPEC}"
 }catch(e){
+    println "Detected triggered by manual: set GERRIT_REFSPEC to 'refs/heads/master'"
     gerritRefspec="refs/heads/master"
 }
-if (!seedJobName.matches("(.*)/(.*)")) {
+if (!seedJobName.matches("codereview/(.*)")) {
+    println "Detected not in codereview: set GERRIT_BRANCH to 'master'"
     gerritBranch ="master"
 }
 println "-------seedJobName:${seedJobName}-------"
@@ -21,14 +23,13 @@ println "-------GERRIT_REFSPEC:${gerritRefspec}-------"
 if(seedJobName == null || gerritRefspec == null || gerritBranch == null ){
     throw new javaposse.jobdsl.dsl.DslException("The JOB_NAME/GERRIT_BRANCH/GERRIT_REFSPEC parameters is not setting!Exit...");
 }
-def ReleasePipelineBuilder(_release_code, _cfg_file, _properties_file, gerritBranch , gerritRefspec ,seedJobName , cron_val = null) {
+def ReleasePipelineBuilder(_release_code, _cfg_file, _properties_file, gerritBranch , gerritRefspec , cron_val = null) {
     new ReleasePipelineSeedJobBuilder(
             release_code: _release_code,
             cfg_file:_cfg_file,
             ci_properties_file:_properties_file,
             gerritBranch: gerritBranch,
             gerritRefspec: gerritRefspec,
-            seedJobName: seedJobName,
     ).build(this)
 
     new ReleasePipelineJobBuilder(
@@ -41,9 +42,9 @@ def ReleasePipelineBuilder(_release_code, _cfg_file, _properties_file, gerritBra
     ).build(this)
 }
 
-ReleasePipelineBuilder("bxms", "bxms.cfg", "/jboss-prod/config/bxms-ci.properties", gerritBranch , gerritRefspec ,seedJobName )
-ReleasePipelineBuilder("bxms-test", "bxms-test.cfg", "/jboss-prod/config/bxms-test-ci.properties",gerritBranch , gerritRefspec ,seedJobName )
-ReleasePipelineBuilder("bxms-nightly", "bxms-dev.cfg", "/jboss-prod/config/bxms-nightly-ci.properties", gerritBranch , gerritRefspec,seedJobName, "H 17 * * *" )
+ReleasePipelineBuilder("bxms", "bxms.cfg", "/jboss-prod/config/bxms-ci.properties", gerritBranch , gerritRefspec )
+ReleasePipelineBuilder("bxms-test", "bxms-test.cfg", "/jboss-prod/config/bxms-test-ci.properties",gerritBranch , gerritRefspec  )
+ReleasePipelineBuilder("bxms-nightly", "bxms-dev.cfg", "/jboss-prod/config/bxms-nightly-ci.properties", gerritBranch , gerritRefspec, "H 17 * * *" )
 
 
 
@@ -80,5 +81,4 @@ new GeneralSeedJobBuilder(
         release_code: "codereview",
         gerritBranch: gerritBranch,
         gerritRefspec: gerritRefspec,
-        thisSeedJobName: seedJobName,
 ).build(this)

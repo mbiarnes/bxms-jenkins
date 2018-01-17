@@ -103,6 +103,10 @@ def jobDefinition = job("${RELEASE_CODE}-send-review-notification-mail") {
         // Runs a shell script (defaults to sh, but this is configurable) for building the project.
         shell(shellScript)
     }
+    if(JOB_NAME.matches("codereview/(.*)")){
+        println "Detected in codereview:Disable send-review-notification-mail"
+        disabled()
+    }
     triggers{
         gerrit{
 

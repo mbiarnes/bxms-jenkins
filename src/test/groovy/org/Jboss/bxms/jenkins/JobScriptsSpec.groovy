@@ -20,7 +20,6 @@ import spock.lang.Unroll
  * Tests that all dsl scripts in the jobs directory will compile. All config.xml's are written to build/debug-xml.
  */
 class JobScriptsSpec extends Specification {
-
     // add in a sample environment for testing
     def enviMap = [
     'RELEASE_CODE':'bxms-test',

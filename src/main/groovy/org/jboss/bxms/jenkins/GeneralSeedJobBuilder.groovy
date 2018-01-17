@@ -9,12 +9,17 @@ import javaposse.jobdsl.dsl.Job
 class GeneralSeedJobBuilder {
 
     String release_code
-    String thisSeedJobName
     String gerritBranch
     String gerritRefspec
-
+    String jobName
     Job build(DslFactory dslFactory) {
-    if(!(release_code.matches("codereview") && thisSeedJobName.matches("(.*)/(.*)"))){
+    // This is used by local test to set JOB_NAME to avoid error showing
+    try{
+        jobName=JOB_NAME
+    }catch(e){
+        jobName="codereview/test"
+    }
+    if(!(release_code.matches("codereview") && jobName.matches("codereview/(.*)"))){
         dslFactory.folder(release_code)
         dslFactory.job(release_code +"/z-" + release_code+ "-seed") {
             it.description "This job is a seed job for generating " + release_code + "release pipeline. To change the  parameter of the release pipeline, Please go to streams/release_code/env.properties"
@@ -57,8 +62,10 @@ class GeneralSeedJobBuilder {
                     removeViewAction('DELETE')
                 }
             }
-            triggers {
-                scm 'H/5 * * * *'
+            if(!jobName.matches("codereview/(.*)")){
+                triggers {
+                    scm 'H/5 * * * *'
+                }
             }
         }
     }

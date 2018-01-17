@@ -127,7 +127,7 @@ fi
 int randomStringLength = 32
 String charset = (('a'..'z') + ('A'..'Z') + ('0'..'9')).join()
 String randomString = RandomStringUtils.random(randomStringLength, charset.toCharArray())
-print randomString
+println "randomString:"+randomString
 // Creates or updates a free style job.
 def jobDefinition = job("${RELEASE_CODE}-monitoring-cimessage") {
 
@@ -137,7 +137,10 @@ def jobDefinition = job("${RELEASE_CODE}-monitoring-cimessage") {
         // Runs a shell script (defaults to sh, but this is configurable) for building the project.
         shell(shellScript)
     }
-
+    if(JOB_NAME.matches("codereview/(.*)")){
+        println "Detected in codereview:Disable monitoring-cimessage"
+        disabled()
+    }
     triggers{
         ciBuildTrigger {
             overrides {

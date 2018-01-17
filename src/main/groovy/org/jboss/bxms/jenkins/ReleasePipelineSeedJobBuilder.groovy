@@ -13,8 +13,14 @@ class ReleasePipelineSeedJobBuilder {
     String cfg_file
     String gerritBranch
     String gerritRefspec
-    String seedJobName
+    String jobName
     Job build(DslFactory dslFactory) {
+        // This is used by local test to set JOB_NAME to avoid error showing
+        try{
+            jobName=JOB_NAME
+        }catch(e){
+            jobName="codereview/test"
+        }
         dslFactory.folder(release_code + "-release-pipeline")
         dslFactory.job(release_code + "-release-pipeline/z-" + release_code + "-release-pipeline-seed") {
             it.description "This job is a seed job for generating " + release_code + "release pipeline. To change the  parameter of the release pipeline, Please go to streams/release_code/env.properties"
@@ -39,6 +45,7 @@ class ReleasePipelineSeedJobBuilder {
                 env("GERRIT_REFSPEC", gerritRefspec)
 
                 env("GERRIT_BRANCH", gerritBranch)
+
                 // Inject Jenkins build variables and also environment contributors and build variable contributors provided by other plugins.
                 keepBuildVariables(true)
 
@@ -82,7 +89,7 @@ class ReleasePipelineSeedJobBuilder {
                 }
             }
 
-            if(!seedJobName.matches("(.*)/(.*)")){
+            if(!jobName.matches("codereview/(.*)")){
                 triggers {
                     upstream('a-master-seed', 'SUCCESS')
                 }

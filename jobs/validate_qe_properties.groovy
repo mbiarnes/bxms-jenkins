@@ -96,6 +96,10 @@ def jobDefinition = job("${RELEASE_CODE}-validate-qe-properties") {
         // Runs a shell script (defaults to sh, but this is configurable) for building the project.
         shell(shellScript)
     }
+    if(JOB_NAME.matches("codereview/(.*)")){
+        println "Detected in codereview:Disable validate-qe-properties"
+        disabled()
+    }
     triggers{
         gerrit{
 

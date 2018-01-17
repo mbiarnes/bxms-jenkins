@@ -48,6 +48,8 @@ class JenkinsAllJobBuilderPipeline {
                 }else{
                   packagesMap.put(section_name,"")
                 }
+              }else{
+                packagesMap.put(section_name,"")
               }
           }
       }
