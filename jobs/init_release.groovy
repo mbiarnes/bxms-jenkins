@@ -88,5 +88,4 @@ def jobDefinition = job("${RELEASE_CODE}-init-release") {
     // Adds post-build actions to the job.
 }
 
-JobTemplate.addCommonConfiguration(jobDefinition, CI_PROPERTIES_FILE)
 JobTemplate.addIpToolingScmConfiguration(jobDefinition,GERRIT_BRANCH , GERRIT_REFSPEC)

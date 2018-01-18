@@ -8,6 +8,7 @@ import javaposse.jobdsl.dsl.Job
  */
 class JenkinsAllJobBuilder {
     String release_code
+    String ci_properties_file
     String job_type
     String cfg_file
 
@@ -35,6 +36,17 @@ MVN_DEP_REPO=nexus-release::default::file://\${DEP_REPO} LOCAL=1 CFG=${_cfg} MVN
         dslFactory.folder(release_code + "-" + job_type + "-release-pipeline")
         dslFactory.job(release_code + "-" + job_type + "-release-pipeline/x-" + release_code + "-all") {
             it.description "This job is a seed job for generating " + release_code + " " +  job_type + " jenkins full build."
+            environmentVariables {
+                // Adds environment variables from a properties file.
+                propertiesFile(ci_properties_file)
+
+                // Inject Jenkins build variables and also environment contributors and build variable contributors provided by other plugins.
+                keepBuildVariables(true)
+
+                // Injects Jenkins system variables and environment variables defined as global properties and as node properties.
+                keepSystemVariables(true)
+
+            }
             logRotator {
                 numToKeep 8
             }

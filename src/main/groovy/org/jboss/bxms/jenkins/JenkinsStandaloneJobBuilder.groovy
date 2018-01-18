@@ -13,6 +13,7 @@ import java.security.cert.X509Certificate
  */
 class JenkinsStandaloneJobBuilder {
     String release_code
+    String ci_properties_file
     String job_type
     String cfg_file
 
@@ -54,6 +55,17 @@ MVN_DEP_REPO=nexus-release::default::file://${maven_repo} REPO_GROUP=${repo_grou
 """
                 dslFactory.job(release_code + "-" + job_type + "-release-pipeline/y-" + release_code + "-" + section_name ) {
                     it.description "This job is a seed job for generating " + release_code + " " + job_type + " jenkins build."
+                    environmentVariables {
+                        // Adds environment variables from a properties file.
+                        propertiesFile(ci_properties_file)
+
+                        // Inject Jenkins build variables and also environment contributors and build variable contributors provided by other plugins.
+                        keepBuildVariables(true)
+
+                        // Injects Jenkins system variables and environment variables defined as global properties and as node properties.
+                        keepSystemVariables(true)
+
+                    }
                     logRotator {
                         numToKeep 8
                     }

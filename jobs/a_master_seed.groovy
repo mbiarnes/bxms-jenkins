@@ -56,15 +56,17 @@ ReleasePipelineBuilder("bxms-nightly", "bxms-dev.cfg", "/jboss-prod/config/bxms-
 
 
 //Release code is identical to the folder name in streams/
-def JenkinsStandaloneJobsBuilder(_release_code, _cfg_file, _job_type){
+def JenkinsStandaloneJobsBuilder(_release_code, _properties_file, _cfg_file, _job_type){
     new JenkinsStandaloneJobBuilder(
             release_code: _release_code,
+            ci_properties_file:_properties_file,
             cfg_file:_cfg_file,
             job_type: _job_type
     ).build(this)
 
     new JenkinsAllJobBuilder(
             release_code: _release_code,
+            ci_properties_file:_properties_file,
             cfg_file:_cfg_file,
             job_type: _job_type
     ).build(this)
@@ -75,8 +77,8 @@ def JenkinsStandaloneJobsBuilder(_release_code, _cfg_file, _job_type){
             job_type: _job_type
     ).build(this)
 }
-JenkinsStandaloneJobsBuilder("bxms", "bxms.cfg", "milestone" )
-JenkinsStandaloneJobsBuilder("bxms", "/jboss-prod/config/bxms-dev.cfg", "nightly" )
+JenkinsStandaloneJobsBuilder("bxms", "/jboss-prod/config/bxms-nightly-ci.properties", "bxms.cfg", "milestone" )
+JenkinsStandaloneJobsBuilder("bxms", "/jboss-prod/config/bxms-nightly-ci.properties", "/jboss-prod/config/bxms-dev.cfg", "nightly" )
 
 new GeneralSeedJobBuilder(
         release_code: "utility",

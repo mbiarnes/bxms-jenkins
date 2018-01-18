@@ -1,7 +1,6 @@
 import org.jboss.bxms.jenkins.JobTemplate
 
 def shellScript = """
-echo -e "Exec node IP:\${OPENSTACK_PUBLIC_IP}\\n"
 kinit -k -t \${HOME}/bxms-release.keytab bxms-release/prod-ci@REDHAT.COM
 case "\${PRODUCT_NAME}" in
     RHDM )
@@ -53,7 +52,7 @@ def jobDefinition = job("${RELEASE_CODE}-trigger-qe-smoke-test") {
             // KEY=value pairs, one per line (Java properties file format) to be used as message properties.
             messageProperties('label=rhap-ci\n' +
                     'CI_TYPE=custom\n' +
-                    'EVENT_TYPE=${prod_lowcase}-70-brew-qe-trigger\n')
+                    'EVENT_TYPE=${prod_lowcase}-70-${release_type}-qe-trigger\n')
             // Content of CI message to be sent.
             messageContent('${prod_staging_properties_url}')
         }
@@ -61,4 +60,4 @@ def jobDefinition = job("${RELEASE_CODE}-trigger-qe-smoke-test") {
 }
 
 JobTemplate.addCommonConfiguration(jobDefinition, CI_PROPERTIES_FILE)
-JobTemplate.addIpToolingScmConfiguration(jobDefinition,GERRIT_BRANCH , GERRIT_REFSPEC)
+JobTemplate.addIpToolingScmConfiguration(jobDefinition, GERRIT_BRANCH , GERRIT_REFSPEC)
