@@ -13,12 +13,6 @@ class GeneralSeedJobBuilder {
     String gerritRefspec
     String jobName
     Job build(DslFactory dslFactory) {
-    // This is used by local test to set JOB_NAME to avoid error showing
-    try{
-        jobName=JOB_NAME
-    }catch(e){
-        jobName="codereview/test"
-    }
     if(!(release_code.matches("codereview") && jobName.matches("codereview/(.*)"))){
         dslFactory.folder(release_code)
         dslFactory.job(release_code +"/z-" + release_code+ "-seed") {

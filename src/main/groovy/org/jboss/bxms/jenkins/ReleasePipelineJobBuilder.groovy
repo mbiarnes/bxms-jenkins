@@ -23,12 +23,6 @@ class ReleasePipelineJobBuilder {
       String product_job_prefix=release_code+"-"
       String pipelineScript=getPipelineScript(file_content,product_job_prefix)
       // This is used by local test to set JOB_NAME to avoid error showing
-      try{
-          jobName=JOB_NAME
-      }catch(e){
-          jobName="codereview/test"
-      }
-
         dslFactory.folder(release_code + "-release-pipeline")
         dslFactory.pipelineJob(release_code + "-release-pipeline/a-" + release_code + "-release-pipeline") {
             it.description "This job is job for run " + release_code + "release pipeline. To change the  parameter of the release pipeline, Please go to streams/release_code/env.properties"
