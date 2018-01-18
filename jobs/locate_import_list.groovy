@@ -106,7 +106,7 @@ function importToMeadFromLog()
 {
     [[ ! -f \$1 ]] && echo "\$1 is not existed!" && exit 1
 
-    local importlist="\$(grep ".*:.*:.*" \$1 | sed 's/.* \\([^: ]*:[^: ]*:[^: ]*\\) .*/\\1/')"
+    local importlist="\$(grep "MISSING: .*:.*:.* FROM" \$1 | sed 's/MISSING: \\([^: ]*:[^: ]*:[^: ]*\\) .*/\\1/')"
     for i in \$importlist ;do
     importToMead \$i
     if [ \$? -ne 0 ] ;then
@@ -123,6 +123,7 @@ ip-tooling/MEAD_check_artifact.sh \$brew_tag /jboss-prod/m2/\${jenkins_cache_rep
 sed -ni "/MISSING/p" /tmp/mead_check.log
 sed -i "/redhat-/d" /tmp/mead_check.log
 sed -i "/SNAPSHOT/d" /tmp/mead_check.log
+
 importToMeadFromLog /tmp/mead_check.log
 echo "JOB DONE"
 """
