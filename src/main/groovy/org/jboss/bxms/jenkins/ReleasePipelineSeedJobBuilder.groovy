@@ -71,6 +71,7 @@ class ReleasePipelineSeedJobBuilder {
             }
 
             steps {
+                shell("echo -e \"Exec node IP:\${OPENSTACK_PUBLIC_IP}\\n\"")
                 dsl {
                     external 'streams/' + release_code + '/dsl/*.groovy'
                     additionalClasspath 'src/main/groovy'

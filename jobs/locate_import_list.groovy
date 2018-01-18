@@ -1,6 +1,7 @@
 import org.jboss.bxms.jenkins.JobTemplate
 
 String shellScript = """
+echo -e "Exec node IP:\${OPENSTACK_PUBLIC_IP}\\n"
 function getGroupId()
 {
   local _input=\$1

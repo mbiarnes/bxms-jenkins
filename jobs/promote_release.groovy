@@ -1,6 +1,7 @@
 import org.jboss.bxms.jenkins.JobTemplate
 
 String shellScript = """
+echo -e "Exec node IP:\${OPENSTACK_PUBLIC_IP}\\n"
 sed -i 's/release_status=/release_status=closed/g' ${CI_PROPERTIES_FILE}
 sed -i '/^release_status=/d' ${CI_PROPERTIES_FILE} && echo "release_status=closed" >>${CI_PROPERTIES_FILE}
 """

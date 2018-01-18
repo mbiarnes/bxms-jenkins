@@ -43,6 +43,7 @@ class JenkinsStandaloneJobBuilder {
 
                 String shellScript = """
 unset WORKSPACE
+echo -e "Exec node IP:\${OPENSTACK_PUBLIC_IP}\\n"
 if [ ! -z \${build_date} ]; then
     sed -i "s#-SNAPSHOT#-\${build_date}#g" bxms-dev.cfg
 fi

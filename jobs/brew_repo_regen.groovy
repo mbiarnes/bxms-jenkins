@@ -1,5 +1,4 @@
 import org.jboss.bxms.jenkins.JobTemplate
-
 // Creates or updates a free style job.
 def jobDefinition = job("${RELEASE_CODE}-brew-repo-regen") {
 
@@ -8,6 +7,7 @@ def jobDefinition = job("${RELEASE_CODE}-brew-repo-regen") {
 
     // Adds build steps to the jobs.
     steps {
+        shell("echo -e \"Exec node IP:\${OPENSTACK_PUBLIC_IP}\\n\"")
         ciGenerateBrewRepoBuilder {
             // Tag name to generate repo for.
             tag("jb-bxms-7.0-maven-build")

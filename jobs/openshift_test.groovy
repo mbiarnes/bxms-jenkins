@@ -1,5 +1,7 @@
 // import org.jboss.bxms.jenkins.JobTemplate
+
 String shellScript = '''
+    echo -e "Exec node IP:\${OPENSTACK_PUBLIC_IP}\\n"
     sudo oc cluster down || /bin/true
     echo -e "\\n-------\\n$(sudo oc cluster status)\\n--------\\n"
     echo -e "\\n-------\\nnode public-ip:${OPENSTACK_PUBLIC_IP}\\n--------\\n"

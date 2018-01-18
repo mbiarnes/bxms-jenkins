@@ -1,6 +1,6 @@
 import org.jboss.bxms.jenkins.JobTemplate
-
 String shellScript = """
+echo -e "Exec node IP:\${OPENSTACK_PUBLIC_IP}\\n"
 remote_product_cfg_sha=\$(git log -1 --pretty="%H" ${IP_CONFIG_FILE})
 cfg=${IP_CONFIG_FILE}
 release_code=\${cfg%%.cfg}

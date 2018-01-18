@@ -86,6 +86,7 @@ String mailContent = '''<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
 
 def shellScript = """
 set +x
+echo -e "Exec node IP:\${OPENSTACK_PUBLIC_IP}\\n"
 jira_comment="Release handover is {color:#ff0000}waiting for review{color}  in \${handover_pr} \n
 Staging folder URL: \n
 [\${rcm_staging_base}/\${product1_staging_path}/]\n

@@ -29,6 +29,7 @@ class JobScriptsSpec extends Specification {
     'JOB_NAME':'a-master-seed',
     'GERRIT_BRANCH':'master',
     'GERRIT_REFSPEC':'refs/heads/master',
+    'OPENSTACK_PUBLIC_IP': '127.0.0.1'
     ]
 
     @Shared

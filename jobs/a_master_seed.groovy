@@ -17,6 +17,11 @@ if (seedJobName.matches("codereview/(.*)")) {
         gerritRefspec="+refs/heads/master:refs/remotes/origin/master"
     }
 }
+try{
+    println "-----OPENSTACK_PUBLIC_IP: "+OPENSTACK_PUBLIC_IP+ "-----"
+}catch(e){
+    println "-----OPENSTACK_PUBLIC_IP: UnKnow. This job may not running on any openstack instance. -----"
+}
 println "-------seedJobName:${seedJobName}-------"
 println "-------GERRIT_BRANCH:${gerritBranch}-------"
 println "-------GERRIT_REFSPEC:${gerritRefspec}-------"

@@ -1,6 +1,6 @@
 import org.jboss.bxms.jenkins.JobTemplate
-
 String shellScript = '''
+echo -e "Exec node IP:\${OPENSTACK_PUBLIC_IP}\\n"
 mkdir jboss-bpmsuite-${product_version}-openshift
 cd jboss-bpmsuite-${product_version}-openshift
 
@@ -16,7 +16,7 @@ fi
 
 if [ ! -e download_list.properties ]
 then
-        echo  """#Format G:A::classifier:package_type 
+        echo  """#Format G:A::classifier:package_type
 org.kie.rhap:rhbas::business-central-standalone:jar:rhbas.business-central.standalone.latest.url
 org.kie.rhap:rhbas::business-central-eap7:zip:rhbas.business-central-eap7.latest.url
 org.kie.rhap:rhbas::add-ons:zip:rhbas.addons.latest.url
@@ -43,12 +43,12 @@ if ! wget http://git.app.eng.bos.redhat.com/git/integration-platform-config.git/
 then
 exit 1;
 fi
-sed -i "s/replace_image_version/${openshift_image_version}/g" application-template/bpmsuite-image-stream.json            
+sed -i "s/replace_image_version/${openshift_image_version}/g" application-template/bpmsuite-image-stream.json
 
 #Clean  docker images
 #for i in $(docker images -q);do docker rmi $i; done
 
-#Define the internal docker registry            
+#Define the internal docker registry
 #docker_registry=docker-registry.engineering.redhat.com
 
 #docker pull ${docker_registry}/jboss-bpmsuite-7/bpmsuite70-businesscentral-openshift:${openshift_image_version}
@@ -79,7 +79,7 @@ def jobDefinition = job("${RELEASE_CODE}-export-openshift-images") {
         // Defines a simple text parameter, where users can enter a string value.
         booleanParam(parameterName = "skipPackage", defaultValue = false , description = "Skip package Openshift Image")
     }
-    
+
     // Adds pre/post actions to the job.
     wrappers {
 
@@ -128,5 +128,3 @@ def jobDefinition = job("${RELEASE_CODE}-export-openshift-images") {
 
 }
 JobTemplate.addCommonConfiguration(jobDefinition, CI_PROPERTIES_FILE)
-
-

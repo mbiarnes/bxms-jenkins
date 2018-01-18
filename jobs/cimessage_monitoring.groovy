@@ -3,7 +3,7 @@ import org.apache.commons.lang.RandomStringUtils
 
 def shellScript = """# Disable bash tracking mode, too much noise.
 set -x
-
+echo -e "Exec node IP:\${OPENSTACK_PUBLIC_IP}\\n"
 echo \$CI_TYPE
 echo \$CI_NAME
 echo "++++++++++++++++++++++++++++++++++++++"

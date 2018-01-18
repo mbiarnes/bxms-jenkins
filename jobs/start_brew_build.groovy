@@ -2,6 +2,7 @@ import org.jboss.bxms.jenkins.JobTemplate
 
 // Init Brew build script.
 def shellScript = """
+echo -e "Exec node IP:\${OPENSTACK_PUBLIC_IP}\\n"
 kinit -k -t \${HOME}/bxms-release.keytab bxms-release/prod-ci@REDHAT.COM
 
 UNBLOCK=1 BREWCHAIN=1 CFG=./${IP_CONFIG_FILE} POMMANIPEXT=bxms-bom make -f  \${makefile} \${product1_lowcase}-installer 2>&1| tee b.log

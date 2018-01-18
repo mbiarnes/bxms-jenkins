@@ -2,6 +2,7 @@ import org.jboss.bxms.jenkins.JobTemplate
 
 // PVT script.
 String shellScript = """
+echo -e "Exec node IP:\${OPENSTACK_PUBLIC_IP}\\n"
 case "\${PRODUCT_NAME}" in
     RHDM )
         prod_smoketest_cfg=\${product1_smoketest_cfg}

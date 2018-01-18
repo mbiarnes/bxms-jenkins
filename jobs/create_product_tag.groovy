@@ -1,10 +1,9 @@
 import org.jboss.bxms.jenkins.JobTemplate
-
 // Create product tag script
 String shellScript = """
 #unset Jenkins WORKSPACE variable to avoid clash with ip-tooling
 unset WORKSPACE
-
+echo -e "Exec node IP:\${OPENSTACK_PUBLIC_IP}\\n"
 echo -e \"Host code.engineering.redhat.com \\n\\
         HostName code.engineering.redhat.com \\n\\
         User jb-ip-tooling-jenkins\" > ~/.ssh/config

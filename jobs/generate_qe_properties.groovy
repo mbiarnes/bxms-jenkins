@@ -1,8 +1,8 @@
 import org.jboss.bxms.jenkins.JobTemplate
-
 def shellScript = """
 
 set -x
+echo -e "Exec node IP:\${OPENSTACK_PUBLIC_IP}\\n"
 #kinit -k -t \${HOME}/bxms-release.keytab bxms-release/prod-ci@REDHAT.COM
 
 function appendProp(){

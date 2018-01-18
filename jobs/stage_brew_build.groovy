@@ -2,7 +2,7 @@ import org.jboss.bxms.jenkins.JobTemplate
 
 def shellScript = """
 set -x
-
+echo -e "Exec node IP:\${OPENSTACK_PUBLIC_IP}\\n"
 case "\${PRODUCT_NAME}" in
     RHDM )
         prod_artifact_version=\${product1_artifact_version}

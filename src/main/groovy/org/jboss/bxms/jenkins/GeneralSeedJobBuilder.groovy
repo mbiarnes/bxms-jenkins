@@ -45,6 +45,7 @@ class GeneralSeedJobBuilder {
             }
 
             steps {
+                shell("echo -e \"Exec node IP:\${OPENSTACK_PUBLIC_IP}\\n\"")
                 dsl {
                     external 'streams/' + release_code + '/*.groovy'
                     additionalClasspath 'src/main/groovy'

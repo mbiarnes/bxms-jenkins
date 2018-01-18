@@ -1,7 +1,7 @@
 import org.jboss.bxms.jenkins.JobTemplate
-
 // Generate html release notes (Note that don't replace ''')
 def shellScript ='''#!/bin/sh
+echo -e "Exec node IP:\${OPENSTACK_PUBLIC_IP}\\n"
 product2_jql_cve_search="(project = RHBRMS OR project = RHBPMS) AND 'Target Release' = ${product_version}.GA AND labels = security AND (Status = closed or Status = VERIFIED)"
 product2_jql_bugfix_search="(project = RHBRMS OR project = RHBPMS) AND 'Target Release' = ${product_version}.GA AND (status = VERIFIED or status = closed) AND summary !~ 'CVE*'"
 

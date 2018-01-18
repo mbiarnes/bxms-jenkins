@@ -3,7 +3,7 @@ import org.jboss.bxms.jenkins.JobTemplate
 // Staging script.
 def shellScript = """
 #Uploading to rcm staging folder
-
+echo -e "Exec node IP:\${OPENSTACK_PUBLIC_IP}\\n"
 ip-tooling/maven-artifact-handler.py --version=\${product1_artifact_version} --override-version \${product1_version} \
    --deliverable \${product1_deliverable_template} --maven-repo \${bxms_patch_maven_repo_url} \
    --output \${product1_name}

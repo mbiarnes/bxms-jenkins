@@ -43,6 +43,9 @@ def jobDefinition = job("${RELEASE_CODE}-send-handover-mail") {
             contentType('text/html')
         }
     }
+    steps {
+        shell("echo -e \"Exec node IP:\${OPENSTACK_PUBLIC_IP}\\n\"")
+    }
 }
 
 JobTemplate.addCommonConfiguration(jobDefinition, CI_PROPERTIES_FILE)

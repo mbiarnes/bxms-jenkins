@@ -20,6 +20,7 @@ class JenkinsAllJobBuilder {
         //Use .m2/repository as local repo
         String shellScript = """
 unset WORKSPACE
+echo -e "Exec node IP:\${OPENSTACK_PUBLIC_IP}\\n"
     DEP_REPO=`pwd`/workspace/.m2deploy
     _local_repo=${maven_repo}
 if [ "\$LOCAL_REPO" = "true" ];then

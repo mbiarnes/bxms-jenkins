@@ -1,7 +1,7 @@
 import org.jboss.bxms.jenkins.JobTemplate
-
 // Create handover script
 def shellScript = """
+echo -e "Exec node IP:\${OPENSTACK_PUBLIC_IP}\\n"
 python ip-tooling/template_helper.py -i \${handover_template_basename}-\${product1_lowcase}.template -p ${CI_PROPERTIES_FILE} -o \${release_handover_basename}-\${product1_lowcase}.adoc
 asciidoctor \${release_handover_basename}-\${product1_lowcase}.adoc
 

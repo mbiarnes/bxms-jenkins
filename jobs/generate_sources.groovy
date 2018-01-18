@@ -1,6 +1,6 @@
 import org.jboss.bxms.jenkins.JobTemplate
-
 shellScript = """
+echo -e "Exec node IP:\${OPENSTACK_PUBLIC_IP}\\n"
 # Kerberos authentication
 kinit -k -t \${HOME}/bxms-release.keytab bxms-release/prod-ci@REDHAT.COM
 

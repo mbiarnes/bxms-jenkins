@@ -1,5 +1,7 @@
 import org.jboss.bxms.jenkins.JobTemplate
+
 String shellScript = """
+echo -e "Exec node IP:\${OPENSTACK_PUBLIC_IP}\\n"
 if [ "\$release_status" = "closed" ];then
         exit 0
 fi

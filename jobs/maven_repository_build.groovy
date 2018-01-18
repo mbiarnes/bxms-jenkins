@@ -1,5 +1,4 @@
 import org.jboss.bxms.jenkins.JobTemplate
-
 // incremental repository
 def incrementalRepositoryString = null
 
@@ -8,6 +7,7 @@ def incrementalRepositoryString = null
 //}
 // Repository builder script
 def shellScript = """
+echo -e "Exec node IP:\${OPENSTACK_PUBLIC_IP}\\n"
 kinit -k -t \${HOME}/bxms-release.keytab bxms-release/prod-ci@REDHAT.COM
 ip-tooling/jira_helper.py -c ${IP_CONFIG_FILE} -a "Maven repository build started: Build url:\${BUILD_URL}" -f
 

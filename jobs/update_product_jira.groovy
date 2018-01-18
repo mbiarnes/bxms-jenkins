@@ -1,7 +1,9 @@
 import org.jboss.bxms.jenkins.JobTemplate
 
 // Update product JIRA script
-def shellScript = """echo "The product version is \$product1_version and the release milestone is \$product1_milestone."
+def shellScript = """
+echo -e "Exec node IP:\${OPENSTACK_PUBLIC_IP}\\n"
+echo "The product version is \$product1_version and the release milestone is \$product1_milestone."
 kinit -k -t \${HOME}/bxms-release.keytab bxms-release/prod-ci@REDHAT.COM
 python ip-tooling/release-ticketor.py --user mw-prod-ci --password ds54sdfs54df \
     --headless \$product1_version.GA \$cutoff_date \$product1_version.\$product1_milestone 2>&1 | tee /tmp/release-ticketor-output
