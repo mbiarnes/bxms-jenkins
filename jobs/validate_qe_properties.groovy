@@ -3,8 +3,25 @@ String shellScript = """
 if [ "\$release_status" = "closed" ];then
         exit 0
 fi
-wget \${product1_staging_properties_url} -O \${product1_staging_properties_name}
-wget \${product1_candidate_properties_url} -O \${product1_candidate_properties_name}
+case "\${PRODUCT_NAME}" in
+        RHDM )
+            product_staging_properties_url=\${product1_staging_properties_url}
+            product_staging_properties_name=\${product1_staging_properties_name}
+            product_version=\${product1_version}
+        ;;
+        RHBAS )
+            product_staging_properties_url=\${product2_staging_properties_url}
+            product_staging_properties_name=\${product2_staging_properties_name}
+            product_version=\${product2_version}
+        ;;
+esac
+
+if [ "\${release_code}" == "bxms-nightly" ]; then
+        product_staging_properties_name="\${PRODUCT_NAME}-\${build_date}.properties"
+        product_staging_properties_url="\${rcm_staging_base}/\${PRODUCT_NAME,,}/\${PRODUCT_NAME}-\${product_version}.NIGHTLY/\${product_staging_properties_name}"
+fi
+
+wget \${product_staging_properties_url} -O \${product_staging_properties_name}
 
 python -c "import sys,os,re
 from urllib2 import urlopen
@@ -86,8 +103,7 @@ def validateProperties(propfile, keyword, product_name):
     else:
         return 1
 
-validateProperties('\$product1_staging_properties_name', 'rcm-guest','rhdm')
-#validateProperties('\${product1_candidate_properties_name}', 'candidates','rhdm')
+validateProperties('\${product_staging_properties_name}', 'rcm-guest','\${PRODUCT_NAME}')
 "
 """
 // Creates or updates a free style job.
@@ -104,6 +120,14 @@ def jobDefinition = job("${RELEASE_CODE}-validate-qe-properties") {
         println "Detected in codereview:Disable validate-qe-properties"
         disabled()
     }
+
+    // Allows to parameterize the job.
+    parameters {
+        // Defines a simple text parameter, where users can enter a string value.
+        stringParam(parameterName = "PRODUCT_NAME", defaultValue = "RHDM",
+                description = "Specify product name to switch between configurations.")
+    }
+
     triggers{
         gerrit{
 
