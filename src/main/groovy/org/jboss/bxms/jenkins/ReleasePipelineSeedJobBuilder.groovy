@@ -83,10 +83,8 @@ class ReleasePipelineSeedJobBuilder {
                 }
             }
 
-            if(!jobName.matches("codereview/(.*)")){
-                triggers {
-                    upstream('a-master-seed', 'SUCCESS')
-                }
+            triggers {
+                upstream(jobName, 'SUCCESS')
             }
 
         }
