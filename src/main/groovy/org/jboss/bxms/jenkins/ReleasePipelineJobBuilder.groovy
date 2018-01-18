@@ -62,7 +62,7 @@ class ReleasePipelineJobBuilder {
                         // Sets the remote URL.
                         url("ssh://jb-ip-tooling-jenkins@code.engineering.redhat.com:22/bxms-jenkins")
                         name("origin")
-                        refspec("+\$GERRIT_REFSPEC")
+                        refspec("\$GERRIT_REFSPEC")
                     }
 
                     // Specify the branches to examine for changes and to build.
