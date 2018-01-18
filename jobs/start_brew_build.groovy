@@ -4,7 +4,7 @@ import org.jboss.bxms.jenkins.JobTemplate
 def shellScript = """
 kinit -k -t \${HOME}/bxms-release.keytab bxms-release/prod-ci@REDHAT.COM
 
-UNBLOCK=1 BREWCHAIN=1 CFG=./${IP_CONFIG_FILE} POMMANIPEXT=bxms-bom make -f  \${makefile} \${product1_lowcase} 2>&1| tee b.log
+UNBLOCK=1 BREWCHAIN=1 CFG=./${IP_CONFIG_FILE} POMMANIPEXT=bxms-bom make -f  \${makefile} \${product1_lowcase}-installer 2>&1| tee b.log
 
 brewchain_build_url=`grep 'build: Watching task ID:' b.log`
 brewchain_build_url=`python -c "import sys,re
