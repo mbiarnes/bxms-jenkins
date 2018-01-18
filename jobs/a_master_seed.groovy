@@ -3,19 +3,19 @@ import org.jboss.bxms.jenkins.*
 //Establish the parametize release pipeline
 //Release code is identical to the folder name in streams/
 def seedJobName="${JOB_NAME}"
-def gerritRefspec
+def gerritRefspec="+refs/heads/master:refs/remotes/origin/master"
 // this is a git point to the refs we used in gerritRefspec which git would fetched
-def gerritBranch="FETCH_HEAD"
-// if triggered by manul, to avoid build fail
-try{
-    gerritRefspec="${GERRIT_REFSPEC}"
-}catch(e){
-    println "Detected triggered by manual: set GERRIT_REFSPEC to 'refs/heads/master'"
-    gerritRefspec="+refs/heads/master:refs/remotes/origin/master"
-}
-if (!seedJobName.matches("codereview/(.*)")) {
-    println "Detected not in codereview: set GERRIT_BRANCH to 'master'"
-    gerritBranch ="master"
+def gerritBranch="master"
+if (seedJobName.matches("codereview/(.*)")) {
+    println "Detected in codereview folder, reset GERRIT_REFSPEC/GERRIT_BRANCH:"
+    gerritBranch ="FETCH_HEAD"
+    // if triggered by manul, to avoid build fail
+    try{
+        gerritRefspec="${GERRIT_REFSPEC}"
+    }catch(e){
+        println "Detected triggered by manual: set GERRIT_REFSPEC to '+refs/heads/master:refs/remotes/origin/master'"
+        gerritRefspec="+refs/heads/master:refs/remotes/origin/master"
+    }
 }
 println "-------seedJobName:${seedJobName}-------"
 println "-------GERRIT_BRANCH:${gerritBranch}-------"
