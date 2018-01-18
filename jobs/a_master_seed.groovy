@@ -11,7 +11,7 @@ try{
     gerritRefspec="${GERRIT_REFSPEC}"
 }catch(e){
     println "Detected triggered by manual: set GERRIT_REFSPEC to 'refs/heads/master'"
-    gerritRefspec="refs/heads/master"
+    gerritRefspec="+refs/heads/master:refs/remotes/origin/master"
 }
 if (!seedJobName.matches("codereview/(.*)")) {
     println "Detected not in codereview: set GERRIT_BRANCH to 'master'"
