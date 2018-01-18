@@ -26,8 +26,9 @@ if [ "\${release_code}" == "bxms-nightly" ]; then
             ;;
     esac
 
-    product_url_prefix="\${jenkins_cache_url}/\${jenkins_cache_repo}/org/kie/rhap/\${PRODUCT_NAME,,}/\${product_version}.redhat-\${build_date}"
-    product_filename_common_prefix="\${product_version}.redhat-\${build_date}"
+    product_url_prefix="\${jenkins_cache_url}/\${jenkins_cache_repo}/org/kie/rhap/\${PRODUCT_NAME,,}/\${product_artifact_version}.redhat-\${build_date}"
+    product_filename_common_prefix="\${PRODUCT_NAME,,}-\${product_artifact_version}"
+    product_installer_name="\${PRODUCT_NAME,,}-installer-\${product_artifact_version}.jar"
     echo "properties_staging_path=\${PRODUCT_NAME,,}/\${PRODUCT_NAME}-\${product_version}.NIGHTLY" > /tmp/prod_staging_path
     echo "prod_properties_name=\${prod_properties_name}" >> /tmp/prod_staging_path
 else
@@ -62,6 +63,7 @@ else
 
     product_url_prefix="\${rcm_staging_base}/\${prod_staging_path}"
     product_filename_common_prefix="\${PRODUCT_NAME,,}-\${product_version}"
+    product_installer_name="\${PRODUCT_NAME,,}-installer-\${product_version}.jar"
 
     echo "properties_staging_path=\${prod_staging_path}" > /tmp/prod_staging_path
     echo "prod_properties_name=\${prod_properties_name}" >> /tmp/prod_staging_path
@@ -84,6 +86,7 @@ esac
 
 appendProp "\${PRODUCT_NAME,,}.kie-server.ee7.latest.url" "\${product_url_prefix}/\${product_filename_common_prefix}-kie-server-ee7.zip"
 appendProp "\${PRODUCT_NAME,,}.addons.latest.url"         "\${product_url_prefix}/\${product_filename_common_prefix}-add-ons.zip"
+appendProp "\${PRODUCT_NAME,,}.installer.latest.url"         "\${product_url_prefix}/\${product_installer_name}"
 appendProp "\${PRODUCT_NAME}_VERSION"   \${product_artifact_version}
 appendProp "KIE_VERSION"                \${kie_version}
 appendProp "APPFORMER_VERSION"          \${appformer_version}
