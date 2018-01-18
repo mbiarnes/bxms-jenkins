@@ -61,8 +61,6 @@ appendProp "release_jira_id" \$jira_id
 
 if [ "\${release_code}" == "bxms-nightly" ]; then
     appendProp "build_date" "\$(date -u +'%Y%m%d')"
-    sed -i s/-SNAPSHOT/-`date -u +'%Y%m%d'`/g bxms-dev.cfg
-    cp bxms-dev.cfg /jboss-prod/config
 fi
 """
 
