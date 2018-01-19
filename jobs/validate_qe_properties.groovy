@@ -1,7 +1,7 @@
 import org.jboss.bxms.jenkins.JobTemplate
 
 String shellScript = """
-echo -e "Exec node IP:\${OPENSTACK_PUBLIC_IP}\\n"
+echo -e "Exec node IP:\${OPENSTACK_PUBLIC_IP}"
 if [ "\$release_status" = "closed" ];then
         exit 0
 fi
@@ -25,7 +25,7 @@ fi
 
 wget \${product_staging_properties_url} -O \${product_staging_properties_name}
 
-python -c "import sys,os,re
+echo -e "import sys,os,re
 from urllib2 import urlopen
 ret=0
 def isvalidurl(url, inc_str):
@@ -57,7 +57,7 @@ def validateProperties(propfile, keyword, product_name):
         tmpFile = open(propfile, 'r')
         for line in tmpFile:
             str1, tmp, str2 = line.partition('=')
-            str2 = str2.replace('\\n', '')
+            str2 = str2.replace('\\\\\\\\n', '')
             dic[str1] = str2
         tmpFile.close()
         if re.match('rhdm-.*', propfile) is not None:
@@ -104,9 +104,10 @@ def validateProperties(propfile, keyword, product_name):
             print  propfile + ' Validation Pass'
     else:
         return 1
-
+print '---Exec the py script...---'
 validateProperties('\${product_staging_properties_name}', 'rcm-guest','\${PRODUCT_NAME}')
-"
+">validateProperties.py
+python validateProperties.py
 """
 // Creates or updates a free style job.
 def jobDefinition = job("${RELEASE_CODE}-validate-qe-properties") {
