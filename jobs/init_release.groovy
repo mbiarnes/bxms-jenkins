@@ -19,7 +19,7 @@ if [ "\${CLEAN_CONFIG}" = "true" ];then
 fi
 
 # Prepare properties for nightly build
-if [ "${release_code}" == "bxms-nightly" ]; then
+if [ "${RELEASE_CODE}" == "bxms-nightly" ]; then
     build_date=\$(date -u +'%Y%m%d')
     sed -i "s#-SNAPSHOT#-\${build_date}#g" ${IP_CONFIG_FILE}
 fi
@@ -65,7 +65,7 @@ jira_id=`tail -n 2 /tmp/jira.log |head -n 1`
 jira_id=\${jira_id/Selected Result:/}
 echo "https://projects.engineering.redhat.com/browse/\$jira_id"
 appendProp "release_jira_id" \$jira_id
-if [ "${release_code}" == "bxms-nightly" ]; then
+if [ "${RELEASE_CODE}" == "bxms-nightly" ]; then
     appendProp "build_date" "\${build_date}"
 fi
 """
