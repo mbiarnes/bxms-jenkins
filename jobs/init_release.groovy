@@ -17,6 +17,13 @@ if [ "\${CLEAN_CONFIG}" = "true" ];then
     rm -vf /jboss-prod/config/\${release_code}-*.*
     rm -vf \${CI_PROPERTIES_FILE}
 fi
+
+# Prepare properties for nightly build
+if [ "${release_code}" == "bxms-nightly" ]; then
+    build_date=\$(date -u +'%Y%m%d')
+    sed -i "s#-SNAPSHOT#-\${build_date}#g" ${IP_CONFIG_FILE}
+fi
+
 #If build new versions, then remove the jenkins properties files
 if [ -f ${CI_PROPERTIES_FILE} ];then
     new_version="`grep 'product1_version=' ${IP_CONFIG_FILE}`"
@@ -58,9 +65,8 @@ jira_id=`tail -n 2 /tmp/jira.log |head -n 1`
 jira_id=\${jira_id/Selected Result:/}
 echo "https://projects.engineering.redhat.com/browse/\$jira_id"
 appendProp "release_jira_id" \$jira_id
-
-if [ "\${release_code}" == "bxms-nightly" ]; then
-    appendProp "build_date" "\$(date -u +'%Y%m%d')"
+if [ "${release_code}" == "bxms-nightly" ]; then
+    appendProp "build_date" "\${build_date}"
 fi
 """
 
