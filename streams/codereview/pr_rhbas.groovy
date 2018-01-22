@@ -5,8 +5,8 @@ export M3_HOME=/jboss-prod/tools/maven-3.3.9-prod
 export PATH=\$M3_HOME/bin:\$PATH
 mvn  -Dversion.override=7.0.0 -Dversion.suffix=redhat-SNAPSHOT -Dversion.suffix.snapshot=true \\
     -DversionOverride=true -DversionSuffixSnapshot=true -Dvictims.updates=offline -B -U -s /jboss-prod/m2/bxms-dev-repo-settings.xml clean package"""
-job('rhbas_codereview'){
-    description("Monitor the code change in rhbas")
+job('rhba_codereview'){
+    description("Monitor the code change in rhba")
 
     parameters {
 
@@ -22,7 +22,7 @@ job('rhbas_codereview'){
             // Adds a remote.
             remote {
                 // Sets the remote URL.
-                url("ssh://jb-ip-tooling-jenkins@code.engineering.redhat.com:22/kiegroup/rhbas")
+                url("ssh://jb-ip-tooling-jenkins@code.engineering.redhat.com:22/kiegroup/rhba")
                 name("origin")
                 refspec("+refs/heads/*:refs/remotes/origin/* \$GERRIT_REFSPEC")
 
@@ -42,7 +42,7 @@ job('rhbas_codereview'){
    triggers{
        gerrit{
 
-           project("kiegroup/rhbas", "master")
+           project("kiegroup/rhba", "master")
            events {
                patchsetCreated()
            }

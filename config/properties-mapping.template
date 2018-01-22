@@ -17,7 +17,7 @@ product2_version_minor=common:product2_version_minor
 product2_version_micro=common:product2_version_micro
 product2_version=common:product2_version
 product2_milestone=common:product2_milestone
-product2_artifact_version=rhbas:version
+product2_artifact_version=rhba:version
 
 release_engineer=common:release_engineer
 release_estimation=common:release_estimation
@@ -64,7 +64,7 @@ release_stream_path=bxms-jenkins/streams/{release_code}
 handover_template_basename={release_stream_path}/config/release-handover
 release_notes_template={release_stream_path}/config/release-notes.template
 product1_deliverable_template={release_stream_path}/config/rhdm-deliverable.properties
-product2_deliverable_template={release_stream_path}/config/rhbas-deliverable.properties
+product2_deliverable_template={release_stream_path}/config/rhba-deliverable.properties
 archive_pvt_report_basename={release_stream_path}/release-history/{release_code}-pvt-report
 product_release_tag={product1_name}-{product1_milestone_version}_{product2_name}-{product2_milestone_version}
 
@@ -81,15 +81,15 @@ brewchain_build_url=
 
 #pvt report
 product1_smoketest_cfg=http://git.app.eng.bos.redhat.com/git/bxms-jenkins.git/plain/config/rhdm-pvt-config.yaml
-product2_smoketest_cfg=http://git.app.eng.bos.redhat.com/git/bxms-jenkins.git/plain/config/rhbas-pvt-config.yaml
+product2_smoketest_cfg=http://git.app.eng.bos.redhat.com/git/bxms-jenkins.git/plain/config/rhba-pvt-config.yaml
 product1_pvt_report_basename={share_config_dir}/{release_code}-pvt-report-rhdm
 product1_pvt_report_adoc_path={share_config_dir}/{release_code}-pvt-report-rhdm.adoc
-product2_pvt_report_basename={share_config_dir}/{release_code}-pvt-report-rhbas
-product2_pvt_report_adoc_path={share_config_dir}/{release_code}-pvt-report-rhbas.adoc
+product2_pvt_report_basename={share_config_dir}/{release_code}-pvt-report-rhba
+product2_pvt_report_adoc_path={share_config_dir}/{release_code}-pvt-report-rhba.adoc
 
 #staging, candidate folder
 product1_lowcase=rhdm
-product2_lowcase=rhbas
+product2_lowcase=rhba
 product1_staging_path={product1_lowcase}/{product1_name}-{product1_milestone_version}
 product2_staging_path={product2_lowcase}/{product2_name}-{product2_milestone_version}
 product1_nightly_path=org/kie/rhba/{product1_lowcase}
@@ -111,17 +111,17 @@ qe_smoketest_job_url=https://bxms-qe-jenkins.rhev-ci-vms.eng.rdu2.redhat.com/job
 #maven offline repository
 product1_maven_repo_name=rhdm-{product1_milestone_version}-maven-repository.zip
 product1_incr_maven_repo_name=rhdm-{product1_milestone_version}-incremental-maven-repository.zip
-product2_maven_repo_name=rhbas-{product1_milestone_version}-maven-repository.zip
-product2_incr_maven_repo_name=rhbas-{product1_milestone_version}-incremental-maven-repository.zip
+product2_maven_repo_name=rhba-{product1_milestone_version}-maven-repository.zip
+product2_incr_maven_repo_name=rhba-{product1_milestone_version}-incremental-maven-repository.zip
 maven_repo_report_url={rcm_staging_base}/{product2_staging_path}/maven-repository-report/
 
 #Misc
 product1_sources_name=rhdm-{product1_milestone_version}-sources.zip
 product1_release_notes_path=rhdm-{product1_version}{availability}-release-notes.html
 product1_release_notes_url={rcm_staging_base}/{product1_staging_path}/rhdm-{product1_version}{availability}-release-notes.html
-product2_sources_name=rhbas-{product2_milestone_version}-sources.zip
-product2_release_notes_path=rhbas-{product1_version}{availability}-release-notes.html
-product2_release_notes_url={rcm_staging_base}/{product2_staging_path}/rhbas-{product1_version}{availability}-release-notes.html
+product2_sources_name=rhba-{product2_milestone_version}-sources.zip
+product2_release_notes_path=rhba-{product1_version}{availability}-release-notes.html
+product2_release_notes_url={rcm_staging_base}/{product2_staging_path}/rhba-{product1_version}{availability}-release-notes.html
 
 # Find the customer portoal software ID for the latest available release in https://access.redhat.com/jbossnetwork/restricted/listSoftware.html
 software_id=52491
