@@ -80,10 +80,10 @@ def validateProperties(propfile, keyword, product_name):
             assertContain(dic['rhdm.installer.latest.url'], '\$product1_milestone_version')
 
         if re.match('rhba-.*', propfile) is not None:
-            isvalidurl(dic['rhbas.addons.latest.url'],keyword)
-            isvalidurl(dic['rhbas.kie-server.ee7.latest.url'],keyword)
-            isvalidurl(dic['rhbas.decision-central.standalone.latest.url'],keyword)
-            isvalidurl(dic['rhbas.decision-central-eap7.latest.url'],keyword)
+            isvalidurl(dic['rhba.addons.latest.url'],keyword)
+            isvalidurl(dic['rhba.kie-server.ee7.latest.url'],keyword)
+            isvalidurl(dic['rhba.decision-central.standalone.latest.url'],keyword)
+            isvalidurl(dic['rhba.decision-central-eap7.latest.url'],keyword)
             isvalidurl(dic['rhba.installer.latest.url'],keyword)
             isvalidurl(dic['build.config'],'bxms')
 
@@ -92,10 +92,10 @@ def validateProperties(propfile, keyword, product_name):
                 isvalidurl(dic['rhba.sources.latest.url'],keyword)
             assertEqual('\$kie_version', dic['KIE_VERSION'])
             assertEqual('\${product2_artifact_version}', dic['RHBAS_VERSION'])
-            assertContain(dic['rhbas.business-central.standalone.latest.url'], '\$product2_milestone_version')
-            assertContain(dic['rhbas.addons.latest.url'], '\$product2_milestone_version')
-            assertContain(dic['rhbas.kie-server.ee7.latest.url'], '\$product2_milestone_version')
-            assertContain(dic['rhbas.installer.latest.url'], '\$product2_milestone_version')
+            assertContain(dic['rhba.business-central.standalone.latest.url'], '\$product2_milestone_version')
+            assertContain(dic['rhba.addons.latest.url'], '\$product2_milestone_version')
+            assertContain(dic['rhba.kie-server.ee7.latest.url'], '\$product2_milestone_version')
+            assertContain(dic['rhba.installer.latest.url'], '\$product2_milestone_version')
 
         if ret != 0:
             print propfile + ' Validation No Pass'

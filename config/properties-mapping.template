@@ -92,8 +92,8 @@ product1_lowcase=rhdm
 product2_lowcase=rhbas
 product1_staging_path={product1_lowcase}/{product1_name}-{product1_milestone_version}
 product2_staging_path={product2_lowcase}/{product2_name}-{product2_milestone_version}
-product1_nightly_path=org/kie/rhap/{product1_lowcase}
-product2_nightly_path=org/kie/rhap/{product2_lowcase}
+product1_nightly_path=org/kie/rhba/{product1_lowcase}
+product2_nightly_path=org/kie/rhba/{product2_lowcase}
 
 #qe properties
 product1_staging_properties_name={product1_lowcase}-deliverable-list-staging.properties

@@ -6,7 +6,7 @@ def shell_script = """
 unset WORKSPACE
 echo -e "Exec node IP:\${OPENSTACK_PUBLIC_IP}\\n"
 echo "Validating upstreams in ${IP_CONFIG_FILE}"
-VALIDATE_ONLY=true LOCAL=1 CFG=./${IP_CONFIG_FILE} REPO_GROUP=MEAD+JENKINS+JBOSS+CENTRAL MVN_LOCAL_REPO=/jboss-prod/m2/\${dev_maven_repo} POMMANIPEXT=bxms-bom make -f Makefile.BRMS rhdm-installer rhbas-installer
+VALIDATE_ONLY=true LOCAL=1 CFG=./${IP_CONFIG_FILE} REPO_GROUP=MEAD+JENKINS+JBOSS+CENTRAL MVN_LOCAL_REPO=/jboss-prod/m2/\${dev_maven_repo} POMMANIPEXT=bxms-bom make -f Makefile.BRMS rhdm-installer rhba-installer
 """
 
 def jobDefinition = job("${RELEASE_CODE}-validate-build-config") {

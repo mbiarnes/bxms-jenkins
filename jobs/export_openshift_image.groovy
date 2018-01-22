@@ -17,10 +17,10 @@ fi
 if [ ! -e download_list.properties ]
 then
         echo  """#Format G:A::classifier:package_type
-org.kie.rhap:rhbas::business-central-standalone:jar:rhbas.business-central.standalone.latest.url
-org.kie.rhap:rhbas::business-central-eap7:zip:rhbas.business-central-eap7.latest.url
-org.kie.rhap:rhbas::add-ons:zip:rhbas.addons.latest.url
-org.kie.rhap:rhbas::execution-server-ee7:zip:rhbas.execution-server.ee7.latest.url""" >>download_list.properties
+org.kie.rhba:rhba::business-central-standalone:jar:rhba.business-central.standalone.latest.url
+org.kie.rhba:rhba::business-central-eap7:zip:rhba.business-central-eap7.latest.url
+org.kie.rhba:rhba::add-ons:zip:rhba.addons.latest.url
+org.kie.rhba:rhba::execution-server-ee7:zip:rhba.execution-server.ee7.latest.url""" >>download_list.properties
 fi
 maven_repo_url="http://download-node-02.eng.bos.redhat.com/brewroot/repos/\${brew_target}/latest/maven/"
 ./maven-artifact-handler.py --version=${product_artifact_version} --override-version ${product_version}${availability} --deliverable download_list.properties --maven-repo ${maven_repo_url} --output BPMS-${product_version}${availability}

@@ -26,7 +26,7 @@ if [ "\${release_code}" == "bxms-nightly" ]; then
             ;;
     esac
 
-    product_url_prefix="\${jenkins_cache_url}/\${jenkins_cache_repo}/org/kie/rhap/\${PRODUCT_NAME,,}/\${product_artifact_version}"
+    product_url_prefix="\${jenkins_cache_url}/\${jenkins_cache_repo}/org/kie/rhba/\${PRODUCT_NAME,,}/\${product_artifact_version}"
     product_installer_url="\${jenkins_cache_url}/\${jenkins_cache_repo}/org/jboss/installer/\${PRODUCT_NAME,,}-installer/\${product_artifact_version}/\${PRODUCT_NAME,,}-installer-\${product_artifact_version}.jar"
     product_filename_common_prefix="\${PRODUCT_NAME,,}-\${product_artifact_version}"
     product_installer_name="\${PRODUCT_NAME,,}-installer-\${product_artifact_version}.jar"
