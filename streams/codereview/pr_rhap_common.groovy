@@ -6,8 +6,8 @@ export PATH=\$M3_HOME/bin:\$PATH
 mvn  -Dversion.override=7.0.0 -Dversion.suffix=redhat-SNAPSHOT -Dversion.suffix.snapshot=true \\
     -DversionOverride=true -DversionSuffixSnapshot=true -Dvictims.updates=offline -B -U -s /jboss-prod/m2/bxms-dev-repo-settings.xml clean package
 """
-job('rhap_common_codereview'){
-    description("Monitor the code change in rhap-common")
+job('rhba_common_codereview'){
+    description("Monitor the code change in rhba-common")
 
     parameters {
 
@@ -23,7 +23,7 @@ job('rhap_common_codereview'){
             // Adds a remote.
             remote {
                 // Sets the remote URL.
-                url("ssh://jb-ip-tooling-jenkins@code.engineering.redhat.com:22/kiegroup/rhap-common")
+                url("ssh://jb-ip-tooling-jenkins@code.engineering.redhat.com:22/kiegroup/rhba-common")
                 name("origin")
                 refspec("+refs/heads/*:refs/remotes/origin/* \$GERRIT_REFSPEC")
 
@@ -43,7 +43,7 @@ job('rhap_common_codereview'){
    triggers{
        gerrit{
 
-           project("kiegroup/rhap-common", "master")
+           project("kiegroup/rhba-common", "master")
            events {
                patchsetCreated()
            }

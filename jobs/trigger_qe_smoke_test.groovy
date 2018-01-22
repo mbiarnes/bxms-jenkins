@@ -50,7 +50,7 @@ def jobDefinition = job("${RELEASE_CODE}-trigger-qe-smoke-test") {
             messageType("Custom")
 
             // KEY=value pairs, one per line (Java properties file format) to be used as message properties.
-            messageProperties('label=rhap-ci\n' +
+            messageProperties('label=rhba-ci\n' +
                     'CI_TYPE=custom\n' +
                     'EVENT_TYPE=${prod_lowcase}-70-${release_type}-qe-trigger\n')
             // Content of CI message to be sent.
