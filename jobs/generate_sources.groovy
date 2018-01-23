@@ -41,7 +41,7 @@ rm -rf src/bxms-license-\${prod_artifact_version} \
 rm -rf src/kie-parent-\${kie_version}/RELEASE-README.md
 
 # Create sources archive
-zip -r -5 --quiet \${prod_sources_name}-\${prod_shipped_file_deliver_version} src/
+zip -r -5 --quiet \${prod_sources_name} src/
 echo "prod_staging_path=\${prod_staging_path}" > /tmp/prod_staging_path
 echo "prod_sources_name=\${prod_sources_name}" >> /tmp/prod_staging_path
 """
@@ -76,7 +76,7 @@ def jobDefinition = job("${RELEASE_CODE}-generate-sources") {
     // Adds post-build actions to the job.
     publishers {
         //Archives artifacts with each build.
-        archiveArtifacts('workspace/\${prod_sources_name}.zip')
+        archiveArtifacts('workspace/\${prod_sources_name}')
 
         // Send artifacts to an SSH server (using SFTP) and/or execute commands over SSH.
         publishOverSsh {
