@@ -33,22 +33,22 @@ if [ "\$CI_TYPE" = "brew-tag" ];then
     if [ "\$CI_NAME" = "org.kie.rhba-rhba" ];then
         product2_assembly_maven_repo_url="http://download.eng.bos.redhat.com/brewroot/packages/\${name}/\${version}/\${release}/maven/"
         product2_assembly_brew_url="https://brewweb.engineering.redhat.com/brew/taskinfo?taskID=\${task_id}"
-        product2_nvr="\$nvr"
+        product2_assembly_nvr="\$nvr"
         appendProp "product2_assembly_maven_repo_url" \$product2_assembly_maven_repo_url
         appendProp "product2_assembly_brew_url" \$product2_assembly_brew_url
-        appendProp "product2_nvr" \$product2_nvr
+        appendProp "product2_assembly_nvr" \$product2_assembly_nvr
         #web_hook=`grep "register_web_hook" ${CI_PROPERTIES_FILE} |cut -d "=" -f2`
         #curl -X POST -d 'OK' -k \$web_hook
-        ip-tooling/jira_helper.py -c ${IP_CONFIG_FILE} -a "Product Assembly Build Completed: \$product2_assembly_brew_url Build nvr: \$product2_nvr " -f
+        ip-tooling/jira_helper.py -c ${IP_CONFIG_FILE} -a "Product Assembly Build Completed: \$product2_assembly_brew_url Build nvr: \$product2_assembly_nvr " -f
 
     elif [ "\$CI_NAME" = "org.kie.rhba-rhdm" ];then
         product1_assembly_maven_repo_url="http://download.eng.bos.redhat.com/brewroot/packages/\${name}/\${version}/\${release}/maven/"
         product1_assembly_brew_url="https://brewweb.engineering.redhat.com/brew/taskinfo?taskID=\${task_id}"
-        product1_nvr="\$nvr"
+        product1_assembly_nvr="\$nvr"
         appendProp "product1_assembly_maven_repo_url" \$product1_assembly_maven_repo_url
         appendProp "product1_assembly_brew_url" \$product1_assembly_brew_url
-        appendProp "product1_nvr" \$product1_nvr
-        ip-tooling/jira_helper.py -c ${IP_CONFIG_FILE} -a "Product Assembly Build Completed: \$product1_assembly_brew_url Build nvr: \$product1_nvr " -f
+        appendProp "product1_assembly_nvr" \$product1_assembly_nvr
+        ip-tooling/jira_helper.py -c ${IP_CONFIG_FILE} -a "Product Assembly Build Completed: \$product1_assembly_brew_url Build nvr: \$product1_assembly_nvr " -f
     elif [ "\$CI_NAME" = "org.jboss.installer-rhdm-installer" ];then
         product1_installer_maven_repo_url="http://download.eng.bos.redhat.com/brewroot/packages/\${name}/\${version}/\${release}/maven/"
         product1_installer_brew_url="https://brewweb.engineering.redhat.com/brew/taskinfo?taskID=\${task_id}"
@@ -58,7 +58,7 @@ if [ "\$CI_TYPE" = "brew-tag" ];then
         appendProp "product1_installer_nvr" \$product1_installer_nvr
         web_hook=`grep "register_web_hook" ${CI_PROPERTIES_FILE} |cut -d "=" -f2`
         curl -X POST -d 'OK' -k \$web_hook
-        ip-tooling/jira_helper.py -c ${IP_CONFIG_FILE} -a "Product Assembly Build Completed: \$product1_assembly_brew_url Build nvr: \$product1_nvr " -f
+        ip-tooling/jira_helper.py -c ${IP_CONFIG_FILE} -a "Product Assembly Build Completed: \$product1_assembly_brew_url Build nvr: \$product1_assembly_nvr " -f
     elif [ "\$CI_NAME" = "org.jboss.installer-rhba-installer" ];then
         product2_installer_maven_repo_url="http://download.eng.bos.redhat.com/brewroot/packages/\${name}/\${version}/\${release}/maven/"
         product2_installer_brew_url="https://brewweb.engineering.redhat.com/brew/taskinfo?taskID=\${task_id}"
@@ -68,7 +68,7 @@ if [ "\$CI_TYPE" = "brew-tag" ];then
         appendProp "product2_installer_nvr" \$product2_installer_nvr
         #web_hook=`grep "register_web_hook" ${CI_PROPERTIES_FILE} |cut -d "=" -f2`
         #curl -X POST -d 'OK' -k \$web_hook
-        ip-tooling/jira_helper.py -c ${IP_CONFIG_FILE} -a "Product Assembly Build Completed: \$product1_assembly_brew_url Build nvr: \$product1_nvr " -f
+        ip-tooling/jira_helper.py -c ${IP_CONFIG_FILE} -a "Product Assembly Build Completed: \$product1_assembly_brew_url Build nvr: \$product1_assembly_nvr " -f
     elif [ "\$CI_NAME" = "org.jboss.brms-bpmsuite.patching-patching-tools-parent" ];then
         bxms_patch_maven_repo_url="http://download.eng.bos.redhat.com/brewroot/packages/\${name}/\${version}/\${release}/maven/"
         bxms_patch_brew_url="https://brewweb.engineering.redhat.com/brew/taskinfo?taskID=\${task_id}"

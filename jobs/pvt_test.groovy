@@ -17,7 +17,7 @@ case "\${PRODUCT_NAME}" in
         prod_pvt_report_basename=\${product2_pvt_report_basename}
         ;;
 esac
-
+git clone https://github.com/project-ncl/pvt.git
 cd pvt
 /jboss-prod/tools/maven-3.3.9-prod/bin/mvn -Dmaven.repo.local=\${dev_maven_repo} \
     surefire-report:report -B -Dproduct.config=\${prod_smoketest_cfg} -Dproduct.version=\${prod_milestone_version} \

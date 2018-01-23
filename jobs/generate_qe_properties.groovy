@@ -64,7 +64,7 @@ else
 
     product_url_prefix="\${rcm_staging_base}/\${prod_staging_path}"
     product_filename_common_prefix="\${PRODUCT_NAME,,}-\${product_version}"
-    product_installer_url="\${product_url_prefix}/\${PRODUCT_NAME,,}-\${product_version}.jar"
+    product_installer_url="\${product_url_prefix}/\${PRODUCT_NAME,,}-installer-\${product_version}.jar"
 
     echo "properties_staging_path=\${prod_staging_path}" > /tmp/prod_staging_path
     echo "prod_properties_name=\${prod_properties_name}" >> /tmp/prod_staging_path

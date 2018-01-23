@@ -73,8 +73,6 @@ link:${product1_assembly_brew_url}[${product1_assembly_nvr}]
 
 == Smoke Tests
 
-${load:qe_smoketest_report_path}
-
 === Package Checking Summary
 
 link:${release_code}-pvt-report-${product1_lowcase}.html[Package Checking Details Report(${product1_name})]
