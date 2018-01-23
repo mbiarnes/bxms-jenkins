@@ -6,15 +6,23 @@ case "\${PRODUCT_NAME}" in
     RHDM )
         prod_staging_properties_url=\${product1_staging_properties_url}
         prod_lowcase=\${product1_lowcase}
+        product_version="\${product1_version}"
         ;;
     RHBAS )
         prod_staging_properties_url=\${product2_staging_properties_url}
         prod_lowcase=\${product2_lowcase}
+        product_version="\${product1_version}"
         ;;
 esac
 
+if [ \${release_code} == "bxms-nightly" ]; then
+    prod_properties_name=\${PRODUCT_NAME, ,}-\${build_date}.properties
+    prod_staging_properties_url="\${rcm_staging_base}/\${PRODUCT_NAME,,}/\${PRODUCT_NAME}-\${product_version}.NIGHTLY/\${prod_properties_name}"
+fi
+
 echo "prod_staging_properties_url=\${prod_staging_properties_url}" > /tmp/prod_staging_properties_url
 echo "prod_lowcase=\${prod_lowcase}" >> /tmp/prod_staging_properties_url
+echo "release_purpose=\${release_code#*-}" >> /tmp/prod_staging_properties_url
 
 ip-tooling/jira_helper.py -c ${IP_CONFIG_FILE} -a "QE smoketest is triggered by CI message. Build URL:\${qe_smoketest_job_url}" -f
 """
@@ -40,7 +48,7 @@ def jobDefinition = job("${RELEASE_CODE}-trigger-qe-smoke-test") {
         // Sends JMS message.
         ciMessageBuilder {
             overrides {
-                topic('VirtualTopic.qe.ci.ba.${prod_lowcase}.70.${release_type}.trigger')
+                topic('VirtualTopic.qe.ci.ba.${prod_lowcase}.70.${release_purpose}.trigger')
             }
 
             // JMS selector to choose messages that will fire the trigger.
@@ -52,7 +60,7 @@ def jobDefinition = job("${RELEASE_CODE}-trigger-qe-smoke-test") {
             // KEY=value pairs, one per line (Java properties file format) to be used as message properties.
             messageProperties('label=rhba-ci\n' +
                     'CI_TYPE=custom\n' +
-                    'EVENT_TYPE=${prod_lowcase}-70-${release_type}-qe-trigger\n')
+                    'EVENT_TYPE=${prod_lowcase}-70-${release_purpose}-qe-trigger\n')
             // Content of CI message to be sent.
             messageContent('${prod_staging_properties_url}')
         }
