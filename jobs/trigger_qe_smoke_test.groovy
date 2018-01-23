@@ -40,7 +40,7 @@ def jobDefinition = job("${RELEASE_CODE}-trigger-qe-smoke-test") {
         // Sends JMS message.
         ciMessageBuilder {
             overrides {
-                topic('VirtualTopic.qe.ci.ba.${prod_lowcase}.70.brew.trigger')
+                topic('VirtualTopic.qe.ci.ba.${prod_lowcase}.70.${release_type}.trigger')
             }
 
             // JMS selector to choose messages that will fire the trigger.
