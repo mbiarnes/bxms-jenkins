@@ -37,8 +37,8 @@ if [ "\$CI_TYPE" = "brew-tag" ];then
         appendProp "product2_assembly_maven_repo_url" \$product2_assembly_maven_repo_url
         appendProp "product2_assembly_brew_url" \$product2_assembly_brew_url
         appendProp "product2_nvr" \$product2_nvr
-        web_hook=`grep "register_web_hook" ${CI_PROPERTIES_FILE} |cut -d "=" -f2`
-        curl -X POST -d 'OK' -k \$web_hook
+        #web_hook=`grep "register_web_hook" ${CI_PROPERTIES_FILE} |cut -d "=" -f2`
+        #curl -X POST -d 'OK' -k \$web_hook
         ip-tooling/jira_helper.py -c ${IP_CONFIG_FILE} -a "Product Assembly Build Completed: \$product2_assembly_brew_url Build nvr: \$product2_nvr " -f
 
     elif [ "\$CI_NAME" = "org.kie.rhba-rhdm" ];then
@@ -48,6 +48,24 @@ if [ "\$CI_TYPE" = "brew-tag" ];then
         appendProp "product1_assembly_maven_repo_url" \$product1_assembly_maven_repo_url
         appendProp "product1_assembly_brew_url" \$product1_assembly_brew_url
         appendProp "product1_nvr" \$product1_nvr
+        ip-tooling/jira_helper.py -c ${IP_CONFIG_FILE} -a "Product Assembly Build Completed: \$product1_assembly_brew_url Build nvr: \$product1_nvr " -f
+    elif [ "\$CI_NAME" = "org.jboss.installer-rhdm-installer" ];then
+        product1_installer_maven_repo_url="http://download.eng.bos.redhat.com/brewroot/packages/\${name}/\${version}/\${release}/maven/"
+        product1_installer_brew_url="https://brewweb.engineering.redhat.com/brew/taskinfo?taskID=\${task_id}"
+        product1_installer_nvr="\$nvr"
+        appendProp "product1_installer_maven_repo_url" \$product1_installer_maven_repo_url
+        appendProp "product1_installer_brew_url" \$product1_installer_brew_url
+        appendProp "product1_installer_nvr" \$product1_installer_nvr
+        web_hook=`grep "register_web_hook" ${CI_PROPERTIES_FILE} |cut -d "=" -f2`
+        curl -X POST -d 'OK' -k \$web_hook
+        ip-tooling/jira_helper.py -c ${IP_CONFIG_FILE} -a "Product Assembly Build Completed: \$product1_assembly_brew_url Build nvr: \$product1_nvr " -f
+    elif [ "\$CI_NAME" = "org.jboss.installer-rhba-installer" ];then
+        product2_installer_maven_repo_url="http://download.eng.bos.redhat.com/brewroot/packages/\${name}/\${version}/\${release}/maven/"
+        product2_installer_brew_url="https://brewweb.engineering.redhat.com/brew/taskinfo?taskID=\${task_id}"
+        product2_installer_nvr="\$nvr"
+        appendProp "product2_installer_maven_repo_url" \$product2_installer_maven_repo_url
+        appendProp "product2_installer_brew_url" \$product2_installer_brew_url
+        appendProp "product2_installer_nvr" \$product2_installer_nvr
         #web_hook=`grep "register_web_hook" ${CI_PROPERTIES_FILE} |cut -d "=" -f2`
         #curl -X POST -d 'OK' -k \$web_hook
         ip-tooling/jira_helper.py -c ${IP_CONFIG_FILE} -a "Product Assembly Build Completed: \$product1_assembly_brew_url Build nvr: \$product1_nvr " -f
@@ -58,14 +76,12 @@ if [ "\$CI_TYPE" = "brew-tag" ];then
         appendProp "bxms_patch_maven_repo_url" \$bxms_patch_maven_repo_url
         appendProp "bxms_patch_maven_repo_url" \$bxms_patch_maven_repo_url
         appendProp "bxms_patch_nvr" \$bxms_patch_nvr
-        web_hook=`grep "register_web_hook" ${CI_PROPERTIES_FILE} |cut -d "=" -f2`
-        curl -X POST -d 'OK' -k \$web_hook
+        #web_hook=`grep "register_web_hook" ${CI_PROPERTIES_FILE} |cut -d "=" -f2`
+        #curl -X POST -d 'OK' -k \$web_hook
         ip-tooling/jira_helper.py -c ${IP_CONFIG_FILE} -a "Patch Brew Build Completed: \$bxms_patch_brew_url nvr:\$bxms_patch_nvr " -f
     elif [ "\$CI_NAME" = "org.jboss.ip-bxms-maven-repo-root" ];then
         #Trigger maven repo to build
         echo "maven-repo-root build has been completed"
-        #web_hook=`grep "register_web_hook" ${CI_PROPERTIES_FILE} |cut -d "=" -f2`
-        #curl -X POST -d 'OK' -k \$web_hook
         ip-tooling/jira_helper.py -c ${IP_CONFIG_FILE} -a "Maven repo root build completed. Ready to trigger maven repo build" -f
     fi
 elif [ "\$label" = "rhba-ci" ];then

@@ -8,6 +8,7 @@ case "\${PRODUCT_NAME}" in
         prod_artifact_version=\${product1_artifact_version}
         prod_shipped_file_deliver_version=\${product1_shipped_file_deliver_version}
         prod_assembly_maven_repo_url=\${product1_assembly_maven_repo_url}
+        prod_installer_maven_repo_url=\${product1_installer_maven_repo_url}
         prod_deliverable_template=\${product1_deliverable_template}
         prod_staging_path=\${product1_staging_path}
         ;;
@@ -15,6 +16,7 @@ case "\${PRODUCT_NAME}" in
         prod_artifact_version=\${product2_artifact_version}
         prod_shipped_file_deliver_version=\${product2_shipped_file_deliver_version}
         prod_assembly_maven_repo_url=\${product2_assembly_maven_repo_url}
+        prod_installer_maven_repo_url=\${product2_installer_maven_repo_url}
         prod_deliverable_template=\${product2_deliverable_template}
         prod_staging_path=\${product2_staging_path}
         ;;
@@ -23,6 +25,9 @@ esac
 echo "prod_staging_path=\$prod_staging_path" > /tmp/prod_staging_path
 
 ip-tooling/maven-artifact-handler.py --version=\${prod_artifact_version} --override-version \${prod_shipped_file_deliver_version} --maven-repo \${prod_assembly_maven_repo_url} \
+  --deliverable \${prod_deliverable_template} --output \${PRODUCT_NAME}
+#Stage installer
+ip-tooling/maven-artifact-handler.py --version=\${prod_artifact_version} --override-version \${prod_shipped_file_deliver_version} --maven-repo \${prod_installer_maven_repo_url} \
   --deliverable \${prod_deliverable_template} --output \${PRODUCT_NAME}
 
 cp ${IP_CONFIG_FILE} \${PRODUCT_NAME}
