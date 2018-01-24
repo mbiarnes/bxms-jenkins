@@ -29,15 +29,22 @@ if(seedJobName == null || gerritRefspec == null || gerritBranch == null ){
     throw new javaposse.jobdsl.dsl.DslException("The JOB_NAME/GERRIT_BRANCH/GERRIT_REFSPEC parameters is not setting!Exit...");
 }
 def ReleasePipelineBuilder(_release_code, _cfg_file, _properties_file, gerritBranch , gerritRefspec , seedJobName, cron_val = null) {
-    new ReleasePipelineSeedJobBuilder(
-            release_code: _release_code,
-            cfg_file:_cfg_file,
-            ci_properties_file:_properties_file,
-            gerritBranch: gerritBranch,
-            gerritRefspec: gerritRefspec,
-            jobName:seedJobName
+    // new ReleasePipelineSeedJobBuilder(
+    //         release_code: _release_code,
+    //         cfg_file:_cfg_file,
+    //         ci_properties_file:_properties_file,
+    //         gerritBranch: gerritBranch,
+    //         gerritRefspec: gerritRefspec,
+    //         jobName:seedJobName
+    // ).build(this)
+    new ReleaseSingleJobBuilder(
+        release_code: _release_code,
+        cfg_file:_cfg_file,
+        ci_properties_file:_properties_file,
+        gerritBranch: gerritBranch,
+        gerritRefspec: gerritRefspec,
+        jobName:seedJobName
     ).build(this)
-
     new ReleasePipelineJobBuilder(
             release_code: _release_code,
             cfg_file:_cfg_file,
