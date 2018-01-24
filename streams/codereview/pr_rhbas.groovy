@@ -5,7 +5,7 @@ export M3_HOME=/jboss-prod/tools/maven-3.3.9-prod
 export PATH=\$M3_HOME/bin:\$PATH
 mvn  -Dversion.override=7.0.0 -Dversion.suffix=redhat-SNAPSHOT -Dversion.suffix.snapshot=true \\
     -DversionOverride=true -DversionSuffixSnapshot=true -Dvictims.updates=offline -B -U -s /jboss-prod/m2/bxms-dev-repo-settings.xml clean package"""
-job('rhba_codereview'){
+job('rhbas_codereview'){
     description("Monitor the code change in rhba")
 
     parameters {
@@ -22,7 +22,7 @@ job('rhba_codereview'){
             // Adds a remote.
             remote {
                 // Sets the remote URL.
-                url("ssh://jb-ip-tooling-jenkins@code.engineering.redhat.com:22/kiegroup/rhba")
+                url("ssh://jb-ip-tooling-jenkins@code.engineering.redhat.com:22/kiegroup/rhbas")
                 name("origin")
                 refspec("+refs/heads/*:refs/remotes/origin/* \$GERRIT_REFSPEC")
 
@@ -54,12 +54,12 @@ job('rhba_codereview'){
        }
    }
    label('nightly-node')
-   
-   // build steps 
+
+   // build steps
    steps{
        shell(shell_script)
     }
-   // clear workspace 
+   // clear workspace
     wrappers {
         preBuildCleanup()
     }
@@ -69,4 +69,3 @@ job('rhba_codereview'){
         archiveArtifacts('target/*.zip,target/*-standalone.jar')
     }
 }
-
