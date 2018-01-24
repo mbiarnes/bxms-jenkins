@@ -66,7 +66,7 @@ class JenkinsAllJobBuilderPipeline {
             logRotator {
                 numToKeep 8
             }
-            label("bxms-nightly")
+            label("nightly-node")
             multiscm {
 
                 // Adds a Git SCM source.

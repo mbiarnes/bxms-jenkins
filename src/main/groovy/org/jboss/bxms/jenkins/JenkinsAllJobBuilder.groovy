@@ -54,7 +54,7 @@ MVN_DEP_REPO=nexus-release::default::file://\${DEP_REPO} LOCAL=1 CFG=${_cfg} MVN
                 // Defines a simple text parameter, where users can enter a string value.
                 booleanParam('LOCAL_REPO', false, 'It will be slower but cleaner since it do not use jenkins cached repo')
             }
-            label("bxms-nightly")
+            label("nightly-node")
             multiscm {
 
                 // Adds a Git SCM source.

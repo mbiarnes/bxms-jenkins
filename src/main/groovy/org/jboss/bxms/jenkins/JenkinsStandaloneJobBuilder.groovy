@@ -74,7 +74,7 @@ MVN_DEP_REPO=nexus-release::default::file://${maven_repo} REPO_GROUP=${repo_grou
                         booleanParam('DEBUG', false, 'Open Debug Log')
                     }
 
-                    label("bxms-nightly")
+                    label("nightly-node")
 
                     multiscm {
 
