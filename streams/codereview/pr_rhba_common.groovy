@@ -23,7 +23,7 @@ job('rhba_common_codereview'){
             // Adds a remote.
             remote {
                 // Sets the remote URL.
-                url("ssh://jb-ip-tooling-jenkins@code.engineering.redhat.com:22/kiegroup/rhba-common")
+                url("ssh://jb-ip-tooling-jenkins@code.engineering.redhat.com:22/kiegroup/rhap-common")
                 name("origin")
                 refspec("+refs/heads/*:refs/remotes/origin/* \$GERRIT_REFSPEC")
 
@@ -43,7 +43,7 @@ job('rhba_common_codereview'){
    triggers{
        gerrit{
 
-           project("kiegroup/rhba-common", "master")
+           project("kiegroup/rhap-common", "master")
            events {
                patchsetCreated()
            }
@@ -55,12 +55,12 @@ job('rhba_common_codereview'){
        }
    }
    label('nightly-node')
-   
-   // build steps 
+
+   // build steps
    steps{
        shell(shell_script)
     }
-   // clear workspace 
+   // clear workspace
     wrappers {
         preBuildCleanup()
     }
@@ -70,4 +70,3 @@ job('rhba_common_codereview'){
         archiveArtifacts('target/*.zip')
     }
 }
-
