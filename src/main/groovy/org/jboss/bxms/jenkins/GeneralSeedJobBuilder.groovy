@@ -57,12 +57,10 @@ class GeneralSeedJobBuilder {
                     removeViewAction('DELETE')
                 }
             }
-            if(!jobName.matches("codereview/(.*)")){
-                triggers {
-                    scm 'H/5 * * * *'
-                }
+            triggers {
+                upstream(jobName, 'SUCCESS')
             }
-        }
+    }
     }
     }
 }
