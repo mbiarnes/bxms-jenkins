@@ -3,7 +3,8 @@ export _KEYSTORE=`pwd`/jssecacerts
 export MAVEN_OPTS="-Djavax.net.ssl.trustStore=\${_KEYSTORE} -Djavax.net.ssl.trustStorePassword=changeit -Djavax.net.ssl.trustStoreType=jks -Djavax.net.ssl.keyStore=\${_KEYSTORE} -Djavax.net.ssl.keyStorePassword=changeit -Djavax.net.ssl.keyStoreType=jks -Xms512m -Xmx3096m -XX:MaxPermSize=1024m"
 export M3_HOME=/jboss-prod/tools/maven-3.3.9-prod
 export PATH=\$M3_HOME/bin:\$PATH
-mvn  -Dversion.override=7.0.0 -Dversion.suffix=redhat-SNAPSHOT -Dversion.suffix.snapshot=true \\
+build_date=\$(date --date="1 days ago" -u +'%Y%m%d')
+mvn  -Dversion.override=7.0.0.DR -Dversion.suffix=redhat-\${build_date} -Dversion.suffix.snapshot=true \\
     -DversionOverride=true -DversionSuffixSnapshot=true -Dvictims.updates=offline -B -U -s /jboss-prod/m2/bxms-dev-repo-settings.xml clean package
 """
 job('rhdm_codereview'){
@@ -55,12 +56,12 @@ job('rhdm_codereview'){
        }
    }
    label('nightly-node')
-   
-   // build steps 
+
+   // build steps
    steps{
        shell(shell_script)
     }
-   // clear workspace 
+   // clear workspace
     wrappers {
         preBuildCleanup()
     }
@@ -70,4 +71,3 @@ job('rhdm_codereview'){
         archiveArtifacts('target/*.zip,target/*-standalone.jar')
     }
 }
-
