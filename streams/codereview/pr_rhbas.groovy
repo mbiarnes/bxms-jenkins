@@ -42,7 +42,7 @@ job('rhbas_codereview'){
    triggers{
        gerrit{
 
-           project("kiegroup/rhba", "master")
+           project("kiegroup/rhbas", "master")
            events {
                patchsetCreated()
            }
