@@ -12,7 +12,7 @@ VALIDATE_ONLY=true LOCAL=1 CFG=./${IP_CONFIG_FILE} REPO_GROUP=MEAD+JENKINS+JBOSS
 def jobDefinition = job("${RELEASE_CODE}-validate-build-config") {
     description("Validate if upstream source configuration is proper")
 
-    label('bxms-nightly')
+    label('nightly-node')
 
     // build steps
     steps {

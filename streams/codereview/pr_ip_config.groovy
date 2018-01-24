@@ -80,7 +80,7 @@ job('bxms-ip-config-codereview'){
            }
        }
    }
-   label('bxms-nightly')
+   label('nightly-node')
    
    // build steps 
    steps{

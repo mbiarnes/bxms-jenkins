@@ -54,7 +54,7 @@ job('rhdm_codereview'){
            }
        }
    }
-   label('bxms-nightly')
+   label('nightly-node')
    
    // build steps 
    steps{
