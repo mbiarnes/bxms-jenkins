@@ -155,4 +155,3 @@ def jobDefinition = job("${RELEASE_CODE}-generate-qe-properties") {
 }
 
 JobTemplate.addCommonConfiguration(jobDefinition, CI_PROPERTIES_FILE)
-JobTemplate.addIpToolingScmConfiguration(jobDefinition,GERRIT_BRANCH , GERRIT_REFSPEC)
