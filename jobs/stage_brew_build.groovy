@@ -30,6 +30,8 @@ ip-tooling/maven-artifact-handler.py --version=\${prod_artifact_version} --overr
 ip-tooling/maven-artifact-handler.py --version=\${prod_artifact_version} --override-version \${prod_shipped_file_deliver_version} --maven-repo \${prod_installer_maven_repo_url} \
   --deliverable \${prod_deliverable_template} --output \${PRODUCT_NAME}
 
+#rename runtime GAV
+rename license-builder \${PRODUCT_NAME}-runtime-GAV \${PRODUCT_NAME}/*.txt
 cp ${IP_CONFIG_FILE} \${PRODUCT_NAME}
 """
 
