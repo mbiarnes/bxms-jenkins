@@ -4,7 +4,8 @@ export MAVEN_OPTS="-Djavax.net.ssl.trustStore=\${_KEYSTORE} -Djavax.net.ssl.trus
 export M3_HOME=/jboss-prod/tools/maven-3.3.9-prod
 export PATH=\$M3_HOME/bin:\$PATH
 build_date=\$(date --date="1 days ago" -u +'%Y%m%d')
-mvn  -Dversion.override=7.0.0.DR -Dversion.suffix=redhat-\${build_date} -Dversion.suffix.snapshot=true \\
+mvn  -Dversion.override=7.0.0.DR -Dversion.suffix=redhat-\${build_date} \\
+    -DdependencyManagement=org.jboss.brms.component.management:brms-dependency-management-all:7.0.0.DR-redhat-\${build_date} \\
     -DversionOverride=true -DversionSuffixSnapshot=true -Dvictims.updates=offline -B -U -s /jboss-prod/m2/bxms-dev-repo-settings.xml clean package
 """
 job('rhba_common_codereview'){

@@ -5,6 +5,7 @@ export M3_HOME=/jboss-prod/tools/maven-3.3.9-prod
 export PATH=\$M3_HOME/bin:\$PATH
 build_date=\$(date --date="1 days ago" -u +'%Y%m%d')
 mvn  -Dversion.override=7.0.0 -Dversion.suffix=redhat-\${buld_date} -Dversion.suffix.snapshot=true \\
+     -DdependencyManagement=org.jboss.brms.component.management:brms-dependency-management-all:7.0.0.DR-redhat-\${build_date} \\
     -DversionOverride=true -DversionSuffixSnapshot=true -Dvictims.updates=offline -B -U -s /jboss-prod/m2/bxms-dev-repo-settings.xml clean package"""
 job('rhbas_codereview'){
     description("Monitor the code change in rhba")

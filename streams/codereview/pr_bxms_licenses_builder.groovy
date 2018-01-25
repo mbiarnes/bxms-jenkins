@@ -1,7 +1,10 @@
 def shell_script = '''export MAVEN_OPTS="-Xms2g -Xmx16g -Dgwt-plugin.localWorkers='3' -XX:+UseConcMarkSweepGC -XX:-UseGCOverheadLimit"
 export M3_HOME=/jboss-prod/tools/maven-3.3.9-prod
 export PATH=$M3_HOME/bin:$PATH
-mvn -Dmaven.repo.local=/jboss-prod/m2/bxms-dev-repo clean install
+build_date=\$(date --date="1 days ago" -u +'%Y%m%d')
+mvn -Dversion.override=7.0.0.DR -Dversion.suffix=redhat-\${build_date} \\
+    -DdependencyManagement=org.jboss.brms.component.management:brms-dependency-management-all:7.0.0.DR-redhat-\${build_date} \\
+    -Dmaven.repo.local=/jboss-prod/m2/bxms-dev-repo clean install
 '''
 job('bxms_licenses_builder_codereview'){
     description("Monitor the code change in bxms-licenses-builder")
