@@ -4,6 +4,7 @@ export PATH=$M3_HOME/bin:$PATH
 build_date=\$(date --date="1 days ago" -u +'%Y%m%d')
 mvn -Dversion.override=7.0.0.DR -Dversion.suffix=redhat-\${build_date} \\
     -DdependencyManagement=org.jboss.brms.component.management:brms-dependency-management-all:7.0.0.DR-redhat-\${build_date} \\
+    -DpropertyManagement=org.jboss.brms.component.management:brms-dependency-management-all:7.0.0.DR-redhat-\${build_date} \\
     -s /jboss-prod/m2/bxms-dev-repo-settings.xml  clean install
 '''
 job('bxms_licenses_builder_codereview'){
