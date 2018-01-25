@@ -74,7 +74,13 @@ MVN_DEP_REPO=nexus-release::default::file://${maven_repo} REPO_GROUP=${repo_grou
                         booleanParam('DEBUG', false, 'Open Debug Log')
                     }
 
-                    label("nightly-node")
+                    if (section.containsKey("jvmOpts".toLowerCase())
+                            && (section.get("jvmOpts".toLowerCase()).contains("BigMem"))) {
+                        // Groovy gets the original file, so detect BigMem is OK
+                        label("nightly-node-bigmemory")
+                    } else {
+                        label("nightly-node")
+                    }
 
                     multiscm {
 
