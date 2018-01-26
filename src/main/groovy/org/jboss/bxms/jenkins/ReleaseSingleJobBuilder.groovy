@@ -2006,8 +2006,8 @@ fi
 
             wget ${product_staging_properties_url} -O ${product_staging_properties_name}
 
-            echo -e "import sys,os,re \\
-from urllib2 import urlopen
+            echo -e "import sys,os,re;
+from urllib2 import urlopen;
 ret=0
 def isvalidurl(url, inc_str):
     print url
