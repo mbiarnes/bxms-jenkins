@@ -56,8 +56,7 @@ build_cfg=
 jenkins_cache_url=http://rhap-repo.usersys.redhat.com/m2
 jenkins_cache_repo=bxms-{product1_version_major}.{product1_version_minor}-nightly
 #running/close, used as a token of activate some of the release pipeline
-brew_status=
-release_status=
+release_status=running
 
 #config file
 release_stream_path=bxms-jenkins/streams/{release_code}

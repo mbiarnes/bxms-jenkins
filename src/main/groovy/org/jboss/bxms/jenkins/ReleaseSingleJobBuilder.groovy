@@ -58,7 +58,7 @@ class ReleaseSingleJobBuilder {
             }
             kinit -k -t \${HOME}/bxms-release.keytab bxms-release/prod-ci@REDHAT.COM
             if [ "\$CI_TYPE" = "brew-tag" ];then
-                    if [ "\$brew_status" != "running" ];then
+                    if [ "\$release_status" != "running" ];then
                             exit 0
                     fi
 
@@ -80,7 +80,9 @@ class ReleaseSingleJobBuilder {
                     #web_hook=`grep "register_web_hook" \${CI_PROPERTIES_FILE} |cut -d "=" -f2`
                     #curl -X POST -d 'OK' -k \$web_hook
                     ip-tooling/jira_helper.py -c \${IP_CONFIG_FILE} -a "Product Assembly Build Completed: \$product2_assembly_brew_url Build nvr: \$product2_assembly_nvr " -f
-
+                elif [ "\$CI_NAME" = "org.kie.rhba-license-builder" ];then
+                    license_builder_maven_repo_url="http://download.eng.bos.redhat.com/brewroot/packages/\${name}/\${version}/\${release}/maven/"
+                    appendProp "license_builder_maven_repo_url" \$license_builder_maven_repo_url
                 elif [ "\$CI_NAME" = "org.kie.rhba-rhdm" ];then
                     product1_assembly_maven_repo_url="http://download.eng.bos.redhat.com/brewroot/packages/\${name}/\${version}/\${release}/maven/"
                     product1_assembly_brew_url="https://brewweb.engineering.redhat.com/brew/taskinfo?taskID=\${task_id}"
@@ -118,11 +120,7 @@ class ReleaseSingleJobBuilder {
                     appendProp "bxms_patch_nvr" \$bxms_patch_nvr
                     #web_hook=`grep "register_web_hook" \${CI_PROPERTIES_FILE} |cut -d "=" -f2`
                     #curl -X POST -d 'OK' -k \$web_hook
-                    ip-tooling/jira_helper.py -c \${IP_CONFIG_FILE} -a "Patch Brew Build Completed: \$bxms_patch_brew_url nvr:\$bxms_patch_nvr " -f
-                elif [ "\$CI_NAME" = "org.jboss.ip-bxms-maven-repo-root" ];then
-                    #Trigger maven repo to build
-                    echo "maven-repo-root build has been completed"
-                    ip-tooling/jira_helper.py -c \${IP_CONFIG_FILE} -a "Maven repo root build completed. Ready to trigger maven repo build" -f
+                    ip-tooling/jira_helper.py -c \${IP_CONFIG_FILE} -a "Patch Brew Build Completed: \$bxms_patch_brew_url nvr:\$bxms_patch_nvr " -f                
                 fi
             elif [ "\$label" = "rhba-ci" ];then
                 if [ "\$release_status" = "closed" ];then
@@ -135,51 +133,50 @@ class ReleaseSingleJobBuilder {
                     echo "QE smoketest report:\$CI_MESSAGE"
                     #Json to adoc
                     echo \${CI_MESSAGE}| python -c "import sys, json;
-            _report=json.load(sys.stdin)
-            adoc_file=open('\${qe_smoketest_report_path}', 'w')
-            adoc_file.write('=== QE smoketest Report\\n')
-            adoc_file.write('[width=100%,options=header,footer,align=center,frame=all]\\n')
-            adoc_file.write('|============\\n')
-            adoc_file.write('|Statistics|\\n')
-            _success=[]
-            _unsuccess=[]
-            _statistics=[]
-            for key in _report:
-                if ('SuccessfulJobs' in key):
-                    for x in _report[key]:
-                        _success.append(x)
-                elif ('UnsuccessfulJobs' in key):
-                    for x in _report[key]:
-                        _unsuccess.append(x)
-                elif ('Statistics' in key):
-                    for x in _report[key]:
-                        adoc_file.write('|' + x + '|' + str(_report[key][x]) +'\\n')
+_report=json.load(sys.stdin)
+adoc_file=open('\${qe_smoketest_report_path}', 'w')
+adoc_file.write('=== QE smoketest Report\\n')
+adoc_file.write('[width=100%,options=header,footer,align=center,frame=all]\\n')
+adoc_file.write('|============\\n')
+adoc_file.write('|Statistics|\\n')
+_success=[]
+_unsuccess=[]
+_statistics=[]
+for key in _report:
+    if ('SuccessfulJobs' in key):
+        for x in _report[key]:
+            _success.append(x)
+    elif ('UnsuccessfulJobs' in key):
+        for x in _report[key]:
+            _unsuccess.append(x)
+    elif ('Statistics' in key):
+        for x in _report[key]:
+            adoc_file.write('|' + x + '|' + str(_report[key][x]) +'\\n')
 
-            adoc_file.write('|#UNSUCCESSFUL#|')
-            adoc_file.write('\\n\\n'.join(map(str,_unsuccess)))
-            adoc_file.write('\\n')
-            adoc_file.write('|URL|\${qe_smoketest_job_url}\\n')
-            adoc_file.write('|============\\n')
-            adoc_file.close()
-            "
-                cat \${qe_smoketest_report_path}
-                web_hook=`grep "register_web_hook" \${CI_PROPERTIES_FILE} |cut -d "=" -f2`
-                curl -X POST -d 'OK' -k \$web_hook
-                    ip-tooling/jira_helper.py -c \${IP_CONFIG_FILE} -a "QE smoketest returned" -f
-                else
-                    echo "Something else triggered this job"
-                    echo "\$CI_MESSAGE"
-                fi
-            elif [ "\$new" = "FAILED" ] && [ "\$method" = "chainmaven" ];then
-                ip-tooling/jira_helper.py -c \${IP_CONFIG_FILE} -a "Brewchain failed: \$brewchain_build_url " -f
-                web_hook=`grep "register_web_hook" \${CI_PROPERTIES_FILE} |cut -d "=" -f2`
-                curl -X POST -d 'STOP' -k \$web_hook
-            else
-                echo "ERROR!Not triggered by CI!"
-                exit 1
-            fi
-
-            """
+adoc_file.write('|#UNSUCCESSFUL#|')
+adoc_file.write('\\n\\n'.join(map(str,_unsuccess)))
+adoc_file.write('\\n')
+adoc_file.write('|URL|\${qe_smoketest_job_url}\\n')
+adoc_file.write('|============\\n')
+adoc_file.close()
+"
+    cat \${qe_smoketest_report_path}
+    #web_hook=`grep "register_web_hook" \${CI_PROPERTIES_FILE} |cut -d "=" -f2`
+    #curl -X POST -d 'OK' -k \$web_hook
+        ip-tooling/jira_helper.py -c \${IP_CONFIG_FILE} -a "QE smoketest returned" -f
+    else
+        echo "Something else triggered this job"
+        echo "\$CI_MESSAGE"
+    fi
+elif [ "\$new" = "FAILED" ] && [ "\$method" = "chainmaven" ];then
+    ip-tooling/jira_helper.py -c \${IP_CONFIG_FILE} -a "Brewchain failed: \$brewchain_build_url " -f
+    web_hook=`grep "register_web_hook" \${CI_PROPERTIES_FILE} |cut -d "=" -f2`
+    curl -X POST -d 'STOP' -k \$web_hook
+else
+    echo "ERROR!Not triggered by CI!"
+    exit 1
+fi
+"""
             int randomStringLength = 32
             String charset = (('a'..'z') + ('A'..'Z') + ('0'..'9')).join()
             String randomString = RandomStringUtils.random(randomStringLength, charset.toCharArray())
@@ -200,7 +197,7 @@ class ReleaseSingleJobBuilder {
                     overrides {
                       topic("Consumer.rh-jenkins-ci-plugin.${randomString}.VirtualTopic.qe.ci.>")
                     }
-                    selector("label='rhba-ci' OR (CI_TYPE='brew-tag' AND ( CI_NAME='org.jboss.ip-bxms-maven-repo-root' OR CI_NAME='org.kie.rhba-rhdm' OR CI_NAME='org.kie.rhba-rhba' OR CI_NAME='org.jboss.brms-bpmsuite.patching-patching-tools-parent')) OR (new='FAILED' AND method='chainmaven' AND target='jb-bxms-7.0-maven-candidate')")
+                    selector("label='rhba-ci' OR (CI_TYPE='brew-tag' AND ( CI_NAME='org.kie.rhba-rhdm' OR CI_NAME='org.kie.rhba-rhba' OR CI_NAME='org.kie.rhba-license-builder' OR CI_NAME='org.jboss.installer-rhdm-installer' OR CI_NAME='org.jboss.installer-rhba-installer' OR CI_NAME='org.jboss.brms-bpmsuite.patching-patching-tools-parent')) OR (new='FAILED' AND method='chainmaven' AND target='jb-bxms-7.0-maven-candidate')")
                     //providerName('CI Publish')
                 }
             }
@@ -574,8 +571,7 @@ class ReleaseSingleJobBuilder {
     void generateQeProperties(DslFactory dslFactory){
         def job=dslFactory.job(release_code + "-release-pipeline/" + release_code +"-"+ "generate-qe-properties"){
             def shellScript = '''
-
-            set -x
+            #set -x
             echo -e "Exec node IP: ${OPENSTACK_PUBLIC_IP}\\n"
             #kinit -k -t  ${HOME}/bxms-release.keytab bxms-release/prod-ci@REDHAT.COM
 
@@ -680,6 +676,8 @@ class ReleaseSingleJobBuilder {
                 sed -e "s=${rcm_staging_base}/${PRODUCT_NAME,,}=${rcm_candidate_base}/${PRODUCT_NAME}=g" \
                 ${prod_properties_name} > ${prod_candidate_properties_name}
             fi
+            #Validate QE properties
+            
             '''
             // Sets a description for the job.
             description("This job is responsible for staging the Brew release deliverable to the RCM staging area.")
@@ -1209,6 +1207,7 @@ class ReleaseSingleJobBuilder {
 
             parameters {
                 stringParam("PRODUCT_NAME", "rhdm","Specify product name to switch between configurations.")
+                stringParam("RELEASE_TYPE", "brew","brew or nightly")
             }
             // Adds build steps to the jobs.
             steps {
@@ -1217,7 +1216,7 @@ class ReleaseSingleJobBuilder {
                 // Sends JMS message.
                 ciMessageBuilder {
                     overrides {
-                        topic('VirtualTopic.qe.ci.ba.$PRODUCT_NAME.70.brew.smoke.results')
+                        topic('VirtualTopic.qe.ci.ba.$PRODUCT_NAME.70.$RELEASE_TYPE.smoke.results')
                     }
 
                     // JMS selector to choose messages that will fire the trigger.
@@ -1229,7 +1228,7 @@ class ReleaseSingleJobBuilder {
                     // KEY=value pairs, one per line (Java properties file format) to be used as message properties.
                     messageProperties('label=rhba-ci\n' +
                             'CI_TYPE=customer\n' +
-                            'EVENT_TYPE=$PRODUCT_NAME-70-brew-qe-smoke-results\n')
+                            'EVENT_TYPE=$PRODUCT_NAME-70-$RELEASE_TYPE-qe-smoke-results\n')
 
                     // Content of CI message to be sent.
                     messageContent(report_string)
@@ -1291,7 +1290,6 @@ class ReleaseSingleJobBuilder {
         def job=dslFactory.job(release_code + "-release-pipeline/" + release_code +"-"+ "promote-release"){
             String shellScript = '''
             echo -e "Exec node IP:${OPENSTACK_PUBLIC_IP}\\n"
-            sed -i 's/release_status=/release_status=closed/g' ${CI_PROPERTIES_FILE}
             sed -i '/^release_status=/d' ${CI_PROPERTIES_FILE} && echo "release_status=closed" >>${CI_PROPERTIES_FILE}
             '''
             // Sets a description for the job.
@@ -1653,9 +1651,11 @@ class ReleaseSingleJobBuilder {
 
             ip-tooling/maven-artifact-handler.py --version=${prod_artifact_version} --override-version ${prod_shipped_file_deliver_version} --maven-repo ${prod_assembly_maven_repo_url} \
               --deliverable ${prod_deliverable_template} --output ${PRODUCT_NAME}
-            #Stage installer
+            #Download installer
             ip-tooling/maven-artifact-handler.py --version=${prod_artifact_version} --override-version ${prod_shipped_file_deliver_version} --maven-repo ${prod_installer_maven_repo_url} \
               --deliverable ${prod_deliverable_template} --output ${PRODUCT_NAME}
+            #Download runtime gav txt
+            ip-tooling/maven-artifact-handler.py --version=${prod_artifact_version} --override-version ${prod_shipped_file_deliver_version} --maven-repo ${license_builder_maven_repo_url}               --deliverable ${prod_deliverable_template} --output ${PRODUCT_NAME}  
             rename license-builder \${PRODUCT_NAME,,}-runtime-GAV \${PRODUCT_NAME}/*.txt
             cp ${IP_CONFIG_FILE} ${PRODUCT_NAME}
             '''
@@ -1834,10 +1834,8 @@ class ReleaseSingleJobBuilder {
 
             echo "Brewchain Build URL: $brewchain_build_url"
 
-            sed -i '/^brewchain_build_url=/d' ${CI_PROPERTIES_FILE} && echo "brewchain_build_url=$brewchain_build_url" >>${CI_PROPERTIES_FILE}
-            sed -i '/^brew_status=/d' ${CI_PROPERTIES_FILE} && echo "brew_status=running" >>${CI_PROPERTIES_FILE}
+            sed -i '/^brewchain_build_url=/d' ${CI_PROPERTIES_FILE} && echo "brewchain_build_url=$brewchain_build_url" >>${CI_PROPERTIES_FILE}            
             ip-tooling/jira_helper.py -c ${IP_CONFIG_FILE} -a "Brew chainbuild is trigger at: ${brewchain_build_url}" -f
-
             '''
             // Sets a description for the job.
             description("This job is responsible for initialising the Brew chain build.")
@@ -2008,89 +2006,93 @@ class ReleaseSingleJobBuilder {
 
             wget ${product_staging_properties_url} -O ${product_staging_properties_name}
 
-            echo -e "import sys,os,re
-            from urllib2 import urlopen
-            ret=0
-            def isvalidurl(url, inc_str):
-                print url
-                try:
-                    code = urlopen(url).code
-                except IOError:
-                    print 'ERROR ', url + ' is invalid!'
-                    ret=1
-                    return 1
-                if (code / 100 >= 4):
-                    print 'ERROR ', url + ' is invalid!'
-                    ret=1
-                assertContain(url, inc_str)
+            echo -e "import sys,os,re \\
+from urllib2 import urlopen
+ret=0
+def isvalidurl(url, inc_str):
+    print url
+    try:
+        code = urlopen(url).code
+    except IOError:
+        print 'ERROR ', url + ' is invalid!'
+        ret=1
+        return 1
+    if (code / 100 >= 4):
+        print 'ERROR ', url + ' is invalid!'
+        ret=1
+    assertContain(url, inc_str)
 
-            def assertEqual(expect, actual):
-                if expect != actual:
-                    print 'ERROR Actual is ' + actual + ' , Expect is ' + expect
-                    ret=1
+def assertEqual(expect, actual):
+    if expect != actual:
+        print 'ERROR Actual is ' + actual + ' , Expect is ' + expect
+        ret=1
 
-            def assertContain(actual, expect):
-                if expect not in actual:
-                    print 'ERROR Actual is ' + actual + ' , Expect is ' + expect
-                    ret=1
+def assertContain(actual, expect):
+    if expect not in actual:
+        print 'ERROR Actual is ' + actual + ' , Expect is ' + expect
+        ret=1
 
-            def validateProperties(propfile, keyword, product_name):
-                dic = {}
-                if os.path.isfile(propfile):
-                    tmpFile = open(propfile, 'r')
-                    for line in tmpFile:
-                        str1, tmp, str2 = line.partition('=')
-                        str2 = str2.replace('\\\\\\\\n', '')
-                        dic[str1] = str2
-                    tmpFile.close()
-                    if re.match('rhdm-.*', propfile) is not None:
-                        isvalidurl(dic['rhdm.addons.latest.url'],keyword)
-                        isvalidurl(dic['rhdm.kie-server.ee7.latest.url'],keyword)
-                        isvalidurl(dic['rhdm.decision-central.standalone.latest.url'],keyword)
-                        isvalidurl(dic['rhdm.decision-central-eap7.latest.url'],keyword)
-                        isvalidurl(dic['rhdm.installer.latest.url'],keyword)
-                        isvalidurl(dic['build.config'],'bxms')
+def validateProperties(propfile, keyword, product_name):
+    dic = {}
+    if os.path.isfile(propfile):
+        tmpFile = open(propfile, 'r')
+        for line in tmpFile:
+            str1, tmp, str2 = line.partition('=')
+            str2 = str2.replace('\\\\\\\\n', '')
+            dic[str1] = str2
+        tmpFile.close()
+        if re.match('rhdm-.*', propfile) is not None:
+            isvalidurl(dic['rhdm.addons.latest.url'],keyword)
+            isvalidurl(dic['rhdm.kie-server.ee7.latest.url'],keyword)
+            isvalidurl(dic['rhdm.decision-central.standalone.latest.url'],keyword)
+            isvalidurl(dic['rhdm.decision-central-eap7.latest.url'],keyword)
+            isvalidurl(dic['rhdm.installer.latest.url'],keyword)
+            isvalidurl(dic['build.config'],'bxms')
 
-                        if '${release_code}' != 'bxms-nightly':
-                            isvalidurl(dic['rhdm.maven.repo.latest.url'],keyword)
-                            isvalidurl(dic['rhdm.sources.latest.url'],keyword)
+            if '${release_code}' != 'bxms-nightly':
+                isvalidurl(dic['rhdm.maven.repo.latest.url'],keyword)
+                isvalidurl(dic['rhdm.sources.latest.url'],keyword)
 
-                        assertEqual('$kie_version', dic['KIE_VERSION'])
-                        assertEqual('${product1_artifact_version}', dic['RHDM_VERSION'])
-                        assertContain(dic['rhdm.decision-central.standalone.latest.url'], '$product1_milestone_version')
-                        assertContain(dic['rhdm.addons.latest.url'], '$product1_milestone_version')
-                        assertContain(dic['rhdm.kie-server.ee7.latest.url'], '$product1_milestone_version')
-                        assertContain(dic['rhdm.installer.latest.url'], '$product1_milestone_version')
+            assertEqual('$kie_version', dic['KIE_VERSION'])
+            assertEqual('${product1_artifact_version}', dic['RHDM_VERSION'])
+            assertContain(dic['rhdm.decision-central.standalone.latest.url'], '$product1_milestone_version')
+            assertContain(dic['rhdm.addons.latest.url'], '$product1_milestone_version')
+            assertContain(dic['rhdm.kie-server.ee7.latest.url'], '$product1_milestone_version')
+            assertContain(dic['rhdm.installer.latest.url'], '$product1_milestone_version')
 
-                    if re.match('rhba-.*', propfile) is not None:
-                        isvalidurl(dic['rhba.addons.latest.url'],keyword)
-                        isvalidurl(dic['rhba.kie-server.ee7.latest.url'],keyword)
-                        isvalidurl(dic['rhba.decision-central.standalone.latest.url'],keyword)
-                        isvalidurl(dic['rhba.decision-central-eap7.latest.url'],keyword)
-                        isvalidurl(dic['rhba.installer.latest.url'],keyword)
-                        isvalidurl(dic['build.config'],'bxms')
+        if re.match('rhba-.*', propfile) is not None:
+            isvalidurl(dic['rhba.addons.latest.url'],keyword)
+            isvalidurl(dic['rhba.kie-server.ee7.latest.url'],keyword)
+            isvalidurl(dic['rhba.decision-central.standalone.latest.url'],keyword)
+            isvalidurl(dic['rhba.decision-central-eap7.latest.url'],keyword)
+            isvalidurl(dic['rhba.installer.latest.url'],keyword)
+            isvalidurl(dic['build.config'],'bxms')
 
-                        if '${release_code}' != 'bxms-nightly':
-                            isvalidurl(dic['rhba.maven.repo.latest.url'],keyword)
-                            isvalidurl(dic['rhba.sources.latest.url'],keyword)
-                        assertEqual('$kie_version', dic['KIE_VERSION'])
-                        assertEqual('${product2_artifact_version}', dic['RHBAS_VERSION'])
-                        assertContain(dic['rhba.business-central.standalone.latest.url'], '$product2_milestone_version')
-                        assertContain(dic['rhba.addons.latest.url'], '$product2_milestone_version')
-                        assertContain(dic['rhba.kie-server.ee7.latest.url'], '$product2_milestone_version')
-                        assertContain(dic['rhba.installer.latest.url'], '$product2_milestone_version')
+            if '${release_code}' != 'bxms-nightly':
+                isvalidurl(dic['rhba.maven.repo.latest.url'],keyword)
+                isvalidurl(dic['rhba.sources.latest.url'],keyword)
+            assertEqual('$kie_version', dic['KIE_VERSION'])
+            assertEqual('${product2_artifact_version}', dic['RHBAS_VERSION'])
+            assertContain(dic['rhba.business-central.standalone.latest.url'], '$product2_milestone_version')
+            assertContain(dic['rhba.addons.latest.url'], '$product2_milestone_version')
+            assertContain(dic['rhba.kie-server.ee7.latest.url'], '$product2_milestone_version')
+            assertContain(dic['rhba.installer.latest.url'], '$product2_milestone_version')
 
-                    if ret != 0:
-                        print propfile + ' Validation No Pass'
-                        sys.exit(1)
-                    else:
-                        print  propfile + ' Validation Pass'
-                else:
-                    return 1
-            print '---Exec the py script...---'
-            validateProperties('${product_staging_properties_name}', 'rcm-guest','${PRODUCT_NAME}')
-            ">validateProperties.py
-            python validateProperties.py
+        if ret != 0:
+            print propfile + ' Validation No Pass'
+            sys.exit(1)
+        else:
+            print  propfile + ' Validation Pass'
+    else:
+        return 1
+print '---Exec the py script...---'
+validateProperties(sys.argv[1], sys.argv[2],sys.argv[3])
+">validateProperties.py
+            if [ "\${IS_STAGING}" = "true" ];then
+                python validateProperties.py '${product_staging_properties_name}' 'rcm-guest' '${PRODUCT_NAME}'                
+            else
+                python validateProperties.py '${product_staging_properties_name}' 'candidates' '${PRODUCT_NAME}'
+            fi
             '''
             // Sets a description for the job.
             description("This job is responsible for uploading release to candidate area.")
@@ -2108,27 +2110,8 @@ class ReleaseSingleJobBuilder {
             parameters {
                 // Defines a simple text parameter, where users can enter a string value.
                 stringParam("PRODUCT_NAME",  "RHDM","Specify product name to switch between configurations.")
+                booleanParam("IS_STAGING",  true,"Specify product name to switch between configurations.")
             }
-
-            triggers{
-                gerrit{
-
-                    project("bxms-jenkins", "ant:**")
-                    events {
-                        patchsetCreated()
-                    }
-                    configure { triggers ->
-                        triggers   <<  {
-                            'serverName' 'code.engineering.redhat.com'
-                        }
-                        triggers/'gerritProjects'/'com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.data.GerritProject'/'filePaths'/'com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.data.FilePath' << {
-                            'compareType' 'REG_EXP'
-                            'pattern' 'stream/bxms/release-history/*-handover.adoc'
-                        }
-                    }
-                }
-            }
-
         }
         buildEnv(job)
         buildCommon(job)

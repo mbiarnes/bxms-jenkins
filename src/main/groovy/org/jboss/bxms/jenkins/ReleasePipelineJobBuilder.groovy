@@ -109,7 +109,7 @@ class ReleasePipelineJobBuilder {
             }else if(!isParaExists(stages[i])){
               if(stageName.matches("Input")){
                 pipelineScript=pipelineScript+"    input 'continue the work?'\n    echo 'continue to next stage.'\n"
-              }else if(stageName.matches("Pause")){
+              }else if(stageName.toLowerCase().matches("pause")){
                 pipelineScript=pipelineScript+"\n    hook = registerWebhook()\n    echo 'Waiting for trigger on \${hook.getURL()}.'\n    sh \"sed -i \'/^register_web_hook=/d\' \${CI_PROPERTIES_FILE} && echo \\\"register_web_hook=\${hook.getURL()}\\\" >>\${CI_PROPERTIES_FILE}\"\n    data = waitForWebhook hook\n    if(data.trim() != \"OK\"){\n     error(\"CI trigger return FAIL,force job stop...\")\n    }\n"
               }else{
                 pipelineScript=pipelineScript+"    build job :'"+ fullJobName +"'\n"
@@ -142,7 +142,7 @@ class ReleasePipelineJobBuilder {
           String[] stages=rightline.split(' ')
           for(int i=0;i<stages.size();i++){
             String stageName=getStageName(stages[i])
-            if(!stageName.matches("Input") && !stageName.matches("Pause"))
+            if(!stageName.matches("Input") && !stageName.toLowerCase().matches("pause"))
             result.add(stageName)
           }
         }
