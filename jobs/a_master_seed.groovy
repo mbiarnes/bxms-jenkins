@@ -87,15 +87,11 @@ def JenkinsStandaloneJobsBuilder(_release_code, _properties_file, _cfg_file, _jo
 //JenkinsStandaloneJobsBuilder("bxms", "/jboss-prod/config/bxms-nightly-ci.properties", "bxms.cfg", "milestone" )
 JenkinsStandaloneJobsBuilder("bxms", "/jboss-prod/config/bxms-nightly-ci.properties", "/jboss-prod/config/bxms-dev.cfg", "nightly" )
 
+def dirNameRow=["codereview","utility"]
+//if you want to create codereviewer(rzhang)'s directory and his master seed job,do like this:
+//def dirNameRow=["codereview","utility","rzhang_coder_review"]
 new GeneralSeedJobBuilder(
-        release_code: "utility",
-        gerritBranch: gerritBranch,
-        gerritRefspec: gerritRefspec,
-        jobName:seedJobName
-).build(this)
-
-new GeneralSeedJobBuilder(
-        release_code: "codereview",
+        dirNameRow: dirNameRow,
         gerritBranch: gerritBranch,
         gerritRefspec: gerritRefspec,
         jobName:seedJobName
