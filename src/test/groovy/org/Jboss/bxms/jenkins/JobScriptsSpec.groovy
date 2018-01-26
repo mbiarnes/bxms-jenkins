@@ -97,11 +97,7 @@ class JobScriptsSpec extends Specification {
 
     static List<File> getJobFiles() {
         List<File> files = []
-        new File('jobs').eachFileRecurse(FileType.FILES) {
-            if (it.name.endsWith('.groovy')) {
-                files << it
-            }
-        }
-        files
+        files << new File('jobs/a_master_seed.groovy')
+
     }
 }

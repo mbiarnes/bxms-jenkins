@@ -84,7 +84,7 @@ def JenkinsStandaloneJobsBuilder(_release_code, _properties_file, _cfg_file, _jo
             job_type: _job_type
     ).build(this)
 }
-JenkinsStandaloneJobsBuilder("bxms", "/jboss-prod/config/bxms-nightly-ci.properties", "bxms.cfg", "milestone" )
+//JenkinsStandaloneJobsBuilder("bxms", "/jboss-prod/config/bxms-nightly-ci.properties", "bxms.cfg", "milestone" )
 JenkinsStandaloneJobsBuilder("bxms", "/jboss-prod/config/bxms-nightly-ci.properties", "/jboss-prod/config/bxms-dev.cfg", "nightly" )
 
 new GeneralSeedJobBuilder(
