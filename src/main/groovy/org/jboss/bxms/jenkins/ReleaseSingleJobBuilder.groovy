@@ -850,12 +850,6 @@ fi
                 rm -vf ${CI_PROPERTIES_FILE}
             fi
 
-            # Prepare properties for nightly build
-            if [ "${RELEASE_CODE}" == "bxms-nightly" ]; then
-                build_date=$(date -u +'%Y%m%d')
-                sed -i "s#-SNAPSHOT#-${build_date}#g" ${IP_CONFIG_FILE}
-            fi
-
             #If build new versions, then remove the jenkins properties files
             if [ -f ${CI_PROPERTIES_FILE} ];then
                 new_version="`grep 'product1_version=' ${IP_CONFIG_FILE}`"
@@ -897,8 +891,9 @@ fi
             jira_id=${jira_id/Selected Result:/}
             echo "https://projects.engineering.redhat.com/browse/$jira_id"
             appendProp "release_jira_id" $jira_id
-            if [ "${RELEASE_CODE}" == "bxms-nightly" ]; then
-                appendProp "build_date" "${build_date}"
+            #build_date is used in nightly build
+            build_date=$(date -u +'%Y%m%d')
+            appendProp "build_date" "${build_date}"
             fi
             '''
             // Sets a description for the job.
@@ -1871,15 +1866,11 @@ fi
 
             if [ ${release_code} == "bxms-nightly" ]; then
                 prod_properties_name=${PRODUCT_NAME, ,}-${build_date}.properties
-                prod_staging_properties_url="${rcm_staging_base}/${PRODUCT_NAME,,}/${PRODUCT_NAME}-${product_version}.NIGHTLY/${prod_properties_name}"
-                release_type="nightly"
-            else
-                release_type="brew"
+                prod_staging_properties_url="${rcm_staging_base}/${PRODUCT_NAME,,}/${PRODUCT_NAME}-${product_version}.NIGHTLY/${prod_properties_name}"                
             fi
 
             echo "prod_staging_properties_url=${prod_staging_properties_url}" > /tmp/prod_staging_properties_url
-            echo "prod_lowcase=${prod_lowcase}" >> /tmp/prod_staging_properties_url
-            echo "release_purpose=${release_type#*-}" >> /tmp/prod_staging_properties_url
+            echo "prod_lowcase=${prod_lowcase}" >> /tmp/prod_staging_properties_url            
 
             ip-tooling/jira_helper.py -c ${IP_CONFIG_FILE} -a "QE smoketest is triggered by CI message. Build URL: ${qe_smoketest_job_url}" -f
             '''

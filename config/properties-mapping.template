@@ -41,7 +41,7 @@ product2_milestone_version={product2_version}{availability}.{product2_milestone}
 #In CR release shipped_file deliver version shouldn't contain ER/CR in the filename
 product1_shipped_file_deliver_version={product1_milestone_version}
 product2_shipped_file_deliver_version={product2_milestone_version}
-release_type=default
+release_type=common:release_type
 
 share_config_dir=/jboss-prod/config
 repository_builder_script=regen_bxms_repo_builder.sh
@@ -104,7 +104,7 @@ product2_staging_properties_name={product2_lowcase}-deliverable-list-staging.pro
 product2_candidate_properties_name={product2_lowcase}-deliverable-list.properties
 product2_staging_properties_url={rcm_staging_base}/{product2_staging_path}/{product2_staging_properties_name}
 product2_candidate_properties_={rcm_staging_base}/{product2_staging_path}/{product2_lowcase}-deliverable-list.properties
-qe_smoketest_report_path={share_config_dir}/{release_code}-qe-smoketest-report.adoc
+qe_smoketest_report_path={share_config_dir}/{release_code}-${release_type}-qe-smoketest-report.adoc
 qe_smoketest_job_url=https://bxms-qe-jenkins.rhev-ci-vms.eng.rdu2.redhat.com/job/BxMS/job/BxMS-prod-{product1_version_major}.{product1_version_minor}/job/smoke/
 
 #maven offline repository

@@ -92,7 +92,5 @@ def dirNameRow=["codereview","utility"]
 //def dirNameRow=["codereview","utility","rzhang_coder_review"]
 new GeneralSeedJobBuilder(
         dirNameRow: dirNameRow,
-        gerritBranch: gerritBranch,
-        gerritRefspec: gerritRefspec,
         jobName:seedJobName
 ).build(this)

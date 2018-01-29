@@ -9,8 +9,6 @@ import javaposse.jobdsl.dsl.Job
 class GeneralSeedJobBuilder {
 
     def dirNameRow
-    String gerritBranch
-    String gerritRefspec
     String jobName
 
     void pr_bxms_licenses_builder(DslFactory dslFactory, String release_code){
@@ -499,11 +497,6 @@ class GeneralSeedJobBuilder {
                 numToKeep(5)
                 artifactNumToKeep(1)
             }
-            environmentVariables {
-                env("GERRIT_REFSPEC", gerritRefspec)
-                keepBuildVariables(true)
-                keepSystemVariables(true)
-            }
             parameters {
                 stringParam( "GERRIT_REFSPEC", "+refs/heads/master:refs/remotes/origin/master",  "Parameter passed by Gerrit code review trigger")
             }
@@ -558,14 +551,6 @@ class GeneralSeedJobBuilder {
 
     void jobCommonEnv(Job job){
         job.with{
-            environmentVariables {
-                env("GERRIT_REFSPEC", gerritRefspec)
-                env("GERRIT_BRANCH", gerritBranch)
-                // Inject Jenkins build variables and also environment contributors and build variable contributors provided by other plugins.
-                keepBuildVariables(true)
-                // Injects Jenkins system variables and environment variables defined as global properties and as node properties.
-                keepSystemVariables(true)
-            }
             if(jobName.matches("codereview/(.*)")){
                 println "Detected in codereview:Disable jobs in codereview's codereview & utility."
                 disabled()
