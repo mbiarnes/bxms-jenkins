@@ -583,7 +583,7 @@ fi
                 sed -i "/^$1/d"  ${prod_properties_name} && echo "$1=$2" >>  ${prod_properties_name}
             }
 
-            if [ "${release_code}" == "bxms-nightly" ]; then
+            if [ "${RELEASE_CODE}" == "bxms-nightly" ]; then
                 prod_properties_name=${PRODUCT_NAME, ,}-${build_date}.properties
                 case "${PRODUCT_NAME}" in
                     RHDM )
@@ -666,7 +666,7 @@ fi
             appendProp "MVEL_VERSION"               ${mvel_version}
 
             #Additional properties for brew release
-            if [ "${release_code}" != "bxms-nightly" ]; then
+            if [ "${RELEASE_CODE}" != "bxms-nightly" ]; then
                 #append the other properties per qe's requirement
                 appendProp "build.config" ${product_url_prefix}/${IP_CONFIG_FILE}
                 appendProp $prod_public_version_properties_name ${prod_public_version_properties_value}
