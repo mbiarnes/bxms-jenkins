@@ -109,6 +109,7 @@ class GeneralSeedJobBuilder {
                 stringParam( "GERRIT_BRANCH", "master",  "Parameter passed by Gerrit code review trigger")
 
             }
+            disabled()
             multiscm {
                 // Adds a Git SCM source.
                 git {
@@ -169,8 +170,6 @@ class GeneralSeedJobBuilder {
                    }
                }
            }
-           label('nightly-node')
-
            // build steps
            steps{
                shell("echo -e \"Exec node IP:\${OPENSTACK_PUBLIC_IP}\\n\"")
@@ -242,7 +241,6 @@ class GeneralSeedJobBuilder {
                    }
                }
            }
-           label('nightly-node')
 
            // build steps
            steps{
@@ -268,7 +266,7 @@ class GeneralSeedJobBuilder {
         export M3_HOME=/jboss-prod/tools/maven-3.3.9-prod
         export PATH=\$M3_HOME/bin:\$PATH
         build_date=\$(date --date="1 days ago" -u +'%Y%m%d')
-        mvn  -Dversion.override=7.0.0 -Dversion.suffix=redhat-\${buld_date} -Dversion.suffix.snapshot=true \\
+        mvn  -Dversion.override=7.0.0.DR -Dversion.suffix=redhat-\${build_date} -Dversion.suffix.snapshot=true \\
              -DdependencyManagement=org.jboss.brms.component.management:brms-dependency-management-all:7.0.0.DR-redhat-\${build_date} \\
              -DpropertyManagement=org.jboss.brms.component.management:brms-dependency-management-all:7.0.0.DR-redhat-\${build_date} \\
             -DversionOverride=true -DversionSuffixSnapshot=true -Dvictims.updates=offline -B -U -s /jboss-prod/m2/bxms-dev-repo-settings.xml clean package"""
@@ -320,7 +318,6 @@ class GeneralSeedJobBuilder {
                    }
                }
            }
-           label('nightly-node')
 
            // build steps
            steps{
@@ -399,7 +396,6 @@ class GeneralSeedJobBuilder {
                    }
                }
            }
-           label('nightly-node')
 
            // build steps
            steps{
@@ -450,7 +446,6 @@ class GeneralSeedJobBuilder {
            triggers{
                 cron('@daily')
            }
-           label('volumn-node')
 
            // build steps
            steps{
@@ -486,7 +481,7 @@ class GeneralSeedJobBuilder {
                 preBuildCleanup()
             }
         }
-        jobCommonEnv(job)
+        jobCommonEnv(job, 'volumn-node')
 
     }
 
@@ -549,8 +544,9 @@ class GeneralSeedJobBuilder {
         }
     }
 
-    void jobCommonEnv(Job job){
+    void jobCommonEnv(Job job, String node_label="nightly-node&&codereview"){
         job.with{
+            label(node_label)
             if(jobName.matches("codereview/(.*)")){
                 println "Detected in codereview:Disable jobs in codereview's codereview & utility."
                 disabled()

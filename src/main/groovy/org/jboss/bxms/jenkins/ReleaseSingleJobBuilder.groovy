@@ -129,7 +129,7 @@ class ReleaseSingleJobBuilder {
                 if [[ "\$EVENT_TYPE" =~ 70-brew-qe-trigger\$ ]];then
                     echo "Triggered by  bxms-prod ci message "
                     echo "\$CI_MESSAGE"
-                elif [[ "\$EVENT_TYPE" =~ qe-smoke-results\$ ]];then
+                elif [[ "\$EVENT_TYPE" =~ \${release_type}.*qe-smoke-results\$ ]];then
                     echo "QE smoketest report:\$CI_MESSAGE"
                     #Json to adoc
                     echo \${CI_MESSAGE}| python -c "import sys, json;
@@ -163,10 +163,7 @@ adoc_file.close()
     cat \${qe_smoketest_report_path}
     #web_hook=`grep "register_web_hook" \${CI_PROPERTIES_FILE} |cut -d "=" -f2`
     #curl -X POST -d 'OK' -k \$web_hook
-        ip-tooling/jira_helper.py -c \${IP_CONFIG_FILE} -a "QE smoketest returned" -f
-    else
-        echo "Something else triggered this job"
-        echo "\$CI_MESSAGE"
+        ip-tooling/jira_helper.py -c \${IP_CONFIG_FILE} -a "QE smoketest returned" -f    
     fi
 elif [ "\$new" = "FAILED" ] && [ "\$method" = "chainmaven" ];then
     ip-tooling/jira_helper.py -c \${IP_CONFIG_FILE} -a "Brewchain failed: \$brewchain_build_url " -f
@@ -894,7 +891,6 @@ fi
             #build_date is used in nightly build
             build_date=$(date -u +'%Y%m%d')
             appendProp "build_date" "${build_date}"
-            fi
             '''
             // Sets a description for the job.
             description("This is the \${RELEASE_CODE} release initialization job. This job is responsible for preparation of \${CI_PROPERTIES_FILE} file.")
@@ -1202,7 +1198,6 @@ fi
 
             parameters {
                 stringParam("PRODUCT_NAME", "rhdm","Specify product name to switch between configurations.")
-                stringParam("RELEASE_TYPE", "brew","brew or nightly")
             }
             // Adds build steps to the jobs.
             steps {
@@ -1211,7 +1206,7 @@ fi
                 // Sends JMS message.
                 ciMessageBuilder {
                     overrides {
-                        topic('VirtualTopic.qe.ci.ba.$PRODUCT_NAME.70.$RELEASE_TYPE.smoke.results')
+                        topic('VirtualTopic.qe.ci.ba.$PRODUCT_NAME.70.${release_type}.smoke.results')
                     }
 
                     // JMS selector to choose messages that will fire the trigger.
@@ -1223,7 +1218,7 @@ fi
                     // KEY=value pairs, one per line (Java properties file format) to be used as message properties.
                     messageProperties('label=rhba-ci\n' +
                             'CI_TYPE=customer\n' +
-                            'EVENT_TYPE=$PRODUCT_NAME-70-$RELEASE_TYPE-qe-smoke-results\n')
+                            'EVENT_TYPE=$PRODUCT_NAME-70-${release_type}-qe-smoke-results\n')
 
                     // Content of CI message to be sent.
                     messageContent(report_string)
@@ -1864,7 +1859,7 @@ fi
                     ;;
             esac
 
-            if [ ${release_code} == "bxms-nightly" ]; then
+            if [ ${RELEASE_CODE} == "bxms-nightly" ]; then
                 prod_properties_name=${PRODUCT_NAME, ,}-${build_date}.properties
                 prod_staging_properties_url="${rcm_staging_base}/${PRODUCT_NAME,,}/${PRODUCT_NAME}-${product_version}.NIGHTLY/${prod_properties_name}"                
             fi
