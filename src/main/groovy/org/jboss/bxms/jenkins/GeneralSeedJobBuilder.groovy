@@ -90,8 +90,8 @@ class GeneralSeedJobBuilder {
         # Workaround for variable name conflict between Jenkins and ip-tooling
         unset WORKSPACE
 
-        #changed_cfgs=`git diff --name-only HEAD HEAD~1 | grep -E 'rhba|rhdm.\\*\\.cfg'`
-        changed_cfgs=`git diff-tree --no-commit-id --name-only -r HEAD| grep -E 'rhba|rhdm.\\*\\.cfg'`
+        #changed_cfgs=`git diff --name-only HEAD HEAD~1 | grep -E '(rhba|rhdm).*\\.cfg'`
+        changed_cfgs=`git diff-tree --no-commit-id --name-only -r HEAD| grep -E '(rhba|rhdm).*\\.cfg'`
         echo \$changed_cfgs
         for cfg in \${changed_cfgs[*]}
         do

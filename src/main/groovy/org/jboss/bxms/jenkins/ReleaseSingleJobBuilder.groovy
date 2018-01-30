@@ -8,8 +8,8 @@ import org.apache.commons.lang.RandomStringUtils
  */
 class ReleaseSingleJobBuilder {
     String release_code
-    String ci_properties_file
     String cfg_file
+    String ci_properties_file
     String gerritBranch
     String gerritRefspec
     String jobName
@@ -55,7 +55,6 @@ class ReleaseSingleJobBuilder {
                 fi
                 sed -i "/^\$1/d" \${CI_PROPERTIES_FILE} && echo "\$1=\$2" >> \${CI_PROPERTIES_FILE}
             }
-            kinit -k -t \${HOME}/bxms-release.keytab bxms-release/prod-ci@REDHAT.COM
             if [ "\$CI_TYPE" = "brew-tag" ];then
                     if [ "\$release_status" != "running" ];then
                             exit 0
@@ -69,47 +68,27 @@ class ReleaseSingleJobBuilder {
                     release=`echo \$CI_MESSAGE| python -c "import sys, json; print json.load(sys.stdin)['build']['release']"` 1>/dev/null
                     task_id=`echo \$CI_MESSAGE| python -c "import sys, json; print json.load(sys.stdin)['build']['task_id']"` 1>/dev/null
                     nvr=`echo \$CI_MESSAGE| python -c "import sys, json; print json.load(sys.stdin)['build']['nvr']"` 1>/dev/null
-                if [ "\$CI_NAME" = "org.kie.rhba-rhba" ];then
-                    product2_assembly_maven_repo_url="http://download.eng.bos.redhat.com/brewroot/packages/\${name}/\${version}/\${release}/maven/"
-                    product2_assembly_brew_url="https://brewweb.engineering.redhat.com/brew/taskinfo?taskID=\${task_id}"
-                    product2_assembly_nvr="\$nvr"
-                    appendProp "product2_assembly_maven_repo_url" \$product2_assembly_maven_repo_url
-                    appendProp "product2_assembly_brew_url" \$product2_assembly_brew_url
-                    appendProp "product2_assembly_nvr" \$product2_assembly_nvr
-                    #web_hook=`grep "register_web_hook" \${CI_PROPERTIES_FILE} |cut -d "=" -f2`
-                    #curl -X POST -d 'OK' -k \$web_hook
-                    ip-tooling/jira_helper.py -c \${IP_CONFIG_FILE} -a "Product Assembly Build Completed: \$product2_assembly_brew_url Build nvr: \$product2_assembly_nvr " -f
+                if [ "\$CI_NAME" = "org.kie.rhba-rhba" ] || [ "\$CI_NAME" = "org.kie.rhba-rhdm" ] ;then
+                    \${product_lowercase}_assembly_maven_repo_url="http://download.eng.bos.redhat.com/brewroot/packages/\${name}/\${version}/\${release}/maven/"
+                    \${product_lowercase}_assembly_brew_url="https://brewweb.engineering.redhat.com/brew/taskinfo?taskID=\${task_id}"
+                    \${product_lowercase}_assembly_nvr="\$nvr"
+                    appendProp "\${product_lowercase}_assembly_maven_repo_url" \${product_lowercase}_assembly_maven_repo_url
+                    appendProp "\${product_lowercase}_assembly_brew_url" \${product_lowercase}_assembly_brew_url
+                    appendProp "\${product_lowercase}_assembly_nvr" \${product_lowercase}_assembly_nvr
+                    ip-tooling/jira_helper.py -c \${IP_CONFIG_FILE} -a "Product Assembly Build Completed: \${product_lowercase}_assembly_brew_url Build nvr: \${product_lowercase}_assembly_nvr " -f
                 elif [ "\$CI_NAME" = "org.kie.rhba-license-builder" ];then
                     license_builder_maven_repo_url="http://download.eng.bos.redhat.com/brewroot/packages/\${name}/\${version}/\${release}/maven/"
                     appendProp "license_builder_maven_repo_url" \$license_builder_maven_repo_url
-                elif [ "\$CI_NAME" = "org.kie.rhba-rhdm" ];then
-                    product1_assembly_maven_repo_url="http://download.eng.bos.redhat.com/brewroot/packages/\${name}/\${version}/\${release}/maven/"
-                    product1_assembly_brew_url="https://brewweb.engineering.redhat.com/brew/taskinfo?taskID=\${task_id}"
-                    product1_assembly_nvr="\$nvr"
-                    appendProp "product1_assembly_maven_repo_url" \$product1_assembly_maven_repo_url
-                    appendProp "product1_assembly_brew_url" \$product1_assembly_brew_url
-                    appendProp "product1_assembly_nvr" \$product1_assembly_nvr
-                    ip-tooling/jira_helper.py -c \${IP_CONFIG_FILE} -a "Product Assembly Build Completed: \$product1_assembly_brew_url Build nvr: \$product1_assembly_nvr " -f
-                elif [ "\$CI_NAME" = "org.jboss.installer-rhdm-installer" ];then
-                    product1_installer_maven_repo_url="http://download.eng.bos.redhat.com/brewroot/packages/\${name}/\${version}/\${release}/maven/"
-                    product1_installer_brew_url="https://brewweb.engineering.redhat.com/brew/taskinfo?taskID=\${task_id}"
-                    product1_installer_nvr="\$nvr"
-                    appendProp "product1_installer_maven_repo_url" \$product1_installer_maven_repo_url
-                    appendProp "product1_installer_brew_url" \$product1_installer_brew_url
-                    appendProp "product1_installer_nvr" \$product1_installer_nvr
+                elif [ "\$CI_NAME" = "org.jboss.installer-rhdm-installer" ] || [ "\$CI_NAME" = "org.jboss.installer-rhba-installer" ];then
+                    \${product_lowercase}_installer_maven_repo_url="http://download.eng.bos.redhat.com/brewroot/packages/\${name}/\${version}/\${release}/maven/"
+                    \${product_lowercase}_installer_brew_url="https://brewweb.engineering.redhat.com/brew/taskinfo?taskID=\${task_id}"
+                    \${product_lowercase}_installer_nvr="\$nvr"
+                    appendProp "\${product_lowercase}_installer_maven_repo_url" \$\${product_lowercase}_installer_maven_repo_url
+                    appendProp "\${product_lowercase}_installer_brew_url" \$\${product_lowercase}_installer_brew_url
+                    appendProp "\${product_lowercase}_installer_nvr" \$\${product_lowercase}_installer_nvr
                     web_hook=`grep "register_web_hook" \${CI_PROPERTIES_FILE} |cut -d "=" -f2`
                     curl -X POST -d 'OK' -k \$web_hook
-                    ip-tooling/jira_helper.py -c \${IP_CONFIG_FILE} -a "Product Assembly Build Completed: \$product1_assembly_brew_url Build nvr: \$product1_assembly_nvr " -f
-                elif [ "\$CI_NAME" = "org.jboss.installer-rhba-installer" ];then
-                    product2_installer_maven_repo_url="http://download.eng.bos.redhat.com/brewroot/packages/\${name}/\${version}/\${release}/maven/"
-                    product2_installer_brew_url="https://brewweb.engineering.redhat.com/brew/taskinfo?taskID=\${task_id}"
-                    product2_installer_nvr="\$nvr"
-                    appendProp "product2_installer_maven_repo_url" \$product2_installer_maven_repo_url
-                    appendProp "product2_installer_brew_url" \$product2_installer_brew_url
-                    appendProp "product2_installer_nvr" \$product2_installer_nvr
-                    #web_hook=`grep "register_web_hook" \${CI_PROPERTIES_FILE} |cut -d "=" -f2`
-                    #curl -X POST -d 'OK' -k \$web_hook
-                    ip-tooling/jira_helper.py -c \${IP_CONFIG_FILE} -a "Product Assembly Build Completed: \$product1_assembly_brew_url Build nvr: \$product1_assembly_nvr " -f
+                    ip-tooling/jira_helper.py -c \${IP_CONFIG_FILE} -a "Product Assembly Build Completed: \$product_assembly_brew_url Build nvr: \$product_assembly_nvr " -f
                 elif [ "\$CI_NAME" = "org.jboss.brms-bpmsuite.patching-patching-tools-parent" ];then
                     bxms_patch_maven_repo_url="http://download.eng.bos.redhat.com/brewroot/packages/\${name}/\${version}/\${release}/maven/"
                     bxms_patch_brew_url="https://brewweb.engineering.redhat.com/brew/taskinfo?taskID=\${task_id}"
@@ -128,7 +107,7 @@ class ReleaseSingleJobBuilder {
                 if [[ "\$EVENT_TYPE" =~ 70-brew-qe-trigger\$ ]];then
                     echo "Triggered by  bxms-prod ci message "
                     echo "\$CI_MESSAGE"
-                elif [[ "\$EVENT_TYPE" =~ \${release_type}.*qe-smoke-results\$ ]];then
+                elif [[ "\$EVENT_TYPE" =~ \${product_lowercase}-\${release_type}.*qe-smoke-results\$ ]];then
                     echo "QE smoketest report:\$CI_MESSAGE"
                     #Json to adoc
                     echo \${CI_MESSAGE}| python -c "import sys, json;
@@ -207,28 +186,21 @@ fi
             // Create handover script
             def shellScript = '''
             echo -e "Exec node IP: ${OPENSTACK_PUBLIC_IP}\\n"
-            python ip-tooling/template_helper.py -i  ${handover_template_basename}-${product1_lowcase}.template -p ${CI_PROPERTIES_FILE} -o  ${release_handover_basename}-${product1_lowcase}.adoc
-            asciidoctor  ${release_handover_basename}-${product1_lowcase}.adoc
-
-            #python ip-tooling/template_helper.py -i  ${handover_template_basename}-${product2_lowcase}.template -p ${CI_PROPERTIES_FILE} -o  ${release_handover_basename}-${product2_lowcase}.adoc
-            #asciidoctor  ${release_handover_basename}-${product2_lowcase}.adoc
-
+            python ip-tooling/template_helper.py -i  ${handover_template_basename}-${product_lowercase}.template -p ${CI_PROPERTIES_FILE} -o  ${release_handover_basename}-${product_lowercase}.adoc
+            asciidoctor  ${release_handover_basename}-${product_lowercase}.adoc
+            
             git config --global user.email "jb-ip-tooling-jenkins@redhat.com"
             git config --global user.name "bxms-prod"
 
-            if [ -f  ${product1_pvt_report_basename}.html ];then
-                cp  ${product1_pvt_report_basename}.html  ${archive_pvt_report_basename}-${product1_lowcase}.html
+            if [ -f  ${product_pvt_report_basename}.html ];then
+                cp  ${product_pvt_report_basename}.html  ${archive_pvt_report_basename}-${product_lowercase}.html
             fi
-
-            #if [ -f  ${product2_pvt_report_basename}.html ];then
-            #    cp  ${product2_pvt_report_basename}.html  ${archive_pvt_report_basename}-${product2_lowcase}.html
-            #fi
 
             cd bxms-jenkins
             git add --all
 
             #sed -i 's/releaseci_trigger=true/releaseci_trigger=false/g' ${CI_PROPERTIES_FILE}
-            commit_msg="Prepare handover PR  ${product1_name}  ${product1_version}  ${product1_milestone}"
+            commit_msg="Prepare handover PR  ${product_name}  ${product_version}  ${product_milestone}"
 
             git commit -m "${commit_msg}"
             git push origin HEAD:refs/for/master 2>&1| tee b.log
@@ -268,13 +240,13 @@ fi
                             transferSet {
 
                                 // Sets the files to upload to a server.
-                                sourceFiles('${archive_pvt_report_basename}-${product1_lowcase}.html,${release_handover_basename}-${product1_lowcase}.html')
+                                sourceFiles('${archive_pvt_report_basename}-${product_lowercase}.html,${release_handover_basename}-${product_lowercase}.html')
 
                                 // Sets the first part of the file path that should not be created on the remote server.
                                 removePrefix('${release_stream_path}/release-history')
 
                                 // Sets the destination folder.
-                                remoteDirectory('${product1_staging_path}')
+                                remoteDirectory('${product_staging_path}')
                             }
                         }
                 }
@@ -295,7 +267,7 @@ fi
                     User jb-ip-tooling-jenkins\" > ~/.ssh/config
             chmod 600 ~/.ssh/config
             MVN_LOCAL_REPO=/jboss-prod/m2/bxms-dev-repo RELEASE_TAG=${product_release_tag} LOCAL=1 CFG=./${IP_CONFIG_FILE} \
-                REPO_GROUP=MEAD make POMMANIPEXT=${product_lowcase}-build-bom -f  ${makefile}  ${product1_lowcase} 2>&1
+                REPO_GROUP=MEAD make POMMANIPEXT=${product_lowercase}-build-bom -f  ${makefile}  ${product_lowercase} 2>&1
 
             #need to verify if all tags are created succesfully
             EXIST_MISSING_TAG=0
@@ -347,14 +319,15 @@ fi
         buildScm(job)
     }
     void releaseNotes(DslFactory dslFactory){
+        //TODO remove product2
         def job=dslFactory.job(release_code + "-release-pipeline/" + release_code +"-"+ "release-notes"){
             def shellScript ='''#!/bin/sh
             echo -e "Exec node IP:\${OPENSTACK_PUBLIC_IP}\\n"
-            product2_jql_cve_search="(project = RHBRMS OR project = RHBPMS) AND 'Target Release' = ${product_version}.GA AND labels = security AND (Status = closed or Status = VERIFIED)"
-            product2_jql_bugfix_search="(project = RHBRMS OR project = RHBPMS) AND 'Target Release' = ${product_version}.GA AND (status = VERIFIED or status = closed) AND summary !~ 'CVE*'"
+            product2_jql_cve_search="(project = \${product_name}) AND 'Target Release' = ${product_version}.GA AND labels = security AND (Status = closed or Status = VERIFIED)"
+            product2_jql_bugfix_search="(project = \${product_name}) AND 'Target Release' = ${product_version}.GA AND (status = VERIFIED or status = closed) AND summary !~ 'CVE*'"
 
-            product1_jql_cve_search="(project = RHBRMS OR project = RHBPMS) AND 'Target Release' = ${product_version}.GA AND labels = security AND (status = VERIFIED or status = closed) AND component not in ('Form Modeler', 'jBPM Core', 'jBPM Designer') "
-            product1_jql_bugfix_search="(project = RHBRMS OR project = RHBPMS) AND 'Target Release' = ${product_version}.GA AND (status = VERIFIED or status = closed) AND component not in ('Form Modeler', 'jBPM Core', 'jBPM Designer') AND summary !~ 'CVE*'"
+            product_jql_cve_search="(project = \${product_name}) AND 'Target Release' = ${product_version}.GA AND labels = security AND (status = VERIFIED or status = closed) AND component not in ('Form Modeler', 'jBPM Core', 'jBPM Designer') "
+            product_jql_bugfix_search="(project = \${product_name}) AND 'Target Release' = ${product_version}.GA AND (status = VERIFIED or status = closed) AND component not in ('Form Modeler', 'jBPM Core', 'jBPM Designer') AND summary !~ 'CVE*'"
 
             kinit -k -t \${HOME}/bxms-release.keytab bxms-release/prod-ci@REDHAT.COM
             function generate_release_notes () {
@@ -386,13 +359,13 @@ fi
                 done < ./jql_search_data.txt
             }
 
-            generate_release_notes ${product1_release_notes_path} "${product1_jql_cve_search}" "${product1_jql_bugfix_search}"
+            generate_release_notes ${product_release_notes_path} "${product_jql_cve_search}" "${product_jql_bugfix_search}"
             generate_release_notes ${product2_release_notes_path} "${product2_jql_cve_search}" "${product2_jql_bugfix_search}"
 
             '''
             // Sets a description for the job.
             description("This job is responsible for generating a html release description.")
-
+            disabled()
             // Adds build steps to the jobs.
             steps {
 
@@ -414,19 +387,10 @@ fi
                         transferSet {
 
                             // Sets the files to upload to a server.
-                            sourceFiles('${product1_release_notes_path}')
+                            sourceFiles('${product_release_notes_path}')
 
                             // Sets the destination folder.
-                            remoteDirectory('${product1_staging_path}/')
-                        }
-                        // Adds a transfer set.
-                        transferSet {
-
-                            // Sets the files to upload to a server.
-                            sourceFiles('${product2_release_notes_path}')
-
-                            // Sets the destination folder.
-                            remoteDirectory('${product2_staging_path}/')
+                            remoteDirectory('${product_staging_path}/')
                         }
                     }
                 }
@@ -437,6 +401,7 @@ fi
         buildScm(job)
     }
     void exportOpenshiftImages(DslFactory dslFactory){
+        //TODO needs house cleaning
         def job=dslFactory.job(release_code + "-release-pipeline/" + release_code +"-"+ "export-openshift-images"){
             String shellScript = '''
             echo -e "Exec node IP: ${OPENSTACK_PUBLIC_IP}\\n"
@@ -514,6 +479,7 @@ fi
                 // Defines a simple text parameter, where users can enter a string value.
                 booleanParam("skipPackage", false ,"Skip package Openshift Image")
             }
+            disabled()
 
             // Adds pre/post actions to the job.
             wrappers {
@@ -576,122 +542,64 @@ fi
                     echo "Param  is not allow empty"
                     exit 1
                 fi
-                sed -i "/^$1/d"  ${prod_properties_name} && echo "$1=$2" >>  ${prod_properties_name}
+                sed -i "/^$1/d"  ${product_staging_properties_name} && echo "$1=$2" >>  ${product_staging_properties_name}
             }
 
             if [ "${release_type}" == "nightly" ]; then
-                prod_properties_name=${PRODUCT_NAME, ,}-${build_date}.properties
-                case "${PRODUCT_NAME}" in
-                    RHDM )
-                        product_version="${product1_version}"
-                        product_artifact_version="${product1_artifact_version}"
-                        ;;
-                    RHBAS )
-                        product_version="${product2_version}"
-                        product_artifact_version="${product2_artifact_version}"
-                        ;;
-                esac
-
-                product_url_prefix="${jenkins_cache_url}/${jenkins_cache_repo}/org/kie/rhba/${PRODUCT_NAME,,}/${product_artifact_version}"
-                product_installer_url="${jenkins_cache_url}/${jenkins_cache_repo}/org/jboss/installer/${PRODUCT_NAME,,}-installer/${product_artifact_version}/${PRODUCT_NAME,,}-installer-${product_artifact_version}.jar"
-                product_filename_common_prefix="${PRODUCT_NAME,,}-${product_artifact_version}"
-                product_installer_name="${PRODUCT_NAME,,}-installer-${product_artifact_version}.jar"
-                echo "properties_staging_path=${PRODUCT_NAME,,}/${PRODUCT_NAME}-${product_version}.NIGHTLY" > /tmp/prod_staging_path
-                echo "prod_properties_name=${prod_properties_name}" >> /tmp/prod_staging_path
-            else
-                case "${PRODUCT_NAME}" in
-                    RHDM )
-                        prod_properties_name=${product1_staging_properties_name}
-                        prod_staging_properties_url=${product1_staging_properties_url}
-                        product_version=${product1_shipped_file_deliver_version}
-                        product_artifact_version=${product1_artifact_version}
-
-                        prod_deliverable_template=${product1_deliverable_template}
-                        prod_staging_path=${product1_staging_path}
-                        prod_candidate_properties_name=${product1_candidate_properties_name}
-                        prod_public_version_properties_name="RHDM_PUBLIC_VERSION"
-                        prod_public_version_properties_value=${product1_milestone_version}
-                        prod_sources_name=${product1_sources_name}
-                        ;;
-                    RHBAS )
-                        prod_properties_name=${product2_staging_properties_name}
-                        prod_staging_properties_url=${product2_staging_properties_url}
-                        product_version=${product2_shipped_file_deliver_version}
-                        product_artifact_version=${product1_artifact_version}
-
-                        prod_deliverable_template=${product2_deliverable_template}
-                        prod_staging_path=${product2_staging_path}
-                        prod_candidate_properties_name=${product2_candidate_properties_name}
-                        prod_public_version_properties_name="RHBA_PUBLIC_VERSION"
-                        prod_public_version_properties_value=${product2_milestone_version}
-                        prod_sources_name=${product2_sources_name}
-                        ;;
-                esac
-
-                product_url_prefix="${rcm_staging_base}/${prod_staging_path}"
-                product_filename_common_prefix="${PRODUCT_NAME,,}-${product_version}"
-                product_installer_url="${product_url_prefix}/${PRODUCT_NAME,,}-installer-${product_version}.jar"
-
-                echo "properties_staging_path=${prod_staging_path}" > /tmp/prod_staging_path
-                echo "prod_properties_name=${prod_properties_name}" >> /tmp/prod_staging_path
-                echo "prod_candidate_properties_name=${prod_candidate_properties_name}" >> /tmp/prod_staging_path
+                product_url_prefix="${jenkins_cache_url}/${jenkins_cache_repo}/org/kie/rhba/${product_lowercase}/${product_artifact_version}"
+                product_installer_url="${jenkins_cache_url}/${jenkins_cache_repo}/org/jboss/installer/${product_lowercase}-installer/${product_artifact_version}/${product_lowercase}-installer-${product_artifact_version}.jar"
+                product_filename_common_prefix="${product_lowercase}-${product_artifact_version}"
+                product_installer_name="${product_lowercase}-installer-${product_artifact_version}.jar"
+                                
+            else              
+                product_url_prefix="${rcm_staging_base}/${product_staging_path}"
+                product_filename_common_prefix="${product_lowercase}-${product_version}"
+                product_installer_url="${product_url_prefix}/${product_lowercase}-installer-${product_version}.jar"
+                
             fi
-
-            if [ ! -f $prod_properties_name ]; then
-                touch $prod_properties_name
+            if [ ! -f $product_staging_properties_name ]; then
+                touch $product_staging_properties_name
             fi
-
-            case "${PRODUCT_NAME}" in
+            case "${product_name}" in
                 RHDM )
-                    appendProp "${PRODUCT_NAME,,}.decision-central.standalone.latest.url"    "$product_url_prefix/${product_filename_common_prefix}-decision-central-standalone.jar"
-                    appendProp "${PRODUCT_NAME,,}.decision-central-eap7.latest.url"          "$product_url_prefix/${product_filename_common_prefix}-decision-central-eap7-deployable.zip"
+                    appendProp "${product_lowercase}.decision-central.standalone.latest.url"    "$product_url_prefix/${product_filename_common_prefix}-decision-central-standalone.jar"
+                    appendProp "${product_lowercase}.decision-central-eap7.latest.url"          "$product_url_prefix/${product_filename_common_prefix}-decision-central-eap7-deployable.zip"
                     ;;
-                RHBAS )
-                    appendProp "${PRODUCT_NAME,,}.business-central.standalone.latest.url"    "$product_url_prefix/${product_filename_common_prefix}-business-central-standalone.jar"
-                    appendProp "${PRODUCT_NAME,,}.business-central-eap7.latest.url"          "$product_url_prefix/${product_filename_common_prefix}-business-central-eap7-deployable.zip"
+                RHBA )
+                    appendProp "${product_lowercase}.business-central.standalone.latest.url"    "$product_url_prefix/${product_filename_common_prefix}-business-central-standalone.jar"
+                    appendProp "${product_lowercase}.business-central-eap7.latest.url"          "$product_url_prefix/${product_filename_common_prefix}-business-central-eap7-deployable.zip"
             esac
 
-            appendProp "${PRODUCT_NAME,,}.kie-server.ee7.latest.url" "${product_url_prefix}/${product_filename_common_prefix}-kie-server-ee7.zip"
-            appendProp "${PRODUCT_NAME,,}.addons.latest.url"         "${product_url_prefix}/${product_filename_common_prefix}-add-ons.zip"
-            appendProp "${PRODUCT_NAME,,}.installer.latest.url"         "${product_installer_url}"
+            appendProp "${product_lowercase}.kie-server.ee7.latest.url" "${product_url_prefix}/${product_filename_common_prefix}-kie-server-ee7.zip"
+            appendProp "${product_lowercase}.addons.latest.url"         "${product_url_prefix}/${product_filename_common_prefix}-add-ons.zip"
+            appendProp "${product_lowercase}.installer.latest.url"         "${product_installer_url}"
 
-            appendProp "${PRODUCT_NAME}_VERSION"   ${product_artifact_version}
+            appendProp "${product_name}_VERSION"   ${product_artifact_version}
             appendProp "KIE_VERSION"                ${kie_version}
             appendProp "APPFORMER_VERSION"          ${appformer_version}
             appendProp "ERRAI_VERSION"              ${errai_version}
             appendProp "MVEL_VERSION"               ${mvel_version}
 
             #Additional properties for brew release
-            if [ "${release_type}" == "nightly" ]; then
+            if [ "${release_type}" == "brew" ]; then
                 #append the other properties per qe's requirement
                 appendProp "build.config" ${product_url_prefix}/${IP_CONFIG_FILE}
-                appendProp $prod_public_version_properties_name ${prod_public_version_properties_value}
-                appendProp "${PRODUCT_NAME,,}.maven.repo.latest.url"     "$product_url_prefix/${product_filename_common_prefix}-maven-repository.zip"
-                appendProp "${PRODUCT_NAME,,}.sources.latest.url"   "$product_url_prefix/${prod_sources_name}"
+                appendProp ${product_name}_PUBLIC_VERSION ${product_version}
+                appendProp "${product_lowercase}.maven.repo.latest.url"     "$product_url_prefix/${product_filename_common_prefix}-maven-repository.zip"
+                appendProp "${product_lowercase}.sources.latest.url"   "$product_url_prefix/${product_sources_name}"
 
-                sed -e "s=${rcm_staging_base}/${PRODUCT_NAME,,}=${rcm_candidate_base}/${PRODUCT_NAME}=g" \
-                ${prod_properties_name} > ${prod_candidate_properties_name}
+                sed -e "s=${rcm_staging_base}/${product_lowercase}=${rcm_candidate_base}/${product_lowercase}=g" \
+                ${product_staging_properties_name} > ${product_candidate_properties_name}
             fi
-            #Validate QE properties
-            
+           
             '''
             // Sets a description for the job.
             description("This job is responsible for staging the Brew release deliverable to the RCM staging area.")
-
-            // Allows to parameterize the job.
-            parameters {
-                // Defines a simple text parameter, where users can enter a string value.
-                stringParam("PRODUCT_NAME", "RHDM","Specify product name to switch between configurations.")
-            }
 
             // Adds build steps to the jobs.
             steps {
                 // Runs a shell script (defaults to sh, but this is configurable) for building the project.
                 shell(shellScript)
-                // Inject environment variables for staging paths
-                environmentVariables {
-                    propertiesFile("/tmp/prod_staging_path")
-                }
             }
             wrappers {
                 // Deletes files from the workspace before the build starts.
@@ -706,10 +614,10 @@ fi
                         // Adds a transfer set.
                         transferSet {
                             // Sets the files to upload to a server.
-                            sourceFiles('${IP_CONFIG_FILE}, ${prod_properties_name}, ${prod_candidate_properties_name}')
+                            sourceFiles('${IP_CONFIG_FILE}, ${product_staging_properties_name}, ${product_candidate_properties_name}')
 
                             // Sets the destination folder.
-                            remoteDirectory('${properties_staging_path}')
+                            remoteDirectory('${product_staging_path}')
                         }
                     }
                 }
@@ -729,53 +637,27 @@ fi
             # Workaround for variable name conflict between Jenkins and ip-tooling
             unset WORKSPACE
 
-
             # Make sources
-            make CFG=${IP_CONFIG_FILE} SOURCES=1 POMMANIPEXT=${product_lowcase}-build-bom SRCDIR=src -f Makefile.BRMS ${PRODUCT_NAME,,}
+            make CFG=${IP_CONFIG_FILE} SOURCES=1 POMMANIPEXT=${product_lowercase}-build-bom SRCDIR=src -f Makefile.BRMS ${product_lowercase}-installer
 
             ## Prepare sources for delivery ##
             cd workspace
-
-            # Remove settings.xml
-            # TODO It's a fast fix. It should be more generic.
-            #rm -f src/errai-parent*/settings.xml
-
-            case "${PRODUCT_NAME}" in
-                RHDM )
-                    prod_artifact_version=${product1_artifact_version}
-                    prod_staging_path=${product1_staging_path}
-                    prod_sources_name=${product1_sources_name}
-                    rm -rf src/jbpm-wb-${kie_version}
-
-                    ;;
-                RHBAS )
-                    prod_artifact_version=${product2_artifact_version}
-                    prod_sources_name=${product2_sources_name}
-                    prod_staging_path=${product2_staging_path}
-                    ;;
-            esac
-
-            rm -rf src/${product_lowcase}-license-${prod_artifact_version} \
-                   src/${product_lowcase}-maven-repo-root-${prod_artifact_version} \
+                        
+            rm -rf src/${product_lowercase}-license-${product_artifact_version} \
+                   src/${product_lowercase}-maven-repo-root-${product_artifact_version} \
                    src/errai-parent-${errai_version} \
-                   src/${product_lowcase}\
+                   src/${product_lowercase}\
                    src/kie-parent-${kie_version}/RELEASE-README.md \
                    src/drools-${kie_version}/drools-verifier
 
             # Create sources archive
-            zip -r -5 --quiet ${prod_sources_name} src/
-            echo "prod_staging_path=${prod_staging_path}" > /tmp/prod_staging_path
-            echo "prod_sources_name=${prod_sources_name}" >> /tmp/prod_staging_path
+            zip -r -5 --quiet ${product_sources_name} src/
             '''
             // Sets a description for the job.
             description("This job is responsible for generating product sources.")
-            parameters {
-                // Defines a simple text parameter, where users can enter a string value.
-                stringParam( "PRODUCT_NAME", "RHDM","Specify product name to switch between configurations.")
-            }
+
             // Adds pre/post actions to the job.
             wrappers {
-
                         // Deletes files from the workspace before the build starts.
                         preBuildCleanup()
                     }
@@ -785,15 +667,12 @@ fi
                 // Runs a shell script (defaults to sh, but this is configurable) for building the project.
                 shell(shellScript)
                 // Inject environment variables for staging paths
-                environmentVariables {
-                    propertiesFile("/tmp/prod_staging_path")
-                }
             }
 
             // Adds post-build actions to the job.
             publishers {
                 //Archives artifacts with each build.
-                archiveArtifacts('workspace/${prod_sources_name}')
+                archiveArtifacts('workspace/${product_sources_name}')
 
                 // Send artifacts to an SSH server (using SFTP) and/or execute commands over SSH.
                 publishOverSsh {
@@ -808,13 +687,13 @@ fi
                         transferSet {
 
                             // Sets the files to upload to a server.
-                            sourceFiles('workspace/${prod_sources_name}')
+                            sourceFiles('workspace/${product_sources_name}')
 
                             // Sets the first part of the file path that should not be created on the remote server.
                             removePrefix('workspace/')
 
                             // Sets the destination path.
-                            remoteDirectory('${prod_staging_path}')
+                            remoteDirectory('${product_staging_path}')
                         }
                     }
                 }
@@ -831,27 +710,26 @@ fi
             echo -e "Exec node IP: ${OPENSTACK_PUBLIC_IP}\\n"
             remote_product_cfg_sha=$(git log -1 --pretty="%H" ${IP_CONFIG_FILE})
             cfg=${IP_CONFIG_FILE}
-            release_code=${cfg%%.cfg}
 
             function appendProp() {
-                echo "Inject Properties:$2"
-                if [ -z "$1" ] || [ -z "$2" ];then
-                    echo "Properties value is empty"
+                echo "Inject Properties:$1 Value:$2"
+                if [ -z "$1" ] ;then
+                    echo "Properties name is empty"
                     exit 1
                 fi
                 sed -i "/^$1/d" ${CI_PROPERTIES_FILE} && echo "$1=$2" >> ${CI_PROPERTIES_FILE}
             }
             if [ "${CLEAN_CONFIG}" = "true" ];then
-                rm -vf /jboss-prod/config/${release_code}-*.*
+                rm -vf /jboss-prod/config/${RELEASE_CODE}-*.*
                 rm -vf ${CI_PROPERTIES_FILE}
             fi
 
             #If build new versions, then remove the jenkins properties files
             if [ -f ${CI_PROPERTIES_FILE} ];then
-                new_version="`grep 'product1_version=' ${IP_CONFIG_FILE}`"
-                new_milestone="`grep 'product1_milestone=' ${IP_CONFIG_FILE}`"
-                old_version="`grep 'product1_version=' ${CI_PROPERTIES_FILE}`"
-                old_milestone="`grep 'product1_milestone=' ${CI_PROPERTIES_FILE}`"
+                new_version="`grep 'product_version=' ${IP_CONFIG_FILE}`"
+                new_milestone="`grep 'product_milestone=' ${IP_CONFIG_FILE}`"
+                old_version="`grep 'product_version=' ${CI_PROPERTIES_FILE}`"
+                old_milestone="`grep 'product_milestone=' ${CI_PROPERTIES_FILE}`"
 
                 export `grep "product_cfg_sha" ${CI_PROPERTIES_FILE}`
 
@@ -862,23 +740,19 @@ fi
                     rm -vf ${CI_PROPERTIES_FILE}
                 fi
             fi
+            build_date=$(date -u +'%Y%m%d')
+            #Override nightly build properties name
             if [ ! -f ${CI_PROPERTIES_FILE} ];then
                 #Loading env from cfg file
-                python ip-tooling/jenkins_ci_property_loader.py -m bxms-jenkins/streams/${RELEASE_CODE}/config/properties-mapping.template -i ${IP_CONFIG_FILE} -o ${CI_PROPERTIES_FILE}
+                if [[ "${RELEASE_CODE}" =~ nightly ]];then
+                    sed -i "s#-SNAPSHOT#-${build_date}#g" ${IP_CONFIG_FILE}
+                fi
+                python ip-tooling/jenkins_ci_property_loader.py -m bxms-jenkins/config/properties-mapping.template -i ${IP_CONFIG_FILE} -o ${CI_PROPERTIES_FILE}
                 appendProp "product_cfg_sha" $remote_product_cfg_sha
                 appendProp "ci_properties_file" ${CI_PROPERTIES_FILE}
                 appendProp "build_cfg" ${IP_CONFIG_FILE}
             fi
-            source ${CI_PROPERTIES_FILE}
-            product1_shipped_file_deliver_version=${product1_milestone_version}
-            product2_shipped_file_deliver_version=${product2_milestone_version}
-            #Uploading to rcm staging folder
-            if [ "${milestone:0:2}" == "CR" ];then
-                product1_shipped_file_deliver_version=${product1_version}${availability}
-                product2_shipped_file_deliver_version=${product2_version}${availability}
-            fi
-            appendProp "product1_shipped_file_deliver_version" $product1_shipped_file_deliver_version
-            appendProp "product2_shipped_file_deliver_version" $product2_shipped_file_deliver_version
+            source ${CI_PROPERTIES_FILE}            
 
             #Use kerbose to create the release JIRA
             kinit -k -t  ${HOME}/bxms-release.keytab bxms-release/prod-ci@REDHAT.COM
@@ -888,8 +762,15 @@ fi
             echo "https://projects.engineering.redhat.com/browse/$jira_id"
             appendProp "release_jira_id" $jira_id
             #build_date is used in nightly build
-            build_date=$(date -u +'%Y%m%d')
             appendProp "build_date" "${build_date}"
+
+            if [ "${release_type}" == "nightly" ];then
+                appendProp "product_staging_properties_name" "${product_lowercase}-${build_date}.properties"
+                appendProp "product_candidate_properties_name" ""
+                appendProp "product_staging_path" "${product_lowercase}/${product_name}-${product_version}.NIGHTLY"
+                product_staging_properties_url="${rcm_staging_base}/${product_lowercase}/${product_lowercase}-${product_version}.NIGHTLY/${prod_properties_name}"                
+        
+            fi
             '''
             // Sets a description for the job.
             description("This is the \${RELEASE_CODE} release initialization job. This job is responsible for preparation of \${CI_PROPERTIES_FILE} file.")
@@ -1080,26 +961,8 @@ fi
             kinit -k -t  ${HOME}/bxms-release.keytab bxms-release/prod-ci@REDHAT.COM
             ip-tooling/jira_helper.py -c ${IP_CONFIG_FILE} -a "Maven repository build started: Build url: ${BUILD_URL}" -f
 
-            case "${PRODUCT_NAME}" in
-                RHDM )
-                    prod_staging_path=${product1_staging_path}
-                    prod_maven_repo_name=${product1_maven_repo_name}
-                    prod_candidate_path=${product1_candidate_path}
-                    ;;
-                RHBAS )
-                    prod_staging_path=${product2_staging_path}
-                    prod_maven_repo_name=${product2_maven_repo_name}
-                    prod_candidate_path=${product2_candidate_path}
-                    ;;
-            esac
-
-            echo "prod_staging_path=$prod_staging_path" > /tmp/prod_staging_path
-
-            echo "prod_name_lowercase=${PRODUCT_NAME,,}" >> /tmp/prod_staging_path
-            prod_name_lowercase=${PRODUCT_NAME,,}
-            PROJECT_NAME=${prod_name_lowercase} make CFG=${IP_CONFIG_FILE} BUILDER_SCRIPT=${repository_builder_script} -f ${makefile} repository
-            rename jboss-${prod_name_lowercase} ${prod_name_lowercase} workspace/${prod_name_lowercase}-repository/archive/*
-
+            PROJECT_NAME=${product_lowercase} make CFG=${IP_CONFIG_FILE} BUILDER_SCRIPT=${repository_builder_script} -f ${makefile} repository
+            rename jboss-${product_name_lowercase} ${product_lowercase} workspace/${product_lowercase}-repository/archive/*
             '''
             // Sets a description for the job.
             description("This job is responsible for building the offline maven repository zip for MRRC.")
@@ -1118,8 +981,6 @@ fi
 
                 // Defines a simple text parameter, where users can enter a string value.
                 stringParam("INCREMENTAL_REPO_FOR", incrementalRepositoryString, "List of repositories to exclude. They can be online repository urls or online available zip files in format <url to the zip>:<relative path to repo root inside the zip<. Each repository is supposed to be put on a new line.")
-
-                stringParam("PRODUCT_NAME", "RHDM","Specify product name to switch between configurations.")
             }
 
             // Adds build steps to the jobs.
@@ -1127,10 +988,7 @@ fi
 
                 // Runs a shell script (defaults to sh, but this is configurable) for building the project.
                 shell(shellScript)
-                // Inject environment variables for $prod_staging_path
-                environmentVariables {
-                    propertiesFile("/tmp/prod_staging_path")
-                }
+                // Inject environment variables for $product_staging_path
             }
 
             wrappers {
@@ -1145,7 +1003,7 @@ fi
             publishers {
 
                 //Archives artifacts with each build.
-                archiveArtifacts('workspace/${prod_name_lowercase}-repository/archive/**/*')
+                archiveArtifacts('workspace/${product_lowercase}-repository/archive/**/*')
 
                 // Send artifacts to an SSH server (using SFTP) and/or execute commands over SSH.
                 publishOverSsh {
@@ -1160,20 +1018,20 @@ fi
                             transferSet {
 
                                 // Sets the files to upload to a server.
-                                sourceFiles('workspace/${prod_name_lowercase}-repository/archive/*.zip,workspace/${prod_name_lowercase}-repository/archive/*.text,workspace/${prod_name_lowercase}-repository/archive/*.md5')
+                                sourceFiles('workspace/${product_lowercase}-repository/archive/*.zip,workspace/${product_lowercase}-repository/archive/*.text,workspace/${product_lowercase}-repository/archive/*.md5')
 
                                 // Sets the first part of the file path that should not be created on the remote server.
-                                removePrefix('workspace/${prod_name_lowercase}-repository/archive/')
+                                removePrefix('workspace/${product_lowercase}-repository/archive/')
 
                                 // Sets the destination folder.
-                                remoteDirectory('${prod_staging_path}')
+                                remoteDirectory('${product_staging_path}')
 
                                 // Specifies a command to execute on the remote server.
                                 execCommand('unzip ' +
-                                        '-o ~/staging/${prod_staging_path}/maven-repository-report.zip ' +
-                                        '-d ~/staging/${prod_staging_path}' +
+                                        '-o ~/staging/${product_staging_path}/maven-repository-report.zip ' +
+                                        '-d ~/staging/${product_staging_path}' +
                                         '&& rm ' +
-                                        '-f ~/staging/${prod_staging_path}/maven-repository-report.zip')
+                                        '-f ~/staging/${product_staging_path}/maven-repository-report.zip')
                             }
 
                         }
@@ -1194,10 +1052,7 @@ fi
             def report_string = '''{"SuccessfulJobs":{"BxMS/BxMS-prod-6.4/smoke-prod/bpms-prod-6.4-blessed-business-central-smoke-container":"SUCCESS","BxMS/BxMS-prod-6.4/smoke-prod/bpms-prod-6.4-blessed-business-central-smoke-db":"SUCCESS","BxMS/BxMS-prod-6.4/smoke-prod/bpms-prod-6.4-blessed-business-central-smoke-was":"SUCCESS","BxMS/BxMS-prod-6.4/smoke-prod/bpms-prod-6.4-blessed-business-central-smoke-wls":"SUCCESS","BxMS/BxMS-prod-6.4/smoke-prod/bpms-prod-6.4-blessed-dashbuilder-smoke-container":"SUCCESS","BxMS/BxMS-prod-6.4/smoke-prod/bpms-prod-6.4-blessed-dashbuilder-smoke-was":"SUCCESS","BxMS/BxMS-prod-6.4/smoke-prod/bpms-prod-6.4-blessed-integration-smoke-container":"SUCCESS","BxMS/BxMS-prod-6.4/smoke-prod/bpms-prod-6.4-blessed-quickstarts-smoke":"SUCCESS","BxMS/BxMS-prod-6.4/smoke-prod/bpms-prod-6.4-blessed-united-exec-servers-smoke":"SUCCESS","BxMS/BxMS-prod-6.4/smoke-prod/bpms-prod-6.4-blessed-wb-rest-smoke-container":"SUCCESS","BxMS/BxMS-prod-6.4/smoke-prod/bpms-prod-6.4-blessed-wb-rest-smoke-wls":"SUCCESS","BxMS/BxMS-prod-6.4/smoke-prod/brms-prod-6.4-blessed-bre-smoke":"SUCCESS","BxMS/BxMS-prod-6.4/smoke-prod/brms-prod-6.4-blessed-business-central-smoke-container":"SUCCESS","BxMS/BxMS-prod-6.4/smoke-prod/brms-prod-6.4-blessed-business-central-smoke-was":"SUCCESS","BxMS/BxMS-prod-6.4/smoke-prod/brms-prod-6.4-blessed-business-central-smoke-wls":"SUCCESS","BxMS/BxMS-prod-6.4/smoke-prod/brms-prod-6.4-blessed-quickstarts-smoke":"SUCCESS","BxMS/BxMS-prod-6.4/smoke-prod/brms-prod-6.4-blessed-wb-rest-smoke-was":"SUCCESS","BxMS/BxMS-prod-6.4/smoke-prod/bxms-prod-6.4-blessed-inc-maven-repo-testsuite-smoke":"SUCCESS","BxMS/BxMS-prod-6.4/smoke-prod/bxms-prod-6.4-blessed-maven-repo-testsuite-smoke":"SUCCESS"},"UnsuccessfulJobs":{"BxMS/BxMS-prod-6.4/smoke-prod/bpms-prod-6.4-blessed-clustering-smoke":"FAILURE","BxMS/BxMS-prod-6.4/smoke-prod/bpms-prod-6.4-blessed-dashbuilder-smoke-db":"UNSTABLE","BxMS/BxMS-prod-6.4/smoke-prod/brms-prod-6.4-blessed-exec-server-smoke-container":"FAILURE","BxMS/BxMS-prod-6.4/smoke-prod/brms-prod-6.4-blessed-wb-rest-smoke-container":"FAILURE"},"Statistics":{"TotaBuildRuns":23,"SuccessfulBuilds":19,"UnsuccessfulBuilds":4}}'''
                                 // Sets a description for the job.
             description("This job is responsible for mocking a CI message triggered returned the smoketest result from QE.")
-
-            parameters {
-                stringParam("PRODUCT_NAME", "rhdm","Specify product name to switch between configurations.")
-            }
+            
             // Adds build steps to the jobs.
             steps {
                 shell(shellScript)
@@ -1205,7 +1060,7 @@ fi
                 // Sends JMS message.
                 ciMessageBuilder {
                     overrides {
-                        topic('VirtualTopic.qe.ci.ba.$PRODUCT_NAME.70.${release_type}.smoke.results')
+                        topic('VirtualTopic.qe.ci.ba.${product_lowercase}.70.${release_type}.smoke.results')
                     }
 
                     // JMS selector to choose messages that will fire the trigger.
@@ -1217,7 +1072,7 @@ fi
                     // KEY=value pairs, one per line (Java properties file format) to be used as message properties.
                     messageProperties('label=rhba-ci\n' +
                             'CI_TYPE=customer\n' +
-                            'EVENT_TYPE=$PRODUCT_NAME-70-${release_type}-qe-smoke-results\n')
+                            'EVENT_TYPE=${product_lowercase}-70-${release_type}-qe-smoke-results\n')
 
                     // Content of CI message to be sent.
                     messageContent(report_string)
@@ -1279,7 +1134,7 @@ fi
         def job=dslFactory.job(release_code + "-release-pipeline/" + release_code +"-"+ "promote-release"){
             String shellScript = '''
             echo -e "Exec node IP:${OPENSTACK_PUBLIC_IP}\\n"
-            sed -i '/^release_status=/d' ${CI_PROPERTIES_FILE} && echo "release_status=closed" >>${CI_PROPERTIES_FILE}
+            #sed -i '/^release_status=/d' ${CI_PROPERTIES_FILE} && echo "release_status=closed" >>${CI_PROPERTIES_FILE}
             '''
             // Sets a description for the job.
             description("This job is responsible for uploading release to candidate area.")
@@ -1293,6 +1148,7 @@ fi
                 disabled()
             }
 
+            //
             triggers{
                 gerrit{
 
@@ -1306,7 +1162,7 @@ fi
                         }
                         triggers/'gerritProjects'/'com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.data.GerritProject'/'filePaths'/'com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.data.FilePath' << {
                             'compareType' 'REG_EXP'
-                            'pattern' 'stream/bxms/release-history/*-handover.adoc'
+                            'pattern' 'stream/rhdm/release-history/*-handover.adoc'
                         }
                     }
                 }
@@ -1331,7 +1187,7 @@ fi
 
                             // Specifies a command to execute on the remote server.
                             execCommand('kinit -k -t ~/bxms-release.keytab bxms-release/prod-ci@REDHAT.COM\n' +
-                                    '/mnt/redhat/scripts/rel-eng/utility/bus-clients/stage-mw-release ${product1_name}-${product1_milestone_version}\n')
+                                    '/mnt/redhat/scripts/rel-eng/utility/bus-clients/stage-mw-release ${product_name}-${product_milestone_version}\n')
                         }
                     }
                 }
@@ -1344,52 +1200,29 @@ fi
         def job=dslFactory.job(release_code + "-release-pipeline/" + release_code +"-"+ "pvt-test"){
             String shellScript = '''
             echo -e "Exec node IP: ${OPENSTACK_PUBLIC_IP}\\n"
-            case "${PRODUCT_NAME}" in
+            case "${product_lowercase}" in
                 RHDM )
-                    prod_smoketest_cfg=${product1_smoketest_cfg}
-                    prod_milestone_version=${product1_milestone_version}
-                    prod_shipped_file_deliver_version=${product1_shipped_file_deliver_version}
-                    prod_pvt_report_basename=${product1_pvt_report_basename}
+                    prod_smoketest_cfg=${product_smoketest_cfg}
+                    prod_milestone_version=${product_milestone_version}
+                    product_upload_version=${product_shipped_file_deliver_version}
+                    prod_pvt_report_basename=${product_pvt_report_basename}
                     ;;
                 RHBAS )
                     prod_smoketest_cfg=${product2_smoketest_cfg}
                     prod_milestone_version=${product2_milestone_version}
-                    prod_shipped_file_deliver_version=${product2_shipped_file_deliver_version}
+                    product_upload_version=${product2_shipped_file_deliver_version}
                     prod_pvt_report_basename=${product2_pvt_report_basename}
                     ;;
             esac
             git clone https://github.com/project-ncl/pvt.git
             cd pvt
-            /jboss-prod/tools/maven-3.3.9-prod/bin/mvn -Dmaven.repo.local=${dev_maven_repo} \
-                surefire-report:report -B -Dproduct.config=${prod_smoketest_cfg} -Dproduct.version=${prod_milestone_version} \
-                -Dproduct.target=${prod_shipped_file_deliver_version} -Dreport.filepath=${prod_pvt_report_basename} clean package
+            ~/bin/maven-3.3.9-prod/bin/mvn -Dmaven.repo.local=${dev_maven_repo} \
+                surefire-report:report -B -Dproduct.config=${product_smoketest_cfg} -Dproduct.version=${product_milestone_version} \
+                -Dproduct.target=${product_upload_version} -Dreport.filepath=${product_pvt_report_basename} clean package
 
             '''
             // Sets a description for the job.
             description("This job is responsible for executing product validation tests.")
-
-            parameters {
-                stringParam("PRODUCT_NAME",  "RHDM","Specify product name to switch between configurations.")
-            }
-
-            // Adds a Git SCM source.
-            multiscm {
-
-                git {
-                    remote {
-
-                        // Sets the remote URL.
-                        url("https://github.com/project-ncl/pvt")
-                    }
-                    // Adds additional behaviors.
-                    extensions {
-                        // Specifies a local directory (relative to the workspace root) where the Git repository will be checked out.
-                        relativeTargetDirectory("pvt")
-                    }
-                    // Specify the branches to examine for changes and to build.
-                    branch('*/master')
-                }
-            }
 
             // Adds build steps to the jobs.
             steps {
@@ -1409,9 +1242,9 @@ fi
         def job=dslFactory.job(release_code + "-release-pipeline/" + release_code +"-"+ "send-handover-mail"){
             def mailContent = '''Hello,
 
-            $product1 ${product1_milestone_version} is now available, the handover can be found below:
+            $product ${product_milestone_version} is now available, the handover can be found below:
 
-            $rcm_candidate_base/$product1_name/$product1_name-${product1_milestone_version}/${product1_lowcase}-handover.html
+            $rcm_candidate_base/$product_name/$product_name-${product_milestone_version}/${product_lowercase}-handover.html
 
             $product2 ${product2_milestone_version} is now available, the handover can be found below:
 
@@ -1436,7 +1269,7 @@ fi
                     replyToList('bxms-prod@redhat.com')
 
                     // Sets the default email subject that will be used for each email that is sent.
-                    defaultSubject('${product1_name}${product1_version}${product1_milestone} is now available.')
+                    defaultSubject('${product_name}${product_version}${product_milestone} is now available.')
 
                     // Sets the default email content that will be used for each email that is sent.
                     defaultContent(mailContent)
@@ -1482,7 +1315,7 @@ fi
                                         <td class="email-content-main mobile-expand " style="padding: 0px; border-collapse: collapse; border-left: 1px solid #ccc; border-right: 1px solid #ccc; border-top: 0; border-bottom: 0; padding: 0 15px 0 16px; background-color: #fff">
                                             <table class="page-title-pattern" cellspacing="0" cellpadding="0" border="0" width="100%" style="border-collapse: collapse; mso-table-lspace: 0pt; mso-table-rspace: 0pt">
                                                 <tr>
-                                                    <td style="vertical-align: top;; padding: 0px; border-collapse: collapse; padding-right: 5px; font-size: 20px; line-height: 30px; mso-line-height-rule: exactly" class="page-title-pattern-header-container"> <span class="page-title-pattern-header" style="font-family: Arial, sans-serif; padding: 0; font-size: 20px; line-height: 30px; mso-text-raise: 2px; mso-line-height-rule: exactly; vertical-align: middle"> <a href="" style="color: #3b73af; text-decoration: none">${product1_name}${product1_version}${product1_milestone}  Release Handover Review</a> </span>
+                                                    <td style="vertical-align: top;; padding: 0px; border-collapse: collapse; padding-right: 5px; font-size: 20px; line-height: 30px; mso-line-height-rule: exactly" class="page-title-pattern-header-container"> <span class="page-title-pattern-header" style="font-family: Arial, sans-serif; padding: 0; font-size: 20px; line-height: 30px; mso-text-raise: 2px; mso-line-height-rule: exactly; vertical-align: middle"> <a href="" style="color: #3b73af; text-decoration: none">${product_name}${product_version}${product_milestone}  Release Handover Review</a> </span>
                                                     </td>
                                                 </tr>
                                             </table>
@@ -1494,7 +1327,7 @@ fi
                                                 <tr>
                                                     <td class="text-paragraph-pattern-container mobile-resize-text " style="padding: 0px; border-collapse: collapse; padding: 0 0 10px 0">
                                                         <p style="margin: 10px 0 0 0">Release handover is <font color="#ff0000">waiting for review</font> in remote: <a href="${handover_pr}" class="external-link" rel="nofollow" style="color: #3b73af; text-decoration: none">${handover_pr}</a></p>
-                                                        <p style="margin: 10px 0 0 0">Staging folder URL: <br /> <a href="${rcm_staging_base}/${product1_staging_path}/" class="external-link" rel="nofollow" style="color: #3b73af; text-decoration: none">${rcm_staging_base}/${product1_staging_path}/</a></p>
+                                                        <p style="margin: 10px 0 0 0">Staging folder URL: <br /> <a href="${rcm_staging_base}/${product_staging_path}/" class="external-link" rel="nofollow" style="color: #3b73af; text-decoration: none">${rcm_staging_base}/${product_staging_path}/</a></p>
                                                         <p style="margin: 10px 0 0 0"><a href="${rcm_staging_base}/${product2_staging_path}/" class="external-link" rel="nofollow" style="color: #3b73af; text-decoration: none">${rcm_staging_base}/${product2_staging_path}/</a></p>
                                                     </td>
                                                 </tr>
@@ -1543,7 +1376,7 @@ fi
             echo -e "Exec node IP:\${OPENSTACK_PUBLIC_IP}\\n"
             jira_comment="Release handover is {color:#ff0000}waiting for review{color}  in \${handover_pr} \n
             Staging folder URL: \n
-            [\${rcm_staging_base}/\${product1_staging_path}/]\n
+            [\${rcm_staging_base}/\${product_staging_path}/]\n
             [\${rcm_staging_base}/\${product2_staging_path}/]"
             kinit -k -t \${HOME}/bxms-release.keytab bxms-release/prod-ci@REDHAT.COM
             ip-tooling/jira_helper.py -c ${IP_CONFIG_FILE} -f -a "\${jira_comment}"
@@ -1617,36 +1450,16 @@ fi
             def shellScript = '''
             set -x
             echo -e "Exec node IP: ${OPENSTACK_PUBLIC_IP}\\n"
-            case "${PRODUCT_NAME}" in
-                RHDM )
-                    prod_artifact_version=${product1_artifact_version}
-                    prod_shipped_file_deliver_version=${product1_shipped_file_deliver_version}
-                    prod_assembly_maven_repo_url=${product1_assembly_maven_repo_url}
-                    prod_installer_maven_repo_url=${product1_installer_maven_repo_url}
-                    prod_deliverable_template=${product1_deliverable_template}
-                    prod_staging_path=${product1_staging_path}
-                    ;;
-                RHBAS )
-                    prod_artifact_version=${product2_artifact_version}
-                    prod_shipped_file_deliver_version=${product2_shipped_file_deliver_version}
-                    prod_assembly_maven_repo_url=${product2_assembly_maven_repo_url}
-                    prod_installer_maven_repo_url=${product2_installer_maven_repo_url}
-                    prod_deliverable_template=${product2_deliverable_template}
-                    prod_staging_path=${product2_staging_path}
-                    ;;
-            esac
 
-            echo "prod_staging_path=$prod_staging_path" > /tmp/prod_staging_path
-
-            ip-tooling/maven-artifact-handler.py --version=${prod_artifact_version} --override-version ${prod_shipped_file_deliver_version} --maven-repo ${prod_assembly_maven_repo_url} \
-              --deliverable ${prod_deliverable_template} --output ${PRODUCT_NAME}
+            ip-tooling/maven-artifact-handler.py --version=${product_artifact_version} --override-version ${product_upload_version} --maven-repo ${product_assembly_maven_repo_url} \
+              --deliverable ${prod_deliverable_template} --output ${product_lowercase}
             #Download installer
-            ip-tooling/maven-artifact-handler.py --version=${prod_artifact_version} --override-version ${prod_shipped_file_deliver_version} --maven-repo ${prod_installer_maven_repo_url} \
-              --deliverable ${prod_deliverable_template} --output ${PRODUCT_NAME}
+            ip-tooling/maven-artifact-handler.py --version=${product_artifact_version} --override-version ${product_upload_version} --maven-repo ${product_installer_maven_repo_url} \
+              --deliverable ${prod_deliverable_template} --output ${product_lowercase}
             #Download runtime gav txt
-            ip-tooling/maven-artifact-handler.py --version=${prod_artifact_version} --override-version ${prod_shipped_file_deliver_version} --maven-repo ${license_builder_maven_repo_url}               --deliverable ${prod_deliverable_template} --output ${PRODUCT_NAME}  
-            rename license-builder \${PRODUCT_NAME,,}-runtime-GAV \${PRODUCT_NAME}/*.txt
-            cp ${IP_CONFIG_FILE} ${PRODUCT_NAME}
+            ip-tooling/maven-artifact-handler.py --version=${product_artifact_version} --override-version ${product_upload_version} --maven-repo ${license_builder_maven_repo_url}               --deliverable ${prod_deliverable_template} --output ${product_lowercase}  
+            rename license-builder \${product_lowercase}-runtime-GAV \${product_lowercase}/*.txt
+            cp ${IP_CONFIG_FILE} ${product_lowercase}/
             '''
             // Sets a description for the job.
             description("This job is responsible for staging the Brew release deliverables to the RCM staging area.")
@@ -1656,7 +1469,6 @@ fi
 
                 // Defines a simple text parameter, where users can enter a string value.
                 booleanParam("CLEAN_STAGING_ARTIFACTS", false, "WARNING, click this will force remove your artifacts in staging folder!")
-                stringParam("PRODUCT_NAME",  "RHDM","Specify product name to switch between configurations.")
             }
 
             // Adds build steps to the jobs.
@@ -1666,7 +1478,7 @@ fi
                 shell(shellScript)
                 // Inject environment variables for staging paths
                 environmentVariables {
-                    propertiesFile("/tmp/prod_staging_path")
+                    propertiesFile("/tmp/product_staging_path")
                 }
             }
             wrappers {
@@ -1692,9 +1504,9 @@ fi
                                 // Sets the files to upload to a server.
                                 sourceFiles('')
                                 // Sets the destination folder.
-                                remoteDirectory('${prod_staging_path}')
+                                remoteDirectory('${product_staging_path}')
                                 execCommand('if [ "${CLEAN_STAGING_ARTIFACTS}" = "true" ];then \n' +
-                                                'rm -vrf  ~/staging/${prod_staging_path}/* \n' +
+                                                'rm -vrf  ~/staging/${product_staging_path}/* \n' +
                                             'fi')
                             }
                             // Adds a target server.
@@ -1704,11 +1516,11 @@ fi
                             transferSet {
 
                                 // Sets the files to upload to a server.
-                                sourceFiles('${PRODUCT_NAME}/*.*')
-                                removePrefix('${PRODUCT_NAME}/')
+                                sourceFiles('${product_lowercase}/*.*')
+                                removePrefix('${product_lowercase}/')
 
                                 // Sets the destination folder.
-                                remoteDirectory('${prod_staging_path}')
+                                remoteDirectory('${product_staging_path}')
                             }
                     }
                 }
@@ -1719,23 +1531,21 @@ fi
         buildCommon(job)
         buildScm(job)
     }
+    //This needs testing
     void stageBxmsPatch(DslFactory dslFactory){
         def job=dslFactory.job(release_code + "-release-pipeline/" + release_code +"-"+ "stage-bxms-patch"){
             def shellScript = '''
             #Uploading to rcm staging folder
             echo -e "Exec node IP:\${OPENSTACK_PUBLIC_IP}\\n"
-            ip-tooling/maven-artifact-handler.py --version=\${product1_artifact_version} --override-version \${product1_version} \
-               --deliverable \${product1_deliverable_template} --maven-repo \${bxms_patch_maven_repo_url} \
-               --output \${product1_name}
+            ip-tooling/maven-artifact-handler.py --version=\${product_artifact_version} --override-version \${product_version} \
+               --deliverable \${product_deliverable_template} --maven-repo \${bxms_patch_maven_repo_url} \
+               --output \${product_name}
 
-
-            ip-tooling/maven-artifact-handler.py --version=\${product2_artifact_version} --override-version \${product2_version} \
-               --deliverable \${product2_deliverable_template} --maven-repo \${bxms_patch_maven_repo_url} \
-               --output \${product2_name}
             '''
             // Sets a description for the job.
             description("This job is responsible for staging the Brew release deliverables to the RCM staging area.")
 
+            disabled()
             // Adds build steps to the jobs.
             steps {
 
@@ -1764,11 +1574,11 @@ fi
                         transferSet {
 
                             // Sets the files to upload to a server.
-                            sourceFiles('${product1_name}/*.*')
-                            removePrefix('${product1_name}/')
+                            sourceFiles('${product_name}/*.*')
+                            removePrefix('${product_name}/')
 
                             // Sets the destination folder.
-                            remoteDirectory('${product1_staging_path}')
+                            remoteDirectory('${product_staging_path}')
                         }
 
                         // Adds a transfer set.
@@ -1789,7 +1599,7 @@ fi
                             sourceFiles('${release_code}-deliverable-list*.properties')
 
                             // Sets the destination folder.
-                            remoteDirectory('${product1_staging_path}/')
+                            remoteDirectory('${product_staging_path}/')
                         }
 
                         // Adds a transfer set.
@@ -1816,7 +1626,7 @@ fi
             echo -e "Exec node IP:${OPENSTACK_PUBLIC_IP}\\n"
             kinit -k -t ${HOME}/bxms-release.keytab bxms-release/prod-ci@REDHAT.COM
 
-            UNBLOCK=1 BREWCHAIN=1 CFG=./${IP_CONFIG_FILE} POMMANIPEXT=${product_lowcase}-build-bom make -f  ${makefile} ${product1_lowcase}-installer 2>&1| tee b.log
+            UNBLOCK=1 BREWCHAIN=1 CFG=./${IP_CONFIG_FILE} POMMANIPEXT=${product_lowercase}-build-bom make -f  ${makefile} ${product_lowercase}-installer 2>&1| tee b.log
 
             brewchain_build_url=`grep 'build: Watching task ID:' b.log`
             brewchain_build_url=`python -c "import sys,re;print re.match('^.*(https.*\\d+).*$', '$brewchain_build_url').group(1)"`
@@ -1845,48 +1655,25 @@ fi
         def job=dslFactory.job(release_code + "-release-pipeline/" + release_code +"-"+ "trigger-qe-smoke-test"){
             def shellScript = '''
             kinit -k -t  ${HOME}/bxms-release.keytab bxms-release/prod-ci@REDHAT.COM
-            case "${PRODUCT_NAME}" in
-                RHDM )
-                    prod_staging_properties_url=${product1_staging_properties_url}
-                    prod_lowcase=${product1_lowcase}
-                    product_version="${product1_version}"
-                    ;;
-                RHBAS )
-                    prod_staging_properties_url=${product2_staging_properties_url}
-                    prod_lowcase=${product2_lowcase}
-                    product_version="${product1_version}"
-                    ;;
-            esac
 
-            if [ "${release_type}" == "nightly" ]; then
-                prod_properties_name=${PRODUCT_NAME, ,}-${build_date}.properties
-                prod_staging_properties_url="${rcm_staging_base}/${PRODUCT_NAME,,}/${PRODUCT_NAME}-${product_version}.NIGHTLY/${prod_properties_name}"                
-            fi
-
-            echo "prod_staging_properties_url=${prod_staging_properties_url}" > /tmp/prod_staging_properties_url
-            echo "prod_lowcase=${prod_lowcase}" >> /tmp/prod_staging_properties_url            
-
+            
             ip-tooling/jira_helper.py -c ${IP_CONFIG_FILE} -a "QE smoketest is triggered by CI message. Build URL: ${qe_smoketest_job_url}" -f
             '''
             // Sets a description for the job.
             description("This job is responsible for triggering QE smoke test.")
 
             parameters {
-                stringParam("PRODUCT_NAME", "RHDM", "Specify product name to switch between configurations.")
+                stringParam("{product_lowercase}", "RHDM", "Specify product name to switch between configurations.")
             }
 
             // Adds build steps to the jobs.
             steps {
                 shell(shellScript)
 
-                environmentVariables {
-                    propertiesFile("/tmp/prod_staging_properties_url")
-                }
-
                 // Sends JMS message.
                 ciMessageBuilder {
                     overrides {
-                        topic('VirtualTopic.qe.ci.ba.${prod_lowcase}.70.${release_type}.trigger')
+                        topic('VirtualTopic.qe.ci.ba.${product_lowercase}.70.${release_type}.trigger')
                     }
 
                     // JMS selector to choose messages that will fire the trigger.
@@ -1898,12 +1685,11 @@ fi
                     // KEY=value pairs, one per line (Java properties file format) to be used as message properties.
                     messageProperties('label=rhba-ci\n' +
                             'CI_TYPE=custom\n' +
-                            'EVENT_TYPE=${prod_lowcase}-70-${release_type}-qe-trigger\n')
+                            'EVENT_TYPE=${product_lowercase}-70-${release_type}-qe-trigger\n')
                     // Content of CI message to be sent.
-                    messageContent('${prod_staging_properties_url}')
+                    messageContent('${product_staging_properties_url}')
                 }
             }
-
         }
         buildEnv(job)
         buildCommon(job)
@@ -1913,10 +1699,10 @@ fi
         def job=dslFactory.job(release_code + "-release-pipeline/" + release_code +"-"+ "update-product-jira"){
             def shellScript = '''
             echo -e "Exec node IP: ${OPENSTACK_PUBLIC_IP}\\n"
-            echo "The product version is $product1_version and the release milestone is $product1_milestone."
+            echo "The product version is $product_version and the release milestone is $product_milestone."
             kinit -k -t  ${HOME}/bxms-release.keytab bxms-release/prod-ci@REDHAT.COM
             python ip-tooling/release-ticketor.py --user mw-prod-ci --password ds54sdfs54df \
-                --headless $product1_version.GA $cutoff_date $product1_version.$product1_milestone 2>&1 | tee /tmp/release-ticketor-output
+                --headless $product_version.GA $cutoff_date $product_version.$product_milestone 2>&1 | tee /tmp/release-ticketor-output
 
             sed -i '/^resolve_issue_list=/d' ${CI_PROPERTIES_FILE} \
                 && echo "resolve_issue_list="`cat /tmp/release-ticketor-output | grep https://url.corp.redhat.com` >> ${CI_PROPERTIES_FILE}
@@ -1936,34 +1722,6 @@ fi
         buildCommon(job)
         buildScm(job)
     }
-    void validateBuildConfig(DslFactory dslFactory){
-        def job=dslFactory.job(release_code + "-release-pipeline/" + release_code +"-"+ "validate-build-config"){
-            def shell_script = '''
-
-            # Workaround for variable name conflict between Jenkins and ip-tooling
-            unset WORKSPACE
-            echo -e "Exec node IP: ${OPENSTACK_PUBLIC_IP}\\n"
-            echo "Validating upstreams in ${IP_CONFIG_FILE}"
-            VALIDATE_ONLY=true LOCAL=1 CFG=./${IP_CONFIG_FILE} REPO_GROUP=MEAD+JENKINS+JBOSS+CENTRAL MVN_LOCAL_REPO=/jboss-prod/m2/${dev_maven_repo} POMMANIPEXT=${product_lowcase}-build-bom make -f Makefile.BRMS rhdm-installer rhba-installer
-            '''
-            description("Validate if upstream source configuration is proper")
-
-            label('nightly-node')
-
-            // build steps
-            steps {
-                shell(shell_script)
-            }
-            // clear workspace
-            wrappers {
-                preBuildCleanup()
-            }
-
-        }
-        buildEnv(job)
-        buildCommon(job)
-        buildScm(job)
-    }
     void validateQeProperties(DslFactory dslFactory){
         def job=dslFactory.job(release_code + "-release-pipeline/" + release_code +"-"+ "validate-qe-properties"){
             String shellScript = '''
@@ -1971,22 +1729,10 @@ fi
             if [ "$release_status" = "closed" ];then
                     exit 0
             fi
-            case "${PRODUCT_NAME}" in
-                    RHDM )
-                        product_staging_properties_url=${product1_staging_properties_url}
-                        product_staging_properties_name=${product1_staging_properties_name}
-                        product_version=${product1_version}
-                    ;;
-                    RHBAS )
-                        product_staging_properties_url=${product2_staging_properties_url}
-                        product_staging_properties_name=${product2_staging_properties_name}
-                        product_version=${product2_version}
-                    ;;
-            esac
-
+    
             if [ "${release_type}" == "nightly" ]; then
-                    product_staging_properties_name="${PRODUCT_NAME}-${build_date}.properties"
-                    product_staging_properties_url="${rcm_staging_base}/${PRODUCT_NAME,,}/${PRODUCT_NAME}-${product_version}.NIGHTLY/${product_staging_properties_name}"
+                    product_staging_properties_name="${product_lowercase}-${build_date}.properties"
+                    product_staging_properties_url="${rcm_staging_base}/${product_lowercase}/${product_lowercase}-${product_version}.NIGHTLY/${product_staging_properties_name}"
             fi
 
             wget ${product_staging_properties_url} -O ${product_staging_properties_name}
@@ -2039,11 +1785,11 @@ def validateProperties(propfile, keyword, product_name):
                 isvalidurl(dic['rhdm.sources.latest.url'],keyword)
 
             assertEqual('$kie_version', dic['KIE_VERSION'])
-            assertEqual('${product1_artifact_version}', dic['RHDM_VERSION'])
-            assertContain(dic['rhdm.decision-central.standalone.latest.url'], '$product1_milestone_version')
-            assertContain(dic['rhdm.addons.latest.url'], '$product1_milestone_version')
-            assertContain(dic['rhdm.kie-server.ee7.latest.url'], '$product1_milestone_version')
-            assertContain(dic['rhdm.installer.latest.url'], '$product1_milestone_version')
+            assertEqual('${product_artifact_version}', dic['RHDM_VERSION'])
+            assertContain(dic['rhdm.decision-central.standalone.latest.url'], '$product_milestone_version')
+            assertContain(dic['rhdm.addons.latest.url'], '$product_milestone_version')
+            assertContain(dic['rhdm.kie-server.ee7.latest.url'], '$product_milestone_version')
+            assertContain(dic['rhdm.installer.latest.url'], '$product_milestone_version')
 
         if re.match('rhba-.*', propfile) is not None:
             isvalidurl(dic['rhba.addons.latest.url'],keyword)
@@ -2056,12 +1802,12 @@ def validateProperties(propfile, keyword, product_name):
             if '${release_type}' != 'nightly':
                 isvalidurl(dic['rhba.maven.repo.latest.url'],keyword)
                 isvalidurl(dic['rhba.sources.latest.url'],keyword)
-            assertEqual('$kie_version', dic['KIE_VERSION'])
-            assertEqual('${product2_artifact_version}', dic['RHBAS_VERSION'])
-            assertContain(dic['rhba.business-central.standalone.latest.url'], '$product2_milestone_version')
-            assertContain(dic['rhba.addons.latest.url'], '$product2_milestone_version')
-            assertContain(dic['rhba.kie-server.ee7.latest.url'], '$product2_milestone_version')
-            assertContain(dic['rhba.installer.latest.url'], '$product2_milestone_version')
+            assertEqual(dic['KIE_VERSION'], '$kie_version')
+            assertEqual(dic['RHBAS_VERSION'], '${product_artifact_version}')
+            assertContain(dic['rhba.business-central.standalone.latest.url'], '$product_milestone_version')
+            assertContain(dic['rhba.addons.latest.url'], '$product_milestone_version')
+            assertContain(dic['rhba.kie-server.ee7.latest.url'], '$product_milestone_version')
+            assertContain(dic['rhba.installer.latest.url'], '$product_milestone_version')
 
         if ret != 0:
             print propfile + ' Validation No Pass'
@@ -2074,9 +1820,9 @@ print '---Exec the py script...---'
 validateProperties(sys.argv[1], sys.argv[2],sys.argv[3])
 ">validateProperties.py
             if [ "\${IS_STAGING}" = "true" ];then
-                python validateProperties.py '${product_staging_properties_name}' 'rcm-guest' '${PRODUCT_NAME}'                
+                python validateProperties.py '${product_staging_properties_name}' 'rcm-guest' '${product_lowercase}'                
             else
-                python validateProperties.py '${product_staging_properties_name}' 'candidates' '${PRODUCT_NAME}'
+                python validateProperties.py '${product_staging_properties_name}' 'candidates' '${product_lowercase}'
             fi
             '''
             // Sets a description for the job.
@@ -2094,7 +1840,7 @@ validateProperties(sys.argv[1], sys.argv[2],sys.argv[3])
             // Allows to parameterize the job.
             parameters {
                 // Defines a simple text parameter, where users can enter a string value.
-                stringParam("PRODUCT_NAME",  "RHDM","Specify product name to switch between configurations.")
+                stringParam("{product_lowercase}",  "RHDM","Specify product name to switch between configurations.")
                 booleanParam("IS_STAGING",  true,"Specify product name to switch between configurations.")
             }
         }
@@ -2285,7 +2031,6 @@ validateProperties(sys.argv[1], sys.argv[2],sys.argv[3])
         startBrewBuild(dslFactory)
         triggerQeSmokeTest(dslFactory)
         updateProductJira(dslFactory)
-        validateBuildConfig(dslFactory)
         validateQeProperties(dslFactory)
 
     }

@@ -50,10 +50,10 @@ echo -e "Exec node IP:\${OPENSTACK_PUBLIC_IP}\\n"
 if [ ! -z \${build_date} ]; then
     sed -i "s#-SNAPSHOT#-\${build_date}#g" ${cfg_filename}
 fi
-if [ "${cfg_file}" != "${cfg_filename}" ]; then
-    sed -i "s#cfg=${cfg_filename}\\.cfg#cfg=${cfg_filename},cfg.url.template=file://`pwd`/{0}#g" ${cfg_filename}
+if [ "${job_type}" == "nightly" ]; then
+    sed -i "s#ip.config.sha=#cfg.url.template=file://`pwd`/{0},ip.config.sha=#g" ${cfg_filename}
 fi
-MVN_DEP_REPO=nexus-release::default::file://${maven_repo} REPO_GROUP=${repo_group} LOCAL=1 CFG=${_cfg} MVN_LOCAL_REPO=${maven_repo} POMMANIPEXT=\${product_lowcase}-build-bom make DEBUG=\$DEBUG ${section_name}
+MVN_DEP_REPO=nexus-release::default::file://${maven_repo} REPO_GROUP=${repo_group} LOCAL=1 CFG=${_cfg} MVN_LOCAL_REPO=${maven_repo} POMMANIPEXT=\${product_lowercase}-build-bom make DEBUG=\$DEBUG ${section_name}
 """
                 dslFactory.job(release_code + "-" + job_type + "-release-pipeline/y-" + release_code + "-" + section_name ) {
                     it.description "This job is a seed job for generating " + release_code + " " + job_type + " jenkins build."

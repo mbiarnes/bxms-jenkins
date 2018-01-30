@@ -32,7 +32,7 @@ else
     _local_repo=${maven_repo}
 fi
 
-MVN_DEP_REPO=nexus-release::default::file://\${DEP_REPO} LOCAL=1 CFG=${_cfg} MVN_LOCAL_REPO=\${_local_repo} POMMANIPEXT=\${product_lowcase}-build-bom make -f Makefile.BRMS \${product_lowcase}-installer
+MVN_DEP_REPO=nexus-release::default::file://\${DEP_REPO} LOCAL=1 CFG=${_cfg} MVN_LOCAL_REPO=\${_local_repo} POMMANIPEXT=\${product_lowercase}-build-bom make -f Makefile.BRMS \${product_lowercase}-installer
 """
 
         dslFactory.folder(release_code + "-" + job_type + "-release-pipeline")
