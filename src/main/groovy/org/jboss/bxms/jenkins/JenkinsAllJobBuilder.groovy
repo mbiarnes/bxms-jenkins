@@ -15,7 +15,9 @@ class JenkinsAllJobBuilder {
     Job build(DslFactory dslFactory) {
 
         String _cfg = cfg_file
-        Map<String, String> maven_repo_map=["intpack-fuse63-bxms64":"/jboss-prod/m2/bxms-6.4-", "bxms64":"/jboss-prod/m2/bxms-6.4-", "bxms70la":"/jboss-prod/m2/bxms-7.0-", "bxms":"/jboss-prod/m2/bxms-7.0-", "bxms-test":"/jboss-prod/m2/bxms-7.0-"]
+        Map<String, String> maven_repo_map=[
+                "rhdm":"/jboss-prod/m2/bxms-7.0-", \
+        "rhdm-test":"/jboss-prod/m2/bxms-7.0-"]
         String maven_repo = maven_repo_map [release_code] + job_type
 
         //Use .m2/repository as local repo
@@ -30,7 +32,7 @@ else
     _local_repo=${maven_repo}
 fi
 
-MVN_DEP_REPO=nexus-release::default::file://\${DEP_REPO} LOCAL=1 CFG=${_cfg} MVN_LOCAL_REPO=\${_local_repo} POMMANIPEXT=bxms-bom make -f Makefile.BRMS rhdm-installer rhbas-installer
+MVN_DEP_REPO=nexus-release::default::file://\${DEP_REPO} LOCAL=1 CFG=${_cfg} MVN_LOCAL_REPO=\${_local_repo} POMMANIPEXT=\${product_lowcase}-build-bom make -f Makefile.BRMS \${product_lowcase}-installer
 """
 
         dslFactory.folder(release_code + "-" + job_type + "-release-pipeline")
@@ -54,7 +56,7 @@ MVN_DEP_REPO=nexus-release::default::file://\${DEP_REPO} LOCAL=1 CFG=${_cfg} MVN
                 // Defines a simple text parameter, where users can enter a string value.
                 booleanParam('LOCAL_REPO', false, 'It will be slower but cleaner since it do not use jenkins cached repo')
             }
-            label("nightly-node")
+            label("nightly-node-bigmemory")
             multiscm {
 
                 // Adds a Git SCM source.

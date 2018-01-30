@@ -1,1 +1,0 @@
-../../../jobs/generate_sources.groovy

@@ -2,7 +2,6 @@ package org.jboss.bxms.jenkins
 
 import javaposse.jobdsl.dsl.DslFactory
 import javaposse.jobdsl.dsl.Job
-import org.jboss.bxms.jenkins.JobTemplate
 import org.apache.commons.lang.RandomStringUtils
 /**
  *  Create BxMS release/build pipeline stream with Parameter
@@ -296,7 +295,7 @@ fi
                     User jb-ip-tooling-jenkins\" > ~/.ssh/config
             chmod 600 ~/.ssh/config
             MVN_LOCAL_REPO=/jboss-prod/m2/bxms-dev-repo RELEASE_TAG=${product_release_tag} LOCAL=1 CFG=./${IP_CONFIG_FILE} \
-                REPO_GROUP=MEAD make POMMANIPEXT=bxms-bom -f  ${makefile}  ${product1_lowcase} 2>&1
+                REPO_GROUP=MEAD make POMMANIPEXT=${product_lowcase}-build-bom -f  ${makefile}  ${product1_lowcase} 2>&1
 
             #need to verify if all tags are created succesfully
             EXIST_MISSING_TAG=0
@@ -580,7 +579,7 @@ fi
                 sed -i "/^$1/d"  ${prod_properties_name} && echo "$1=$2" >>  ${prod_properties_name}
             }
 
-            if [ "${RELEASE_CODE}" == "bxms-nightly" ]; then
+            if [ "${release_type}" == "nightly" ]; then
                 prod_properties_name=${PRODUCT_NAME, ,}-${build_date}.properties
                 case "${PRODUCT_NAME}" in
                     RHDM )
@@ -663,7 +662,7 @@ fi
             appendProp "MVEL_VERSION"               ${mvel_version}
 
             #Additional properties for brew release
-            if [ "${RELEASE_CODE}" != "bxms-nightly" ]; then
+            if [ "${release_type}" == "nightly" ]; then
                 #append the other properties per qe's requirement
                 appendProp "build.config" ${product_url_prefix}/${IP_CONFIG_FILE}
                 appendProp $prod_public_version_properties_name ${prod_public_version_properties_value}
@@ -732,7 +731,7 @@ fi
 
 
             # Make sources
-            make CFG=${IP_CONFIG_FILE} SOURCES=1 POMMANIPEXT=bxms-bom SRCDIR=src -f Makefile.BRMS ${PRODUCT_NAME,,}
+            make CFG=${IP_CONFIG_FILE} SOURCES=1 POMMANIPEXT=${product_lowcase}-build-bom SRCDIR=src -f Makefile.BRMS ${PRODUCT_NAME,,}
 
             ## Prepare sources for delivery ##
             cd workspace
@@ -756,13 +755,12 @@ fi
                     ;;
             esac
 
-            rm -rf src/bxms-license-${prod_artifact_version} \
-                   src/bxms-maven-repo-root-${prod_artifact_version} \
+            rm -rf src/${product_lowcase}-license-${prod_artifact_version} \
+                   src/${product_lowcase}-maven-repo-root-${prod_artifact_version} \
                    src/errai-parent-${errai_version} \
-                   src/bxms
-
-            rm -rf src/kie-parent-${kie_version}/RELEASE-README.md
-            rm -rf src/drools-${kie_version}/drools-verifier/
+                   src/${product_lowcase}\
+                   src/kie-parent-${kie_version}/RELEASE-README.md \
+                   src/drools-${kie_version}/drools-verifier
 
             # Create sources archive
             zip -r -5 --quiet ${prod_sources_name} src/
@@ -1818,7 +1816,7 @@ fi
             echo -e "Exec node IP:${OPENSTACK_PUBLIC_IP}\\n"
             kinit -k -t ${HOME}/bxms-release.keytab bxms-release/prod-ci@REDHAT.COM
 
-            UNBLOCK=1 BREWCHAIN=1 CFG=./${IP_CONFIG_FILE} POMMANIPEXT=bxms-bom make -f  ${makefile} ${product1_lowcase}-installer 2>&1| tee b.log
+            UNBLOCK=1 BREWCHAIN=1 CFG=./${IP_CONFIG_FILE} POMMANIPEXT=${product_lowcase}-build-bom make -f  ${makefile} ${product1_lowcase}-installer 2>&1| tee b.log
 
             brewchain_build_url=`grep 'build: Watching task ID:' b.log`
             brewchain_build_url=`python -c "import sys,re;print re.match('^.*(https.*\\d+).*$', '$brewchain_build_url').group(1)"`
@@ -1860,7 +1858,7 @@ fi
                     ;;
             esac
 
-            if [ ${RELEASE_CODE} == "bxms-nightly" ]; then
+            if [ "${release_type}" == "nightly" ]; then
                 prod_properties_name=${PRODUCT_NAME, ,}-${build_date}.properties
                 prod_staging_properties_url="${rcm_staging_base}/${PRODUCT_NAME,,}/${PRODUCT_NAME}-${product_version}.NIGHTLY/${prod_properties_name}"                
             fi
@@ -1946,7 +1944,7 @@ fi
             unset WORKSPACE
             echo -e "Exec node IP: ${OPENSTACK_PUBLIC_IP}\\n"
             echo "Validating upstreams in ${IP_CONFIG_FILE}"
-            VALIDATE_ONLY=true LOCAL=1 CFG=./${IP_CONFIG_FILE} REPO_GROUP=MEAD+JENKINS+JBOSS+CENTRAL MVN_LOCAL_REPO=/jboss-prod/m2/${dev_maven_repo} POMMANIPEXT=bxms-bom make -f Makefile.BRMS rhdm-installer rhba-installer
+            VALIDATE_ONLY=true LOCAL=1 CFG=./${IP_CONFIG_FILE} REPO_GROUP=MEAD+JENKINS+JBOSS+CENTRAL MVN_LOCAL_REPO=/jboss-prod/m2/${dev_maven_repo} POMMANIPEXT=${product_lowcase}-build-bom make -f Makefile.BRMS rhdm-installer rhba-installer
             '''
             description("Validate if upstream source configuration is proper")
 
@@ -1986,7 +1984,7 @@ fi
                     ;;
             esac
 
-            if [ "${release_code}" == "bxms-nightly" ]; then
+            if [ "${release_type}" == "nightly" ]; then
                     product_staging_properties_name="${PRODUCT_NAME}-${build_date}.properties"
                     product_staging_properties_url="${rcm_staging_base}/${PRODUCT_NAME,,}/${PRODUCT_NAME}-${product_version}.NIGHTLY/${product_staging_properties_name}"
             fi
@@ -2034,9 +2032,9 @@ def validateProperties(propfile, keyword, product_name):
             isvalidurl(dic['rhdm.decision-central.standalone.latest.url'],keyword)
             isvalidurl(dic['rhdm.decision-central-eap7.latest.url'],keyword)
             isvalidurl(dic['rhdm.installer.latest.url'],keyword)
-            isvalidurl(dic['build.config'],'bxms')
+            isvalidurl(dic['build.config'],'rhdm')
 
-            if '${release_code}' != 'bxms-nightly':
+            if '${release_type}' != 'nightly':
                 isvalidurl(dic['rhdm.maven.repo.latest.url'],keyword)
                 isvalidurl(dic['rhdm.sources.latest.url'],keyword)
 
@@ -2053,9 +2051,9 @@ def validateProperties(propfile, keyword, product_name):
             isvalidurl(dic['rhba.decision-central.standalone.latest.url'],keyword)
             isvalidurl(dic['rhba.decision-central-eap7.latest.url'],keyword)
             isvalidurl(dic['rhba.installer.latest.url'],keyword)
-            isvalidurl(dic['build.config'],'bxms')
+            isvalidurl(dic['build.config'],'rhba')
 
-            if '${release_code}' != 'bxms-nightly':
+            if '${release_type}' != 'nightly':
                 isvalidurl(dic['rhba.maven.repo.latest.url'],keyword)
                 isvalidurl(dic['rhba.sources.latest.url'],keyword)
             assertEqual('$kie_version', dic['KIE_VERSION'])

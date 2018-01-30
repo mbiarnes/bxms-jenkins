@@ -1,0 +1,84 @@
+= ${product2_name} ${product2_version} ${product2_milestone}
+
+:Author Initials: SJR
+:toc:
+:icons:
+:numbered:
+
+[NOTE]
+.link:${release_jira_base}${release_jira_id}[Release JIRA]
+
+============================================================================================================================
+Please allow [red]#10-15 minutes# for GlobalSync to occur should the release folder appear to be non-existent at your local mirror.
+============================================================================================================================
+
+== Product Milestone
+
+
+[options="header,footer",align="center",frame="all"]
+|=====================================================================
+|Product Name: |Red Hat Decision Manager
+
+|Product Version |${product2_version}
+
+|Build: |${product2_milestone}
+
+|Engineer: |${release_engineer}
+
+|Resolved issues (ON_QA) |${resolve_issue_list}
+
+|=====================================================================
+
+== Special instructions/Notes
+
+
+- ${product2_name} ${product2_version} ${product2_milestone} is dependencies have been aligned to *${eap_version}*
+
+- Please unzip the ${product2_lowcase}-business-central-eap7.zip into the latest of EAP 7.0.x. the latest EAP 7.0.x can be downloaded from:
+http://download.eng.pnq.redhat.com/released/JBEAP-7/
+
+
+== Repositories
+
+
+- http://download.lab.bos.redhat.com/brewroot/repos/${brew_tag}/latest/maven/
+
+
+== ${product2_name} Download
+
+
+- http://download.devel.redhat.com/devel/candidates/${product2_name}/${product2_name}-${product2_milestone_version}
+
+
+== Components
+
+- Product tag: *${product2_name}.${product2_milestone_version}_${product2_name}.${product2_milestone_version}*
+
+- Product version in Maven repo: *${product2_artifact_version}*
+
+- KIE version: *${kie_version}*
+
+- JBoss Integration Platform BOM: *${ip_bom_version}*
+
+- Upstream Tag: *${upstream_tag}*
+
+- Upstream handover: *${upstream_handover_url}*
+
+- For a full list of components and their associated versions, please look at the build configuration:
+link:${build_cfg}[Components and Versions]
+
+== Build
+
+link:${product2_assembly_brew_url}[${product2_assembly_nvr}]
+
+== Smoke Tests
+
+${load:qe_smoketest_report_path}
+
+=== Package Checking Summary
+
+link:${release_code}-pvt-report-${product2_lowcase}.html[Package Checking Details Report(${product2_name})]
+
+link:${maven_repo_report_url}[Maven Repository Report]
+
+${load:product2_pvt_report_adoc_path}

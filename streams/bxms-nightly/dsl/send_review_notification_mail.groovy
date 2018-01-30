@@ -1,1 +1,0 @@
-../../../jobs/send_review_notification_mail.groovy

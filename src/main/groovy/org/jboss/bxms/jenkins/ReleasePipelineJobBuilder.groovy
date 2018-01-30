@@ -2,7 +2,6 @@ package org.jboss.bxms.jenkins
 
 import javaposse.jobdsl.dsl.DslFactory
 import javaposse.jobdsl.dsl.Job
-import java.io.File
 /**
  *  Create BxMS release/build pipeline stream with Parameter
  */

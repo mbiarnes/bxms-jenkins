@@ -17,7 +17,9 @@ class JenkinsStandaloneJobBuilder {
     String job_type
     String cfg_file
 
-    Map<String, String> maven_repo_map=["intpack-fuse63-bxms64":"/jboss-prod/m2/bxms-6.4-", "bxms64":"/jboss-prod/m2/bxms-6.4-", "bxms70la":"/jboss-prod/m2/bxms-7.0-", "bxms":"/jboss-prod/m2/bxms-7.0-", "bxms-test":"/jboss-prod/m2/bxms-7.0-"]
+    Map<String, String> maven_repo_map=[
+        "rhdm":"/jboss-prod/m2/bxms-7.0-", \
+        "rhdm-test":"/jboss-prod/m2/bxms-7.0-"]
     Map<String, String> repo_group_map=["milestone":"MEAD", "nightly":"MEAD+JENKINS+JBOSS+CENTRAL"]
     Job build(DslFactory dslFactory) {
         String cfg_filename = cfg_file
@@ -46,12 +48,12 @@ class JenkinsStandaloneJobBuilder {
 unset WORKSPACE
 echo -e "Exec node IP:\${OPENSTACK_PUBLIC_IP}\\n"
 if [ ! -z \${build_date} ]; then
-    sed -i "s#-SNAPSHOT#-\${build_date}#g" bxms-dev.cfg
+    sed -i "s#-SNAPSHOT#-\${build_date}#g" ${cfg_filename}
 fi
 if [ "${cfg_file}" != "${cfg_filename}" ]; then
-    sed -i "s#cfg=bxms-dev\\.cfg#cfg=bxms-dev.cfg,cfg.url.template=file://`pwd`/{0}#g" ${cfg_filename}
+    sed -i "s#cfg=${cfg_filename}\\.cfg#cfg=${cfg_filename},cfg.url.template=file://`pwd`/{0}#g" ${cfg_filename}
 fi
-MVN_DEP_REPO=nexus-release::default::file://${maven_repo} REPO_GROUP=${repo_group} LOCAL=1 CFG=${_cfg} MVN_LOCAL_REPO=${maven_repo} POMMANIPEXT=bxms-bom make DEBUG=\$DEBUG ${section_name}
+MVN_DEP_REPO=nexus-release::default::file://${maven_repo} REPO_GROUP=${repo_group} LOCAL=1 CFG=${_cfg} MVN_LOCAL_REPO=${maven_repo} POMMANIPEXT=\${product_lowcase}-build-bom make DEBUG=\$DEBUG ${section_name}
 """
                 dslFactory.job(release_code + "-" + job_type + "-release-pipeline/y-" + release_code + "-" + section_name ) {
                     it.description "This job is a seed job for generating " + release_code + " " + job_type + " jenkins build."

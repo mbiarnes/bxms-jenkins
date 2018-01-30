@@ -1,1 +1,0 @@
-../../../jobs/validate_qe_properties.groovy

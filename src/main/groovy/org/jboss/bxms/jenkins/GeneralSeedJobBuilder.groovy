@@ -67,7 +67,6 @@ class GeneralSeedJobBuilder {
                    }
                }
            }
-           label('nightly-node')
 
            // build steps
            steps{
@@ -91,11 +90,22 @@ class GeneralSeedJobBuilder {
         # Workaround for variable name conflict between Jenkins and ip-tooling
         unset WORKSPACE
 
-        changed_cfgs=`git diff --name-only HEAD HEAD~1 | grep -i ^bxms.\\*\\.cfg`
+        #changed_cfgs=`git diff --name-only HEAD HEAD~1 | grep -E 'rhba|rhdm.\\*\\.cfg'`
+        changed_cfgs=`git diff-tree --no-commit-id --name-only -r HEAD| grep -E 'rhba|rhdm.\\*\\.cfg'`
+        echo \$changed_cfgs
         for cfg in \${changed_cfgs[*]}
         do
-            echo "Changes found in \${cfg}, validating..."
-            VALIDATE_ONLY=true LOCAL=1 REPO_GROUP=MEAD+JENKINS+JBOSS+CENTRAL CFG=./\${cfg} MVN_LOCAL_REPO=/jboss-prod/m2/bxms-dev-repo POMMANIPEXT=bxms-bom make -f Makefile.BRMS rhdm-installer rhba-installer
+            echo "Changes found in \${cfg}, validating..."            
+            if [[ "\$cfg" =~ -dev ]];then
+                build_date=\$(date --date='1 days ago' -u +'%Y%m%d')
+                sed -i "s#-SNAPSHOT#-\${build_date}#g" \${cfg}
+            fi
+            if [[ "\$cfg" =~ ^rhdm ]];then
+                product_name="rhdm"
+            elif [[ "\$cfg" =~ ^rhba ]];then
+                product_name="rhba"            
+            fi
+            VALIDATE_ONLY=true LOCAL=1 REPO_GROUP=MEAD+JENKINS+JBOSS+CENTRAL CFG=./\${cfg} MVN_LOCAL_REPO=/jboss-prod/m2/bxms-7.0-nightly POMMANIPEXT=\${product_name}-build-bom make -f Makefile.BRMS \${product_name}-installer
         done
         """
 
@@ -109,7 +119,6 @@ class GeneralSeedJobBuilder {
                 stringParam( "GERRIT_BRANCH", "master",  "Parameter passed by Gerrit code review trigger")
 
             }
-            disabled()
             multiscm {
                 // Adds a Git SCM source.
                 git {
@@ -165,7 +174,7 @@ class GeneralSeedJobBuilder {
                        }
                        triggers/'gerritProjects'/'com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.data.GerritProject'/'filePaths'/'com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.data.FilePath' << {
                            'compareType' 'REG_EXP'
-                           'pattern' 'bxms*.cfg'
+                           'pattern' '(rhba|rhdm)*.cfg'
                        }
                    }
                }

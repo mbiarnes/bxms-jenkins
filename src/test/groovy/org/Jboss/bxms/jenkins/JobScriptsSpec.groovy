@@ -1,6 +1,5 @@
 package org.Jboss.bxms.jenkins
 
-import groovy.io.FileType
 import hudson.model.Item
 import hudson.model.View
 import javaposse.jobdsl.dsl.DslScriptLoader
@@ -22,10 +21,10 @@ import spock.lang.Unroll
 class JobScriptsSpec extends Specification {
     // add in a sample environment for testing
     def enviMap = [
-    'RELEASE_CODE':'bxms-test',
+    'RELEASE_CODE':'rhdm-test',
     'pipelineSeqFile':'release_pipeline_seq.cfg',
-    'CI_PROPERTIES_FILE':'bxms-test-jenkins-ci.properties',
-    'IP_CONFIG_FILE':'bxms-test.cfg',
+    'CI_PROPERTIES_FILE':'rhdm-test-jenkins-ci.properties',
+    'IP_CONFIG_FILE':'rhdm-test.cfg',
     'JOB_NAME':'a-master-seed',
     'GERRIT_BRANCH':'master',
     'GERRIT_REFSPEC':'refs/heads/master',

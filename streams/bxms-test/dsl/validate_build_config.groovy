@@ -1,1 +1,0 @@
-../../../jobs/validate_build_config.groovy
