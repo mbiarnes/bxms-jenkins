@@ -45,8 +45,9 @@ resolve_issue_list=
 product_cfg_sha=
 build_cfg=
 #Jenkins milestone maven repo folder
-jenkins_cache_url=http://rhap-repo.usersys.redhat.com/m2
-jenkins_cache_repo=bxms-{product_version_major}.0-nightly
+jenkins_repo_url=http://bxms-qe.rhev-ci-vms.eng.rdu2.redhat.com:8081/nexus/content/repositories
+jenkins_repo_name={product_lowercase}-{product_version_major}{product_version_minor}-nightly
+jenkins_deploy_name=scratch-release-{product_lowercase}-{product_version_major}.{product_version_minor}
 #running/close, used as a token of activate some of the release pipeline
 release_status=running
 

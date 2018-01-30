@@ -13,14 +13,6 @@ class JenkinsStandaloneJobBuilder {
     String cfg_file
     String gerrit_ref_spec
 
-    Map<String, String> maven_repo_map=[
-        "rhdm-71":"/jboss-prod/m2/bxms-7.0-", \
-        "rhdm-70":"/jboss-prod/m2/bxms-7.0-", \
-        "rhpam-70":"/jboss-prod/m2/bxms-7.0-", \
-        "rhpam-70-da":"/jboss-prod/m2/bxms-7.0-da-", \
-        "rhpam-71":"/jboss-prod/m2/bxms-7.0-", \
-        "rhdm-test":"/jboss-prod/m2/bxms-7.0-"]
-    Map<String, String> repo_group_map=["milestone":"MEAD", "nightly":"MEAD+JENKINS+JBOSS+CENTRAL"]
     def build(DslFactory dslFactory) {
         String cfg_filename = cfg_file
         if (cfg_file.contains("/")) {
@@ -35,8 +27,6 @@ class JenkinsStandaloneJobBuilder {
         Map<String,Map<String,String>> sections = _ini_cfg.getSections()
 
         dslFactory.folder(release_code + "-" + job_type + "-release-pipeline")
-        String maven_repo = maven_repo_map [release_code] + job_type
-        String repo_group = repo_group_map [job_type]
         def bomSource = "POMMANIPEXT=\${product_lowercase}-build-bom"
         if (release_code.contains('-da')) {
             bomSource = ''
@@ -62,8 +52,11 @@ if [ "${job_type}" == "nightly" ]; then
 fi
 let retry=3
 while [ \$retry -ne 0 ]; do
-    MVN_DEP_REPO=nexus-release::default::file://${maven_repo} REPO_GROUP=${repo_group} LOCAL=1 CFG=${cfg_filename} MVN_LOCAL_REPO=${maven_repo} ${bomSource} make DEBUG=\$DEBUG ${section_name}
+    MVN_DEP_REPO=nexus-release::default::\${jenkins_repo_url}/\${jenkins_deploy_name} \
+    MVN_SETTINGS=/jboss-prod/config/\${product_lowercase}-\${product_version_major}\${product_version_minor}-settings.xml \
+    LOCAL=1 CFG=${cfg_filename} ${bomSource} make DEBUG=\$DEBUG ${section_name}
     ret=\$?
+    #Retry if hit DA rest call timeout error, it will skip automatically retry if build not depends on DA services
     grep "REST client finished with failures..." "workspace/build.${section_name}/mvn.log"
     if [ \$? -eq 0 ]; then
         let retry-=1

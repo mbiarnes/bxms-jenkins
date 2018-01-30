@@ -542,8 +542,8 @@ fi
             }
 
             if [ "${release_type}" == "nightly" ]; then
-                product_url_prefix="${jenkins_cache_url}/${jenkins_cache_repo}/org/kie/rhba/${product_lowercase}/${product_artifact_version}"
-                product_installer_url="${jenkins_cache_url}/${jenkins_cache_repo}/org/jboss/installer/${product_lowercase}-installer/${product_artifact_version}/${product_lowercase}-installer-${product_artifact_version}.jar"
+                product_url_prefix="${jenkins_repo_url}/${jenkins_repo_name}/org/kie/rhba/${product_lowercase}/${product_artifact_version}"
+                product_installer_url="${jenkins_repo_url}/${jenkins_repo_name}/org/jboss/installer/${product_lowercase}-installer/${product_artifact_version}/${product_lowercase}-installer-${product_artifact_version}.jar"
                 product_filename_common_prefix="${product_lowercase}-${product_artifact_version}"
                 product_installer_name="${product_lowercase}-installer-${product_artifact_version}.jar"
 
@@ -884,7 +884,7 @@ fi
                     local a=\$(getArtifactId \$_artifact)
                     local v=\$(getVersion \$_artifact)
                     local gavpath=\$(echo \$(echo "\$g" | sed "s|\\.|/|g")/\$a/\$v)
-                    local _mavenrepo="/jboss-prod/m2/\${jenkins_cache_repo}"
+                    local _mavenrepo="/jboss-prod/m2/\${jenkins_repo_name}"
                     local _importtag=\$brew_importtag
                     local _importowner="bxms-release/prod-ci"
                     echo ":) Importing \$g:\$a:\$v into \$_importtag by \$_importowner"
@@ -923,7 +923,7 @@ fi
 
             kinit -k -t \${HOME}/bxms-release.keytab bxms-release/prod-ci@REDHAT.COM
             echo "Scanning missing artifact..."
-            ip-tooling/MEAD_check_artifact.sh \$brew_tag /jboss-prod/m2/\${jenkins_cache_repo} 2>&1 | tee /tmp/mead_check.log
+            ip-tooling/MEAD_check_artifact.sh \$brew_tag /jboss-prod/m2/\${jenkins_repo_name} 2>&1 | tee /tmp/mead_check.log
             # echo "`tail -n 5 /tmp/mead_check.log`" > /tmp/mead_check.log # For debug purpose
             sed -ni "/MISSING/p" /tmp/mead_check.log
             sed -i -e "/redhat-/d" -e "/SNAPSHOT/d" -e "/Unknown DIR/d" /tmp/mead_check.log
