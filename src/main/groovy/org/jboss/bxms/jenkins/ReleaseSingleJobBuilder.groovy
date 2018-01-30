@@ -762,6 +762,7 @@ fi
                    src/bxms
 
             rm -rf src/kie-parent-${kie_version}/RELEASE-README.md
+            rm -rf src/drools-${kie_version}/drools-verifier/
 
             # Create sources archive
             zip -r -5 --quiet ${prod_sources_name} src/
