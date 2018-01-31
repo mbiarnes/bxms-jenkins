@@ -142,6 +142,13 @@ MVN_DEP_REPO=nexus-release::default::file://${maven_repo} REPO_GROUP=${repo_grou
                             allowEmpty(true)
                             pattern("**/*.log")
                         }
+                        postBuildScripts {
+                            steps {
+                                shell("echo \"Cleaning worksapce...\" ; rm -rf *")
+                            }
+                            onlyIfBuildFails(false)
+                            onlyIfBuildSucceeds(true)
+                        }
                     }
                 }
             }
