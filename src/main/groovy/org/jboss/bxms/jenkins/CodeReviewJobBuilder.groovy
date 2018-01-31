@@ -243,15 +243,15 @@ class CodeReviewJobBuilder {
             switch(dirName) {
                 case "codereview":
                     dslFactory.folder(dirName)
-                    create_codereview_job(dslFactory,"bxms-license-builder", run_mvn_with_pme,"nightly-node&&codereview")
-                    create_codereview_job(dslFactory,"kiegroup/rhap-common",run_mvn_with_pme,"nightly-node&&codereview")
-                    create_codereview_job(dslFactory,"kiegroup/rhdm", run_mvn_with_pme,"nightly-node&&codereview")
-                    create_codereview_job(dslFactory,"kiegroup/rhbas", run_mvn_with_pme,"nightly-node&&codereview")
-                    create_codereview_job(dslFactory,"kiegroup/rhdm-boms", run_mvn_with_pme,"nightly-node&&codereview")
-                    create_codereview_job(dslFactory,"kiegroup/rhba-boms", run_mvn_with_pme,"nightly-node&&codereview")
-                    create_codereview_job(dslFactory,"rhdm-maven-repo-root", run_mvn_with_pme,"nightly-node&&codereview")
-                    create_codereview_job(dslFactory,"rhba-maven-repo-root", run_mvn_with_pme,"nightly-node&&codereview")
-                    create_codereview_job(dslFactory,"integration-platform-config", run_make_mead,"nightly-node&&codereview")
+                    create_codereview_job(dslFactory,"bxms-license-builder", run_mvn_with_pme,"codereview")
+                    create_codereview_job(dslFactory,"kiegroup/rhap-common",run_mvn_with_pme,"codereview")
+                    create_codereview_job(dslFactory,"kiegroup/rhdm", run_mvn_with_pme,"codereview")
+                    create_codereview_job(dslFactory,"kiegroup/rhbas", run_mvn_with_pme,"codereview")
+                    create_codereview_job(dslFactory,"kiegroup/rhdm-boms", run_mvn_with_pme,"codereview")
+                    create_codereview_job(dslFactory,"kiegroup/rhba-boms", run_mvn_with_pme,"codereview")
+                    create_codereview_job(dslFactory,"rhdm-maven-repo-root", run_mvn_with_pme,"codereview")
+                    create_codereview_job(dslFactory,"rhba-maven-repo-root", run_mvn_with_pme,"codereview")
+                    create_codereview_job(dslFactory,"integration-platform-config", run_make_mead,"codereview")
                 break
                 case "utility":
                     dslFactory.folder(dirName)
