@@ -2,11 +2,11 @@ import org.jboss.bxms.jenkins.*
 
 //Establish the parametize release pipeline
 //Release code is identical to the folder name in streams/
-def seedJobName="${JOB_NAME}"
+def currentJobName="${JOB_NAME}"
 def gerritRefspec="+refs/heads/master:refs/remotes/origin/master"
 // this is a git point to the refs we used in gerritRefspec which git would fetched
 def gerritBranch="master"
-if (seedJobName.matches("codereview/(.*)")) {
+if (currentJobName.matches("codereview/(.*)")) {
     println "Detected in codereview folder, reset GERRIT_REFSPEC/GERRIT_BRANCH:"
     gerritBranch ="FETCH_HEAD"
     // if triggered by manul, to avoid build fail
@@ -22,20 +22,20 @@ try{
 }catch(e){
     println "-----OPENSTACK_PUBLIC_IP: UnKnow. This job may not running on any openstack instance. -----"
 }
-println "-------seedJobName:${seedJobName}-------"
+println "-------currentJobName:${currentJobName}-------"
 println "-------GERRIT_BRANCH:${gerritBranch}-------"
 println "-------GERRIT_REFSPEC:${gerritRefspec}-------"
-if(seedJobName == null || gerritRefspec == null || gerritBranch == null ){
+if(currentJobName == null || gerritRefspec == null || gerritBranch == null ){
     throw new javaposse.jobdsl.dsl.DslException("The JOB_NAME/GERRIT_BRANCH/GERRIT_REFSPEC parameters is not setting!Exit...");
 }
-def ReleasePipelineBuilder(_release_code, _cfg_file, _properties_file, gerritBranch , gerritRefspec , seedJobName, cron_val = null) {
+def ReleasePipelineBuilder(_release_code, _cfg_file, _properties_file, gerritBranch , gerritRefspec , currentJobName, cron_val = null) {
     new ReleaseSingleJobBuilder(
         release_code: _release_code,
         cfg_file:_cfg_file,
         ci_properties_file:_properties_file,
         gerritBranch: gerritBranch,
         gerritRefspec: gerritRefspec,
-        jobName:seedJobName
+        jobName:currentJobName
     ).build(this)
     new ReleasePipelineJobBuilder(
             release_code: _release_code,
@@ -44,14 +44,14 @@ def ReleasePipelineBuilder(_release_code, _cfg_file, _properties_file, gerritBra
             cron_val: cron_val,
             gerritBranch: gerritBranch,
             gerritRefspec: gerritRefspec,
-            jobName:seedJobName
+            jobName:currentJobName
     ).build(this)
 }
 
-ReleasePipelineBuilder("rhdm", "rhdm.cfg", "/jboss-prod/config/rhdm-ci.properties",gerritBranch , gerritRefspec,seedJobName )
-ReleasePipelineBuilder("rhdm-test", "rhdm-test.cfg", "/jboss-prod/config/rhdm-test-ci.properties",gerritBranch , gerritRefspec,seedJobName )
-ReleasePipelineBuilder("rhdm-nightly", "rhdm-dev.cfg", "/jboss-prod/config/rhdm-nightly-ci.properties", gerritBranch , gerritRefspec,seedJobName, "H 17 * * *" )
-ReleasePipelineBuilder("rhba-nightly", "rhba-dev.cfg", "/jboss-prod/config/rhba-nightly-ci.properties", gerritBranch , gerritRefspec,seedJobName, "H 17 * * *" )
+ReleasePipelineBuilder("rhdm", "rhdm.cfg", "/jboss-prod/config/rhdm-ci.properties",gerritBranch , gerritRefspec,currentJobName )
+ReleasePipelineBuilder("rhdm-test", "rhdm-test.cfg", "/jboss-prod/config/rhdm-test-ci.properties",gerritBranch , gerritRefspec,currentJobName )
+ReleasePipelineBuilder("rhdm-nightly", "rhdm-dev.cfg", "/jboss-prod/config/rhdm-nightly-ci.properties", gerritBranch , gerritRefspec,currentJobName, "H 17 * * *" )
+ReleasePipelineBuilder("rhba-nightly", "rhba-dev.cfg", "/jboss-prod/config/rhba-nightly-ci.properties", gerritBranch , gerritRefspec,currentJobName, "H 17 * * *" )
 
 //Release code is identical to the folder name in streams/
 def JenkinsStandaloneJobsBuilder(_release_code, _properties_file, _cfg_file, _job_type){
@@ -81,7 +81,7 @@ JenkinsStandaloneJobsBuilder("rhba", "/jboss-prod/config/rhba-nightly-ci.propert
 def dirNameRow=["codereview","utility"]
 //if you want to create codereviewer(rzhang)'s directory and his master seed job,do like this:
 //def dirNameRow=["codereview","utility","rzhang_coder_review"]
-new GeneralSeedJobBuilder(
+new CodeReviewJobBuilder(
         dirNameRow: dirNameRow,
-        jobName:seedJobName
+        jobName:currentJobName
 ).build(this)
