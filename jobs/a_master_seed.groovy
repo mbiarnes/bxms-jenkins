@@ -51,6 +51,7 @@ def ReleasePipelineBuilder(_release_code, _cfg_file, _properties_file, gerritBra
 ReleasePipelineBuilder("rhdm", "rhdm.cfg", "/jboss-prod/config/rhdm-ci.properties",gerritBranch , gerritRefspec,seedJobName )
 ReleasePipelineBuilder("rhdm-test", "rhdm-test.cfg", "/jboss-prod/config/rhdm-test-ci.properties",gerritBranch , gerritRefspec,seedJobName )
 ReleasePipelineBuilder("rhdm-nightly", "rhdm-dev.cfg", "/jboss-prod/config/rhdm-nightly-ci.properties", gerritBranch , gerritRefspec,seedJobName, "H 17 * * *" )
+ReleasePipelineBuilder("rhba-nightly", "rhba-dev.cfg", "/jboss-prod/config/rhba-nightly-ci.properties", gerritBranch , gerritRefspec,seedJobName, "H 17 * * *" )
 
 //Release code is identical to the folder name in streams/
 def JenkinsStandaloneJobsBuilder(_release_code, _properties_file, _cfg_file, _job_type){

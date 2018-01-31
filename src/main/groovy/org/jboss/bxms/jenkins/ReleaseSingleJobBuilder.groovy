@@ -720,7 +720,6 @@ fi
                 sed -i "/^$1/d" ${CI_PROPERTIES_FILE} && echo "$1=$2" >> ${CI_PROPERTIES_FILE}
             }
             if [ "${CLEAN_CONFIG}" = "true" ];then
-                rm -vf /jboss-prod/config/${RELEASE_CODE}-*.*
                 rm -vf ${CI_PROPERTIES_FILE}
             fi
 
@@ -887,6 +886,11 @@ fi
                     local _importtag=\$brew_importtag
                     local _importowner="bxms-release/prod-ci"
                     echo ":) Importing \$g:\$a:\$v into \$_importtag by \$_importowner"
+                    if [ "\$CLEAN_MISSING_ARTIFACT" == "true" ];then
+                        rm -rfv \$_mavenrepo/\$gavpath
+                        continue
+                    fi
+                    
                     import-maven --owner=\$_importowner --tag=\$_importtag \$(find \$_mavenrepo/\$gavpath  -name '*.jar' -o -name '*.pom')
                     if [ \$? -ne 0 ] ;then
                         mkdir -p \$_mavenrepo/\$gavpath
@@ -905,7 +909,7 @@ fi
             {
                 [[ ! -f \$1 ]] && echo "\$1 is not existed!" && exit 1
 
-                local importlist="\$(grep "MISSING: .*:.*:.* FROM" \$1 | sed 's/MISSING: \\([^: ]*:[^: ]*:[^: ]*\\) .*/\\1/')"
+                local importlist="\$(grep "MISSING: .*:.*:.* FROM MEAD" \$1 | sed 's/MISSING: \\([^: ]*:[^: ]*:[^: ]*\\) .*/\\1/')"
                 for i in \$importlist ;do
                 importToMead \$i
                 if [ \$? -ne 0 ] ;then
@@ -928,7 +932,9 @@ fi
             '''
             // Sets a description for the job.
             description("This job is responsible for finding brew missing jars.")
-
+            parameters{
+                booleanParam( "CLEAN_MISSING_ARTIFACT", false,"Tick if you want to remove the missing ones. This is useful when the missing report isn't correct for some reason!")
+            }
             // Adds build steps to the jobs.
             steps {
 
