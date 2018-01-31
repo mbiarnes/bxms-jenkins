@@ -765,10 +765,8 @@ fi
 
             if [ "${release_type}" == "nightly" ];then
                 appendProp "product_staging_properties_name" "${product_lowercase}-${build_date}.properties"
-                appendProp "product_candidate_properties_name" ""
-                appendProp "product_staging_path" "${product_lowercase}/${product_name}-${product_version}.NIGHTLY"
-                product_staging_properties_url="${rcm_staging_base}/${product_lowercase}/${product_lowercase}-${product_version}.NIGHTLY/${prod_properties_name}"                
-        
+                appendProp "product_staging_properties_url" "${rcm_staging_base}/${product_staging_path}/${product_lowercase}-${build_date}.properties" 
+                appendProp "product_staging_path" "${product_lowercase}/${product_name}-${product_version}.NIGHTLY"                     
             fi
             '''
             // Sets a description for the job.
@@ -1728,41 +1726,42 @@ fi
             if [ "$release_status" = "closed" ];then
                     exit 0
             fi
-    
-            if [ "${release_type}" == "nightly" ]; then
-                    product_staging_properties_name="${product_lowercase}-${build_date}.properties"
-                    product_staging_properties_url="${rcm_staging_base}/${product_lowercase}/${product_lowercase}-${product_version}.NIGHTLY/${product_staging_properties_name}"
-            fi
-
+            
             wget ${product_staging_properties_url} -O ${product_staging_properties_name}
 
             echo -e "import sys,os,re;
 from urllib2 import urlopen;
-ret=0
 def isvalidurl(url, inc_str):
+    ret=0
     print url
     try:
         code = urlopen(url).code
     except IOError:
         print 'ERROR ', url + ' is invalid!'
         ret=1
-        return 1
+        return ret
     if (code / 100 >= 4):
         print 'ERROR ', url + ' is invalid!'
         ret=1
-    assertContain(url, inc_str)
+    ret+=assertContain(url, inc_str)
+    return ret
 
 def assertEqual(expect, actual):
+    ret=0
     if expect != actual:
         print 'ERROR Actual is ' + actual + ' , Expect is ' + expect
         ret=1
+    return ret
 
 def assertContain(actual, expect):
+    ret=0
     if expect not in actual:
         print 'ERROR Actual is ' + actual + ' , Expect is ' + expect
         ret=1
+    return ret
 
 def validateProperties(propfile, keyword, product_name):
+    ret=0
     dic = {}
     if os.path.isfile(propfile):
         tmpFile = open(propfile, 'r')
@@ -1772,56 +1771,61 @@ def validateProperties(propfile, keyword, product_name):
             dic[str1] = str2
         tmpFile.close()
         if re.match('rhdm-.*', propfile) is not None:
-            isvalidurl(dic['rhdm.addons.latest.url'],keyword)
-            isvalidurl(dic['rhdm.kie-server.ee7.latest.url'],keyword)
-            isvalidurl(dic['rhdm.decision-central.standalone.latest.url'],keyword)
-            isvalidurl(dic['rhdm.decision-central-eap7.latest.url'],keyword)
-            isvalidurl(dic['rhdm.installer.latest.url'],keyword)
-            isvalidurl(dic['build.config'],'rhdm')
+            ret+=isvalidurl(dic['rhdm.addons.latest.url'],keyword)
+            ret+=isvalidurl(dic['rhdm.kie-server.ee7.latest.url'],keyword)
+            ret+=isvalidurl(dic['rhdm.decision-central.standalone.latest.url'],keyword)
+            ret+=isvalidurl(dic['rhdm.decision-central-eap7.latest.url'],keyword)
+            ret+=isvalidurl(dic['rhdm.installer.latest.url'],keyword)
 
             if '${release_type}' != 'nightly':
-                isvalidurl(dic['rhdm.maven.repo.latest.url'],keyword)
-                isvalidurl(dic['rhdm.sources.latest.url'],keyword)
+                ret+=isvalidurl(dic['rhdm.maven.repo.latest.url'],keyword)
+                ret+=isvalidurl(dic['rhdm.sources.latest.url'],keyword)
 
-            assertEqual('$kie_version', dic['KIE_VERSION'])
-            assertEqual('${product_artifact_version}', dic['RHDM_VERSION'])
-            assertContain(dic['rhdm.decision-central.standalone.latest.url'], '$product_milestone_version')
-            assertContain(dic['rhdm.addons.latest.url'], '$product_milestone_version')
-            assertContain(dic['rhdm.kie-server.ee7.latest.url'], '$product_milestone_version')
-            assertContain(dic['rhdm.installer.latest.url'], '$product_milestone_version')
+            ret+=assertEqual('$kie_version', dic['KIE_VERSION'])
+            ret+=assertEqual('${product_artifact_version}', dic['RHDM_VERSION'])
+            ret+=assertContain(dic['rhdm.decision-central.standalone.latest.url'], '$product_milestone_version')
+            ret+=assertContain(dic['rhdm.addons.latest.url'], '$product_milestone_version')
+            ret+=assertContain(dic['rhdm.kie-server.ee7.latest.url'], '$product_milestone_version')
+            ret+=assertContain(dic['rhdm.installer.latest.url'], '$product_milestone_version')
 
         if re.match('rhba-.*', propfile) is not None:
-            isvalidurl(dic['rhba.addons.latest.url'],keyword)
-            isvalidurl(dic['rhba.kie-server.ee7.latest.url'],keyword)
-            isvalidurl(dic['rhba.decision-central.standalone.latest.url'],keyword)
-            isvalidurl(dic['rhba.decision-central-eap7.latest.url'],keyword)
-            isvalidurl(dic['rhba.installer.latest.url'],keyword)
-            isvalidurl(dic['build.config'],'rhba')
+            ret+=isvalidurl(dic['rhba.addons.latest.url'],keyword)
+            ret+=isvalidurl(dic['rhba.kie-server.ee7.latest.url'],keyword)
+            ret+=isvalidurl(dic['rhba.decision-central.standalone.latest.url'],keyword)
+            ret+=isvalidurl(dic['rhba.decision-central-eap7.latest.url'],keyword)
+            ret+=isvalidurl(dic['rhba.installer.latest.url'],keyword)
 
             if '${release_type}' != 'nightly':
-                isvalidurl(dic['rhba.maven.repo.latest.url'],keyword)
-                isvalidurl(dic['rhba.sources.latest.url'],keyword)
-            assertEqual(dic['KIE_VERSION'], '$kie_version')
-            assertEqual(dic['RHBAS_VERSION'], '${product_artifact_version}')
-            assertContain(dic['rhba.business-central.standalone.latest.url'], '$product_milestone_version')
-            assertContain(dic['rhba.addons.latest.url'], '$product_milestone_version')
-            assertContain(dic['rhba.kie-server.ee7.latest.url'], '$product_milestone_version')
-            assertContain(dic['rhba.installer.latest.url'], '$product_milestone_version')
+                ret+=isvalidurl(dic['rhba.maven.repo.latest.url'],keyword)
+                ret+=isvalidurl(dic['rhba.sources.latest.url'],keyword)
+                ret+=isvalidurl(dic['build.config'], product_name)
+
+            ret+=assertEqual(dic['KIE_VERSION'], '$kie_version')
+            ret+=assertEqual(dic['RHBAS_VERSION'], '${product_artifact_version}')
+            ret+=assertContain(dic['rhba.business-central.standalone.latest.url'], '$product_milestone_version')
+            ret+=assertContain(dic['rhba.addons.latest.url'], '$product_milestone_version')
+            ret+=assertContain(dic['rhba.kie-server.ee7.latest.url'], '$product_milestone_version')
+            ret+=assertContain(dic['rhba.installer.latest.url'], '$product_milestone_version')
 
         if ret != 0:
             print propfile + ' Validation No Pass'
-            sys.exit(1)
+            assert ret == 0
         else:
-            print  propfile + ' Validation Pass'
+            print propfile + ' Validation Pass'
     else:
-        return 1
+        print 'error!'
+        sys.exit(1)
 print '---Exec the py script...---'
 validateProperties(sys.argv[1], sys.argv[2],sys.argv[3])
 ">validateProperties.py
-            if [ "\${IS_STAGING}" = "true" ];then
-                python validateProperties.py '${product_staging_properties_name}' 'rcm-guest' '${product_lowercase}'                
+            if [ "\${IS_STAGING}" == "true" ];then
+                if [ "\${release_type}" == "nightly" ];then
+                    python validateProperties.py "${product_staging_properties_name}" "rhap-repo" "${product_lowercase}"
+                else
+                    python validateProperties.py "${product_staging_properties_name}" "rcm-guest" "${product_lowercase}"
+                fi
             else
-                python validateProperties.py '${product_staging_properties_name}' 'candidates' '${product_lowercase}'
+                python validateProperties.py "${product_staging_properties_name}" "candidates" "${product_lowercase}"
             fi
             '''
             // Sets a description for the job.
@@ -1839,7 +1843,6 @@ validateProperties(sys.argv[1], sys.argv[2],sys.argv[3])
             // Allows to parameterize the job.
             parameters {
                 // Defines a simple text parameter, where users can enter a string value.
-                stringParam("{product_lowercase}",  "RHDM","Specify product name to switch between configurations.")
                 booleanParam("IS_STAGING",  true,"Specify product name to switch between configurations.")
             }
         }
