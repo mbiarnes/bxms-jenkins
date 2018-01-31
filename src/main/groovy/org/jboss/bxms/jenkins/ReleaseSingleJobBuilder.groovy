@@ -891,7 +891,7 @@ fi
                         continue
                     fi
                     
-                    import-maven --owner=\$_importowner --tag=\$_importtag \$(find \$_mavenrepo/\$gavpath  -name '*.jar' -o -name '*.pom')
+                    import-maven --owner=\$_importowner --tag=\$_importtag \$(find \$_mavenrepo/\$gavpath  -name '*.jar' -o -name '*.pom')||true
                     if [ \$? -ne 0 ] ;then
                         mkdir -p \$_mavenrepo/\$gavpath
                         cd \$_mavenrepo/\$gavpath
@@ -909,7 +909,7 @@ fi
             {
                 [[ ! -f \$1 ]] && echo "\$1 is not existed!" && exit 1
 
-                local importlist="\$(grep "MISSING: .*:.*:.* FROM MEAD" \$1 | sed 's/MISSING: \\([^: ]*:[^: ]*:[^: ]*\\) .*/\\1/')"
+                local importlist="\$(grep "MISSING: .*:.*:.* FROM" \$1 | sed 's/MISSING: \\([^: ]*:[^: ]*:[^: ]*\\) .*/\\1/')"
                 for i in \$importlist ;do
                 importToMead \$i
                 if [ \$? -ne 0 ] ;then
@@ -924,9 +924,8 @@ fi
             ip-tooling/MEAD_check_artifact.sh \$brew_tag /jboss-prod/m2/\${jenkins_cache_repo} 2>&1 | tee /tmp/mead_check.log
             # echo "`tail -n 5 /tmp/mead_check.log`" > /tmp/mead_check.log # For debug purpose
             sed -ni "/MISSING/p" /tmp/mead_check.log
-            sed -i "/redhat-/d" /tmp/mead_check.log
-            sed -i "/SNAPSHOT/d" /tmp/mead_check.log
-
+            sed -i -e "/redhat-/d" -e "/SNAPSHOT/d" -e "/Unknown DIR/d" /tmp/mead_check.log
+          
             importToMeadFromLog /tmp/mead_check.log
             echo "JOB DONE"
             '''
@@ -941,12 +940,6 @@ fi
                 // Runs a shell script (defaults to sh, but this is configurable) for building the project.
                 shell(shellScript)
 
-            }
-            publishers {
-                postBuildTask {
-                    //TODO
-                    task('JOB DONE', "echo 'send an email notification and trigger automation import'")
-                }
             }
 
         }
