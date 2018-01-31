@@ -1196,21 +1196,7 @@ fi
     void pvtTest(DslFactory dslFactory){
         def job=dslFactory.job(release_code + "-release-pipeline/" + release_code +"-"+ "pvt-test"){
             String shellScript = '''
-            echo -e "Exec node IP: ${OPENSTACK_PUBLIC_IP}\\n"
-            case "${product_lowercase}" in
-                RHDM )
-                    prod_smoketest_cfg=${product_smoketest_cfg}
-                    prod_milestone_version=${product_milestone_version}
-                    product_upload_version=${product_shipped_file_deliver_version}
-                    prod_pvt_report_basename=${product_pvt_report_basename}
-                    ;;
-                RHBAS )
-                    prod_smoketest_cfg=${product2_smoketest_cfg}
-                    prod_milestone_version=${product2_milestone_version}
-                    product_upload_version=${product2_shipped_file_deliver_version}
-                    prod_pvt_report_basename=${product2_pvt_report_basename}
-                    ;;
-            esac
+            echo -e "Exec node IP: ${OPENSTACK_PUBLIC_IP}\\n"            
             git clone https://github.com/project-ncl/pvt.git
             cd pvt
             ~/bin/maven-3.3.9-prod/bin/mvn -Dmaven.repo.local=${dev_maven_repo} \

@@ -19,6 +19,7 @@ class JenkinsStandaloneJobBuilder {
 
     Map<String, String> maven_repo_map=[
         "rhdm":"/jboss-prod/m2/bxms-7.0-", \
+        "rhba":"/jboss-prod/m2/bxms-7.0-", \
         "rhdm-test":"/jboss-prod/m2/bxms-7.0-"]
     Map<String, String> repo_group_map=["milestone":"MEAD", "nightly":"MEAD+JENKINS+JBOSS+CENTRAL"]
     Job build(DslFactory dslFactory) {
