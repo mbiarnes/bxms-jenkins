@@ -553,8 +553,8 @@ fi
                                 
             else              
                 product_url_prefix="${rcm_staging_base}/${product_staging_path}"
-                product_filename_common_prefix="${product_lowercase}-${product_version}"
-                product_installer_url="${product_url_prefix}/${product_lowercase}-installer-${product_version}.jar"
+                product_filename_common_prefix="${product_lowercase}-${product_upload_version}"
+                product_installer_url="${product_url_prefix}/${product_lowercase}-installer-${product_upload_version}.jar"
                 
             fi
             if [ ! -f $product_staging_properties_name ]; then
@@ -574,7 +574,7 @@ fi
             appendProp "${product_lowercase}.addons.latest.url"         "${product_url_prefix}/${product_filename_common_prefix}-add-ons.zip"
             appendProp "${product_lowercase}.installer.latest.url"         "${product_installer_url}"
 
-            appendProp "${PRODUCT_NAME}_VERSION"   ${product_artifact_version}
+            appendProp "${product_name}_VERSION"   ${product_artifact_version}
             appendProp "KIE_VERSION"                ${kie_version}
             appendProp "APPFORMER_VERSION"          ${appformer_version}
             appendProp "ERRAI_VERSION"              ${errai_version}
@@ -584,7 +584,7 @@ fi
             if [ "${release_type}" == "brew" ]; then
                 #append the other properties per qe's requirement
                 appendProp "build.config" ${product_url_prefix}/${IP_CONFIG_FILE}
-                appendProp ${PRODUCT_NAME}_PUBLIC_VERSION ${product_version}
+                appendProp ${product_name}_PUBLIC_VERSION ${product_version}
                 appendProp "${product_lowercase}.maven.repo.latest.url"     "$product_url_prefix/${product_filename_common_prefix}-maven-repository.zip"
                 appendProp "${product_lowercase}.sources.latest.url"   "$product_url_prefix/${product_sources_name}"
 
@@ -959,7 +959,7 @@ fi
             ip-tooling/jira_helper.py -c ${IP_CONFIG_FILE} -a "Maven repository build started: Build url: ${BUILD_URL}" -f
 
             PROJECT_NAME=${product_lowercase} make CFG=${IP_CONFIG_FILE} BUILDER_SCRIPT=${repository_builder_script} -f ${makefile} repository
-            rename jboss-${product_name_lowercase} ${product_lowercase} workspace/${product_lowercase}-repository/archive/*
+            rename jboss-${product_lowercase} ${product_lowercase} workspace/${product_lowercase}-repository/archive/*
             '''
             // Sets a description for the job.
             description("This job is responsible for building the offline maven repository zip for MRRC.")
@@ -1646,10 +1646,6 @@ fi
             '''
             // Sets a description for the job.
             description("This job is responsible for triggering QE smoke test.")
-
-            parameters {
-                stringParam("{product_lowercase}", "RHDM", "Specify product name to switch between configurations.")
-            }
 
             if(jobName.matches("codereview/(.*)")){
                 println "Detected in codereview:Disable trigger-qe-smoketest"

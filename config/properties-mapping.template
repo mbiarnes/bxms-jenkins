@@ -82,7 +82,7 @@ product_incr_maven_repo_name={product_lowercase}-{product_milestone_version}-inc
 maven_repo_report_url={rcm_staging_base}/{product_staging_path}/maven-repository-report/
 
 #Misc
-product_sources_name={product_lowercase}-{product_milestone_version}-sources.zip
+product_sources_name={product_lowercase}-{product_upload_version}-sources.zip
 product_release_notes_path={product_lowercase}-{product_version}{availability}-release-notes.html
 product_release_notes_url={rcm_staging_base}/{product_staging_path}/{product_lowercase}-{product_version}{availability}-release-notes.html
 
