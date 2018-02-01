@@ -83,9 +83,9 @@ class ReleaseSingleJobBuilder {
                     \${product_lowercase}_installer_maven_repo_url="http://download.eng.bos.redhat.com/brewroot/packages/\${name}/\${version}/\${release}/maven/"
                     \${product_lowercase}_installer_brew_url="https://brewweb.engineering.redhat.com/brew/taskinfo?taskID=\${task_id}"
                     \${product_lowercase}_installer_nvr="\$nvr"
-                    appendProp "\${product_lowercase}_installer_maven_repo_url" \$\${product_lowercase}_installer_maven_repo_url
-                    appendProp "\${product_lowercase}_installer_brew_url" \$\${product_lowercase}_installer_brew_url
-                    appendProp "\${product_lowercase}_installer_nvr" \$\${product_lowercase}_installer_nvr
+                    appendProp "\${product_lowercase}_installer_maven_repo_url" \${product_lowercase}_installer_maven_repo_url
+                    appendProp "\${product_lowercase}_installer_brew_url" \${product_lowercase}_installer_brew_url
+                    appendProp "\${product_lowercase}_installer_nvr" \${product_lowercase}_installer_nvr
                     web_hook=`grep "register_web_hook" \${CI_PROPERTIES_FILE} |cut -d "=" -f2`
                     curl -X POST -d 'OK' -k \$web_hook
                     ip-tooling/jira_helper.py -c \${IP_CONFIG_FILE} -a "Product Assembly Build Completed: \$product_assembly_brew_url Build nvr: \$product_assembly_nvr " -f
@@ -1433,14 +1433,19 @@ fi
             def shellScript = '''
             set -x
             echo -e "Exec node IP: ${OPENSTACK_PUBLIC_IP}\\n"
-
-            ip-tooling/maven-artifact-handler.py --version=${product_artifact_version} --override-version ${product_upload_version} --maven-repo ${product_assembly_maven_repo_url} \
-              --deliverable ${prod_deliverable_template} --output ${product_lowercase}
+            #Dynamic variable of bash
+            product_assembly_maven_repo_url=${product_lowercase}_assembly_maven_repo_url
+            product_installer_maven_repo_url=${product_lowercase}_installer_maven_repo_url
+            
+            ip-tooling/maven-artifact-handler.py --version=${product_artifact_version} --override-version ${product_upload_version} \\
+                --maven-repo ${!product_assembly_maven_repo_url} --deliverable ${product_deliverable_template} --output ${product_lowercase}
             #Download installer
-            ip-tooling/maven-artifact-handler.py --version=${product_artifact_version} --override-version ${product_upload_version} --maven-repo ${product_installer_maven_repo_url} \
-              --deliverable ${prod_deliverable_template} --output ${product_lowercase}
+            ip-tooling/maven-artifact-handler.py --version=${product_artifact_version} --override-version ${product_upload_version} \\
+                --maven-repo ${!product_installer_maven_repo_url} --deliverable ${product_deliverable_template} --output ${product_lowercase}
             #Download runtime gav txt
-            ip-tooling/maven-artifact-handler.py --version=${product_artifact_version} --override-version ${product_upload_version} --maven-repo ${license_builder_maven_repo_url}               --deliverable ${prod_deliverable_template} --output ${product_lowercase}  
+            ip-tooling/maven-artifact-handler.py --version=${product_artifact_version} --override-version ${product_upload_version} \\
+                --maven-repo ${license_builder_maven_repo_url} --deliverable ${product_deliverable_template} --output ${product_lowercase}
+                  
             rename license-builder \${product_lowercase}-runtime-GAV \${product_lowercase}/*.txt
             cp ${IP_CONFIG_FILE} ${product_lowercase}/
             '''
@@ -1459,10 +1464,7 @@ fi
 
                 // Runs a shell script (defaults to sh, but this is configurable) for building the project.
                 shell(shellScript)
-                // Inject environment variables for staging paths
-                environmentVariables {
-                    propertiesFile("/tmp/product_staging_path")
-                }
+
             }
             wrappers {
                 // Deletes files from the workspace before the build starts.

@@ -12,7 +12,7 @@ class CodeReviewJobBuilder {
     String jobName
     String run_mvn_with_pme = '''echo -e "Exec node IP:\${OPENSTACK_PUBLIC_IP}\\n"
         export MAVEN_OPTS="-Xms2g -Xmx16g -Dgwt-plugin.localWorkers='3' -XX:+UseConcMarkSweepGC -XX:-UseGCOverheadLimit"
-        export M3_HOME=/jboss-prod/tools/maven-3.3.9-prod
+        export M3_HOME=~/bin/maven-3.3.9-prod
         export PATH=$M3_HOME/bin:$PATH
         build_date=\$(date --date="1 days ago" -u +'%Y%m%d')
         mvn -Dversion.override=7.0.0.DR -Dversion.suffix=redhat-\${build_date} \\
@@ -42,10 +42,25 @@ class CodeReviewJobBuilder {
             VALIDATE_ONLY=true LOCAL=1 REPO_GROUP=MEAD+JENKINS+JBOSS+CENTRAL CFG=./\${cfg} MVN_LOCAL_REPO=/jboss-prod/m2/bxms-7.0-nightly POMMANIPEXT=\${product_name}-build-bom make -f Makefile.BRMS \${product_name}-installer
         done
         """
+    String run_rhba_bom_generator="""echo -e "Exec node IP:\${OPENSTACK_PUBLIC_IP}\\n"            
+            export M3_HOME=~/bin/maven-3.3.9-prod
+            export PATH=\$M3_HOME/bin:\$PATH
+            build_date=\$(date --date="1 days ago" -u +'%Y%m%d')
+            cd rhba
+            mvn -U -Dmanipulation.disable=true -DprojectMetaSkip=true -DversionSuffixSnapshot=true -Dip.config.sha=\${GERRIT_PATCHSET_REVISION} \
+             -Dvictims.updates=offline -B -s /jboss-prod/m2/bxms-dev-repo-settings.xml  deploy
+"""
+    String run_rhdm_bom_generator="""echo -e "Exec node IP:\${OPENSTACK_PUBLIC_IP}\\n"
+            export M3_HOME=~/bin/maven-3.3.9-prod
+            export PATH=\$M3_HOME/bin:\$PATH
+            build_date=\$(date --date="1 days ago" -u +'%Y%m%d')
+            cd rhdm
+            mvn -U  -Dmanipulation.disable=true -DprojectMetaSkip=true -DversionSuffixSnapshot=true -Dip.config.sha=\${GERRIT_PATCHSET_REVISION} \
+             -Dvictims.updates=offline -B -s /jboss-prod/m2/bxms-dev-repo-settings.xml  deploy
+"""
+    void create_codereview_job(DslFactory dslFactory, String repoName, String shellScript, String node_label, String jobprefix=""){
 
-    void create_codereview_job(DslFactory dslFactory, String repoName, String shellScript, String node_label){
-
-        def job=dslFactory.job("codereview/" + repoName.replace('/','-')){
+        def job=dslFactory.job("codereview/" + jobprefix + repoName.replace('/','-')){
             description("Monitor the code change in Gerrit:" + repoName)
 
             parameters {
@@ -94,7 +109,7 @@ class CodeReviewJobBuilder {
 
             // build steps
             steps{
-                shell(run_mvn_with_pme)
+                shell(shellScript)
             }
             // clear workspace
             wrappers {
@@ -237,7 +252,6 @@ class CodeReviewJobBuilder {
 
         }
     }
-
     Job build(DslFactory dslFactory) {
         for (dirName in dirNameRow) {
             switch(dirName) {
@@ -252,7 +266,9 @@ class CodeReviewJobBuilder {
                     create_codereview_job(dslFactory,"rhdm-maven-repo-root", run_mvn_with_pme,"codereview")
                     create_codereview_job(dslFactory,"rhba-maven-repo-root", run_mvn_with_pme,"codereview")
                     create_codereview_job(dslFactory,"integration-platform-config", run_make_mead,"codereview")
-                break
+                    create_codereview_job(dslFactory,"soa/soa-component-management", run_rhba_bom_generator,"codereview", "rhba-")
+                    create_codereview_job(dslFactory,"soa/soa-component-management", run_rhdm_bom_generator,"codereview", "rhdm-")
+                    break
                 case "utility":
                     dslFactory.folder(dirName)
                     utility_bxms_ci_message_monitor(dslFactory,dirName)
