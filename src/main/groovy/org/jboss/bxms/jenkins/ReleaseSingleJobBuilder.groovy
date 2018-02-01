@@ -1218,7 +1218,7 @@ fi
 
         }
         buildEnv(job)
-        buildCommon(job)
+        buildCommon(job, "nightly-node")
         buildScm(job)
     }
     void sendHandoverMail(DslFactory dslFactory){
@@ -1837,9 +1837,9 @@ validateProperties(sys.argv[1], sys.argv[2],sys.argv[3])
         buildEnv(job)
         buildCommon(job)
     }
-    void buildCommon(Job job){
+    void buildCommon(Job job, String node_label="release-pipeline"){
         job.with{
-            label("release-pipeline")
+            label(node_label)
 
             // Adds pre/post actions to the job.
             wrappers {
