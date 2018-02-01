@@ -1651,6 +1651,11 @@ fi
                 stringParam("{product_lowercase}", "RHDM", "Specify product name to switch between configurations.")
             }
 
+            if(jobName.matches("codereview/(.*)")){
+                println "Detected in codereview:Disable trigger-qe-smoketest"
+                disabled()
+            }
+
             // Adds build steps to the jobs.
             steps {
                 shell(shellScript)
@@ -1822,10 +1827,6 @@ validateProperties(sys.argv[1], sys.argv[2],sys.argv[3])
 
                 // Runs a shell script (defaults to sh, but this is configurable) for building the project.
                 shell(shellScript)
-            }
-            if(jobName.matches("codereview/(.*)")){
-                println "Detected in codereview:Disable validate-qe-properties"
-                disabled()
             }
 
             // Allows to parameterize the job.
