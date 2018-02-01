@@ -560,12 +560,12 @@ fi
             if [ ! -f $product_staging_properties_name ]; then
                 touch $product_staging_properties_name
             fi
-            case "${product_name}" in
-                RHDM )
+            case "${product_lowercase}" in
+                rhdm )
                     appendProp "${product_lowercase}.decision-central.standalone.latest.url"    "$product_url_prefix/${product_filename_common_prefix}-decision-central-standalone.jar"
                     appendProp "${product_lowercase}.decision-central-eap7.latest.url"          "$product_url_prefix/${product_filename_common_prefix}-decision-central-eap7-deployable.zip"
                     ;;
-                RHBA )
+                rhba )
                     appendProp "${product_lowercase}.business-central.standalone.latest.url"    "$product_url_prefix/${product_filename_common_prefix}-business-central-standalone.jar"
                     appendProp "${product_lowercase}.business-central-eap7.latest.url"          "$product_url_prefix/${product_filename_common_prefix}-business-central-eap7-deployable.zip"
             esac
@@ -574,7 +574,7 @@ fi
             appendProp "${product_lowercase}.addons.latest.url"         "${product_url_prefix}/${product_filename_common_prefix}-add-ons.zip"
             appendProp "${product_lowercase}.installer.latest.url"         "${product_installer_url}"
 
-            appendProp "${product_name}_VERSION"   ${product_artifact_version}
+            appendProp "${PRODUCT_NAME}_VERSION"   ${product_artifact_version}
             appendProp "KIE_VERSION"                ${kie_version}
             appendProp "APPFORMER_VERSION"          ${appformer_version}
             appendProp "ERRAI_VERSION"              ${errai_version}
@@ -584,7 +584,7 @@ fi
             if [ "${release_type}" == "brew" ]; then
                 #append the other properties per qe's requirement
                 appendProp "build.config" ${product_url_prefix}/${IP_CONFIG_FILE}
-                appendProp ${product_name}_PUBLIC_VERSION ${product_version}
+                appendProp ${PRODUCT_NAME}_PUBLIC_VERSION ${product_version}
                 appendProp "${product_lowercase}.maven.repo.latest.url"     "$product_url_prefix/${product_filename_common_prefix}-maven-repository.zip"
                 appendProp "${product_lowercase}.sources.latest.url"   "$product_url_prefix/${product_sources_name}"
 
@@ -765,8 +765,8 @@ fi
 
             if [ "${release_type}" == "nightly" ];then
                 appendProp "product_staging_properties_name" "${product_lowercase}-${build_date}.properties"
-                appendProp "product_staging_properties_url" "${rcm_staging_base}/${product_staging_path}/${product_lowercase}-${build_date}.properties" 
-                appendProp "product_staging_path" "${product_lowercase}/${product_name}-${product_version}.NIGHTLY"                     
+                appendProp "product_staging_path" "${product_lowercase}/${product_name}-${product_version}.NIGHTLY"
+                appendProp "product_staging_properties_url" "${rcm_staging_base}/${product_lowercase}/${product_name}-${product_version}.NIGHTLY/${product_lowercase}-${build_date}.properties"
             fi
             '''
             // Sets a description for the job.
@@ -1748,7 +1748,7 @@ def assertContain(actual, expect):
         ret=1
     return ret
 
-def validateProperties(propfile, keyword, product_name):
+def validateProperties(propfile, keyword, _product_name):
     ret=0
     dic = {}
     if os.path.isfile(propfile):
@@ -1786,7 +1786,7 @@ def validateProperties(propfile, keyword, product_name):
             if '${release_type}' != 'nightly':
                 ret+=isvalidurl(dic['rhba.maven.repo.latest.url'],keyword)
                 ret+=isvalidurl(dic['rhba.sources.latest.url'],keyword)
-                ret+=isvalidurl(dic['build.config'], product_name)
+                ret+=isvalidurl(dic['build.config'], _product_name)
 
             ret+=assertEqual(dic['KIE_VERSION'], '$kie_version')
             ret+=assertEqual(dic['RHBAS_VERSION'], '${product_artifact_version}')
