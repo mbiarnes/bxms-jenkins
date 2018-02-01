@@ -33,7 +33,7 @@ cutoff_date=common:cutoff_date
 product_milestone_version={product_version}{availability}.{product_milestone}
 
 share_config_dir=/jboss-prod/config
-repository_builder_script=regen_bxms_repo_builder.sh
+repository_builder_script=regen_{product_lowercase}_repo_builder.sh
 rcm_staging_base=http://rcm-guest.app.eng.bos.redhat.com/rcm-guest/staging
 rcm_candidate_base=http://download.devel.redhat.com/devel/candidates
 release_jira_base=https://projects.engineering.redhat.com/browse/
@@ -56,15 +56,6 @@ archive_pvt_report_basename={dsl_basedir}/release-history/{release_code}-pvt-rep
 product_release_tag={product_name}-{product_milestone_version}
 
 release_handover_basename={dsl_basedir}/stream/{release_code}/release-history/release-handover
-
-#brew build
-product_assembly_brew_url=
-product_assembly_nvr=
-product_assembly_maven_repo_url=
-bxms_patch_brew_url=
-bxms_patch_nvr=
-bxms_patch_maven_repo_url=
-brewchain_build_url=
 
 #pvt report
 product_smoketest_cfg=http://git.app.eng.bos.redhat.com/git/bxms-jenkins.git/plain/config/{product_lowercase}-pvt-config.yaml

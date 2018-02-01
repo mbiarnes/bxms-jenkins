@@ -47,16 +47,34 @@ class CodeReviewJobBuilder {
             export PATH=\$M3_HOME/bin:\$PATH
             build_date=\$(date --date="1 days ago" -u +'%Y%m%d')
             cd rhba
-            mvn -U -Dmanipulation.disable=true -DprojectMetaSkip=true -DversionSuffixSnapshot=true -Dip.config.sha=\${GERRIT_PATCHSET_REVISION} \
-             -Dvictims.updates=offline -B -s /jboss-prod/m2/bxms-dev-repo-settings.xml  deploy
+            cfg=rhba-dev.cfg
+            wget http://git.app.eng.bos.redhat.com/git/integration-platform-config.git/plain/\$cfg
+            wget http://git.app.eng.bos.redhat.com/git/integration-platform-config.git/plain/ip-bom.cfg
+            wget http://git.app.eng.bos.redhat.com/git/integration-platform-config.git/plain/common.cfg
+            if [[ "\$cfg" =~ -dev ]];then
+                build_date=\$(date --date='1 days ago' -u +'%Y%m%d')
+                sed -i "s#-SNAPSHOT#-\${build_date}#g" \${cfg}
+            fi
+            mvn -U  -Dcfg=\${cfg} -Dcfg.url.template=file://`pwd`/{0}  \
+             -Dmanipulation.disable=true -DprojectMetaSkip=true -DversionSuffixSnapshot=true -Dip.config.sha=\${GERRIT_PATCHSET_REVISION} \
+             -Dvictims.updates=offline -B -s /jboss-prod/m2/bxms-dev-repo-settings.xml  install
 """
     String run_rhdm_bom_generator="""echo -e "Exec node IP:\${OPENSTACK_PUBLIC_IP}\\n"
             export M3_HOME=~/bin/maven-3.3.9-prod
             export PATH=\$M3_HOME/bin:\$PATH
             build_date=\$(date --date="1 days ago" -u +'%Y%m%d')
             cd rhdm
-            mvn -U  -Dmanipulation.disable=true -DprojectMetaSkip=true -DversionSuffixSnapshot=true -Dip.config.sha=\${GERRIT_PATCHSET_REVISION} \
-             -Dvictims.updates=offline -B -s /jboss-prod/m2/bxms-dev-repo-settings.xml  deploy
+            cfg=rhdm-dev.cfg
+            wget http://git.app.eng.bos.redhat.com/git/integration-platform-config.git/plain/\$cfg
+            wget http://git.app.eng.bos.redhat.com/git/integration-platform-config.git/plain/ip-bom.cfg
+            wget http://git.app.eng.bos.redhat.com/git/integration-platform-config.git/plain/common.cfg
+            if [[ "\$cfg" =~ -dev ]];then
+                build_date=\$(date --date='1 days ago' -u +'%Y%m%d')
+                sed -i "s#-SNAPSHOT#-\${build_date}#g" \${cfg}
+            fi
+            mvn -U  -Dcfg=\${cfg} -Dcfg.url.template=file://`pwd`/{0}  \
+             -Dmanipulation.disable=true -DprojectMetaSkip=true -DversionSuffixSnapshot=true -Dip.config.sha=\${GERRIT_PATCHSET_REVISION} \
+             -Dvictims.updates=offline -B -s /jboss-prod/m2/bxms-dev-repo-settings.xml  install
 """
     void create_codereview_job(DslFactory dslFactory, String repoName, String shellScript, String node_label, String jobprefix=""){
 
