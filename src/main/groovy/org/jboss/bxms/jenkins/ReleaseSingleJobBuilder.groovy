@@ -107,7 +107,7 @@ class ReleaseSingleJobBuilder {
                 if [[ "\$EVENT_TYPE" =~ 70-brew-qe-trigger\$ ]];then
                     echo "Triggered by  bxms-prod ci message "
                     echo "\$CI_MESSAGE"
-                elif [[ "\$EVENT_TYPE" =~ \${product_lowercase}-\${release_type}.*qe-smoke-results\$ ]];then
+                elif [ "\$EVENT_TYPE" == "\${product_lowercase}-70-\${release_type}-qe-smoke-results" ];then
                     echo "QE smoketest report:\$CI_MESSAGE"
                     #Json to adoc
                     echo \${CI_MESSAGE}| python -c "import sys, json;
@@ -762,7 +762,10 @@ fi
             appendProp "release_jira_id" $jira_id
             #build_date is used in nightly build
             appendProp "build_date" "${build_date}"
-
+            
+            appendProp "archive_pvt_report_basename" "bxms-jenkins/streams/${RELEASE_CODE}/release-history/${RELEASE_CODE}-pvt-report
+            appendProp "release_handover_basename" "bxms-jenkins/streams/${RELEASE_CODE}/release-history/release-handover
+            appendProp "release_stream_path" "bxms-jenkins/streams/${RELEASE_CODE}/release-history"
             if [ "${release_type}" == "nightly" ];then
                 appendProp "product_staging_properties_name" "${product_lowercase}-${build_date}.properties"
                 appendProp "product_staging_path" "${product_lowercase}/${product_name}-${product_version}.NIGHTLY"

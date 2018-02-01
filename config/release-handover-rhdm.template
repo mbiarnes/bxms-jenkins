@@ -1,4 +1,4 @@
-= ${product1_name} ${product1_version} ${product1_milestone}
+= ${product_name} ${product_version} ${product_milestone}
 
 :Author Initials: SJR
 :toc:
@@ -19,9 +19,9 @@ Please allow [red]#10-15 minutes# for GlobalSync to occur should the release fol
 |=====================================================================
 |Product Name: |Red Hat Decision Manager
 
-|Product Version |${product1_version}
+|Product Version |${product_version}
 
-|Build: |${product1_milestone}
+|Build: |${product_milestone}
 
 |Engineer: |${release_engineer}
 
@@ -32,9 +32,9 @@ Please allow [red]#10-15 minutes# for GlobalSync to occur should the release fol
 == Special instructions/Notes
 
 
-- ${product1_name} ${product1_version} ${product1_milestone} is dependencies have been aligned to *${eap_version}*
+- ${product_name} ${product_version} ${product_milestone} is dependencies have been aligned to *${eap_version}*
 
-- Please unzip the ${product1_lowcase}-business-central-eap7.zip into the latest of EAP 7.0.x. the latest EAP 7.0.x can be downloaded from:
+- Please unzip the ${product_lowercase}-business-central-eap7.zip into the latest of EAP 7.0.x. the latest EAP 7.0.x can be downloaded from:
 http://download.eng.pnq.redhat.com/released/JBEAP-7/
 
 
@@ -44,17 +44,17 @@ http://download.eng.pnq.redhat.com/released/JBEAP-7/
 - http://download.lab.bos.redhat.com/brewroot/repos/${brew_tag}/latest/maven/
 
 
-== ${product1_name} Download
+== ${product_name} Download
 
 
-- http://download.devel.redhat.com/devel/candidates/${product1_name}/${product1_name}-${product1_milestone_version}
+- http://download.devel.redhat.com/devel/candidates/${product_name}/${product_name}-${product_milestone_version}
 
 
 == Components
 
 - Product tag: *${product_release_tag}*
 
-- Product version in Maven repo: *${product1_artifact_version}*
+- Product version in Maven repo: *${product_artifact_version}*
 
 - KIE version: *${kie_version}*
 
@@ -69,14 +69,15 @@ link:${build_cfg}[Components and Versions]
 
 == Build
 
-link:${product1_assembly_brew_url}[${product1_assembly_nvr}]
+link:${brewchain_build_url}[Brew build]
 
 == Smoke Tests
+${load:qe_smoketest_report_path}
 
 === Package Checking Summary
 
-link:${release_code}-pvt-report-${product1_lowcase}.html[Package Checking Details Report(${product1_name})]
+link:${release_code}-pvt-report-${product_lowercase}.html[Package Checking Details Report(${product_name})]
 
 link:${maven_repo_report_url}[Maven Repository Report]
 
-${load:product1_pvt_report_adoc_path}
+${load:product_pvt_report_adoc_path}
