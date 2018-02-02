@@ -1086,11 +1086,12 @@ fi
     void openshiftTest(DslFactory dslFactory){
         def job=dslFactory.job(release_code + "-release-pipeline/" + release_code +"-"+ "openshift-test"){
             String shellScript = '''
+            product_lowercase="rhdm"
             echo -e "Exec node IP:\${OPENSTACK_PUBLIC_IP}\\n"
             sudo oc cluster down || /bin/true
             echo -e "\\n-------\\n$(sudo oc cluster status)\\n--------\\n"
             echo -e "\\n-------\\nnode public-ip:${OPENSTACK_PUBLIC_IP}\\n--------\\n"
-            sudo oc cluster up --public-hostname="${OPENSTACK_PUBLIC_IP}"
+            sudo oc cluster up --public-hostname="\${product_lowercase}.usersys.redhat.com"
             oc login localhost:8443 -u developer -p developer --insecure-skip-tls-verify=true
             oc new-project "${OCPROJECTNAME}" || /bin/true
             oc project "${OCPROJECTNAME}"
@@ -1107,7 +1108,7 @@ fi
             oc create -f rhdm70-image-streams.yaml
 
             oc process -n "${OCPROJECTNAME}" -f templates/rhdm70-full.yaml -p IMAGE_STREAM_NAMESPACE="${OCPROJECTNAME}" -p ADMIN_PASSWORD=admin\\! -p KIE_ADMIN_USER=adminUser -p KIE_ADMIN_PWD=admin1\\! -p KIE_SERVER_CONTROLLER_USER=controllerUser -p KIE_SERVER_CONTROLLER_PWD=controller1\\! -p KIE_SERVER_USER=executionUser -p KIE_SERVER_PWD=execution1\\! |oc create -n "${OCPROJECTNAME}" -f -
-
+            oc expose svc/myapp-rhdmcentr --hostname="\${product_lowercase}.usersys.redhat.com" --name "\${product_lowercase}"
             '''
 
             // Sets a description for the job.
