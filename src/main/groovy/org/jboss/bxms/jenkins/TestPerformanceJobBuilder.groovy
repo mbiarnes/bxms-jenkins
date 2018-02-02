@@ -11,8 +11,7 @@ class TestPerformanceJobBuilder {
         String run_mvn_with_pme = """echo -e "Exec node IP:\${OPENSTACK_PUBLIC_IP}\\n"        
         build_date=\$(date -u +'%Y%m%d')
         
-            MVN_DEP_REPO=nexus-snapshot::default::file:///jboss-prod/m2/bxms-7.0-nightly MVN_LOCAL_REPO=/jboss-prod/m2/bxms-7.0-nightly \\
-            MVN_SETTINGS=/jboss-prod/m2/bxms-dev-repo-settings.xml \\
+            MVN_LOCAL_REPO=/jboss-prod/m2/bxms-7.0-nightly MVN_SETTINGS=/jboss-prod/m2/bxms-dev-repo-settings.xml \\
             ip-tooling/MEAD_simulator.sh maven-build jb-bxms-7.0-maven-build -m3.3.9-prod \\
             -J-Xms1g -J-Xmx${mem}g -M-T${processor} -Dmaven.test.failure.ignore=true -Dgwt.compiler.localWorkers=${gwtworker} \\
             -M-Drevapi.skip=true -DdependencyManagement=org.kie.rhba.component.management:rhdm-dependency-management-all:7.0.0.DM-redhat-\${build_date} \\
@@ -82,8 +81,14 @@ class TestPerformanceJobBuilder {
 
     Job build(DslFactory dslFactory) {
                     dslFactory.folder("testPerform")
-                    test_perform_job(dslFactory,"jbpm", "nightly-node-bigmemory", 2,8,1)
-                    test_perform_job(dslFactory,"jbpm", "nightly-node-bigmemory",4,4,1)
-                    test_perform_job(dslFactory,"jbpm", "nightly-node-bigmemory",8,2,1)
+                    test_perform_job(dslFactory,"jbpm", "nightly-node-bigmemory", 8,2,1)
+                    test_perform_job(dslFactory,"jbpm", "nightly-node-bigmemory",12,1,1)
+                    test_perform_job(dslFactory,"jbpm", "nightly-node-bigmemory",16,1,1)
+
+                    test_perform_job(dslFactory,"kie-wb-common", "nightly-node-bigmemory",2,3,2)
+                    test_perform_job(dslFactory,"kie-wb-common", "nightly-node-bigmemory",2,3,4)
+                    test_perform_job(dslFactory,"kie-wb-common", "nightly-node-bigmemory",4,3,2)
+                    test_perform_job(dslFactory,"kie-wb-common", "nightly-node-bigmemory",4,2,4)
+                    test_perform_job(dslFactory,"kie-wb-common", "nightly-node-bigmemory",8,2,6)
     }
 }
