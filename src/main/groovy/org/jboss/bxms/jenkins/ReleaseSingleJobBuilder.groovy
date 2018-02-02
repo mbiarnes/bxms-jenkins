@@ -544,7 +544,7 @@ fi
                 fi
                 sed -i "/^$1/d"  ${product_staging_properties_name} && echo "$1=$2" >>  ${product_staging_properties_name}
             }
-
+            
             if [ "${release_type}" == "nightly" ]; then
                 product_url_prefix="${jenkins_cache_url}/${jenkins_cache_repo}/org/kie/rhba/${product_lowercase}/${product_artifact_version}"
                 product_installer_url="${jenkins_cache_url}/${jenkins_cache_repo}/org/jboss/installer/${product_lowercase}-installer/${product_artifact_version}/${product_lowercase}-installer-${product_artifact_version}.jar"
@@ -573,8 +573,9 @@ fi
             appendProp "${product_lowercase}.kie-server.ee7.latest.url" "${product_url_prefix}/${product_filename_common_prefix}-kie-server-ee7.zip"
             appendProp "${product_lowercase}.addons.latest.url"         "${product_url_prefix}/${product_filename_common_prefix}-add-ons.zip"
             appendProp "${product_lowercase}.installer.latest.url"         "${product_installer_url}"
-
-            appendProp "${product_name}_VERSION"   ${product_artifact_version}
+            
+                       
+            appendProp "${product_lowercase^^}_VERSION"   ${product_artifact_version}
             appendProp "KIE_VERSION"                ${kie_version}
             appendProp "APPFORMER_VERSION"          ${appformer_version}
             appendProp "ERRAI_VERSION"              ${errai_version}
@@ -584,7 +585,7 @@ fi
             if [ "${release_type}" == "brew" ]; then
                 #append the other properties per qe's requirement
                 appendProp "build.config" ${product_url_prefix}/${IP_CONFIG_FILE}
-                appendProp ${product_name}_PUBLIC_VERSION ${product_version}
+                appendProp ${product_lowercase^^}_PUBLIC_VERSION ${product_version}
                 appendProp "${product_lowercase}.maven.repo.latest.url"     "$product_url_prefix/${product_filename_common_prefix}-maven-repository.zip"
                 appendProp "${product_lowercase}.sources.latest.url"   "$product_url_prefix/${product_sources_name}"
 

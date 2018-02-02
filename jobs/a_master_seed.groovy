@@ -85,3 +85,5 @@ new CodeReviewJobBuilder(
         dirNameRow: dirNameRow,
         jobName:currentJobName
 ).build(this)
+
+new TestPerformanceJobBuilder().build(this)

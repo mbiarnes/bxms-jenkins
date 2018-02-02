@@ -16,8 +16,8 @@ class CodeReviewJobBuilder {
         export PATH=$M3_HOME/bin:$PATH
         build_date=\$(date --date="1 days ago" -u +'%Y%m%d')
         mvn -Dversion.override=7.0.0.DR -Dversion.suffix=redhat-\${build_date} \\
-            -DdependencyManagement=org.kie.rhba.component.management:rhdm-dependency-management-all:7.0.0.DR-redhat-\${build_date} \\
-            -DpropertyManagement=org.kie.rhba.component.management:rhdm-dependency-management-all:7.0.0.DR-redhat-\${build_date} \\
+            -DdependencyManagement=org.kie.rhba.component.management:rhdm-dependency-management-all:7.0.0.DM-redhat-\${build_date} \\
+            -DpropertyManagement=org.kie.rhba.component.management:rhdm-dependency-management-all:7.0.0.DM-redhat-\${build_date} \\
             -s /jboss-prod/m2/bxms-dev-repo-settings.xml  clean install
         '''
     String run_make_mead="""
