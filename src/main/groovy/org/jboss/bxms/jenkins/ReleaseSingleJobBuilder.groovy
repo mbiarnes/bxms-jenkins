@@ -1091,7 +1091,7 @@ fi
             sudo oc cluster down || /bin/true
             echo -e "\\n-------\\n$(sudo oc cluster status)\\n--------\\n"
             echo -e "\\n-------\\nnode public-ip:${OPENSTACK_PUBLIC_IP}\\n--------\\n"
-            sudo oc cluster up --public-hostname="\${product_lowercase}.usersys.redhat.com"
+            sudo oc cluster up --public-hostname="\${product_lowercase}.usersys.redhat.com" --routing-suffix="\${product_lowercase}.usersys.redhat.com"
             oc login localhost:8443 -u developer -p developer --insecure-skip-tls-verify=true
             oc new-project "${OCPROJECTNAME}" || /bin/true
             oc project "${OCPROJECTNAME}"
