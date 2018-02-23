@@ -1785,8 +1785,8 @@ def validateProperties(propfile, keyword, _product_name):
         if re.match('rhba-.*', propfile) is not None:
             ret+=isvalidurl(dic['rhba.addons.latest.url'],keyword)
             ret+=isvalidurl(dic['rhba.kie-server.ee7.latest.url'],keyword)
-            ret+=isvalidurl(dic['rhba.decision-central.standalone.latest.url'],keyword)
-            ret+=isvalidurl(dic['rhba.decision-central-eap7.latest.url'],keyword)
+            ret+=isvalidurl(dic['rhba.business-central.standalone.latest.url'],keyword)
+            ret+=isvalidurl(dic['rhba.business-central-eap7.latest.url'],keyword)
             ret+=isvalidurl(dic['rhba.installer.latest.url'],keyword)
 
             if '${release_type}' != 'nightly':
@@ -1795,7 +1795,7 @@ def validateProperties(propfile, keyword, _product_name):
                 ret+=isvalidurl(dic['build.config'], _product_name)
 
             ret+=assertEqual(dic['KIE_VERSION'], '$kie_version')
-            ret+=assertEqual(dic['RHBAS_VERSION'], '${product_artifact_version}')
+            ret+=assertEqual(dic['RHBA_VERSION'], '${product_artifact_version}')
             ret+=assertContain(dic['rhba.business-central.standalone.latest.url'], '$product_milestone_version')
             ret+=assertContain(dic['rhba.addons.latest.url'], '$product_milestone_version')
             ret+=assertContain(dic['rhba.kie-server.ee7.latest.url'], '$product_milestone_version')
