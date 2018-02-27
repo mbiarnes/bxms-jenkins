@@ -54,7 +54,6 @@ fi
 if [ "${job_type}" == "nightly" ]; then
     sed -i "s#ip.config.sha=#cfg.url.template=file://`pwd`/{0},ip.config.sha=#g" ${cfg_filename}
 fi
-sed -i 's/checkmvn \"\$_MVNLOG\" \$?//g' ip-tooling/MEAD_simulator.sh
 MVN_DEP_REPO=nexus-release::default::file://${maven_repo} REPO_GROUP=${repo_group} LOCAL=1 CFG=${_cfg} MVN_LOCAL_REPO=${maven_repo} POMMANIPEXT=\${product_lowercase}-build-bom make DEBUG=\$DEBUG ${section_name}
 """
                 dslFactory.job(release_code + "-" + job_type + "-release-pipeline/y-" + release_code + "-" + section_name ) {
