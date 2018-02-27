@@ -78,6 +78,129 @@ class TestPerformanceJobBuilder {
         }
 
     }
+    void test_checkout_job_origin(DslFactory dslFactory, String node_label){
+        String run_nothing = """echo -e "Exec node IP:\${OPENSTACK_PUBLIC_IP}\\n"        
+        """
+        def job=dslFactory.job("testPerform/origin-checkout"){
+            description("Monitor the code change in Gerrit:")
+
+            parameters {
+
+                // Defines a simple text parameter, where users can enter a string value.
+                stringParam( "BRANCH", "master",  "Which branch to test")
+            }
+
+            label(node_label)
+            multiscm {
+                // Adds a Git SCM source.
+                git {
+
+                    // Adds a remote.
+                    remote {
+
+                        // Sets the remote URL.
+                        url("ssh://jb-ip-tooling-jenkins@code.engineering.redhat.com:22/integration-platform-config")
+                    }
+
+                    // Specify the branches to examine for changes and to build.
+                    branch("master")
+                }
+                git {
+
+                    // Adds a remote.
+                    remote {
+
+                        // Sets the remote URL.
+                        url("ssh://jb-ip-tooling-jenkins@code.engineering.redhat.com:22/integration-platform-tooling")
+                    }
+
+                    // Specify the branches to examine for changes and to build.
+                    branch("master")
+
+                    // Adds additional behaviors.
+                    extensions {
+
+                        // Specifies a local directory (relative to the workspace root) where the Git repository will be checked out.
+                        relativeTargetDirectory('ip-tooling')
+                    }
+                }
+                git {
+
+                    // Adds a remote.
+                    remote {
+
+                        // Sets the remote URL.
+                        url("ssh://jb-ip-tooling-jenkins@code.engineering.redhat.com:22/bxms-jenkins")
+                    }
+
+                    // Specify the branches to examine for changes and to build.
+                    branch("master")
+
+                    // Adds additional behaviors.
+                    extensions {
+
+                        // Specifies a local directory (relative to the workspace root) where the Git repository will be checked out.
+                        relativeTargetDirectory('bxms-jenkins')
+                    }
+                }
+            }
+
+            // build steps
+            steps{
+                shell(run_nothing)
+            }
+            // clear workspace
+            wrappers {
+                preBuildCleanup()
+            }
+
+        }
+
+    }
+    void test_checkout_job_optimize(DslFactory dslFactory, String node_label){
+        String bash_checkout = """
+        git init .
+        git fetch  ssh://jb-ip-tooling-jenkins@code.engineering.redhat.com:22/integration-platform-config +refs/heads/master:refs/remotes/origin/master
+        git checkout FETCH_HEAD
+        mkdir ip-tooling
+        cd ip-tooling
+        git fetch ssh://jb-ip-tooling-jenkins@code.engineering.redhat.com:22/integration-platform-tooling +refs/heads/master:refs/remotes/origin/master
+        git checkout FETCH_HEAD
+        cd ..
+        mkdir bxms-jenkins
+        cd bxms-jenkins
+        git init .
+        git fetch ssh://jb-ip-tooling-jenkins@code.engineering.redhat.com:22/integration-platform-tooling +refs/heads/master:refs/remotes/origin/master
+        git checkout FETCH_HEAD
+        cd ..
+"""
+        String run_nothing = """echo -e "Exec node IP:\${OPENSTACK_PUBLIC_IP}\\n"
+        
+        """
+        def job=dslFactory.job("testPerform/optimize-checkout"){
+            description("Monitor the code change in Gerrit:" )
+
+            parameters {
+
+                // Defines a simple text parameter, where users can enter a string value.
+                stringParam( "BRANCH", "master",  "Which branch to test")
+            }
+
+            label(node_label)
+
+            // build steps
+            steps{
+                shell(bash_checkout)
+                shell(run_nothing)
+            }
+            // clear workspace
+            wrappers {
+                preBuildCleanup()
+            }
+
+        }
+
+    }
 
     Job build(DslFactory dslFactory) {
                     dslFactory.folder("testPerform")
@@ -89,5 +212,8 @@ class TestPerformanceJobBuilder {
                     test_perform_job(dslFactory,"kie-wb-common", "nightly-node-bigmemory",4,2,4)
                     test_perform_job(dslFactory,"kie-wb-common", "nightly-node-bigmemory",6,2,2)
                     test_perform_job(dslFactory,"kie-wb-common", "nightly-node-bigmemory",8,2,6)
+
+                    test_checkout_job_origin(dslFactory,  "nightly-node-bigmemory")
+                    test_checkout_job_optimize(dslFactory,"nightly-node-bigmemory")
     }
 }

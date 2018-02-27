@@ -10,14 +10,24 @@ class CodeReviewJobBuilder {
 
     def dirNameRow
     String jobName
-    String run_mvn_with_pme = '''echo -e "Exec node IP:\${OPENSTACK_PUBLIC_IP}\\n"
+    String run_rhdm_mvn_with_pme = '''echo -e "Exec node IP:\${OPENSTACK_PUBLIC_IP}\\n"
         export MAVEN_OPTS="-Xms2g -Xmx16g -Dgwt-plugin.localWorkers='3' -XX:+UseConcMarkSweepGC -XX:-UseGCOverheadLimit"
         export M3_HOME=~/bin/maven-3.3.9-prod
         export PATH=$M3_HOME/bin:$PATH
         build_date=\$(date --date="1 days ago" -u +'%Y%m%d')
-        mvn -Dversion.override=7.0.0.DR -Dversion.suffix=redhat-\${build_date} \\
+        mvn -Dversion.override=7.0.0.DM -Dversion.suffix=redhat-\${build_date} \\
             -DdependencyManagement=org.kie.rhba.component.management:rhdm-dependency-management-all:7.0.0.DM-redhat-\${build_date} \\
             -DpropertyManagement=org.kie.rhba.component.management:rhdm-dependency-management-all:7.0.0.DM-redhat-\${build_date} \\
+            -s /jboss-prod/m2/bxms-dev-repo-settings.xml  clean install
+        '''
+    String run_rhba_mvn_with_pme = '''echo -e "Exec node IP:\${OPENSTACK_PUBLIC_IP}\\n"
+        export MAVEN_OPTS="-Xms2g -Xmx16g -Dgwt-plugin.localWorkers='3' -XX:+UseConcMarkSweepGC -XX:-UseGCOverheadLimit"
+        export M3_HOME=~/bin/maven-3.3.9-prod
+        export PATH=$M3_HOME/bin:$PATH
+        build_date=\$(date --date="1 days ago" -u +'%Y%m%d')
+        mvn -Dversion.override=7.0.0.BA -Dversion.suffix=redhat-\${build_date} \\
+            -DdependencyManagement=org.kie.rhba.component.management:rhba-dependency-management-all:7.0.0.BA-redhat-\${build_date} \\
+            -DpropertyManagement=org.kie.rhba.component.management:rhba-dependency-management-all:7.0.0.BA-redhat-\${build_date} \\
             -s /jboss-prod/m2/bxms-dev-repo-settings.xml  clean install
         '''
     String run_make_mead="""
@@ -275,14 +285,14 @@ class CodeReviewJobBuilder {
             switch(dirName) {
                 case "codereview":
                     dslFactory.folder(dirName)
-                    create_codereview_job(dslFactory,"bxms-licenses-builder", run_mvn_with_pme,"codereview")
-                    create_codereview_job(dslFactory,"kiegroup/rhap-common",run_mvn_with_pme,"codereview")
-                    create_codereview_job(dslFactory,"kiegroup/rhdm", run_mvn_with_pme,"codereview")
-                    create_codereview_job(dslFactory,"kiegroup/rhbas", run_mvn_with_pme,"codereview")
-                    create_codereview_job(dslFactory,"kiegroup/rhdm-boms", run_mvn_with_pme,"codereview")
-                    create_codereview_job(dslFactory,"kiegroup/rhba-boms", run_mvn_with_pme,"codereview")
-                    create_codereview_job(dslFactory,"rhdm-maven-repo-root", run_mvn_with_pme,"codereview")
-                    create_codereview_job(dslFactory,"rhba-maven-repo-root", run_mvn_with_pme,"codereview")
+                    create_codereview_job(dslFactory,"bxms-licenses-builder", run_rhba_mvn_with_pme,"codereview")
+                    create_codereview_job(dslFactory,"kiegroup/rhap-common",run_rhba_mvn_with_pme,"codereview")
+                    create_codereview_job(dslFactory,"kiegroup/rhdm", run_rhdm_mvn_with_pme,"codereview")
+                    create_codereview_job(dslFactory,"kiegroup/rhbas", run_rhba_mvn_with_pme,"codereview")
+                    create_codereview_job(dslFactory,"kiegroup/rhdm-boms", run_rhdm_mvn_with_pme,"codereview")
+                    create_codereview_job(dslFactory,"kiegroup/rhba-boms", run_rhba_mvn_with_pme,"codereview")
+                    create_codereview_job(dslFactory,"rhdm-maven-repo-root", run_rhdm_mvn_with_pme,"codereview")
+                    create_codereview_job(dslFactory,"rhba-maven-repo-root", run_rhba_mvn_with_pme,"codereview")
                     create_codereview_job(dslFactory,"integration-platform-config", run_make_mead,"codereview")
                     create_codereview_job(dslFactory,"soa/soa-component-management", run_rhba_bom_generator,"codereview", "rhba-")
                     create_codereview_job(dslFactory,"soa/soa-component-management", run_rhdm_bom_generator,"codereview", "rhdm-")
