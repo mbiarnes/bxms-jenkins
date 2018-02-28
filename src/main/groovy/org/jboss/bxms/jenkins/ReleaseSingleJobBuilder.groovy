@@ -42,6 +42,8 @@ class ReleaseSingleJobBuilder {
             def shellScript = """
             # Disable bash tracking mode, too much noise.
             set -x
+            kinit -k -t \${HOME}/bxms-release.keytab bxms-release/prod-ci@REDHAT.COM
+
             echo -e "Exec node IP:\${OPENSTACK_PUBLIC_IP}\\n"
             echo \$CI_TYPE
             echo \$CI_NAME
