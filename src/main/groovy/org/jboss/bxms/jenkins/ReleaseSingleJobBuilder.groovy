@@ -766,8 +766,8 @@ fi
             #build_date is used in nightly build
             appendProp "build_date" "${build_date}"
             
-            appendProp "archive_pvt_report_basename" "bxms-jenkins/streams/${RELEASE_CODE}/release-history/${RELEASE_CODE}-pvt-report
-            appendProp "release_handover_basename" "bxms-jenkins/streams/${RELEASE_CODE}/release-history/release-handover
+            appendProp "archive_pvt_report_basename" "bxms-jenkins/streams/${RELEASE_CODE}/release-history/${RELEASE_CODE}-pvt-report"
+            appendProp "release_handover_basename" "bxms-jenkins/streams/${RELEASE_CODE}/release-history/release-handover"
             appendProp "release_stream_path" "bxms-jenkins/streams/${RELEASE_CODE}"
             if [ "${release_type}" == "nightly" ];then
                 appendProp "product_staging_properties_name" "${product_lowercase}-${build_date}.properties"
