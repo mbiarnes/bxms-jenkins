@@ -80,7 +80,7 @@ MVN_DEP_REPO=nexus-release::default::file://${maven_repo} REPO_GROUP=${repo_grou
                     }
 
                     if (section.containsKey("jvmOpts".toLowerCase())
-                            && (section.get("jvmOpts".toLowerCase()).contains("Big"))) {
+                            && (section.get("jvmOpts".toLowerCase()).contains("big"))) {
                         // Groovy gets the original file, so detect BigMem is OK
                         label("nightly-node-bigmemory")
                     } else {
