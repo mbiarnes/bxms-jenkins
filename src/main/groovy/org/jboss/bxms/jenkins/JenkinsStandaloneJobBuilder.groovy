@@ -81,6 +81,8 @@ MVN_DEP_REPO=nexus-release::default::file://${maven_repo} REPO_GROUP=${repo_grou
                     parameters {
                         // Defines a simple text parameter, where users can enter a string value.
                         booleanParam('DEBUG', false, 'Open Debug Log')
+                        stringParam('CONFIG_REFS','+refs/heads/master:refs/remotes/origin/master','The refs of integration-platform-config you want to pull,defautl master.')
+                        stringParam('TOOLING_REFS','+refs/heads/master:refs/remotes/origin/master','The refs of integration-platform-tooling you want to pull,defautl master.')
                     }
 
                     if (section.containsKey("jvmOpts".toLowerCase())
@@ -101,9 +103,10 @@ MVN_DEP_REPO=nexus-release::default::file://${maven_repo} REPO_GROUP=${repo_grou
 
                                 // Sets the remote URL.
                                 url("ssh://jb-ip-tooling-jenkins@code.engineering.redhat.com:22/integration-platform-config")
+                                refspec("\$CONFIG_REFS")
                             }
                             // Specify the branches to examine for changes and to build.
-                            branch("master")
+                            branch("FETCH_HEAD")
                         }
 
                         // Adds a Git SCM source.
@@ -114,10 +117,11 @@ MVN_DEP_REPO=nexus-release::default::file://${maven_repo} REPO_GROUP=${repo_grou
 
                                 // Sets the remote URL.
                                 url("ssh://jb-ip-tooling-jenkins@code.engineering.redhat.com:22/integration-platform-tooling")
+                                refspec("\$TOOLING_REFS")
                             }
 
                             // Specify the branches to examine for changes and to build.
-                            branch("master")
+                            branch("FETCH_HEAD")
 
                             // Adds additional behaviors.
                             extensions {
@@ -155,6 +159,9 @@ MVN_DEP_REPO=nexus-release::default::file://${maven_repo} REPO_GROUP=${repo_grou
                             }
                             onlyIfBuildFails(false)
                             onlyIfBuildSucceeds(true)
+                        }
+                        postBuildTask {
+                            task('Build step \'Publish JUnit test result report\' changed build result to UNSTABLE', 'python ip-tooling/bxms-utility/findErrorMsgFromJunitTestResult.py -url http://10.8.248.195 -p 9200 -d . -pl \$(echo \${JOB_NAME} |sed "s/\${JOB_BASE_NAME}//g") -j \$JOB_BASE_NAME\$BUILD_DISPLAY_NAME -jurl \$BUILD_URL')
                         }
                     }
                 }
