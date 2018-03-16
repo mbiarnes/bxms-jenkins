@@ -88,6 +88,31 @@ class ReleasePipelineJobBuilder {
 
 
     }
+    String stageBuilder(String pipelineScript,String[] stages,int index,String stageName,String fullJobName){
+
+        pipelineScript=pipelineScript+"   stage('"+stageName+"'){\n     if(startstage.matches('"+stageName+"')){flag=1}\n      if(flag==1){\n"
+        if(isParaExists(stages[index])){
+          pipelineScript=pipelineScript+"    build(job : '"+ fullJobName +"',parameters: "+ getStagePara(stages[index])+")\n"
+        }else if(!isParaExists(stages[index])){
+          if(stageName.matches("Input")){
+            pipelineScript=pipelineScript+"    input 'continue the work?'\n    echo 'continue to next stage.'\n"
+          }else if(stageName.toLowerCase().matches("pause")){
+            pipelineScript=pipelineScript+"\n    hook = registerWebhook()\n    echo 'Waiting for trigger on \${hook.getURL()}.'\n    sh \"sed -i \'/^register_web_hook=/d\' \${CI_PROPERTIES_FILE} && echo \\\"register_web_hook=\${hook.getURL()}\\\" >>\${CI_PROPERTIES_FILE}\"\n    data = waitForWebhook hook\n    if(data.trim() != \"OK\"){\n     error(\"CI trigger return FAIL,force job stop...\")\n    }\n"
+          }else{
+            pipelineScript=pipelineScript+"    build job :'"+ fullJobName +"'\n"
+          }
+        }
+        pipelineScript=pipelineScript+"    }\n    }\n"
+        return pipelineScript
+
+    }
+    String getFulljobName(String stageName,String product_job_prefix){
+        String fullJobName = stageName
+        if (! fullJobName.endsWith("pipeline")) {
+            fullJobName = product_job_prefix + stageName
+        }
+        return fullJobName
+    }
     String getPipelineScript(String file_content,String product_job_prefix){
       String pipelineScript="def startstage=\"\${STARTSTAGE}\"\ndef flag=0\nnode('release-pipeline')\n{\n"
       String[] lineSeq=file_content.split('\n')
@@ -95,29 +120,22 @@ class ReleasePipelineJobBuilder {
         if (lineSeq[j].matches("steps(.*)")) {
           String rightline=lineSeq[j].substring(lineSeq[j].indexOf(":")+1)
           String[] stages=rightline.split(' ')
-          pipelineScript=pipelineScript+" def branches"+j+"=[:]\n"
-          for(int i=0;i<stages.size();i++){
-              String stageName=getStageName(stages[i])
-              String fullJobName = stageName
-              if (! fullJobName.endsWith("pipeline")) {
-                  fullJobName = product_job_prefix + stageName
-              }
-            pipelineScript=pipelineScript+"  branches"+j+"["+i+"]={\n   stage('"+stageName+"'){\n     if(startstage.matches('"+stageName+"')){flag=1}\n      if(flag==1){\n"
-            if(isParaExists(stages[i])){
-              pipelineScript=pipelineScript+"    build(job : '"+ fullJobName +"',parameters: "+ getStagePara(stages[i])+")\n"
-            }else if(!isParaExists(stages[i])){
-              if(stageName.matches("Input")){
-                pipelineScript=pipelineScript+"    input 'continue the work?'\n    echo 'continue to next stage.'\n"
-              }else if(stageName.toLowerCase().matches("pause")){
-                pipelineScript=pipelineScript+"\n    hook = registerWebhook()\n    echo 'Waiting for trigger on \${hook.getURL()}.'\n    sh \"sed -i \'/^register_web_hook=/d\' \${CI_PROPERTIES_FILE} && echo \\\"register_web_hook=\${hook.getURL()}\\\" >>\${CI_PROPERTIES_FILE}\"\n    data = waitForWebhook hook\n    if(data.trim() != \"OK\"){\n     error(\"CI trigger return FAIL,force job stop...\")\n    }\n"
-              }else{
-                pipelineScript=pipelineScript+"    build job :'"+ fullJobName +"'\n"
-              }
-            }
-            pipelineScript=pipelineScript+"     }\n    }\n    }\n"
-          }
-          pipelineScript=pipelineScript+"  parallel branches"+j+"\n"
+          if(stages.size()>1){
+            pipelineScript=pipelineScript+" def branches"+j+"=[:]\n"
+            for(int i=0;i<stages.size();i++){
+                String stageName=getStageName(stages[i])
+                String fullJobName=getFulljobName(stageName,product_job_prefix)
+                pipelineScript=pipelineScript+"  branches"+j+"["+stageName+"]={\n"
+                pipelineScript=stageBuilder(pipelineScript,stages,i,stageName,fullJobName)
+                pipelineScript=pipelineScript+"     }\n"
 
+            }
+              pipelineScript=pipelineScript+"  parallel branches"+j+"\n"
+          }else if(stages.size()==1){
+              String stageName=getStageName(stages[0])
+              String fullJobName=getFulljobName(stageName,product_job_prefix)
+              pipelineScript=stageBuilder(pipelineScript,stages,0,stageName,fullJobName)
+          }
         }
       }
       pipelineScript=pipelineScript+"}\n"

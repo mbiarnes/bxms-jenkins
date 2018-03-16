@@ -279,33 +279,40 @@ class JenkinsAllJobBuilderPipeline {
       def stageNames='''+stageNameList+'''
       def runStageAfter="${RUNSTAGEAFTER}"
       def yourchoose="${STARTSTAGE}"
+      def returnonestage(stageNames,insidecount,insidej,yourchoose,runStageAfter,release_code){
+          stage(stageNames.get(insidecount).get(insidej)){
+                if(yourchoose.matches(stageNames.get(insidecount).get(insidej)) ){
+                    flag=1
+                }
+                if((flag==1 && runStageAfter.matches("true"))|| yourchoose.matches(stageNames.get(insidecount).get(insidej))){
+
+                    def jobresult=build(job : "y-" + release_code + "-" + stageNames.get(insidecount).get(insidej), propagate: false).getResult().trim()
+                    if(jobresult == 'UNSTABLE'|| jobresult == 'SUCCESS'){
+                        currentBuild.result = 'SUCCESS'
+                    }else{
+                        currentBuild.result = 'FAILURE'
+                        error("Job ${stageNames.get(insidecount).get(insidej)} Build FAILED!")
+                    }
+
+                }
+          }
+      }
       node ('release-pipeline'){
           int flag=0
           for(int count=0;count<stageNames.size();count++){
             def insidecount=count
-            def branches=[:]
-            for(int j=0;j<stageNames.get(insidecount).size();j++){
-              def insidej=j
-              branches["${insidej}"]={
-                stage(stageNames.get(insidecount).get(insidej)){
-                      if(yourchoose.matches(stageNames.get(insidecount).get(insidej)) ){
-                          flag=1
-                      }
-                      if((flag==1 && runStageAfter.matches("true"))|| yourchoose.matches(stageNames.get(insidecount).get(insidej))){
-
-                          def jobresult=build(job : "y-" + release_code + "-" + stageNames.get(insidecount).get(insidej), propagate: false).getResult().trim()
-                          if(jobresult == 'UNSTABLE'|| jobresult == 'SUCCESS'){
-                              currentBuild.result = 'SUCCESS'
-                          }else{
-                              currentBuild.result = 'FAILURE'
-                              error("Job ${stageNames.get(insidecount).get(insidej)} Build FAILED!")
-                          }
-
-                      }
+            if(stageNames.get(insidecount).size()==1){
+                returnonestage(stageNames,insidecount,0,yourchoose,runStageAfter,release_code)
+            }else{
+                def branches=[:]
+                for(int j=0;j<stageNames.get(insidecount).size();j++){
+                  def insidej=j
+                  branches["${stageNames.get(insidecount).get(insidej)}"]={
+                    returnonestage(stageNames,insidecount,insidej,yourchoose,runStageAfter,release_code)
+                  }
                 }
-              }
+                parallel branches
             }
-            parallel branches
           }
 
         }

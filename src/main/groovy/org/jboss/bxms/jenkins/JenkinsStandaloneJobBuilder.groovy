@@ -161,7 +161,7 @@ MVN_DEP_REPO=nexus-release::default::file://${maven_repo} REPO_GROUP=${repo_grou
                             onlyIfBuildSucceeds(true)
                         }
                         postBuildTask {
-                            task('Build step \'Publish JUnit test result report\' changed build result to UNSTABLE', 'python ip-tooling/bxms-utility/findErrorMsgFromJunitTestResult.py -url http://10.8.248.195 -p 9200 -d . -pl \$(echo \${JOB_NAME} |sed "s/\${JOB_BASE_NAME}//g") -j \$JOB_BASE_NAME\$BUILD_DISPLAY_NAME -jurl \$BUILD_URL')
+                            task('T E S T S', 'python ip-tooling/bxms-utility/findErrorMsgFromJunitTestResult.py -url http://10.8.248.195 -p 9200 -d . -pl \$(echo \${JOB_NAME} |sed "s/\${JOB_BASE_NAME}//g") -j \$JOB_BASE_NAME\$BUILD_DISPLAY_NAME -jurl \$BUILD_URL')
                         }
                     }
                 }
