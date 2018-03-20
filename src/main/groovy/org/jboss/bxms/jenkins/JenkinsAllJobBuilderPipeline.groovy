@@ -279,7 +279,7 @@ class JenkinsAllJobBuilderPipeline {
       def stageNames='''+stageNameList+'''
       def runStageAfter="${RUNSTAGEAFTER}"
       def yourchoose="${STARTSTAGE}"
-      def returnonestage(stageNames,insidecount,insidej,yourchoose,runStageAfter,release_code){
+      int returnonestage(stageNames,insidecount,insidej,yourchoose,runStageAfter,release_code,flag){
           stage(stageNames.get(insidecount).get(insidej)){
                 if(yourchoose.matches(stageNames.get(insidecount).get(insidej)) ){
                     flag=1
@@ -296,19 +296,20 @@ class JenkinsAllJobBuilderPipeline {
 
                 }
           }
+          return flag
       }
       node ('release-pipeline'){
           int flag=0
           for(int count=0;count<stageNames.size();count++){
             def insidecount=count
             if(stageNames.get(insidecount).size()==1){
-                returnonestage(stageNames,insidecount,0,yourchoose,runStageAfter,release_code)
+                flag=returnonestage(stageNames,insidecount,0,yourchoose,runStageAfter,release_code,flag)
             }else{
                 def branches=[:]
                 for(int j=0;j<stageNames.get(insidecount).size();j++){
                   def insidej=j
                   branches["${stageNames.get(insidecount).get(insidej)}"]={
-                    returnonestage(stageNames,insidecount,insidej,yourchoose,runStageAfter,release_code)
+                    flag=returnonestage(stageNames,insidecount,insidej,yourchoose,runStageAfter,release_code,flag)
                   }
                 }
                 parallel branches
