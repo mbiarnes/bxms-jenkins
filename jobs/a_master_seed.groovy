@@ -87,4 +87,4 @@ new CodeReviewJobBuilder(
         jobName:currentJobName
 ).build(this)
 
-new TestPerformanceJobBuilder().build(this)
+//new TestPerformanceJobBuilder().build(this)

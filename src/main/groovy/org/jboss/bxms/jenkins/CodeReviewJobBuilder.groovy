@@ -86,6 +86,9 @@ class CodeReviewJobBuilder {
              -Dmanipulation.disable=true -DprojectMetaSkip=true -DversionSuffixSnapshot=true -Dip.config.sha=\${GERRIT_PATCHSET_REVISION} \
              -Dvictims.updates=offline -B -s /jboss-prod/m2/bxms-dev-repo-settings.xml  install
 """
+    String run_ansible_playbook="""echo -e "Exec node IP:\${OPENSTACK_PUBLIC_IP}\\n"
+    ansible-playbook --vault-password-file=~/.pass site.yml --extra-vars "keypair_name=ansible-config rsa_pub_path=/home/jenkins/.ssh/id_rsa.pub"
+"""
     void create_codereview_job(DslFactory dslFactory, String repoName, String shellScript, String node_label, String jobprefix=""){
 
         def job=dslFactory.job("codereview/" + jobprefix + repoName.replace('/','-')){
@@ -296,6 +299,7 @@ class CodeReviewJobBuilder {
                     create_codereview_job(dslFactory,"integration-platform-config", run_make_mead,"codereview")
                     create_codereview_job(dslFactory,"soa/soa-component-management", run_rhba_bom_generator,"codereview", "rhba-")
                     create_codereview_job(dslFactory,"soa/soa-component-management", run_rhdm_bom_generator,"codereview", "rhdm-")
+                    create_codereview_job(dslFactory,"rhap-ansible-config", run_ansible_playbook,"service-node-9723")
                     break
                 case "utility":
                     dslFactory.folder(dirName)
