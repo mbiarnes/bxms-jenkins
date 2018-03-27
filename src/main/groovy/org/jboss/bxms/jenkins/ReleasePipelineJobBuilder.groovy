@@ -79,7 +79,7 @@ class ReleasePipelineJobBuilder {
                 sandbox()
               }
             }
-            if (cron_val != null && !jobName.matches("codereview/(.*)")) {
+            if (cron_val != null && !jobName.matches("(.*)codereview/(.*)")) {
                 triggers {
                     cron("$cron_val")
                 }

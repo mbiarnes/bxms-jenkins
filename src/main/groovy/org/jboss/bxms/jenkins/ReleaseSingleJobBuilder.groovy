@@ -100,7 +100,7 @@ class ReleaseSingleJobBuilder {
                     appendProp "bxms_patch_nvr" \$bxms_patch_nvr
                     #web_hook=`grep "register_web_hook" \${CI_PROPERTIES_FILE} |cut -d "=" -f2`
                     #curl -X POST -d 'OK' -k \$web_hook
-                    ip-tooling/jira_helper.py -c \${IP_CONFIG_FILE} -a "Patch Brew Build Completed: \$bxms_patch_brew_url nvr:\$bxms_patch_nvr " -f                
+                    ip-tooling/jira_helper.py -c \${IP_CONFIG_FILE} -a "Patch Brew Build Completed: \$bxms_patch_brew_url nvr:\$bxms_patch_nvr " -f
                 fi
             elif [ "\$label" = "rhba-ci" ];then
                 if [ "\$release_status" = "closed" ];then
@@ -143,7 +143,7 @@ adoc_file.close()
     cat \${qe_smoketest_report_path}
     #web_hook=`grep "register_web_hook" \${CI_PROPERTIES_FILE} |cut -d "=" -f2`
     #curl -X POST -d 'OK' -k \$web_hook
-        ip-tooling/jira_helper.py -c \${IP_CONFIG_FILE} -a "QE smoketest returned" -f    
+        ip-tooling/jira_helper.py -c \${IP_CONFIG_FILE} -a "QE smoketest returned" -f
     fi
 elif [ "\$new" = "FAILED" ] && [ "\$method" = "chainmaven" ];then
     ip-tooling/jira_helper.py -c \${IP_CONFIG_FILE} -a "Brewchain failed: \$brewchain_build_url " -f
@@ -165,7 +165,7 @@ fi
                 // Runs a shell script (defaults to sh, but this is configurable) for building the project.
                 shell(shellScript)
             }
-            if(jobName.matches("codereview/(.*)")){
+            if(jobName.matches("(.*)codereview/(.*)")){
                 println "Detected in codereview:Disable monitoring-cimessage"
                 disabled()
             }
@@ -190,7 +190,7 @@ fi
             echo -e "Exec node IP: ${OPENSTACK_PUBLIC_IP}\\n"
             python ip-tooling/template_helper.py -i  ${handover_template_basename}-${product_lowercase}.template -p ${CI_PROPERTIES_FILE} -o  ${release_handover_basename}-${product_lowercase}.adoc
             asciidoctor  ${release_handover_basename}-${product_lowercase}.adoc
-            
+
             git config --global user.email "jb-ip-tooling-jenkins@redhat.com"
             git config --global user.name "bxms-prod"
 
@@ -546,18 +546,18 @@ fi
                 fi
                 sed -i "/^$1/d"  ${product_staging_properties_name} && echo "$1=$2" >>  ${product_staging_properties_name}
             }
-            
+
             if [ "${release_type}" == "nightly" ]; then
                 product_url_prefix="${jenkins_cache_url}/${jenkins_cache_repo}/org/kie/rhba/${product_lowercase}/${product_artifact_version}"
                 product_installer_url="${jenkins_cache_url}/${jenkins_cache_repo}/org/jboss/installer/${product_lowercase}-installer/${product_artifact_version}/${product_lowercase}-installer-${product_artifact_version}.jar"
                 product_filename_common_prefix="${product_lowercase}-${product_artifact_version}"
                 product_installer_name="${product_lowercase}-installer-${product_artifact_version}.jar"
-                                
-            else              
+
+            else
                 product_url_prefix="${rcm_staging_base}/${product_staging_path}"
                 product_filename_common_prefix="${product_lowercase}-${product_upload_version}"
                 product_installer_url="${product_url_prefix}/${product_lowercase}-installer-${product_upload_version}.jar"
-                
+
             fi
             if [ ! -f $product_staging_properties_name ]; then
                 touch $product_staging_properties_name
@@ -575,8 +575,8 @@ fi
             appendProp "${product_lowercase}.kie-server.ee7.latest.url" "${product_url_prefix}/${product_filename_common_prefix}-kie-server-ee7.zip"
             appendProp "${product_lowercase}.addons.latest.url"         "${product_url_prefix}/${product_filename_common_prefix}-add-ons.zip"
             appendProp "${product_lowercase}.installer.latest.url"         "${product_installer_url}"
-            
-                       
+
+
             appendProp "${product_lowercase^^}_VERSION"   ${product_artifact_version}
             appendProp "KIE_VERSION"                ${kie_version}
             appendProp "APPFORMER_VERSION"          ${appformer_version}
@@ -594,7 +594,7 @@ fi
                 sed -e "s=${rcm_staging_base}/${product_lowercase}=${rcm_candidate_base}/${product_lowercase}=g" \
                 ${product_staging_properties_name} > ${product_candidate_properties_name}
             fi
-           
+
             '''
             // Sets a description for the job.
             description("This job is responsible for staging the Brew release deliverable to the RCM staging area.")
@@ -645,7 +645,7 @@ fi
 
             ## Prepare sources for delivery ##
             cd workspace
-                        
+
             rm -rf src/*-license-${product_artifact_version} \
                    src/${product_lowercase}-maven-repo-root-${product_artifact_version} \
                    src/errai-parent-${errai_version} \
@@ -754,7 +754,7 @@ fi
                 appendProp "ci_properties_file" ${CI_PROPERTIES_FILE}
                 appendProp "build_cfg" ${IP_CONFIG_FILE}
             fi
-            source ${CI_PROPERTIES_FILE}            
+            source ${CI_PROPERTIES_FILE}
 
             #Use kerbose to create the release JIRA
             kinit -k -t  ${HOME}/bxms-release.keytab bxms-release/prod-ci@REDHAT.COM
@@ -765,7 +765,7 @@ fi
             appendProp "release_jira_id" $jira_id
             #build_date is used in nightly build
             appendProp "build_date" "${build_date}"
-            
+
             appendProp "archive_pvt_report_basename" "bxms-jenkins/streams/${RELEASE_CODE}/release-history/${RELEASE_CODE}-pvt-report"
             appendProp "release_handover_basename" "bxms-jenkins/streams/${RELEASE_CODE}/release-history/release-handover"
             appendProp "release_stream_path" "bxms-jenkins/streams/${RELEASE_CODE}"
@@ -894,7 +894,7 @@ fi
                         rm -rfv \$_mavenrepo/\$gavpath
                         continue
                     fi
-                    
+
                     import-maven --owner=\$_importowner --tag=\$_importtag \$(find \$_mavenrepo/\$gavpath  -name '*.jar' -o -name '*.pom')||true
                     if [ \$? -ne 0 ] ;then
                         mkdir -p \$_mavenrepo/\$gavpath
@@ -929,7 +929,7 @@ fi
             # echo "`tail -n 5 /tmp/mead_check.log`" > /tmp/mead_check.log # For debug purpose
             sed -ni "/MISSING/p" /tmp/mead_check.log
             sed -i -e "/redhat-/d" -e "/SNAPSHOT/d" -e "/Unknown DIR/d" /tmp/mead_check.log
-          
+
             importToMeadFromLog /tmp/mead_check.log
             echo "JOB DONE"
             '''
@@ -1055,7 +1055,7 @@ fi
             def report_string = '''{"SuccessfulJobs":{"BxMS/BxMS-prod-6.4/smoke-prod/bpms-prod-6.4-blessed-business-central-smoke-container":"SUCCESS","BxMS/BxMS-prod-6.4/smoke-prod/bpms-prod-6.4-blessed-business-central-smoke-db":"SUCCESS","BxMS/BxMS-prod-6.4/smoke-prod/bpms-prod-6.4-blessed-business-central-smoke-was":"SUCCESS","BxMS/BxMS-prod-6.4/smoke-prod/bpms-prod-6.4-blessed-business-central-smoke-wls":"SUCCESS","BxMS/BxMS-prod-6.4/smoke-prod/bpms-prod-6.4-blessed-dashbuilder-smoke-container":"SUCCESS","BxMS/BxMS-prod-6.4/smoke-prod/bpms-prod-6.4-blessed-dashbuilder-smoke-was":"SUCCESS","BxMS/BxMS-prod-6.4/smoke-prod/bpms-prod-6.4-blessed-integration-smoke-container":"SUCCESS","BxMS/BxMS-prod-6.4/smoke-prod/bpms-prod-6.4-blessed-quickstarts-smoke":"SUCCESS","BxMS/BxMS-prod-6.4/smoke-prod/bpms-prod-6.4-blessed-united-exec-servers-smoke":"SUCCESS","BxMS/BxMS-prod-6.4/smoke-prod/bpms-prod-6.4-blessed-wb-rest-smoke-container":"SUCCESS","BxMS/BxMS-prod-6.4/smoke-prod/bpms-prod-6.4-blessed-wb-rest-smoke-wls":"SUCCESS","BxMS/BxMS-prod-6.4/smoke-prod/brms-prod-6.4-blessed-bre-smoke":"SUCCESS","BxMS/BxMS-prod-6.4/smoke-prod/brms-prod-6.4-blessed-business-central-smoke-container":"SUCCESS","BxMS/BxMS-prod-6.4/smoke-prod/brms-prod-6.4-blessed-business-central-smoke-was":"SUCCESS","BxMS/BxMS-prod-6.4/smoke-prod/brms-prod-6.4-blessed-business-central-smoke-wls":"SUCCESS","BxMS/BxMS-prod-6.4/smoke-prod/brms-prod-6.4-blessed-quickstarts-smoke":"SUCCESS","BxMS/BxMS-prod-6.4/smoke-prod/brms-prod-6.4-blessed-wb-rest-smoke-was":"SUCCESS","BxMS/BxMS-prod-6.4/smoke-prod/bxms-prod-6.4-blessed-inc-maven-repo-testsuite-smoke":"SUCCESS","BxMS/BxMS-prod-6.4/smoke-prod/bxms-prod-6.4-blessed-maven-repo-testsuite-smoke":"SUCCESS"},"UnsuccessfulJobs":{"BxMS/BxMS-prod-6.4/smoke-prod/bpms-prod-6.4-blessed-clustering-smoke":"FAILURE","BxMS/BxMS-prod-6.4/smoke-prod/bpms-prod-6.4-blessed-dashbuilder-smoke-db":"UNSTABLE","BxMS/BxMS-prod-6.4/smoke-prod/brms-prod-6.4-blessed-exec-server-smoke-container":"FAILURE","BxMS/BxMS-prod-6.4/smoke-prod/brms-prod-6.4-blessed-wb-rest-smoke-container":"FAILURE"},"Statistics":{"TotaBuildRuns":23,"SuccessfulBuilds":19,"UnsuccessfulBuilds":4}}'''
                                 // Sets a description for the job.
             description("This job is responsible for mocking a CI message triggered returned the smoketest result from QE.")
-            
+
             // Adds build steps to the jobs.
             steps {
                 shell(shellScript)
@@ -1147,7 +1147,7 @@ fi
                 // Runs a shell script (defaults to sh, but this is configurable) for building the project.
                 shell(shellScript)
             }
-            if(jobName.matches("codereview/(.*)")){
+            if(jobName.matches("(.*)codereview/(.*)")){
                 println "Detected in codereview:Disable promote-release"
                 disabled()
             }
@@ -1203,7 +1203,7 @@ fi
     void pvtTest(DslFactory dslFactory){
         def job=dslFactory.job(release_code + "-release-pipeline/" + release_code +"-"+ "pvt-test"){
             String shellScript = '''
-            echo -e "Exec node IP: ${OPENSTACK_PUBLIC_IP}\\n"            
+            echo -e "Exec node IP: ${OPENSTACK_PUBLIC_IP}\\n"
             git clone https://github.com/project-ncl/pvt.git
             cd pvt
             ~/bin/maven-3.3.9-prod/bin/mvn -Dmaven.repo.local=${dev_maven_repo} \
@@ -1378,7 +1378,7 @@ fi
                 // Runs a shell script (defaults to sh, but this is configurable) for building the project.
                 shell(shellScript)
             }
-            if(jobName.matches("codereview/(.*)")){
+            if(jobName.matches("(.*)codereview/(.*)")){
                 println "Detected in codereview:Disable send-review-notification-mail"
                 disabled()
             }
@@ -1443,7 +1443,7 @@ fi
             #Dynamic variable of bash
             product_assembly_maven_repo_url=${product_lowercase}_assembly_maven_repo_url
             product_installer_maven_repo_url=${product_lowercase}_installer_maven_repo_url
-            
+
             ip-tooling/maven-artifact-handler.py --version=${product_artifact_version} --override-version ${product_upload_version} \\
                 --maven-repo ${!product_assembly_maven_repo_url} --deliverable ${product_deliverable_template} --output ${product_lowercase}
             #Download installer
@@ -1452,7 +1452,7 @@ fi
             #Download runtime gav txt
             ip-tooling/maven-artifact-handler.py --version=${product_artifact_version} --override-version ${product_upload_version} \\
                 --maven-repo ${license_builder_maven_repo_url} --deliverable ${product_deliverable_template} --output ${product_lowercase}
-                  
+
             rename license-builder \${product_lowercase}-runtime-GAV \${product_lowercase}/*.txt
             cp ${IP_CONFIG_FILE} ${product_lowercase}/
             '''
@@ -1625,12 +1625,15 @@ fi
 
             echo "Brewchain Build URL: $brewchain_build_url"
 
-            sed -i '/^brewchain_build_url=/d' ${CI_PROPERTIES_FILE} && echo "brewchain_build_url=$brewchain_build_url" >>${CI_PROPERTIES_FILE}            
+            sed -i '/^brewchain_build_url=/d' ${CI_PROPERTIES_FILE} && echo "brewchain_build_url=$brewchain_build_url" >>${CI_PROPERTIES_FILE}
             ip-tooling/jira_helper.py -c ${IP_CONFIG_FILE} -a "Brew chainbuild is trigger at: ${brewchain_build_url}" -f
             '''
             // Sets a description for the job.
             description("This job is responsible for initialising the Brew chain build.")
-
+            if(jobName.matches("(.*)codereview/(.*)")&& !release_code.matches("(.*)-test(.*)")){
+                println "Detected in codereview:Disable trigger-qe-smoketest"
+                disabled()
+            }
             // Adds build steps to the jobs.
             steps {
 
@@ -1648,13 +1651,13 @@ fi
             def shellScript = '''
             kinit -k -t  ${HOME}/bxms-release.keytab bxms-release/prod-ci@REDHAT.COM
 
-            
+
             ip-tooling/jira_helper.py -c ${IP_CONFIG_FILE} -a "QE smoketest is triggered by CI message. Build URL: ${qe_smoketest_job_url}" -f
             '''
             // Sets a description for the job.
             description("This job is responsible for triggering QE smoke test.")
 
-            if(jobName.matches("codereview/(.*)")){
+            if(jobName.matches("(.*)codereview/(.*)")){
                 println "Detected in codereview:Disable trigger-qe-smoketest"
                 disabled()
             }
@@ -1722,7 +1725,7 @@ fi
             if [ "$release_status" = "closed" ];then
                     exit 0
             fi
-            
+
             wget ${product_staging_properties_url} -O ${product_staging_properties_name}
 
             echo -e "import sys,os,re;

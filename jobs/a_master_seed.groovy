@@ -6,7 +6,7 @@ def currentJobName="${JOB_NAME}"
 def gerritRefspec="+refs/heads/master:refs/remotes/origin/master"
 // this is a git point to the refs we used in gerritRefspec which git would fetched
 def gerritBranch="master"
-if (currentJobName.matches("codereview/(.*)")) {
+if (currentJobName.matches("(.*)codereview/(.*)")) {
     println "Detected in codereview folder, reset GERRIT_REFSPEC/GERRIT_BRANCH:"
     gerritBranch ="FETCH_HEAD"
     // if triggered by manul, to avoid build fail

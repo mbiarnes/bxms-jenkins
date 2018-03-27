@@ -39,7 +39,7 @@ class CodeReviewJobBuilder {
         echo \$changed_cfgs
         for cfg in \${changed_cfgs[*]}
         do
-            echo "Changes found in \${cfg}, validating..."            
+            echo "Changes found in \${cfg}, validating..."
             if [[ "\$cfg" =~ -dev ]];then
                 build_date=\$(date --date='1 days ago' -u +'%Y%m%d')
                 sed -i "s#-SNAPSHOT#-\${build_date}#g" \${cfg}
@@ -47,12 +47,12 @@ class CodeReviewJobBuilder {
             if [[ "\$cfg" =~ ^rhdm ]];then
                 product_name="rhdm"
             elif [[ "\$cfg" =~ ^rhba ]];then
-                product_name="rhba"            
+                product_name="rhba"
             fi
             VALIDATE_ONLY=true LOCAL=1 REPO_GROUP=MEAD+JENKINS+JBOSS+CENTRAL CFG=./\${cfg} MVN_LOCAL_REPO=/jboss-prod/m2/bxms-7.0-nightly POMMANIPEXT=\${product_name}-build-bom make -f Makefile.BRMS \${product_name}-installer
         done
         """
-    String run_rhba_bom_generator="""echo -e "Exec node IP:\${OPENSTACK_PUBLIC_IP}\\n"            
+    String run_rhba_bom_generator="""echo -e "Exec node IP:\${OPENSTACK_PUBLIC_IP}\\n"
             export M3_HOME=~/bin/maven-3.3.9-prod
             export PATH=\$M3_HOME/bin:\$PATH
             build_date=\$(date --date="1 days ago" -u +'%Y%m%d')
@@ -144,7 +144,7 @@ class CodeReviewJobBuilder {
                 preBuildCleanup()
             }
 
-            if(jobName.matches("codereview/(.*)")){
+            if(jobName.matches("(.*)codereview/(.*)")){
                 println "Detected in codereview:Disable jobs in codereview's codereview & utility."
                 disabled()
             }
@@ -304,7 +304,7 @@ class CodeReviewJobBuilder {
                 break
                 // default will create the Reviewer's master seed
                 default:
-                    if(!jobName.matches("codereview/(.*)")){
+                    if(!jobName.matches("(.*)codereview/(.*)")){
                         dslFactory.folder("codereview/"+dirName)
                         createReviwerMasterSeed(dslFactory,dirName)
                     }
