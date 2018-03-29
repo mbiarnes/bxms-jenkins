@@ -89,7 +89,6 @@ class ReleasePipelineJobBuilder {
 
     }
     String stageBuilder(String pipelineScript,String[] stages,int index,String stageName,String fullJobName){
-
         pipelineScript=pipelineScript+"   stage('"+stageName+"'){\n     if(startstage.matches('"+stageName+"')){flag=1}\n      if(flag==1){\n"
         if(isParaExists(stages[index])){
           pipelineScript=pipelineScript+"    build(job : '"+ fullJobName +"',parameters: "+ getStagePara(stages[index])+")\n"
@@ -108,8 +107,16 @@ class ReleasePipelineJobBuilder {
     }
     String getFulljobName(String stageName,String product_job_prefix){
         String fullJobName = stageName
-        if (! fullJobName.endsWith("pipeline")) {
+        if (!fullJobName.startsWith("../")) {
             fullJobName = product_job_prefix + stageName
+        }else{
+            String abs_job_path=""
+            String job_base_name=""
+            if (jobName.lastIndexOf("/")!=-1){
+                fullJobName=jobName.substring(0,jobName.lastIndexOf("/")) +"/" + stageName.substring(3, stageName.length())
+            }else{
+                fullJobName= stageName.substring(3, stageName.length())
+            }
         }
         return fullJobName
     }
@@ -125,7 +132,10 @@ class ReleasePipelineJobBuilder {
             for(int i=0;i<stages.size();i++){
                 String stageName=getStageName(stages[i])
                 String fullJobName=getFulljobName(stageName,product_job_prefix)
-                pipelineScript=pipelineScript+"  branches"+j+"["+stageName+"]={\n"
+                //Shorten the stageName shown in Jenkins UI
+                if (stageName.startsWith("../"))
+                    stageName=stageName.substring(stageName.lastIndexOf("/"))
+                pipelineScript=pipelineScript+"  branches"+j+"['"+stageName+"']={\n"
                 pipelineScript=stageBuilder(pipelineScript,stages,i,stageName,fullJobName)
                 pipelineScript=pipelineScript+"     }\n"
 
@@ -134,6 +144,9 @@ class ReleasePipelineJobBuilder {
           }else if(stages.size()==1){
               String stageName=getStageName(stages[0])
               String fullJobName=getFulljobName(stageName,product_job_prefix)
+              //Shorten the stageName shown in Jenkins UI
+              if (stageName.startsWith("../"))
+                  stageName=stageName.substring(stageName.lastIndexOf("/"))
               pipelineScript=stageBuilder(pipelineScript,stages,0,stageName,fullJobName)
           }
         }

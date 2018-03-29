@@ -61,7 +61,7 @@ class JenkinsAllJobBuilderPipeline {
       dslFactory.folder(release_code + "-" + job_type + "-release-pipeline")
       String _cfg = cfg_filename
 
-      dslFactory.pipelineJob(release_code + "-" + job_type + "-release-pipeline/b-" + release_code + "-jenkinsbuild-pipeline") {
+      dslFactory.pipelineJob(release_code + "-" + job_type + "-release-pipeline/" + release_code + "-" + job_type + "-jenkinsbuild-pipeline") {
             it.description "This job is pipeline job for " + release_code + " " +  job_type + ". "
             logRotator {
                 numToKeep 8

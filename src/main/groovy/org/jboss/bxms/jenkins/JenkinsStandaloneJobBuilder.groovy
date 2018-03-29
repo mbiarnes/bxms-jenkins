@@ -18,7 +18,8 @@ class JenkinsStandaloneJobBuilder {
     String cfg_file
 
     Map<String, String> maven_repo_map=[
-        "rhdm":"/jboss-prod/m2/bxms-7.0-", \
+        "rhdm-71":"/jboss-prod/m2/bxms-7.0-", \
+        "rhba-70":"/jboss-prod/m2/bxms-7.0-", \
         "rhba":"/jboss-prod/m2/bxms-7.0-", \
         "rhdm-test":"/jboss-prod/m2/bxms-7.0-"]
     Map<String, String> repo_group_map=["milestone":"MEAD", "nightly":"MEAD+JENKINS+JBOSS+CENTRAL"]
@@ -54,7 +55,7 @@ echo -e "Exec node IP:\${OPENSTACK_PUBLIC_IP}\\n"
 #Patch the MEAD_simulator.sh for preventing run hudson archive and deploy check
 sed -i 's/cd "\$_ARCHIVE"/exit \$_ERR;cd "\$_ARCHIVE"/' ip-tooling/MEAD_simulator.sh
 if [ ! -z \${build_date} ]; then
-    sed -i "s#-SNAPSHOT#-\${build_date}#g" ${cfg_filename}
+    sed -i "s#-SNAPSHOT#-\${build_date}#g" rh*-dev.cfg
 fi
 if [ "${job_type}" == "nightly" ]; then
     sed -i "s#ip.config.sha=#cfg.url.template=file://`pwd`/{0},ip.config.sha=#g" ${cfg_filename}

@@ -21,7 +21,7 @@ import spock.lang.Unroll
 class JobScriptsSpec extends Specification {
     // add in a sample environment for testing
     def enviMap = [
-    'RELEASE_CODE':'rhdm-test',
+    'RELEASE_CODE':'rhdm-71-test',
     'pipelineSeqFile':'release_pipeline_seq.cfg',
     'CI_PROPERTIES_FILE':'rhdm-test-jenkins-ci.properties',
     'IP_CONFIG_FILE':'rhdm-test.cfg',
