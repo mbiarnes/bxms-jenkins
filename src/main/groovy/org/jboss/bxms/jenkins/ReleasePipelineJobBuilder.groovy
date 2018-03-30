@@ -134,7 +134,7 @@ class ReleasePipelineJobBuilder {
                 String fullJobName=getFulljobName(stageName,product_job_prefix)
                 //Shorten the stageName shown in Jenkins UI
                 if (stageName.startsWith("../"))
-                    stageName=stageName.substring(stageName.lastIndexOf("/"))
+                    stageName=stageName.substring(stageName.lastIndexOf("/")+1)
                 pipelineScript=pipelineScript+"  branches"+j+"['"+stageName+"']={\n"
                 pipelineScript=stageBuilder(pipelineScript,stages,i,stageName,fullJobName)
                 pipelineScript=pipelineScript+"     }\n"
@@ -146,7 +146,7 @@ class ReleasePipelineJobBuilder {
               String fullJobName=getFulljobName(stageName,product_job_prefix)
               //Shorten the stageName shown in Jenkins UI
               if (stageName.startsWith("../"))
-                  stageName=stageName.substring(stageName.lastIndexOf("/"))
+                  stageName=stageName.substring(stageName.lastIndexOf("/")+1)
               pipelineScript=stageBuilder(pipelineScript,stages,0,stageName,fullJobName)
           }
         }
