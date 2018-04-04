@@ -14,7 +14,7 @@ class TestPerformanceJobBuilder {
             MVN_LOCAL_REPO=/jboss-prod/m2/bxms-7.0-nightly MVN_SETTINGS=/jboss-prod/m2/bxms-dev-repo-settings.xml \\
             ip-tooling/MEAD_simulator.sh maven-build jb-bxms-7.0-maven-build -m3.3.9-prod \\
             -J-Xms1g -J-Xmx${mem}g -M-T${processor} -Dmaven.test.failure.ignore=true -Dgwt.compiler.localWorkers=${gwtworker} \\
-            -M-Drevapi.skip=true -DdependencyManagement=org.kie.rhba.component.management:rhba-dependency-management-all:7.0.0.BA-redhat-\${build_date} \\
+            -M-Drevapi.skip=true -DdependencyManagement=org.kie.rhba.component.management:rhpam-dependency-management-all:7.0.0.BA-redhat-\${build_date} \\
             -DenforceSkip=false -Dfull=true -Dmaven.test.failure.ignore=true -DoverrideTransitive=false -Dproductized=true \\
             -DprojectMetaSkip=true -DpropertyManagement= -DrepoReportingRemoval=true -DstrictAlignment=false -DversionOverride=7.7.0 \\
             -DversionSuffix=redhat-${processor}${mem}${gwtworker}-\${build_date} -DversionSuffixSnapshot=true -Dvictims.updates=offline \\
@@ -79,7 +79,7 @@ class TestPerformanceJobBuilder {
 
     }
     void test_checkout_job_origin(DslFactory dslFactory, String node_label){
-        String run_nothing = """echo -e "Exec node IP:\${OPENSTACK_PUBLIC_IP}\\n"        
+        String run_nothing = """echo -e "Exec node IP:\${OPENSTACK_PUBLIC_IP}\\n"
         """
         def job=dslFactory.job("testPerform/origin-checkout"){
             description("Monitor the code change in Gerrit:")
@@ -175,7 +175,7 @@ class TestPerformanceJobBuilder {
         cd ..
 """
         String run_nothing = """echo -e "Exec node IP:\${OPENSTACK_PUBLIC_IP}\\n"
-        
+
         """
         def job=dslFactory.job("testPerform/optimize-checkout"){
             description("Monitor the code change in Gerrit:" )

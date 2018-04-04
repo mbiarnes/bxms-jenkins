@@ -20,22 +20,22 @@ class CodeReviewJobBuilder {
             -DpropertyManagement=org.kie.rhba.component.management:rhdm-dependency-management-all:7.0.0.DM-redhat-\${build_date} \\
             -s /jboss-prod/m2/bxms-dev-repo-settings.xml  clean install
         '''
-    String run_rhba_mvn_with_pme = '''echo -e "Exec node IP:\${OPENSTACK_PUBLIC_IP}\\n"
+    String run_rhpam_mvn_with_pme = '''echo -e "Exec node IP:\${OPENSTACK_PUBLIC_IP}\\n"
         export MAVEN_OPTS="-Xms2g -Xmx16g -Dgwt-plugin.localWorkers='3' -XX:+UseConcMarkSweepGC -XX:-UseGCOverheadLimit"
         export M3_HOME=~/bin/maven-3.3.9-prod
         export PATH=$M3_HOME/bin:$PATH
         build_date=\$(date --date="1 days ago" -u +'%Y%m%d')
-        mvn -Dversion.override=7.0.0.BA -Dversion.suffix=redhat-\${build_date} \\
-            -DdependencyManagement=org.kie.rhba.component.management:rhba-dependency-management-all:7.0.0.BA-redhat-\${build_date} \\
-            -DpropertyManagement=org.kie.rhba.component.management:rhba-dependency-management-all:7.0.0.BA-redhat-\${build_date} \\
+        mvn -Dversion.override=7.0.0.PAM -Dversion.suffix=redhat-\${build_date} \\
+            -DdependencyManagement=org.kie.rhba.component.management:rhpam-dependency-management-all:7.0.0.PAM-redhat-\${build_date} \\
+            -DpropertyManagement=org.kie.rhba.component.management:rhpam-dependency-management-all:7.0.0.PAM-redhat-\${build_date} \\
             -s /jboss-prod/m2/bxms-dev-repo-settings.xml  clean install
         '''
     String run_make_mead="""
         # Workaround for variable name conflict between Jenkins and ip-tooling
         unset WORKSPACE
 
-        #changed_cfgs=`git diff --name-only HEAD HEAD~1 | grep -E '(rhba|rhdm).*\\.cfg'`
-        changed_cfgs=`git diff-tree --no-commit-id --name-only -r HEAD| grep -E '(rhba|rhdm).*\\.cfg'`
+        #changed_cfgs=`git diff --name-only HEAD HEAD~1 | grep -E '(rhpam|rhdm).*\\.cfg'`
+        changed_cfgs=`git diff-tree --no-commit-id --name-only -r HEAD| grep -E '(rhpam|rhdm).*\\.cfg'`
         echo \$changed_cfgs
         for cfg in \${changed_cfgs[*]}
         do
@@ -46,18 +46,18 @@ class CodeReviewJobBuilder {
             fi
             if [[ "\$cfg" =~ ^rhdm ]];then
                 product_name="rhdm"
-            elif [[ "\$cfg" =~ ^rhba ]];then
-                product_name="rhba"
+            elif [[ "\$cfg" =~ ^rhpam ]];then
+                product_name="rhpam"
             fi
             VALIDATE_ONLY=true LOCAL=1 REPO_GROUP=MEAD+JENKINS+JBOSS+CENTRAL CFG=./\${cfg} MVN_LOCAL_REPO=/jboss-prod/m2/bxms-7.0-nightly POMMANIPEXT=\${product_name}-build-bom make -f Makefile.BRMS \${product_name}-installer
         done
         """
-    String run_rhba_bom_generator="""echo -e "Exec node IP:\${OPENSTACK_PUBLIC_IP}\\n"
+    String run_rhpam_bom_generator="""echo -e "Exec node IP:\${OPENSTACK_PUBLIC_IP}\\n"
             export M3_HOME=~/bin/maven-3.3.9-prod
             export PATH=\$M3_HOME/bin:\$PATH
             build_date=\$(date --date="1 days ago" -u +'%Y%m%d')
-            cd rhba
-            cfg=rhba-dev.cfg
+            cd rhpam
+            cfg=rhpam-70-dev.cfg
             wget http://git.app.eng.bos.redhat.com/git/integration-platform-config.git/plain/\$cfg
             wget http://git.app.eng.bos.redhat.com/git/integration-platform-config.git/plain/ip-bom.cfg
             wget http://git.app.eng.bos.redhat.com/git/integration-platform-config.git/plain/common.cfg
@@ -74,7 +74,7 @@ class CodeReviewJobBuilder {
             export PATH=\$M3_HOME/bin:\$PATH
             build_date=\$(date --date="1 days ago" -u +'%Y%m%d')
             cd rhdm
-            cfg=rhdm-dev.cfg
+            cfg=rhdm-71-dev.cfg
             wget http://git.app.eng.bos.redhat.com/git/integration-platform-config.git/plain/\$cfg
             wget http://git.app.eng.bos.redhat.com/git/integration-platform-config.git/plain/ip-bom.cfg
             wget http://git.app.eng.bos.redhat.com/git/integration-platform-config.git/plain/common.cfg
@@ -181,7 +181,7 @@ class CodeReviewJobBuilder {
     }
     void utility_pme_update(DslFactory dslFactory, String release_code){
         def job_d = """This job should create a job automatically check and update jenkins-PME-tool"""
-        def job=dslFactory.job(release_code +"/" +'rhba-pme-update'){
+        def job=dslFactory.job(release_code +"/" +'rhpam.pme-update'){
            description("$job_d")
            // check daily
            triggers{
@@ -288,16 +288,16 @@ class CodeReviewJobBuilder {
             switch(dirName) {
                 case "codereview":
                     dslFactory.folder(dirName)
-                    create_codereview_job(dslFactory,"bxms-licenses-builder", run_rhba_mvn_with_pme,"codereview")
-                    create_codereview_job(dslFactory,"kiegroup/rhap-common",run_rhba_mvn_with_pme,"codereview")
+                    create_codereview_job(dslFactory,"bxms-licenses-builder", run_rhpam_mvn_with_pme,"codereview")
+                    create_codereview_job(dslFactory,"kiegroup/rhap-common",run_rhpam_mvn_with_pme,"codereview")
                     create_codereview_job(dslFactory,"kiegroup/rhdm", run_rhdm_mvn_with_pme,"codereview")
-                    create_codereview_job(dslFactory,"kiegroup/rhbas", run_rhba_mvn_with_pme,"codereview")
+                    create_codereview_job(dslFactory,"kiegroup/rhbas", run_rhpam_mvn_with_pme,"codereview")
                     create_codereview_job(dslFactory,"kiegroup/rhdm-boms", run_rhdm_mvn_with_pme,"codereview")
-                    create_codereview_job(dslFactory,"kiegroup/rhba-boms", run_rhba_mvn_with_pme,"codereview")
+                    create_codereview_job(dslFactory,"kiegroup/rhba-boms", run_rhpam_mvn_with_pme,"codereview")
                     create_codereview_job(dslFactory,"rhdm-maven-repo-root", run_rhdm_mvn_with_pme,"codereview")
-                    create_codereview_job(dslFactory,"rhba-maven-repo-root", run_rhba_mvn_with_pme,"codereview")
+                    create_codereview_job(dslFactory,"rhpam-maven-repo-root", run_rhpam_mvn_with_pme,"codereview")
                     create_codereview_job(dslFactory,"integration-platform-config", run_make_mead,"codereview")
-                    create_codereview_job(dslFactory,"soa/soa-component-management", run_rhba_bom_generator,"codereview", "rhba-")
+                    create_codereview_job(dslFactory,"soa/soa-component-management", run_rhpam_bom_generator,"codereview", "rhpam-")
                     create_codereview_job(dslFactory,"soa/soa-component-management", run_rhdm_bom_generator,"codereview", "rhdm-")
                     create_codereview_job(dslFactory,"rhap-ansible-config", run_ansible_playbook,"service-node-9723")
                     break

@@ -49,11 +49,11 @@ def ReleasePipelineBuilder(_release_code, _cfg_file, _properties_file, gerritBra
 }
 
 ReleasePipelineBuilder("rhdm-71", "rhdm.cfg", "/jboss-prod/config/rhdm-71-ci.properties",gerritBranch , gerritRefspec,currentJobName )
-ReleasePipelineBuilder("rhba-70", "rhba.cfg", "/jboss-prod/config/rhba-70-ci.properties",gerritBranch , gerritRefspec,currentJobName )
+ReleasePipelineBuilder("rhpam-70", "rhpam.cfg", "/jboss-prod/config/rhpam-70-ci.properties",gerritBranch , gerritRefspec,currentJobName )
 //ReleasePipelineBuilder("rhdm-71-test", "rhdm-test.cfg", "/jboss-prod/config/rhdm-71-test-ci.properties",gerritBranch , gerritRefspec,currentJobName)
 ReleasePipelineBuilder("rhdm-71-nightly", "rhdm-71-dev.cfg", "/jboss-prod/config/rhdm-71-nightly-ci.properties", gerritBranch , gerritRefspec,currentJobName)
-ReleasePipelineBuilder("rhba-70-nightly", "rhba-70-dev.cfg", "/jboss-prod/config/rhba-70-nightly-ci.properties", gerritBranch , gerritRefspec,currentJobName, "H 17 * * *" )
-ReleasePipelineBuilder("rhba-71-nightly", "rhba-71-dev.cfg", "/jboss-prod/config/rhba-71-nightly-ci.properties", gerritBranch , gerritRefspec,currentJobName, "H 21 * * *" )
+ReleasePipelineBuilder("rhpam-70-nightly", "rhpam-70-dev.cfg", "/jboss-prod/config/rhpam-70-nightly-ci.properties", gerritBranch , gerritRefspec,currentJobName, "H 17 * * *" )
+ReleasePipelineBuilder("rhpam-71-nightly", "rhpam-71-dev.cfg", "/jboss-prod/config/rhpam-71-nightly-ci.properties", gerritBranch , gerritRefspec,currentJobName, "H 21 * * *" )
 
 //Release code is identical to the folder name in streams/
 def JenkinsStandaloneJobsBuilder(_release_code, _properties_file, _cfg_file, _job_type){
@@ -78,8 +78,8 @@ def JenkinsStandaloneJobsBuilder(_release_code, _properties_file, _cfg_file, _jo
     ).build(this)
 }
 JenkinsStandaloneJobsBuilder("rhdm-71", "/jboss-prod/config/rhdm-71-nightly-ci.properties", "rhdm-71-dev.cfg", "nightly" )
-JenkinsStandaloneJobsBuilder("rhba-70", "/jboss-prod/config/rhba-70-nightly-ci.properties", "rhba-70-dev.cfg", "nightly" )
-JenkinsStandaloneJobsBuilder("rhba-71", "/jboss-prod/config/rhba-71-nightly-ci.properties", "rhba-71-dev.cfg", "nightly" )
+JenkinsStandaloneJobsBuilder("rhpam-70", "/jboss-prod/config/rhpam-70-nightly-ci.properties", "rhpam-70-dev.cfg", "nightly" )
+JenkinsStandaloneJobsBuilder("rhpam-71", "/jboss-prod/config/rhpam-71-nightly-ci.properties", "rhpam-71-dev.cfg", "nightly" )
 
 def dirNameRow=["codereview","utility"]
 //if you want to create codereviewer(rzhang)'s directory and his master seed job,do like this:

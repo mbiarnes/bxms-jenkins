@@ -19,8 +19,8 @@ class JenkinsStandaloneJobBuilder {
 
     Map<String, String> maven_repo_map=[
         "rhdm-71":"/jboss-prod/m2/bxms-7.0-", \
-        "rhba-70":"/jboss-prod/m2/bxms-7.0-", \
-        "rhba-71":"/jboss-prod/m2/bxms-7.0-", \
+        "rhpam-70":"/jboss-prod/m2/bxms-7.0-", \
+        "rhpam-71":"/jboss-prod/m2/bxms-7.0-", \
         "rhdm-test":"/jboss-prod/m2/bxms-7.0-"]
     Map<String, String> repo_group_map=["milestone":"MEAD", "nightly":"MEAD+JENKINS+JBOSS+CENTRAL"]
     Job build(DslFactory dslFactory) {
@@ -50,7 +50,7 @@ class JenkinsStandaloneJobBuilder {
 unset WORKSPACE
 echo -e "Exec node IP:\${OPENSTACK_PUBLIC_IP}\\n"
 #Only debug purpose
-#cp /jboss-prod/config/rhba-dev.cfg .
+#cp /jboss-prod/config/rhpam-71-dev.cfg .
 
 #Patch the MEAD_simulator.sh for preventing run hudson archive and deploy check
 sed -i 's/cd "\$_ARCHIVE"/exit \$_ERR;cd "\$_ARCHIVE"/' ip-tooling/MEAD_simulator.sh

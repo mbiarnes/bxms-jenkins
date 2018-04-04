@@ -17,8 +17,8 @@ class JenkinsAllJobBuilder {
         String _cfg = cfg_file
         Map<String, String> maven_repo_map=[
                 "rhdm-71":"/jboss-prod/m2/bxms-7.0-", \
-                "rhba-70":"/jboss-prod/m2/bxms-7.0-", \
-                "rhba-71":"/jboss-prod/m2/bxms-7.0-", \
+                "rhpam-70":"/jboss-prod/m2/bxms-7.0-", \
+                "rhpam-71":"/jboss-prod/m2/bxms-7.0-", \
                 "rhdm-test":"/jboss-prod/m2/bxms-7.0-"]
         String maven_repo = maven_repo_map [release_code] + job_type
 

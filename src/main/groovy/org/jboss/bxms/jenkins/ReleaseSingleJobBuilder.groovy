@@ -70,7 +70,7 @@ class ReleaseSingleJobBuilder {
                     release=`echo \$CI_MESSAGE| python -c "import sys, json; print json.load(sys.stdin)['build']['release']"` 1>/dev/null
                     task_id=`echo \$CI_MESSAGE| python -c "import sys, json; print json.load(sys.stdin)['build']['task_id']"` 1>/dev/null
                     nvr=`echo \$CI_MESSAGE| python -c "import sys, json; print json.load(sys.stdin)['build']['nvr']"` 1>/dev/null
-                if [ "\$CI_NAME" = "org.kie.rhba-rhba" ] || [ "\$CI_NAME" = "org.kie.rhba-rhdm" ] ;then
+                if [ "\$CI_NAME" = "org.kie.rhba-rhpam" ] || [ "\$CI_NAME" = "org.kie.rhba-rhdm" ] ;then
                     \${product_lowercase}_assembly_maven_repo_url="http://download.eng.bos.redhat.com/brewroot/packages/\${name}/\${version}/\${release}/maven/"
                     \${product_lowercase}_assembly_brew_url="https://brewweb.engineering.redhat.com/brew/taskinfo?taskID=\${task_id}"
                     \${product_lowercase}_assembly_nvr="\$nvr"
@@ -81,7 +81,7 @@ class ReleaseSingleJobBuilder {
                 elif [ "\$CI_NAME" = "org.kie.rhba-license-builder" ];then
                     license_builder_maven_repo_url="http://download.eng.bos.redhat.com/brewroot/packages/\${name}/\${version}/\${release}/maven/"
                     appendProp "license_builder_maven_repo_url" \$license_builder_maven_repo_url
-                elif [ "\$CI_NAME" = "org.jboss.installer-rhdm-installer" ] || [ "\$CI_NAME" = "org.jboss.installer-rhba-installer" ];then
+                elif [ "\$CI_NAME" = "org.jboss.installer-rhdm-installer" ] || [ "\$CI_NAME" = "org.jboss.installer-rhpam-installer" ];then
                     \${product_lowercase}_installer_maven_repo_url="http://download.eng.bos.redhat.com/brewroot/packages/\${name}/\${version}/\${release}/maven/"
                     \${product_lowercase}_installer_brew_url="https://brewweb.engineering.redhat.com/brew/taskinfo?taskID=\${task_id}"
                     \${product_lowercase}_installer_nvr="\$nvr"
@@ -174,7 +174,7 @@ fi
                     overrides {
                       topic("Consumer.rh-jenkins-ci-plugin.${randomString}.VirtualTopic.qe.ci.>")
                     }
-                    selector("label='rhba-ci' OR (CI_TYPE='brew-tag' AND ( CI_NAME='org.kie.rhba-rhdm' OR CI_NAME='org.kie.rhba-rhba' OR CI_NAME='org.kie.rhba-license-builder' OR CI_NAME='org.jboss.installer-rhdm-installer' OR CI_NAME='org.jboss.installer-rhba-installer' OR CI_NAME='org.jboss.brms-bpmsuite.patching-patching-tools-parent')) OR (new='FAILED' AND method='chainmaven' AND target='jb-bxms-7.0-maven-candidate')")
+                    selector("label='rhba-ci' OR (CI_TYPE='brew-tag' AND ( CI_NAME='org.kie.rhba-rhdm' OR CI_NAME='org.kie.rhba-rhpam' OR CI_NAME='org.kie.rhba-license-builder' OR CI_NAME='org.jboss.installer-rhdm-installer' OR CI_NAME='org.jboss.installer-rhpam-installer' OR CI_NAME='org.jboss.brms-bpmsuite.patching-patching-tools-parent')) OR (new='FAILED' AND method='chainmaven' AND target='jb-bxms-7.0-maven-candidate')")
                     //providerName('CI Publish')
                 }
             }
@@ -423,10 +423,10 @@ fi
             if [ ! -e download_list.properties ]
             then
                     echo  """#Format G:A::classifier:package_type
-            org.kie.rhba:rhba::business-central-standalone:jar:rhba.business-central.standalone.latest.url
-            org.kie.rhba:rhba::business-central-eap7:zip:rhba.business-central-eap7.latest.url
-            org.kie.rhba:rhba::add-ons:zip:rhba.addons.latest.url
-            org.kie.rhba:rhba::execution-server-ee7:zip:rhba.execution-server.ee7.latest.url""" >>download_list.properties
+            org.kie.rhba:rhpam.:business-central-standalone:jar:rhpam.business-central.standalone.latest.url
+            org.kie.rhba:rhpam.:business-central-eap7:zip:rhpam.business-central-eap7.latest.url
+            org.kie.rhba:rhpam.:add-ons:zip:rhpam.addons.latest.url
+            org.kie.rhba:rhpam.:execution-server-ee7:zip:rhpam.execution-server.ee7.latest.url""" >>download_list.properties
             fi
             maven_repo_url="http://download-node-02.eng.bos.redhat.com/brewroot/repos/${brew_target}/latest/maven/"
             ./maven-artifact-handler.py --version=${product_artifact_version} --override-version ${product_version}${availability} --deliverable download_list.properties --maven-repo ${maven_repo_url} --output BPMS-${product_version}${availability}
@@ -567,7 +567,7 @@ fi
                     appendProp "${product_lowercase}.decision-central.standalone.latest.url"    "$product_url_prefix/${product_filename_common_prefix}-decision-central-standalone.jar"
                     appendProp "${product_lowercase}.decision-central-eap7.latest.url"          "$product_url_prefix/${product_filename_common_prefix}-decision-central-eap7-deployable.zip"
                     ;;
-                rhba )
+                rhpam )
                     appendProp "${product_lowercase}.business-central.standalone.latest.url"    "$product_url_prefix/${product_filename_common_prefix}-business-central-standalone.jar"
                     appendProp "${product_lowercase}.business-central-eap7.latest.url"          "$product_url_prefix/${product_filename_common_prefix}-business-central-eap7-deployable.zip"
             esac
@@ -1791,24 +1791,24 @@ def validateProperties(propfile, keyword, _product_name):
             ret+=assertContain(dic['rhdm.kie-server.ee7.latest.url'], '$product_milestone_version')
             ret+=assertContain(dic['rhdm.installer.latest.url'], '$product_milestone_version')
 
-        if re.match('rhba-.*', propfile) is not None:
-            ret+=isvalidurl(dic['rhba.addons.latest.url'],keyword)
-            ret+=isvalidurl(dic['rhba.kie-server.ee7.latest.url'],keyword)
-            ret+=isvalidurl(dic['rhba.business-central.standalone.latest.url'],keyword)
-            ret+=isvalidurl(dic['rhba.business-central-eap7.latest.url'],keyword)
-            ret+=isvalidurl(dic['rhba.installer.latest.url'],keyword)
+        if re.match('rhpam..*', propfile) is not None:
+            ret+=isvalidurl(dic['rhpam.addons.latest.url'],keyword)
+            ret+=isvalidurl(dic['rhpam.kie-server.ee7.latest.url'],keyword)
+            ret+=isvalidurl(dic['rhpam.business-central.standalone.latest.url'],keyword)
+            ret+=isvalidurl(dic['rhpam.business-central-eap7.latest.url'],keyword)
+            ret+=isvalidurl(dic['rhpam.installer.latest.url'],keyword)
 
             if '${release_type}' != 'nightly':
-                ret+=isvalidurl(dic['rhba.maven.repo.latest.url'],keyword)
-                ret+=isvalidurl(dic['rhba.sources.latest.url'],keyword)
+                ret+=isvalidurl(dic['rhpam.maven.repo.latest.url'],keyword)
+                ret+=isvalidurl(dic['rhpam.sources.latest.url'],keyword)
                 ret+=isvalidurl(dic['build.config'], _product_name)
 
             ret+=assertEqual(dic['KIE_VERSION'], '$kie_version')
-            ret+=assertEqual(dic['RHBA_VERSION'], '${product_artifact_version}')
-            ret+=assertContain(dic['rhba.business-central.standalone.latest.url'], '$product_milestone_version')
-            ret+=assertContain(dic['rhba.addons.latest.url'], '$product_milestone_version')
-            ret+=assertContain(dic['rhba.kie-server.ee7.latest.url'], '$product_milestone_version')
-            ret+=assertContain(dic['rhba.installer.latest.url'], '$product_milestone_version')
+            ret+=assertEqual(dic['RHPAM_VERSION'], '${product_artifact_version}')
+            ret+=assertContain(dic['rhpam.business-central.standalone.latest.url'], '$product_milestone_version')
+            ret+=assertContain(dic['rhpam.addons.latest.url'], '$product_milestone_version')
+            ret+=assertContain(dic['rhpam.kie-server.ee7.latest.url'], '$product_milestone_version')
+            ret+=assertContain(dic['rhpam.installer.latest.url'], '$product_milestone_version')
 
         if ret != 0:
             print propfile + ' Validation No Pass'
@@ -1987,7 +1987,7 @@ validateProperties(sys.argv[1], sys.argv[2],sys.argv[3])
 
                 // The name of the product, e.g., bxms64.
                 env("RELEASE_CODE", release_code)
-                //eg: 70 is VERSION_CODE for rhba-70
+                //eg: 70 is VERSION_CODE for rhpam-70
                 env("VERSION_CODE", release_code.substring(5,7))
 
                 // Release pipeline CI properties file
