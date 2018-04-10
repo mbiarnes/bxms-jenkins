@@ -769,7 +769,6 @@ fi
             #build_date is used in nightly build
             appendProp "build_date" "${build_date}"
 
-            appendProp "version_code" "${VERSION_CODE}"
             appendProp "archive_pvt_report_basename" "bxms-jenkins/streams/${RELEASE_CODE}/release-history/${RELEASE_CODE}-pvt-report"
             appendProp "release_handover_basename" "bxms-jenkins/streams/${RELEASE_CODE}/release-history/release-handover"
             appendProp "release_stream_path" "bxms-jenkins/streams/${RELEASE_CODE}"
@@ -1673,7 +1672,7 @@ fi
                 // Sends JMS message.
                 ciMessageBuilder {
                     overrides {
-                        topic('VirtualTopic.qe.ci.ba.${product_lowercase}.${version_code}.${release_type}.trigger')
+                        topic('VirtualTopic.qe.ci.ba.${product_lowercase}.${product_version_major}${product_version_minor}.${release_type}.trigger')
                     }
 
                     // JMS selector to choose messages that will fire the trigger.
@@ -1685,7 +1684,7 @@ fi
                     // KEY=value pairs, one per line (Java properties file format) to be used as message properties.
                     messageProperties('label=rhba-ci\n' +
                             'CI_TYPE=custom\n' +
-                            'EVENT_TYPE=${product_lowercase}-${version_code}-${release_type}-qe-trigger\n')
+                            'EVENT_TYPE=${product_lowercase}-${product_version_major}${product_version_minor}-${release_type}-qe-trigger\n')
                     // Content of CI message to be sent.
                     messageContent('${product_staging_properties_url}')
                 }
@@ -1987,8 +1986,6 @@ validateProperties(sys.argv[1], sys.argv[2],sys.argv[3])
 
                 // The name of the product, e.g., bxms64.
                 env("RELEASE_CODE", release_code)
-                //eg: 70 is VERSION_CODE for rhpam-70
-                env("VERSION_CODE", release_code.substring(5,7))
 
                 // Release pipeline CI properties file
                 env("CI_PROPERTIES_FILE",ci_properties_file)
