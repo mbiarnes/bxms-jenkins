@@ -106,10 +106,10 @@ class ReleaseSingleJobBuilder {
                 if [ "\$release_status" = "closed" ];then
                     exit 0
                 fi
-                if [[ "\$EVENT_TYPE" =~ 70-brew-qe-trigger\$ ]];then
+                if [[ "\$EVENT_TYPE" =~ \${product_version_major}\${product_version_minor}-brew-qe-trigger\$ ]];then
                     echo "Triggered by  bxms-prod ci message "
                     echo "\$CI_MESSAGE"
-                elif [ "\$EVENT_TYPE" == "\${product_lowercase}-70-\${release_type}-qe-smoke-results" ];then
+                elif [ "\$EVENT_TYPE" == "\${product_lowercase}-\${product_version_major}\${product_version_minor}-\${release_type}-qe-smoke-results" ];then
                     echo "QE smoketest report:\$CI_MESSAGE"
                     #Json to adoc
                     echo \${CI_MESSAGE}| python -c "import sys, json;
@@ -1066,7 +1066,7 @@ fi
                 // Sends JMS message.
                 ciMessageBuilder {
                     overrides {
-                        topic('VirtualTopic.qe.ci.ba.${product_lowercase}.70.${release_type}.smoke.results')
+                        topic('VirtualTopic.qe.ci.ba.${product_lowercase}.${product_version_major}${product_version_minor}.${release_type}.smoke.results')
                     }
 
                     // JMS selector to choose messages that will fire the trigger.
