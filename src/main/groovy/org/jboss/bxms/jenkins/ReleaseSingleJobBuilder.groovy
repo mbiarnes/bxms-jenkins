@@ -1913,7 +1913,6 @@ validateProperties(sys.argv[1], sys.argv[2],sys.argv[3])
                         // Sets the remote URL.
                         url("ssh://jb-ip-tooling-jenkins@code.engineering.redhat.com:22/integration-platform-config")
                         refspec("+refs/heads/master:refs/remotes/origin/master")
-                        //refspec("+refs/changes/38/135838/11")
                     }
 
                     // Specify the branches to examine for changes and to build.
@@ -1954,7 +1953,6 @@ validateProperties(sys.argv[1], sys.argv[2],sys.argv[3])
 
                     // Specify the branches to examine for changes and to build.
                     branch("master")
-
 
                     // Adds additional behaviors.
                     extensions {

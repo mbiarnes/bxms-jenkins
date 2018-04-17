@@ -16,10 +16,12 @@ class JenkinsStandaloneJobBuilder {
     String ci_properties_file
     String job_type
     String cfg_file
+    String gerrit_ref_spec
 
     Map<String, String> maven_repo_map=[
         "rhdm-71":"/jboss-prod/m2/bxms-7.0-", \
         "rhpam-70":"/jboss-prod/m2/bxms-7.0-", \
+        "rhpam-70-da":"/jboss-prod/m2/bxms-7.0-da-", \
         "rhpam-71":"/jboss-prod/m2/bxms-7.0-", \
         "rhdm-test":"/jboss-prod/m2/bxms-7.0-"]
     Map<String, String> repo_group_map=["milestone":"MEAD", "nightly":"MEAD+JENKINS+JBOSS+CENTRAL"]
@@ -29,7 +31,9 @@ class JenkinsStandaloneJobBuilder {
             String[] cfg_file_paths = cfg_file.tokenize("/")
             cfg_filename = cfg_file_paths[cfg_file_paths.length - 1]
         }
-        String urlString ="https://code.engineering.redhat.com/gerrit/gitweb?p=integration-platform-config.git;a=blob_plain;f=" + cfg_filename
+        String urlString = "https://code.engineering.redhat.com/gerrit/gitweb?p=integration-platform-config.git;a=blob_plain;f=" + cfg_filename
+        if (gerrit_ref_spec != '')
+            urlString = urlString + ";hb=" + gerrit_ref_spec
         URL cfg_url = urlString.toURL()
         BufferedReader configReader = newReader(cfg_url.getHost(), cfg_url.getFile())
         Ini _ini_cfg = new Ini().read(configReader)
@@ -62,7 +66,7 @@ if [ "${job_type}" == "nightly" ]; then
     sed -i "s#ip.config.sha=#cfg.url.template=file://`pwd`/{0},ip.config.sha=#g" ${cfg_filename}
 fi
 
-MVN_DEP_REPO=nexus-release::default::file://${maven_repo} REPO_GROUP=${repo_group} LOCAL=1 CFG=${_cfg} MVN_LOCAL_REPO=${maven_repo} POMMANIPEXT=\${product_lowercase}-build-bom make DEBUG=\$DEBUG ${section_name}
+MVN_DEP_REPO=nexus-release::default::file://${maven_repo} REPO_GROUP=${repo_group} LOCAL=1 CFG=${_cfg} MVN_LOCAL_REPO=${maven_repo} make DEBUG=\$DEBUG ${section_name}
 """
                 dslFactory.job(release_code + "-" + job_type + "-release-pipeline/y-" + release_code + "-" + section_name ) {
                     it.description "This job is a seed job for generating " + release_code + " " + job_type + " jenkins build."

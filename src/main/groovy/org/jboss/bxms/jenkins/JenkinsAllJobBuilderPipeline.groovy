@@ -23,6 +23,7 @@ class JenkinsAllJobBuilderPipeline {
     String release_code
     String job_type
     String cfg_file
+    String gerrit_ref_spec
 
     Job build(DslFactory dslFactory) {
         String cfg_filename = cfg_file
@@ -30,8 +31,10 @@ class JenkinsAllJobBuilderPipeline {
             String[] cfg_file_paths = cfg_file.tokenize("/")
             cfg_filename = cfg_file_paths[cfg_file_paths.length - 1]
         }
-      String urlString ="https://code.engineering.redhat.com/gerrit/gitweb?p=integration-platform-config.git;a=blob_plain;f=" + cfg_filename
-      URL cfg_url = urlString.toURL()
+        String urlString ="https://code.engineering.redhat.com/gerrit/gitweb?p=integration-platform-config.git;a=blob_plain;f=" + cfg_filename
+        if (gerrit_ref_spec != '')
+            urlString = urlString + ";hb=" + gerrit_ref_spec
+        URL cfg_url = urlString.toURL()
       BufferedReader configReader = newReader(cfg_url.getHost(), cfg_url.getFile())
       Ini _ini_cfg = new Ini().read(configReader)
       Map<String,Map<String,String>> sections = _ini_cfg.getSections()
