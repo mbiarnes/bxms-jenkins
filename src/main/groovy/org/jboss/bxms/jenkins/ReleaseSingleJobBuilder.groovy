@@ -71,26 +71,20 @@ class ReleaseSingleJobBuilder {
                     task_id=`echo \$CI_MESSAGE| python -c "import sys, json; print json.load(sys.stdin)['build']['task_id']"` 1>/dev/null
                     nvr=`echo \$CI_MESSAGE| python -c "import sys, json; print json.load(sys.stdin)['build']['nvr']"` 1>/dev/null
                 if [ "\$CI_NAME" = "org.kie.rhba-rhpam" ] || [ "\$CI_NAME" = "org.kie.rhba-rhdm" ] ;then
-                    \${product_lowercase}_assembly_maven_repo_url="http://download.eng.bos.redhat.com/brewroot/packages/\${name}/\${version}/\${release}/maven/"
-                    \${product_lowercase}_assembly_brew_url="https://brewweb.engineering.redhat.com/brew/taskinfo?taskID=\${task_id}"
-                    \${product_lowercase}_assembly_nvr="\$nvr"
-                    appendProp "\${product_lowercase}_assembly_maven_repo_url" \${product_lowercase}_assembly_maven_repo_url
-                    appendProp "\${product_lowercase}_assembly_brew_url" \${product_lowercase}_assembly_brew_url
-                    appendProp "\${product_lowercase}_assembly_nvr" \${product_lowercase}_assembly_nvr
-                    ip-tooling/jira_helper.py -c \${IP_CONFIG_FILE} -a "Product Assembly Build Completed: \${product_lowercase}_assembly_brew_url Build nvr: \${product_lowercase}_assembly_nvr " -f
+                    appendProp "\${product_lowercase}_assembly_maven_repo_url" "http://download.eng.bos.redhat.com/brewroot/packages/\${name}/\${version}/\${release}/maven/"
+                    appendProp "\${product_lowercase}_assembly_brew_url" "https://brewweb.engineering.redhat.com/brew/taskinfo?taskID=\${task_id}"
+                    appendProp "\${product_lowercase}_assembly_nvr" "\$nvr"
+                    #ip-tooling/jira_helper.py -c \${IP_CONFIG_FILE} -a "Product Assembly Build Completed: \${product_lowercase}_assembly_brew_url Build nvr: \${product_lowercase}_assembly_nvr " -f
                 elif [ "\$CI_NAME" = "org.kie.rhba-license-builder" ];then
-                    license_builder_maven_repo_url="http://download.eng.bos.redhat.com/brewroot/packages/\${name}/\${version}/\${release}/maven/"
-                    appendProp "license_builder_maven_repo_url" \$license_builder_maven_repo_url
+                    license_builder_maven_repo_url=
+                    appendProp "license_builder_maven_repo_url" "http://download.eng.bos.redhat.com/brewroot/packages/\${name}/\${version}/\${release}/maven/"
                 elif [ "\$CI_NAME" = "org.jboss.installer-rhdm-installer" ] || [ "\$CI_NAME" = "org.jboss.installer-rhpam-installer" ];then
-                    \${product_lowercase}_installer_maven_repo_url="http://download.eng.bos.redhat.com/brewroot/packages/\${name}/\${version}/\${release}/maven/"
-                    \${product_lowercase}_installer_brew_url="https://brewweb.engineering.redhat.com/brew/taskinfo?taskID=\${task_id}"
-                    \${product_lowercase}_installer_nvr="\$nvr"
-                    appendProp "\${product_lowercase}_installer_maven_repo_url" \${product_lowercase}_installer_maven_repo_url
-                    appendProp "\${product_lowercase}_installer_brew_url" \${product_lowercase}_installer_brew_url
-                    appendProp "\${product_lowercase}_installer_nvr" \${product_lowercase}_installer_nvr
+                    appendProp "\${product_lowercase}_installer_maven_repo_url" "http://download.eng.bos.redhat.com/brewroot/packages/\${name}/\${version}/\${release}/maven/"
+                    appendProp "\${product_lowercase}_installer_brew_url" "https://brewweb.engineering.redhat.com/brew/taskinfo?taskID=\${task_id}"
+                    appendProp "\${product_lowercase}_installer_nvr" "\$nvr"
                     web_hook=`grep "register_web_hook" \${CI_PROPERTIES_FILE} |cut -d "=" -f2`
                     curl -X POST -d 'OK' -k \$web_hook
-                    ip-tooling/jira_helper.py -c \${IP_CONFIG_FILE} -a "Product Assembly Build Completed: \$product_assembly_brew_url Build nvr: \$product_assembly_nvr " -f
+                    ip-tooling/jira_helper.py -c \${IP_CONFIG_FILE} -a "Brewchain Build Completed, Build nvr: \$nvr " -f
                 elif [ "\$CI_NAME" = "org.jboss.brms-bpmsuite.patching-patching-tools-parent" ];then
                     bxms_patch_maven_repo_url="http://download.eng.bos.redhat.com/brewroot/packages/\${name}/\${version}/\${release}/maven/"
                     bxms_patch_brew_url="https://brewweb.engineering.redhat.com/brew/taskinfo?taskID=\${task_id}"
@@ -1908,10 +1902,12 @@ validateProperties(sys.argv[1], sys.argv[2],sys.argv[3])
 
                         // Sets the remote URL.
                         url("ssh://jb-ip-tooling-jenkins@code.engineering.redhat.com:22/integration-platform-config")
+                        refspec("+refs/heads/master:refs/remotes/origin/master")
+                        //refspec("+refs/changes/38/135838/11")
                     }
 
                     // Specify the branches to examine for changes and to build.
-                    branch("master")
+                    branch("FETCH_HEAD")
                 }
 
                 // Adds a Git SCM source.
@@ -1922,10 +1918,11 @@ validateProperties(sys.argv[1], sys.argv[2],sys.argv[3])
 
                         // Sets the remote URL.
                         url("ssh://jb-ip-tooling-jenkins@code.engineering.redhat.com:22/integration-platform-tooling")
+                        refspec("+refs/heads/master:refs/remotes/origin/master")
                     }
 
                     // Specify the branches to examine for changes and to build.
-                    branch("master")
+                    branch("FETCH_HEAD")
 
                     // Adds additional behaviors.
                     extensions {
@@ -1947,6 +1944,7 @@ validateProperties(sys.argv[1], sys.argv[2],sys.argv[3])
 
                     // Specify the branches to examine for changes and to build.
                     branch("master")
+
 
                     // Adds additional behaviors.
                     extensions {

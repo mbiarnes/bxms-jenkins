@@ -296,7 +296,6 @@ class CodeReviewJobBuilder {
                     create_codereview_job(dslFactory,"jboss-integration/rhpam-boms", run_rhpam_mvn_with_pme,"codereview")
                     create_codereview_job(dslFactory,"rhdm-maven-repo-root", run_rhdm_mvn_with_pme,"codereview")
                     create_codereview_job(dslFactory,"rhba-maven-repo-root", run_rhpam_mvn_with_pme,"codereview")
-                    create_codereview_job(dslFactory,"integration-platform-config", run_make_mead,"codereview")
                     create_codereview_job(dslFactory,"soa/soa-component-management", run_rhpam_bom_generator,"codereview", "rhpam-")
                     create_codereview_job(dslFactory,"soa/soa-component-management", run_rhdm_bom_generator,"codereview", "rhdm-")
                     create_codereview_job(dslFactory,"rhap-ansible-config", run_ansible_playbook,"service-node-9723")
