@@ -48,8 +48,8 @@ def ReleasePipelineBuilder(_release_code, _cfg_file, _properties_file, gerritBra
     ).build(this)
 }
 
-ReleasePipelineBuilder("rhdm-71", "rhdm.cfg", "/jboss-prod/config/rhdm-71-ci.properties",gerritBranch , gerritRefspec,currentJobName )
-ReleasePipelineBuilder("rhpam-70", "rhpam.cfg", "/jboss-prod/config/rhpam-70-ci.properties",gerritBranch , gerritRefspec,currentJobName )
+ReleasePipelineBuilder("rhdm-70", "rhdm-70.cfg", "/jboss-prod/config/rhdm-70-ci.properties",gerritBranch , gerritRefspec,currentJobName )
+ReleasePipelineBuilder("rhpam-70", "rhpam-70.cfg", "/jboss-prod/config/rhpam-70-ci.properties",gerritBranch , gerritRefspec,currentJobName )
 ReleasePipelineBuilder("rhpam-70-test", "rhpam-70-test.cfg", "/jboss-prod/config/rhpam-70-test-ci.properties",gerritBranch , gerritRefspec,currentJobName)
 ReleasePipelineBuilder("rhdm-71-test", "rhdm-71-test.cfg", "/jboss-prod/config/rhdm-71-test-ci.properties",gerritBranch , gerritRefspec,currentJobName)
 ReleasePipelineBuilder("rhdm-71-nightly", "rhdm-71-dev.cfg", "/jboss-prod/config/rhdm-71-nightly-ci.properties", gerritBranch , gerritRefspec,currentJobName)
