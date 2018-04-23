@@ -646,9 +646,7 @@ fi
                    src/errai-parent-${errai_version} \
                    src/${product_lowercase}\
                    src/kie-parent-${kie_version}/RELEASE-README.md \
-                   src/drools-${kie_version}/drools-verifier \
-                   src/lienzo-test-${kie_version} \
-                   src/javaparser-parent-*
+                   src/lienzo-tests-${kie_version}
 
             # Create sources archive
             zip -r -5 --quiet ${product_sources_name} src/
