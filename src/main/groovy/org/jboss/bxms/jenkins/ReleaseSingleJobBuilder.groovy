@@ -1218,7 +1218,11 @@ fi
                 // Runs a shell script (defaults to sh, but this is configurable) for building the project.
                 shell(shellScript)
             }
+            wrappers {
+                // Deletes files from the workspace before the build starts.
+                preBuildCleanup()
 
+            }
             // Adds post-build actions to the job.
 
         }
@@ -1784,6 +1788,9 @@ def validateProperties(propfile, keyword, _product_name):
             ret+=assertContain(dic['rhdm.addons.latest.url'], '$product_milestone_version')
             ret+=assertContain(dic['rhdm.kie-server.ee7.latest.url'], '$product_milestone_version')
             ret+=assertContain(dic['rhdm.installer.latest.url'], '$product_milestone_version')
+            ret+=assertContain(dic['INSTALLER_COMMONS_VERSION'], '$installercommons_version')
+            ret+=assertContain(dic['IZPACK_VERSION'], '$izpack_version')
+            ret+=assertContain(dic['JAVAPARSER_VERSION'], '${drlx-parser_version}')
 
         if re.match('rhpam..*', propfile) is not None:
             ret+=isvalidurl(dic['rhpam.addons.latest.url'],keyword)
@@ -1803,6 +1810,9 @@ def validateProperties(propfile, keyword, _product_name):
             ret+=assertContain(dic['rhpam.addons.latest.url'], '$product_milestone_version')
             ret+=assertContain(dic['rhpam.kie-server.ee7.latest.url'], '$product_milestone_version')
             ret+=assertContain(dic['rhpam.installer.latest.url'], '$product_milestone_version')
+            ret+=assertContain(dic['INSTALLER_COMMONS_VERSION'], '$installercommons_version')
+            ret+=assertContain(dic['IZPACK_VERSION'], '$izpack_version')
+            ret+=assertContain(dic['JAVAPARSER_VERSION'], '${drlx-parser_version}')
 
         if ret != 0:
             print propfile + ' Validation No Pass'
