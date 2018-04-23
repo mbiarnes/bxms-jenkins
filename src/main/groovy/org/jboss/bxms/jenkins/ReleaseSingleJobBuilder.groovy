@@ -577,12 +577,15 @@ fi
             appendProp "APPFORMER_VERSION"          ${appformer_version}
             appendProp "ERRAI_VERSION"              ${errai_version}
             appendProp "MVEL_VERSION"               ${mvel_version}
+            appendProp "IZPACK_VERSION"             ${izpack_version}
+            appendProp "INSTALLER_COMMONS_VERSION"  ${installercommons_version}
+            appendProp "JAVAPARSER_VERSION"         ${drlx-parser_version}
 
             #Additional properties for brew release
             if [ "${release_type}" == "brew" ]; then
                 #append the other properties per qe's requirement
                 appendProp "build.config" ${product_url_prefix}/${IP_CONFIG_FILE}
-                appendProp ${product_lowercase^^}_PUBLIC_VERSION ${product_version}
+                appendProp ${product_lowercase^^}_PUBLIC_VERSION ${product_upload_version}
                 appendProp "${product_lowercase}.maven.repo.latest.url"     "$product_url_prefix/${product_filename_common_prefix}-maven-repository.zip"
                 appendProp "${product_lowercase}.sources.latest.url"   "$product_url_prefix/${product_sources_name}"
 
