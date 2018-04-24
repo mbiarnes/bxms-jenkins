@@ -2,9 +2,9 @@
 # Sample PVT Configuration File.
 #
 
-product: RHBAS
+product: RHPAM
 version: 7.0.0.ER3
-distrepo: http://download-node-02.eng.bos.redhat.com/rcm-guest/staging/rhba/RHBAS-%{version}/
+distrepo: http://download-node-02.eng.bos.redhat.com/rcm-guest/staging/rhpam/RHPAM-%{version}/
 tests:
   org.jboss.pvt.generic.NoSignatureCheckTest:
     resources: ['rhpam-%{target}-kie-server-ee7.zip', 'rhpam-%{target}-business-central-eap7-deployable.zip', 'rhpam-%{target}-add-ons.zip']
