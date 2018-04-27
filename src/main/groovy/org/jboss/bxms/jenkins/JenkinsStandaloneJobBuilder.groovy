@@ -56,6 +56,7 @@ echo -e "Exec node IP:\${OPENSTACK_PUBLIC_IP}\\n"
 sed -i 's/cd "\$_ARCHIVE"/exit \$_ERR;cd "\$_ARCHIVE"/' ip-tooling/MEAD_simulator.sh
 if [ ! -z \${build_date} ]; then
     sed -i "s#-SNAPSHOT#-\${build_date}#g" rh*-dev.cfg
+    sed -i -E "s#(upstream_tag=.*)#\\1,`date -u -d \${build_date} +'%Y-%m-%d'`#g" rh*-dev.cfg
 fi
 if [ "${job_type}" == "nightly" ]; then
     sed -i "s#ip.config.sha=#cfg.url.template=file://`pwd`/{0},ip.config.sha=#g" ${cfg_filename}
