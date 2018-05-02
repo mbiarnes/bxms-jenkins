@@ -567,7 +567,6 @@ fi
             esac
 
             appendProp "${product_lowercase}.kie-server.ee7.latest.url" "${product_url_prefix}/${product_filename_common_prefix}-kie-server-ee7.zip"
-            appendProp "${product_lowercase}.monitorig.ee7.latest.url" "${product_url_prefix}/${product_filename_common_prefix}-monitoring-ee7.zip"
             appendProp "${product_lowercase}.addons.latest.url"         "${product_url_prefix}/${product_filename_common_prefix}-add-ons.zip"
             appendProp "${product_lowercase}.installer.latest.url"         "${product_installer_url}"
 
