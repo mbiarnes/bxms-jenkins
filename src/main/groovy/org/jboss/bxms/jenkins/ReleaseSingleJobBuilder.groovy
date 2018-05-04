@@ -1454,7 +1454,7 @@ fi
             ip-tooling/maven-artifact-handler.py --version=${product_artifact_version} --override-version ${product_upload_version} \\
                 --maven-repo ${license_builder_maven_repo_url} --deliverable ${product_deliverable_template} --output ${product_lowercase}
 
-            rename license-builder \${product_lowercase}-runtime-GAV \${product_lowercase}/*.txt
+            #rename license-builder \${product_lowercase}-runtime-GAV \${product_lowercase}/*.txt
             cp ${IP_CONFIG_FILE} ${product_lowercase}/
             '''
             // Sets a description for the job.
