@@ -1,4 +1,4 @@
-= RHPAM 7.0.0 ER4
+= RHPAM 7.0.0 ER5
 
 :Author Initials: SJR
 :toc:
@@ -6,7 +6,7 @@
 :numbered:
 
 [NOTE]
-.link:https://projects.engineering.redhat.com/browse/IPBRPMS-2598[Release JIRA]
+.link:https://projects.engineering.redhat.com/browse/IPBRPMS-2626[Release JIRA]
 
 ============================================================================================================================
 Please allow [red]#10-15 minutes# for GlobalSync to occur should the release folder appear to be non-existent at your local mirror.
@@ -21,7 +21,7 @@ Please allow [red]#10-15 minutes# for GlobalSync to occur should the release fol
 
 |Product Version |7.0.0
 
-|Build: |ER4
+|Build: |ER5
 
 |Engineer: |bxms-prod@redhat.com
 
@@ -32,7 +32,7 @@ Please allow [red]#10-15 minutes# for GlobalSync to occur should the release fol
 == Special instructions/Notes
 
 
-- RHPAM 7.0.0 ER4 is dependencies have been aligned to *eap-7.1.0*
+- RHPAM 7.0.0 ER5 is dependencies have been aligned to *eap-7.1.0*
 
 - Please unzip the rhpam-business-central-eap7.zip into the latest of EAP 7.0.x. the latest EAP 7.0.x can be downloaded from:
 http://download.eng.pnq.redhat.com/released/JBEAP-7/
@@ -47,41 +47,43 @@ http://download.eng.pnq.redhat.com/released/JBEAP-7/
 == RHPAM Download
 
 
-- http://download.devel.redhat.com/devel/candidates/RHPAM/RHPAM-7.0.0.ER4
+- http://download.devel.redhat.com/devel/candidates/RHPAM/RHPAM-7.0.0.ER5
 
 
 == Components
 
-- Product tag: *RHPAM-7.0.0.ER4*
+- Product tag: *RHPAM-7.0.0.ER5*
 
-- Product version in Maven repo: *7.0.0.ER-redhat-4*
+- Product version in Maven repo: *7.0.0.ER-redhat-5*
 
-- KIE version: *7.7.0.Final-redhat-3*
+- KIE version: *7.7.0.Final-redhat-4*
 
 - JBoss Integration Platform BOM: *8.0.0.CR3-redhat-1*
 
-- Upstream Tag: *sync-7.7.x-2018.04.16*
+- Upstream Tag: *sync-7.7.x-2018.04.30*
 
-- Upstream handover: *https://github.com/jboss-integration/kie-release-reports/blob/7.x/reports/tags/sync-7.7.x-2018.04.16/sync-7.7.x-2018.04.16-1.txt*
+- Upstream handover: *https://github.com/jboss-integration/kie-release-reports/blob/7.x/reports/tags/sync-7.7.x-2018.04.30/sync-7.7.x-2018.04.30-1.txt*
 
 - For a full list of components and their associated versions, please look at the build configuration:
 link:rhpam-70.cfg[Components and Versions]
 
 == Build
 
-link:https://brewweb.engineering.redhat.com/brew/taskinfo?taskID=15865971[Brew build]
+link:https://brewweb.engineering.redhat.com/brew/taskinfo?taskID=15971362[Brew build]
 
 == Smoke Tests
 === QE smoketest Report
 [width=100%,options=header,footer,align=center,frame=all]
 |============
 |Statistics|
-|UnsuccessfulBuilds|2
-|SuccessfulBuilds|6
+|UnsuccessfulBuilds|3
+|SuccessfulBuilds|5
 |TotalBuildRuns|8
-|#UNSUCCESSFUL#|https://rhba-qe-jenkins.rhev-ci-vms.eng.rdu2.redhat.com/job/BxMS/job/RHPAM-7.0-brew/job/smoke/job/blessed-maven-repo-testsuite-smoke/4
+|#UNSUCCESSFUL#|https://rhba-qe-jenkins.rhev-ci-vms.eng.rdu2.redhat.com/job/BxMS/job/RHPAM-7.0-brew/job/smoke/job/blessed-openshift-smoke/7
 
-https://rhba-qe-jenkins.rhev-ci-vms.eng.rdu2.redhat.com/job/BxMS/job/RHPAM-7.0-brew/job/smoke/job/blessed-openshift-smoke/3
+https://rhba-qe-jenkins.rhev-ci-vms.eng.rdu2.redhat.com/job/BxMS/job/RHPAM-7.0-brew/job/smoke/job/blessed-installer-smoke/9
+
+https://rhba-qe-jenkins.rhev-ci-vms.eng.rdu2.redhat.com/job/BxMS/job/RHPAM-7.0-brew/job/smoke/job/blessed-maven-repo-testsuite-smoke/10
 |URL|https://bxms-qe-jenkins.rhev-ci-vms.eng.rdu2.redhat.com/job/BxMS/job/BxMS-prod-7.0/job/smoke/
 |============
 
@@ -90,7 +92,7 @@ https://rhba-qe-jenkins.rhev-ci-vms.eng.rdu2.redhat.com/job/BxMS/job/RHPAM-7.0-b
 
 link:rhpam-pvt-report-rhpam.html[Package Checking Details Report(RHPAM)]
 
-link:http://rcm-guest.app.eng.bos.redhat.com/rcm-guest/staging/rhpam/RHPAM-7.0.0.ER4/maven-repository-report/[Maven Repository Report]
+link:http://rcm-guest.app.eng.bos.redhat.com/rcm-guest/staging/rhpam/RHPAM-7.0.0.ER5/maven-repository-report/[Maven Repository Report]
 
 [options="header"]
 .Not Passed in org.jboss.pvt.generic.JDKCompatibleCheckTest
