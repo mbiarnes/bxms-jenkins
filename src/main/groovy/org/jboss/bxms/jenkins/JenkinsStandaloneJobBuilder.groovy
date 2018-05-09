@@ -56,6 +56,7 @@ class JenkinsStandaloneJobBuilder {
 
 
                 String shellScript = """
+set +e
 unset WORKSPACE
 echo -e "Exec node IP:\${OPENSTACK_PUBLIC_IP}\\n"
 #Only debug purpose
@@ -70,8 +71,19 @@ fi
 if [ "${job_type}" == "nightly" ]; then
     sed -i "s#ip.config.sha=#cfg.url.template=file://`pwd`/{0},ip.config.sha=#g" ${cfg_filename}
 fi
-
-MVN_DEP_REPO=nexus-release::default::file://${maven_repo} REPO_GROUP=${repo_group} LOCAL=1 CFG=${_cfg} MVN_LOCAL_REPO=${maven_repo} ${bomSource} make DEBUG=\$DEBUG ${section_name}
+let retry=3
+while [ \$retry -ne 0 ]; do
+    MVN_DEP_REPO=nexus-release::default::file://${maven_repo} REPO_GROUP=${repo_group} LOCAL=1 CFG=${_cfg} MVN_LOCAL_REPO=${maven_repo} ${bomSource} make DEBUG=\$DEBUG ${section_name}
+    ret=\$?
+    grep "due to 504, splitting and retrying" "workspace/build.${section_name}/mvn.log"
+    if [ \$? -eq 0 ]; then
+        let retry-=1
+        sleep 15
+    else
+        break
+    fi
+done
+exit \$ret
 """
                 dslFactory.job(release_code + "-" + job_type + "-release-pipeline/y-" + release_code + "-" + section_name ) {
                     it.description "This job is a seed job for generating " + release_code + " " + job_type + " jenkins build."
