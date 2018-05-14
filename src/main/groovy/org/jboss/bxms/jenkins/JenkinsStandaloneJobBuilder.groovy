@@ -183,9 +183,6 @@ exit \$ret
                             onlyIfBuildFails(false)
                             onlyIfBuildSucceeds(true)
                         }
-                        postBuildTask {
-                            task('T E S T S', 'python ip-tooling/bxms-utility/findErrorMsgFromJunitTestResult.py -url http://10.8.248.195 -p 9200 -d . -pl \$(echo \${JOB_NAME} |sed "s/\${JOB_BASE_NAME}//g") -j \$JOB_BASE_NAME\$BUILD_DISPLAY_NAME -jurl \$BUILD_URL')
-                        }
                     }
                 }
             }
