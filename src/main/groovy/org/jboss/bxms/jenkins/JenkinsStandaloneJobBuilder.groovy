@@ -75,7 +75,7 @@ let retry=3
 while [ \$retry -ne 0 ]; do
     MVN_DEP_REPO=nexus-release::default::file://${maven_repo} REPO_GROUP=${repo_group} LOCAL=1 CFG=${_cfg} MVN_LOCAL_REPO=${maven_repo} ${bomSource} make DEBUG=\$DEBUG ${section_name}
     ret=\$?
-    grep "due to 504, splitting and retrying" "workspace/build.${section_name}/mvn.log"
+    grep "REST client finished with failures..." "workspace/build.${section_name}/mvn.log"
     if [ \$? -eq 0 ]; then
         let retry-=1
         sleep 15
