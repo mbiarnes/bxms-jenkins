@@ -643,7 +643,8 @@ fi
             ## Prepare sources for delivery ##
             cd workspace
 
-            rm -rf src/license-builder-${product_artifact_version} \
+            rm -rf src/*-license-${product_artifact_version} \
+                   src/license-builder-${product_artifact_version} \
                    src/${product_lowercase}-maven-repo-root-${product_artifact_version} \
                    src/errai-parent-${errai_version} \
                    src/${product_lowercase}\
