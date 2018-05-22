@@ -4,18 +4,6 @@ import javaposse.jobdsl.dsl.DslFactory
 import javaposse.jobdsl.dsl.Job
 import ca.szc.configparser.Ini
 
-import java.net.InetSocketAddress
-import java.net.Socket
-import java.security.KeyManagementException
-import java.security.NoSuchAlgorithmException
-import java.security.SecureRandom
-import java.security.cert.X509Certificate
-import javax.net.ssl.SSLContext
-import javax.net.ssl.SSLSocket
-import javax.net.ssl.SSLSocketFactory
-import javax.net.ssl.TrustManager
-import javax.net.ssl.X509TrustManager
-import java.io.StringReader
 /**
  *  Create BxMS release/build pipeline stream with Parameter
  */
@@ -34,8 +22,7 @@ class JenkinsAllJobBuilderPipeline {
         String urlString ="https://code.engineering.redhat.com/gerrit/gitweb?p=integration-platform-config.git;a=blob_plain;f=" + cfg_filename
         if (gerrit_ref_spec != '')
             urlString = urlString + ";hb=" + gerrit_ref_spec
-        URL cfg_url = urlString.toURL()
-      BufferedReader configReader = newReader(cfg_url.getHost(), cfg_url.getFile())
+      BufferedReader configReader = new BufferedReader(new InputStreamReader(new URL(urlString).openStream()))
       Ini _ini_cfg = new Ini().read(configReader)
       Map<String,Map<String,String>> sections = _ini_cfg.getSections()
       Map packagesMap = new HashMap()
@@ -125,67 +112,6 @@ class JenkinsAllJobBuilderPipeline {
             }
 
         }
-    }
-    BufferedReader newReader(String hostname, String file)
-    {
-        Socket baseSocket = new Socket()
-        baseSocket.connect(new InetSocketAddress(hostname, 443))
-
-        X509TrustManager trustAllTrustManager = new X509TrustManager() {
-            public X509Certificate[] getAcceptedIssuers(){return null}
-            public void checkClientTrusted(X509Certificate[] certs, String authType){}
-            public void checkServerTrusted(X509Certificate[] certs, String authType){}
-        }
-        SSLContext sslContext = SSLContext.getInstance("TLS")
-        TrustManager[] trustAllTrustManagers = [ trustAllTrustManager ]
-        sslContext.init(null, trustAllTrustManagers, new SecureRandom())
-        SSLSocketFactory factory = sslContext.getSocketFactory()
-        // Intentionally blank. Hostname was given to baseSocket so that sslSocket can be unaware of it.
-        String blankHostname = ""
-        SSLSocket sslSocket = (SSLSocket) factory.createSocket(baseSocket, blankHostname, baseSocket.getPort(), true)
-        sslSocket.setUseClientMode(true)
-
-        sslSocket.startHandshake()
-
-        InputStream inStream = sslSocket.getInputStream()
-        OutputStream outStream = sslSocket.getOutputStream()
-
-        BufferedReader read = new BufferedReader(new InputStreamReader(inStream))
-        BufferedWriter write = new BufferedWriter(new OutputStreamWriter(outStream))
-
-        // Write request lines
-        // Method and File
-        write.write("GET ")
-        write.write(file)
-        write.write(" HTTP/1.0")
-        write.write("\r\n")
-        // Host
-        write.write("Host: ")
-        write.write(hostname)
-        write.write("\r\n")
-        // Close connection after reply
-        write.write("Connection: close")
-        write.write("\r\n")
-        // Finish request
-        write.write("\r\n")
-        // Send to server
-        write.flush()
-
-        // Read reply
-        String line
-
-        // Look at status line
-        line = read.readLine()
-        if (!"HTTP/1.1 200 OK".equals(line))
-            throw new IOException("Bad HTTP server status: " + line)
-
-        // Read through the HTTP header
-        while ((line = read.readLine()) != null)
-            if ("".equals(line))
-                break
-
-        // Return the reader for caller to consume from
-        return read
     }
 
 // func to turn cfg requirement relationship into oneline steps use kahn
