@@ -73,7 +73,7 @@ product_staging_properties_url={rcm_staging_base}/{product_staging_path}/{produc
 product_candidate_properties_url={rcm_staging_base}/{product_staging_path}/{product_lowercase}-deliverable-list.properties
 
 qe_smoketest_report_path={share_config_dir}/{release_code}-{release_type}-qe-smoketest-report.adoc
-qe_smoketest_job_url=https://bxms-qe-jenkins.rhev-ci-vms.eng.rdu2.redhat.com/job/BxMS/job/BxMS-prod-{product_version_major}.{product_version_minor}/job/smoke/
+qe_smoketest_job_url=https://rhba-qe-jenkins.rhev-ci-vms.eng.rdu2.redhat.com/job/BxMS/job//RHPAM-{product_version_major}.{product_version_minor}-brew/
 
 #maven offline repository
 product_maven_repo_name={product_lowercase}-{product_milestone_version}-maven-repository.zip
