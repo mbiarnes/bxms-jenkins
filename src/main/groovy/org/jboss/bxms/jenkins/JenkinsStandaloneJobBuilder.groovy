@@ -2,7 +2,6 @@ package org.jboss.bxms.jenkins
 
 import ca.szc.configparser.Ini
 import javaposse.jobdsl.dsl.DslFactory
-import javaposse.jobdsl.dsl.Job
 
 /**
  *  Create BxMS release/build pipeline stream with Parameter
@@ -21,7 +20,7 @@ class JenkinsStandaloneJobBuilder {
         "rhpam-71":"/jboss-prod/m2/bxms-7.0-", \
         "rhdm-test":"/jboss-prod/m2/bxms-7.0-"]
     Map<String, String> repo_group_map=["milestone":"MEAD", "nightly":"MEAD+JENKINS+JBOSS+CENTRAL"]
-    Job build(DslFactory dslFactory) {
+    def build(DslFactory dslFactory) {
         String cfg_filename = cfg_file
         if (cfg_file.contains("/")) {
             String[] cfg_file_paths = cfg_file.tokenize("/")
@@ -37,19 +36,13 @@ class JenkinsStandaloneJobBuilder {
         dslFactory.folder(release_code + "-" + job_type + "-release-pipeline")
         String maven_repo = maven_repo_map [release_code] + job_type
         String repo_group = repo_group_map [job_type]
-        String _cfg = cfg_filename
         def bomSource = "POMMANIPEXT=\${product_lowercase}-build-bom"
         if (release_code.contains('-da')) {
             bomSource = ''
         }
 
-        for (String section_name : sections.keySet())
-        {
-            Map<String, String> section=sections.get(section_name)
-            if ((!section.containsKey("config_type")) || (section.containsKey("config_type") && section.get("config_type").equals("bom-builder")) )
-            {
-
-
+        sections.each { section_name, section ->
+            if ((!section.containsKey("config_type")) || (section.containsKey("config_type") && section.get("config_type").equals("bom-builder")) ) {
                 String shellScript = """
 set +e
 unset WORKSPACE
@@ -68,7 +61,7 @@ if [ "${job_type}" == "nightly" ]; then
 fi
 let retry=3
 while [ \$retry -ne 0 ]; do
-    MVN_DEP_REPO=nexus-release::default::file://${maven_repo} REPO_GROUP=${repo_group} LOCAL=1 CFG=${_cfg} MVN_LOCAL_REPO=${maven_repo} ${bomSource} make DEBUG=\$DEBUG ${section_name}
+    MVN_DEP_REPO=nexus-release::default::file://${maven_repo} REPO_GROUP=${repo_group} LOCAL=1 CFG=${cfg_filename} MVN_LOCAL_REPO=${maven_repo} ${bomSource} make DEBUG=\$DEBUG ${section_name}
     ret=\$?
     grep "REST client finished with failures..." "workspace/build.${section_name}/mvn.log"
     if [ \$? -eq 0 ]; then
@@ -181,7 +174,6 @@ exit \$ret
                     }
                 }
             }
-
         }
     }
 }
