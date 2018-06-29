@@ -15,6 +15,7 @@ class JenkinsStandaloneJobBuilder {
 
     Map<String, String> maven_repo_map=[
         "rhdm-71":"/jboss-prod/m2/bxms-7.0-", \
+        "rhdm-70":"/jboss-prod/m2/bxms-7.0-", \
         "rhpam-70":"/jboss-prod/m2/bxms-7.0-", \
         "rhpam-70-da":"/jboss-prod/m2/bxms-7.0-da-", \
         "rhpam-71":"/jboss-prod/m2/bxms-7.0-", \

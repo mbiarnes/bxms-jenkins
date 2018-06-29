@@ -1004,7 +1004,7 @@ fi
             publishers {
 
                 //Archives artifacts with each build.
-                archiveArtifacts('workspace/${product_lowercase}-repository/archive/**/*')
+                archiveArtifacts('workspace/${product_lowercase}-${product_version_major}${product_version_micro}-repository/archive/**/*')
 
                 // Send artifacts to an SSH server (using SFTP) and/or execute commands over SSH.
                 publishOverSsh {
@@ -1019,10 +1019,10 @@ fi
                             transferSet {
 
                                 // Sets the files to upload to a server.
-                                sourceFiles('workspace/${product_lowercase}-repository/archive/*.zip,workspace/${product_lowercase}-repository/archive/*.text,workspace/${product_lowercase}-repository/archive/*.md5')
+                                sourceFiles('workspace/${product_lowercase}-${product_version_major}${product_version_micro}-repository/archive/*.zip,workspace/${product_lowercase}-${product_version_major}${product_version_micro}-repository/archive/*.text,workspace/${product_lowercase}-${product_version_major}${product_version_micro}-repository/archive/*.md5')
 
                                 // Sets the first part of the file path that should not be created on the remote server.
-                                removePrefix('workspace/${product_lowercase}-repository/archive/')
+                                removePrefix('workspace/${product_lowercase}-${product_version_major}${product_version_micro}-repository/archive/')
 
                                 // Sets the destination folder.
                                 remoteDirectory('${product_staging_path}')
