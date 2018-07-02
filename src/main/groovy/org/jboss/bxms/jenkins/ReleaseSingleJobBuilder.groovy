@@ -1827,7 +1827,7 @@ validateProperties(sys.argv[1], sys.argv[2],sys.argv[3])
 ">validateProperties.py
             if [ "\${IS_STAGING}" == "true" ];then
                 if [ "\${release_type}" == "nightly" ];then
-                    python validateProperties.py "${product_staging_properties_name}" "rhap-repo" "${product_lowercase}"
+                    python validateProperties.py "${product_staging_properties_name}" "bxms-qe" "${product_lowercase}"
                 else
                     python validateProperties.py "${product_staging_properties_name}" "rcm-guest" "${product_lowercase}"
                 fi
