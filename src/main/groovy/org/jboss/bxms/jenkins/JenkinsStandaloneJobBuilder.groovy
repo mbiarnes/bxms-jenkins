@@ -50,11 +50,11 @@ fi
 if [ "${job_type}" == "nightly" ]; then
     sed -i "s#ip.config.sha=#cfg.url.template=file://`pwd`/{0},ip.config.sha=#g" ${cfg_filename}
 fi
-ln -sf `pwd`/workspace/build.${section_name}/.m2 /tmp/\${product_lowercase}\${product_version_major}\${product_version_minor}
+ln -sf `pwd`/workspace/build.${section_name}/.m2 /tmp/\${product_lowercase}\${product_version_major}\${product_version_minor}.${section_name}
 let retry=3
 while [ \$retry -ne 0 ]; do
     MVN_DEP_REPO=nexus-release::default::\${jenkins_repo_url}/\${jenkins_deploy_name} \
-    MVN_LOCAL_REPO=/tmp/\${product_lowercase}\${product_version_major}\${product_version_minor} \
+    MVN_LOCAL_REPO=/tmp/\${product_lowercase}\${product_version_major}\${product_version_minor}.${section_name} \
     MVN_SETTINGS=/jboss-prod/config/\${product_lowercase}-\${product_version_major}\${product_version_minor}-settings.xml \
     LOCAL=1 CFG=${cfg_filename} ${bomSource} make DEBUG=\$DEBUG ${section_name}
     ret=\$?
