@@ -49,6 +49,11 @@ if [ ! -z \${build_date} ]; then
 fi
 if [ "${job_type}" == "nightly" ]; then
     sed -i "s#ip.config.sha=#cfg.url.template=file://`pwd`/{0},ip.config.sha=#g" ${cfg_filename}
+    #SkipTests except every Thursday
+    if [ `date +%w` != 6 ] && [ "\${SKIPTEST}" == "true" ]; then
+      sed -i "s#^mvnSkipTestsOption=#mvnSkipTestsOption=skipTests=true,#g" ${cfg_filename}
+      cp ${cfg_filename} /tmp/${cfg_filename}
+    fi
 fi
 ln -sf `pwd`/workspace/build.${section_name}/.m2 /tmp/\${product_lowercase}\${product_version_major}\${product_version_minor}.${section_name}
 let retry=3
@@ -90,6 +95,7 @@ exit \$ret
                         booleanParam('DEBUG', false, 'Open Debug Log')
                         stringParam('CONFIG_REFS','+refs/heads/master:refs/remotes/origin/master','The refs of integration-platform-config you want to pull,defautl master.')
                         stringParam('TOOLING_REFS','+refs/heads/master:refs/remotes/origin/master','The refs of integration-platform-tooling you want to pull,defautl master.')
+                        booleanParam('SKIPTEST',true,'Remove check if you do not want to skip Unittest and integration test')
                     }
 
                     if (section.containsKey("jvmOpts".toLowerCase())
