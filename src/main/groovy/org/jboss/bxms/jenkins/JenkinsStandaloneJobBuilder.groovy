@@ -52,7 +52,6 @@ if [ "${job_type}" == "nightly" ]; then
     #SkipTests except every Thursday
     if [ `date +%w` != 6 ] && [ "\${SKIPTEST}" == "true" ]; then
       sed -i "s#^mvnSkipTestsOption=#mvnSkipTestsOption=skipTests=true,#g" ${cfg_filename}
-      cp ${cfg_filename} /tmp/${cfg_filename}
     fi
 fi
 ln -sf `pwd`/workspace/build.${section_name}/.m2 /tmp/\${product_lowercase}\${product_version_major}\${product_version_minor}.${section_name}
@@ -69,7 +68,11 @@ while [ \$retry -ne 0 ]; do
         let retry-=1
         sleep 15
     else
-        break
+    # Retry 1 time only because network issues during maven repository fetching
+        if [ \$retry -lt 3 ];then
+          break
+        fi
+        let retry-=1
     fi
 done
 exit \$ret
