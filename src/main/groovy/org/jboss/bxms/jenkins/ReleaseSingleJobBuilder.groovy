@@ -564,6 +564,10 @@ fi
                 rhpam )
                     appendProp "${product_lowercase}.business-central.standalone.latest.url"    "$product_url_prefix/${product_filename_common_prefix}-business-central-standalone.jar"
                     appendProp "${product_lowercase}.business-central-eap7.latest.url"          "$product_url_prefix/${product_filename_common_prefix}-business-central-eap7-deployable.zip"
+                    # RHPAM 7.1 needs certify kie-server-jws
+                    if [ "${product_version_minor}" == "1" ];then
+                      appendProp "${product_lowercase}.kie-server.jws.latest.url" "${product_url_prefix}/${product_filename_common_prefix}-kie-server-jws.zip"
+                    fi
             esac
 
             appendProp "${product_lowercase}.kie-server.ee7.latest.url" "${product_url_prefix}/${product_filename_common_prefix}-kie-server-ee7.zip"

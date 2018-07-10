@@ -54,7 +54,7 @@ release_status=running
 #config file
 handover_template_basename=bxms-jenkins/config/release-handover
 release_notes_template=bxms-jenkins/config/release-notes.template
-product_deliverable_template=bxms-jenkins/config/{product_lowercase}-deliverable.properties
+product_deliverable_template=bxms-jenkins/config/{product_lowercase}-{product_version_major}.{product_version_minor}-deliverable.properties
 product_release_tag={product_name}-{product_milestone_version}
 
 #pvt report
