@@ -967,7 +967,7 @@ fi
             ip-tooling/jira_helper.py -c ${IP_CONFIG_FILE} -a "Maven repository build started: Build url: ${BUILD_URL}" -f
 
             PROJECT_NAME=${product_lowercase} make CFG=${IP_CONFIG_FILE} BUILDER_SCRIPT=${repository_builder_script} -f ${makefile} repository
-            rename jboss-${product_lowercase} ${product_lowercase} workspace/${product_lowercase}-repository/archive/*
+            rename jboss-${product_lowercase} ${product_lowercase} workspace/${product_lowercase}-${product_version_major}${product_version_minor}-repository/archive/*
             '''
             // Sets a description for the job.
             description("This job is responsible for building the offline maven repository zip for MRRC.")
@@ -1008,7 +1008,7 @@ fi
             publishers {
 
                 //Archives artifacts with each build.
-                archiveArtifacts('workspace/${product_lowercase}-${product_version_major}${product_version_micro}-repository/archive/**/*')
+                archiveArtifacts('workspace/${product_lowercase}-${product_version_major}${product_version_minor}-repository/archive/**/*')
 
                 // Send artifacts to an SSH server (using SFTP) and/or execute commands over SSH.
                 publishOverSsh {
