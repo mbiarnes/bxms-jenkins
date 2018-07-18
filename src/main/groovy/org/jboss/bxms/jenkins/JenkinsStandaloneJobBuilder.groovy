@@ -41,6 +41,86 @@ echo -e "Exec node IP:\${OPENSTACK_PUBLIC_IP}\\n"
 #Only debug purpose
 #cp /jboss-prod/config/rhpam-71-dev.cfg .
 
+cat <<EOT > /tmp/\${product_lowercase}-\${product_version_major}\${product_version_minor}-settings.xml
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ Copyright 2017 Red Hat, Inc, and individual contributors.
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+ http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd">
+  <profiles>
+    <profile>
+      <id>nighlty-repo</id>
+      <activation>
+          <activeByDefault>true</activeByDefault>
+        </activation>
+        <properties>
+          <altDeploymentRepository>nexus-release::default::http://bxms-qe.rhev-ci-vms.eng.rdu2.redhat.com:8081/nexus/content/repositories/scratch-release-\${product_lowercase}-\${product_version_major}.\${product_version_minor}</altDeploymentRepository>
+        </properties>
+      <repositories>
+        <!-- RHBA Nightly repo -->
+        <repository>
+          <id>shared-imports</id>
+          <url>http://bxms-qe.rhev-ci-vms.eng.rdu2.redhat.com:8081/nexus/content/repositories/\${product_lowercase}-\${product_version_major}.\${product_version_minor}-nightly</url>
+        </repository>
+      </repositories>
+      <pluginRepositories>
+        <pluginRepository>
+          <id>shared-imports</id>
+          <url>http://bxms-qe.rhev-ci-vms.eng.rdu2.redhat.com:8081/nexus/content/repositories/\${product_lowercase}-\${product_version_major}.\${product_version_minor}-nightly</url>
+        </pluginRepository>
+      </pluginRepositories>
+    </profile>
+  </profiles>
+  <servers>
+  <server>
+    <id>nexus-release</id>
+    <username>kieciuser</username>
+    <password>jbo55.rocks!</password>
+    <configuration>
+      <httpConfiguration>
+        <all>
+          <useDefaultHeaders>false</useDefaultHeaders>
+          <headers>
+            <header>
+              <name>Cache-control</name>
+              <value>no-cache</value>
+            </header>
+            <header>
+              <name>Cache-store</name>
+              <value>no-store</value>
+            </header>
+            <header>
+              <name>Pragma</name>
+              <value>no-cache</value>
+            </header>
+            <header>
+              <name>Expires</name>
+              <value>0</value>
+            </header>
+          </headers>
+        </all>
+      </httpConfiguration>
+    </configuration>
+  </server>
+</servers>
+  <activeProfiles>
+    <activeProfile>nighlty-repo</activeProfile>
+  </activeProfiles>
+</settings>
+EOT
 #Patch the MEAD_simulator.sh for preventing run hudson archive and deploy check
 sed -i 's/cd "\$_ARCHIVE"/exit \$_ERR;cd "\$_ARCHIVE"/' ip-tooling/MEAD_simulator.sh
 if [ ! -z \${build_date} ]; then
@@ -59,7 +139,7 @@ let retry=3
 while [ \$retry -ne 0 ]; do
     MVN_DEP_REPO=nexus-release::default::\${jenkins_repo_url}/\${jenkins_deploy_name} \
     MVN_LOCAL_REPO=/tmp/\${product_lowercase}\${product_version_major}\${product_version_minor}.${section_name} \
-    MVN_SETTINGS=/jboss-prod/config/\${product_lowercase}-\${product_version_major}\${product_version_minor}-settings.xml \
+    MVN_SETTINGS=/tmp/\${product_lowercase}-\${product_version_major}\${product_version_minor}-settings.xml \
     LOCAL=1 CFG=${cfg_filename} ${bomSource} make DEBUG=\$DEBUG ${section_name}
     ret=\$?
     #Retry if hit DA rest call timeout error, it will skip automatically retry if build not depends on DA services
