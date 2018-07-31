@@ -303,7 +303,7 @@ class CodeReviewJobBuilder {
                 case "utility":
                     dslFactory.folder(dirName)
                     utility_bxms_ci_message_monitor(dslFactory,dirName)
-                    utility_pme_update(dslFactory,dirName)
+                    //utility_pme_update(dslFactory,dirName)
                 break
                 // default will create the Reviewer's master seed
                 default:
