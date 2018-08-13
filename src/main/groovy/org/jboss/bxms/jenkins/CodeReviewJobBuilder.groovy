@@ -225,7 +225,7 @@ class CodeReviewJobBuilder {
         }
     }
 
-    void createReviwerMasterSeed(DslFactory dslFactory,String dirName){
+    void createReviwerMasterSeed(DslFactory dslFactory,String dirName){        
         def job=dslFactory.job("codereview/"+dirName +"/" +dirName+'_master_seed'){
             description('This job controls all codereview jobs generation. It includes the sub seed jobs and pipelines, and execution jobs etc.')
             logRotator {
@@ -262,7 +262,7 @@ class CodeReviewJobBuilder {
                         }
                         triggers/'gerritProjects'/'com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.data.GerritProject'/'topics'/'com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.data.Topic' << {
                             'compareType' 'PLAIN'
-                            'pattern' dirName
+                            'pattern' dirName.substring(0, dirName.index("_"))
                         }
                     }
                 }
