@@ -54,7 +54,7 @@ ReleasePipelineBuilder("rhdm-71-nightly", "rhdm-71-dev.cfg", "/jboss-prod/config
 
 ReleasePipelineBuilder("rhpam-70", "rhpam-70.cfg", "/jboss-prod/config/rhpam-70-ci.properties",gerritBranch , gerritRefspec,currentJobName )
 //ReleasePipelineBuilder("rhpam-70-nightly", "rhpam-70-dev.cfg", "/jboss-prod/config/rhpam-70-nightly-ci.properties", gerritBranch , gerritRefspec,currentJobName, "H 17 * * *" )
-ReleasePipelineBuilder("rhpam-71-nightly", "rhpam-71-dev.cfg", "/jboss-prod/config/rhpam-71-nightly-ci.properties", gerritBranch , gerritRefspec,currentJobName, "H 22 * * *" )
+ReleasePipelineBuilder("rhpam-71-nightly", "rhpam-71-dev.cfg", "/jboss-prod/config/rhpam-71-nightly-ci.properties", gerritBranch , gerritRefspec,currentJobName, "H 17 * * *" )
 ReleasePipelineBuilder("rhpam-70-test", "rhpam-70-test.cfg", "/jboss-prod/config/rhpam-70-test-ci.properties",gerritBranch , gerritRefspec,currentJobName)
 //ReleasePipelineBuilder("rhpam-70-da-nightly", "rhpam-70-da-dev.cfg", "/jboss-prod/config/rhpam-70-da-nightly-ci.properties", gerritBranch , gerritRefspec,currentJobName)
 

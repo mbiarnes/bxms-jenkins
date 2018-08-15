@@ -15,20 +15,20 @@ class CodeReviewJobBuilder {
         export M3_HOME=~/bin/maven-3.3.9-prod
         export PATH=$M3_HOME/bin:$PATH
         build_date=\$(date --date="1 days ago" -u +'%Y%m%d')
-        mvn -Dversion.override=7.0.0.DM -Dversion.suffix=redhat-\${build_date} \\
-            -DdependencyManagement=org.kie.rhba.component.management:rhdm-dependency-management-all:7.0.0.DM-redhat-\${build_date} \\
-            -DpropertyManagement=org.kie.rhba.component.management:rhdm-dependency-management-all:7.0.0.DM-redhat-\${build_date} \\
-            -s /jboss-prod/m2/bxms-dev-repo-settings.xml  clean install
+        mvn -Dversion.override=7.1.0.DM -Dversion.suffix=redhat-\${build_date} \\
+            -DdependencyManagement=org.kie.rhba.component.management:rhdm-dependency-management-all:7.1.0.DM-redhat-\${build_date} \\
+            -DpropertyManagement=org.kie.rhba.component.management:rhdm-dependency-management-all:7.1.0.DM-redhat-\${build_date} \\
+            -Dmaven.repo.local=http://bxms-qe.rhev-ci-vms.eng.rdu2.redhat.com:8081/nexus/content/groups/rhdm-7.1-nightly/ clean install
         '''
     String run_rhpam_mvn_with_pme = '''echo -e "Exec node IP:\${OPENSTACK_PUBLIC_IP}\\n"
         export MAVEN_OPTS="-Xms2g -Xmx16g -Dgwt-plugin.localWorkers='3' -XX:+UseConcMarkSweepGC -XX:-UseGCOverheadLimit"
         export M3_HOME=~/bin/maven-3.3.9-prod
         export PATH=$M3_HOME/bin:$PATH
         build_date=\$(date --date="1 days ago" -u +'%Y%m%d')
-        mvn -Dversion.override=7.0.0.PAM -Dversion.suffix=redhat-\${build_date} \\
-            -DdependencyManagement=org.kie.rhba.component.management:rhpam-dependency-management-all:7.0.0.PAM-redhat-\${build_date} \\
-            -DpropertyManagement=org.kie.rhba.component.management:rhpam-dependency-management-all:7.0.0.PAM-redhat-\${build_date} \\
-            -s /jboss-prod/m2/bxms-dev-repo-settings.xml  clean install
+        mvn -Dversion.override=7.1.0.PAM -Dversion.suffix=redhat-\${build_date} \\
+            -DdependencyManagement=org.kie.rhba.component.management:rhpam-dependency-management-all:7.1.0.PAM-redhat-\${build_date} \\
+            -DpropertyManagement=org.kie.rhba.component.management:rhpam-dependency-management-all:7.1.0.PAM-redhat-\${build_date} \\
+            -Dmaven.repo.local=http://bxms-qe.rhev-ci-vms.eng.rdu2.redhat.com:8081/nexus/content/groups/rhpam-7.1-nightly/  clean install
         '''
     String run_make_mead="""
         # Workaround for variable name conflict between Jenkins and ip-tooling
@@ -57,7 +57,7 @@ class CodeReviewJobBuilder {
             export PATH=\$M3_HOME/bin:\$PATH
             build_date=\$(date --date="1 days ago" -u +'%Y%m%d')
             cd rhpam
-            cfg=rhpam-70-dev.cfg
+            cfg=rhpam-71-dev.cfg
             wget http://git.app.eng.bos.redhat.com/git/integration-platform-config.git/plain/\$cfg
             wget http://git.app.eng.bos.redhat.com/git/integration-platform-config.git/plain/ip-bom.cfg
             wget http://git.app.eng.bos.redhat.com/git/integration-platform-config.git/plain/common.cfg
@@ -67,7 +67,7 @@ class CodeReviewJobBuilder {
             fi
             mvn -U  -Dcfg=\${cfg} -Dcfg.url.template=file://`pwd`/{0}  \
              -Dmanipulation.disable=true -DprojectMetaSkip=true -DversionSuffixSnapshot=true -Dip.config.sha=\${GERRIT_PATCHSET_REVISION} \
-             -Dvictims.updates=offline -B -s /jboss-prod/m2/bxms-dev-repo-settings.xml  install
+             -Dvictims.updates=offline -B -Dmaven.repo.local=http://bxms-qe.rhev-ci-vms.eng.rdu2.redhat.com:8081/nexus/content/groups/rhpam-7.1-nightly/  install
 """
     String run_rhdm_bom_generator="""echo -e "Exec node IP:\${OPENSTACK_PUBLIC_IP}\\n"
             export M3_HOME=~/bin/maven-3.3.9-prod
@@ -84,7 +84,7 @@ class CodeReviewJobBuilder {
             fi
             mvn -U  -Dcfg=\${cfg} -Dcfg.url.template=file://`pwd`/{0}  \
              -Dmanipulation.disable=true -DprojectMetaSkip=true -DversionSuffixSnapshot=true -Dip.config.sha=\${GERRIT_PATCHSET_REVISION} \
-             -Dvictims.updates=offline -B -s /jboss-prod/m2/bxms-dev-repo-settings.xml  install
+             -Dvictims.updates=offline -B -Dmaven.repo.local=http://bxms-qe.rhev-ci-vms.eng.rdu2.redhat.com:8081/nexus/content/groups/rhdm-7.1-nightly/  install
 """
     String run_ansible_playbook="""echo -e "Exec node IP:\${OPENSTACK_PUBLIC_IP}\\n"
     ansible-playbook --vault-password-file=~/.pass site.yml --extra-vars "keypair_name=ansible-config rsa_pub_path=/home/jenkins/.ssh/id_rsa.pub"
