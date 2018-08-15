@@ -149,7 +149,7 @@ class CodeReviewJobBuilder {
 
             if(jobName.matches("(.*)codereview/(.*)")){
                 println "Detected in codereview:Disable jobs in codereview's codereview & utility."
-                disabled()
+                //disabled()
             }
         }
 
