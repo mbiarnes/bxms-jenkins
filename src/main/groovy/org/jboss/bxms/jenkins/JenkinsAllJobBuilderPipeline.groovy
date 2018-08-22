@@ -99,7 +99,7 @@ class JenkinsAllJobBuilderPipeline {
                 booleanParam('RUNSTAGEAFTER', true, 'Uncheck to just run the stage alone without the stages after.')
                 choiceParam('STARTSTAGE', choosOptScript, 'choose the stage to start,default the first one.')
                 stringParam('CONFIG_REFS','+refs/heads/master:refs/remotes/origin/master','The refs of integration-platform-config you want to pull,defautl master.')
-                stringParam('TOOLING_REFS','+refs/heads/master:refs/remotes/origin/master','The refs of integration-platform-tooling you want to pull,defautl master.')
+                stringParam('TOOLING_REFS','+refs/heads/master:refs/remotes/origin/master','The refs of integration-platform-tooling you want to pull,default master.')
             }
             definition{
               cps {
