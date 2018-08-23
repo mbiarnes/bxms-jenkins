@@ -18,7 +18,7 @@ class CodeReviewJobBuilder {
         mvn -Dversion.override=7.1.0.DM -Dversion.suffix=redhat-\${build_date} \\
             -DdependencyManagement=org.kie.rhba.component.management:rhdm-dependency-management-all:7.1.0.DM-redhat-\${build_date} \\
             -DpropertyManagement=org.kie.rhba.component.management:rhdm-dependency-management-all:7.1.0.DM-redhat-\${build_date} \\
-            -Dmaven.repo.local=http://bxms-qe.rhev-ci-vms.eng.rdu2.redhat.com:8081/nexus/content/groups/rhdm-7.1-nightly/ clean install
+            -s settings.xml clean install
         '''
     String run_rhpam_mvn_with_pme = '''echo -e "Exec node IP:\${OPENSTACK_PUBLIC_IP}\\n"
         export MAVEN_OPTS="-Xms2g -Xmx16g -Dgwt-plugin.localWorkers='3' -XX:+UseConcMarkSweepGC -XX:-UseGCOverheadLimit"
@@ -28,7 +28,7 @@ class CodeReviewJobBuilder {
         mvn -Dversion.override=7.1.0.PAM -Dversion.suffix=redhat-\${build_date} \\
             -DdependencyManagement=org.kie.rhba.component.management:rhpam-dependency-management-all:7.1.0.PAM-redhat-\${build_date} \\
             -DpropertyManagement=org.kie.rhba.component.management:rhpam-dependency-management-all:7.1.0.PAM-redhat-\${build_date} \\
-            -Dmaven.repo.local=http://bxms-qe.rhev-ci-vms.eng.rdu2.redhat.com:8081/nexus/content/groups/rhpam-7.1-nightly/  clean install
+            -s settings.xml  clean install
         '''
     String run_make_mead="""
         # Workaround for variable name conflict between Jenkins and ip-tooling
@@ -67,7 +67,7 @@ class CodeReviewJobBuilder {
             fi
             mvn -U  -Dcfg=\${cfg} -Dcfg.url.template=file://`pwd`/{0}  \
              -Dmanipulation.disable=true -DprojectMetaSkip=true -DversionSuffixSnapshot=true -Dip.config.sha=\${GERRIT_PATCHSET_REVISION} \
-             -Dvictims.updates=offline -B -Dmaven.repo.local=http://bxms-qe.rhev-ci-vms.eng.rdu2.redhat.com:8081/nexus/content/groups/rhpam-7.1-nightly/  install
+             -Dvictims.updates=offline -B -s settings.xml  install
 """
     String run_rhdm_bom_generator="""echo -e "Exec node IP:\${OPENSTACK_PUBLIC_IP}\\n"
             export M3_HOME=~/bin/maven-3.3.9-prod
@@ -84,10 +84,92 @@ class CodeReviewJobBuilder {
             fi
             mvn -U  -Dcfg=\${cfg} -Dcfg.url.template=file://`pwd`/{0}  \
              -Dmanipulation.disable=true -DprojectMetaSkip=true -DversionSuffixSnapshot=true -Dip.config.sha=\${GERRIT_PATCHSET_REVISION} \
-             -Dvictims.updates=offline -B -Dmaven.repo.local=http://bxms-qe.rhev-ci-vms.eng.rdu2.redhat.com:8081/nexus/content/groups/rhdm-7.1-nightly/  install
+             -Dvictims.updates=offline -B -s settings.xml  install
 """
     String run_ansible_playbook="""echo -e "Exec node IP:\${OPENSTACK_PUBLIC_IP}\\n"
     ansible-playbook --vault-password-file=~/.pass site.yml --extra-vars "keypair_name=ansible-config rsa_pub_path=/home/jenkins/.ssh/id_rsa.pub"
+"""
+    String prepareSettingxml="""
+    cat <<EOT > settings.xml
+    <?xml version="1.0" encoding="UTF-8"?>
+    <!--
+     Copyright 2017 Red Hat, Inc, and individual contributors.
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+    -->
+    <settings xmlns="http://maven.apache.org/SETTINGS/1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd">
+      <profiles>
+        <profile>
+          <id>nighlty-repo</id>
+          <activation>
+              <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+              <altDeploymentRepository>nexus-release::default::http://bxms-qe.rhev-ci-vms.eng.rdu2.redhat.com:8081/nexus/content/repositories/scratch-release-\${product_lowercase}-\${product_version_major}.\${product_version_minor}</altDeploymentRepository>
+            </properties>
+          <repositories>
+            <!-- RHBA Nightly repo -->
+            <repository>
+              <id>shared-imports</id>
+              <url>http://bxms-qe.rhev-ci-vms.eng.rdu2.redhat.com:8081/nexus/content/repositories/\${product_lowercase}-\${product_version_major}.\${product_version_minor}-nightly</url>
+            </repository>
+          </repositories>
+          <pluginRepositories>
+            <pluginRepository>
+              <id>shared-imports</id>
+              <url>http://bxms-qe.rhev-ci-vms.eng.rdu2.redhat.com:8081/nexus/content/repositories/\${product_lowercase}-\${product_version_major}.\${product_version_minor}-nightly</url>
+            </pluginRepository>
+          </pluginRepositories>
+        </profile>
+      </profiles>
+      <servers>
+      <server>
+        <id>nexus-release</id>
+        <username>kieciuser</username>
+        <password>jbo55.rocks!</password>
+        <configuration>
+          <httpConfiguration>
+            <all>
+              <useDefaultHeaders>false</useDefaultHeaders>
+              <headers>
+                <header>
+                  <name>Cache-control</name>
+                  <value>no-cache</value>
+                </header>
+                <header>
+                  <name>Cache-store</name>
+                  <value>no-store</value>
+                </header>
+                <header>
+                  <name>Pragma</name>
+                  <value>no-cache</value>
+                </header>
+                <header>
+                  <name>Expires</name>
+                  <value>0</value>
+                </header>
+              </headers>
+            </all>
+          </httpConfiguration>
+        </configuration>
+      </server>
+    </servers>
+      <activeProfiles>
+        <activeProfile>nighlty-repo</activeProfile>
+      </activeProfiles>
+    </settings>
+    EOT
 """
     void create_codereview_job(DslFactory dslFactory, String repoName, String shellScript, String node_label, String jobprefix=""){
 
@@ -140,6 +222,7 @@ class CodeReviewJobBuilder {
 
             // build steps
             steps{
+                shell(prepareSettingxml)
                 shell(shellScript)
             }
             // clear workspace
@@ -298,7 +381,7 @@ class CodeReviewJobBuilder {
                     create_codereview_job(dslFactory,"rhba-maven-repo-root", run_rhpam_mvn_with_pme,"codereview")
                     create_codereview_job(dslFactory,"soa/soa-component-management", run_rhpam_bom_generator,"codereview", "rhpam-")
                     create_codereview_job(dslFactory,"soa/soa-component-management", run_rhdm_bom_generator,"codereview", "rhdm-")
-                    create_codereview_job(dslFactory,"rhap-ansible-config", run_ansible_playbook,"service-node-9723")
+                    //create_codereview_job(dslFactory,"rhap-ansible-config", run_ansible_playbook,"service-node-9723")
                     break
                 case "utility":
                     dslFactory.folder(dirName)

@@ -9,7 +9,7 @@ def gerritBranch="master"
 if (currentJobName.matches("(.*)codereview/(.*)")) {
     println "Detected in codereview folder, reset GERRIT_REFSPEC/GERRIT_BRANCH:"
     gerritBranch ="FETCH_HEAD"
-    // if triggered by manul, to avoid build fail
+    // if triggered by manual, to avoid build fail
     try{
         gerritRefspec="${GERRIT_REFSPEC}"
     }catch(e){

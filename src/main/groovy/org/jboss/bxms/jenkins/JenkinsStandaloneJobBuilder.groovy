@@ -129,7 +129,7 @@ if [ ! -z \${build_date} ]; then
 fi
 if [ "${job_type}" == "nightly" ]; then
     sed -i "s#ip.config.sha=#cfg.url.template=file://`pwd`/{0},ip.config.sha=#g" ${cfg_filename}
-    #SkipTests except every Thursday
+    #SkipTests except every Saturday
     if [ `date +%w` != 6 ] && [ "\${SKIPTEST}" == "true" ]; then
       sed -i "s#^mvnSkipTestsOption=#mvnSkipTestsOption=skipTests=true,#g" ${cfg_filename}
     fi
