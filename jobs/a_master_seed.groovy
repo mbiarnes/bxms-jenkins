@@ -56,7 +56,7 @@ ReleasePipelineBuilder("rhpam-70", "rhpam-70.cfg", "/jboss-prod/config/rhpam-70-
 //ReleasePipelineBuilder("rhpam-70-nightly", "rhpam-70-dev.cfg", "/jboss-prod/config/rhpam-70-nightly-ci.properties", gerritBranch , gerritRefspec,currentJobName, "H 17 * * *" )
 ReleasePipelineBuilder("rhpam-71-nightly", "rhpam-71-dev.cfg", "/jboss-prod/config/rhpam-71-nightly-ci.properties", gerritBranch , gerritRefspec,currentJobName, "H 17 * * *" )
 ReleasePipelineBuilder("rhpam-70-test", "rhpam-70-test.cfg", "/jboss-prod/config/rhpam-70-test-ci.properties",gerritBranch , gerritRefspec,currentJobName)
-ReleasePipelineBuilder("rhpam-70-da-nightly", "rhpam-70-da-dev.cfg", "/jboss-prod/config/rhpam-70-da-nightly-ci.properties", gerritBranch , gerritRefspec,currentJobName)
+ReleasePipelineBuilder("rhpam-71-da-nightly", "rhpam-71-da-dev.cfg", "/jboss-prod/config/rhpam-71-da-nightly-ci.properties", gerritBranch , gerritRefspec,currentJobName)
 
 //Release code is identical to the folder name in streams/
 def JenkinsStandaloneJobsBuilder(_release_code, _properties_file, _cfg_file, _job_type, gerrit_ref_spec=''){
@@ -84,7 +84,7 @@ def JenkinsStandaloneJobsBuilder(_release_code, _properties_file, _cfg_file, _jo
 }
 JenkinsStandaloneJobsBuilder("rhdm-71", "/jboss-prod/config/rhdm-71-nightly-ci.properties", "rhdm-71-dev.cfg", "nightly" )
 //JenkinsStandaloneJobsBuilder("rhpam-70", "/jboss-prod/config/rhpam-70-nightly-ci.properties", "rhpam-70-dev.cfg", "nightly" )
-JenkinsStandaloneJobsBuilder("rhpam-70-da", "/jboss-prod/config/rhpam-70-da-nightly-ci.properties", "rhpam-70-da-dev.cfg", "nightly")
+JenkinsStandaloneJobsBuilder("rhpam-71-da", "/jboss-prod/config/rhpam-71-da-nightly-ci.properties", "rhpam-71-da-dev.cfg", "nightly")
 JenkinsStandaloneJobsBuilder("rhpam-71", "/jboss-prod/config/rhpam-71-nightly-ci.properties", "rhpam-71-dev.cfg", "nightly" )
 
 def dirNameRow=["codereview","utility", "rzhang_coderreview"]
