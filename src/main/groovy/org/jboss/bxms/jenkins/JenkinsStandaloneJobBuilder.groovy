@@ -36,8 +36,8 @@ class JenkinsStandaloneJobBuilder {
             if ((!section.containsKey("config_type")) || (section.containsKey("config_type") && section.get("config_type").equals("bom-builder")) ) {
                 String shellScript = """
 set +e
-unset WORKSPACE
 DEPLOY_DIR=\$WORKSPACE/deployDirectory
+unset WORKSPACE
 echo -e "Exec node IP:\${OPENSTACK_PUBLIC_IP}\\n"
 #Only debug purpose
 #cp /jboss-prod/config/rhpam-71-dev.cfg .
