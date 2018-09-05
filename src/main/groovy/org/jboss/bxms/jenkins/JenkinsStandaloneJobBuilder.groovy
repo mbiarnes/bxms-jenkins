@@ -37,6 +37,7 @@ class JenkinsStandaloneJobBuilder {
                 String shellScript = """
 set +e
 unset WORKSPACE
+DEPLOY_DIR=\$WORKSPACE/deployDirectory
 echo -e "Exec node IP:\${OPENSTACK_PUBLIC_IP}\\n"
 #Only debug purpose
 #cp /jboss-prod/config/rhpam-71-dev.cfg .
@@ -67,7 +68,7 @@ cat <<EOT > /tmp/\${product_lowercase}-\${product_version_major}\${product_versi
           <activeByDefault>true</activeByDefault>
         </activation>
         <properties>
-          <altDeploymentRepository>nexus-release::default::http://bxms-qe.rhev-ci-vms.eng.rdu2.redhat.com:8081/nexus/content/repositories/scratch-release-\${product_lowercase}-\${product_version_major}.\${product_version_minor}</altDeploymentRepository>
+          <altDeploymentRepository>local::default::file://\$DEPLOY_DIR</altDeploymentRepository>
         </properties>
       <repositories>
         <!-- RHBA Nightly repo -->
@@ -137,7 +138,6 @@ fi
 ln -sf `pwd`/workspace/build.${section_name}/.m2 /tmp/\${product_lowercase}\${product_version_major}\${product_version_minor}.${section_name}
 let retry=3
 while [ \$retry -ne 0 ]; do
-    MVN_DEP_REPO=nexus-release::default::\${jenkins_repo_url}/\${jenkins_deploy_name} \
     MVN_LOCAL_REPO=/tmp/\${product_lowercase}\${product_version_major}\${product_version_minor}.${section_name} \
     MVN_SETTINGS=/tmp/\${product_lowercase}-\${product_version_major}\${product_version_minor}-settings.xml \
     LOCAL=1 CFG=${cfg_filename} ${bomSource} make DEBUG=\$DEBUG ${section_name}
@@ -155,6 +155,13 @@ while [ \$retry -ne 0 ]; do
         let retry-=1
     fi
 done
+
+# unpack zip to QA Nexus
+cd \$DEPLOY_DIR
+zip -r kiegroup .
+curl --upload-file kiegroup.zip -u \$kieUnpack -v http://bxms-qe.rhev-ci-vms.eng.rdu2.redhat.com:8081/nexus/service/local/repositories/scratch-release-\${product_lowercase}-\${product_version_major}.\${product_version_minor}/content-compressed
+cd ..
+
 exit \$ret
 """
                 dslFactory.job(release_code + "-" + job_type + "-release-pipeline/y-" + release_code + "-" + section_name ) {
@@ -232,6 +239,10 @@ exit \$ret
                         preBuildCleanup(){
                             includePattern('workspace/**')
                             deleteDirectories()
+                        }
+
+                        credentialsBinding {
+                            usernamePassword("kieUnpack" , "unpacks-zip-on-qa-nexus")
                         }
 
                     }
