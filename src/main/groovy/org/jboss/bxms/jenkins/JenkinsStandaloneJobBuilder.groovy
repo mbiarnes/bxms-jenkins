@@ -36,7 +36,10 @@ class JenkinsStandaloneJobBuilder {
             if ((!section.containsKey("config_type")) || (section.containsKey("config_type") && section.get("config_type").equals("bom-builder")) ) {
                 String shellScript = """
 set +e
+# set up dir for deployment cache and make sure it exists
 DEPLOY_DIR=\$WORKSPACE/deployDirectory
+mkdir -p \$DEPLOY_DIR
+
 unset WORKSPACE
 echo -e "Exec node IP:\${OPENSTACK_PUBLIC_IP}\\n"
 #Only debug purpose
