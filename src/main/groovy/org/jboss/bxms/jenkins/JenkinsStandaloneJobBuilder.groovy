@@ -77,13 +77,13 @@ cat <<EOT > /tmp/\${product_lowercase}-\${product_version_major}\${product_versi
         <!-- RHBA Nightly repo -->
         <repository>
           <id>shared-imports</id>
-          <url>http://bxms-qe.rhev-ci-vms.eng.rdu2.redhat.com:8081/nexus/content/repositories/\${product_lowercase}-\${product_version_major}.\${product_version_minor}-nightly</url>
+          <url>http://bxms-qe.rhev-ci-vms.eng.rdu2.redhat.com:8081/nexus/content/repositories/rhba-master-nightly</url>
         </repository>
       </repositories>
       <pluginRepositories>
         <pluginRepository>
           <id>shared-imports</id>
-          <url>http://bxms-qe.rhev-ci-vms.eng.rdu2.redhat.com:8081/nexus/content/repositories/\${product_lowercase}-\${product_version_major}.\${product_version_minor}-nightly</url>
+          <url>http://bxms-qe.rhev-ci-vms.eng.rdu2.redhat.com:8081/nexus/content/repositories/rhba-master-nightly</url>
         </pluginRepository>
       </pluginRepositories>
     </profile>
@@ -163,7 +163,7 @@ done
 # unpack zip to QA Nexus
 cd \$DEPLOY_DIR
 zip -r kiegroup .
-curl --upload-file kiegroup.zip -u \$kieUnpack -v http://bxms-qe.rhev-ci-vms.eng.rdu2.redhat.com:8081/nexus/service/local/repositories/scratch-release-\${product_lowercase}-\${product_version_major}.\${product_version_minor}/content-compressed
+curl --upload-file kiegroup.zip -u \$kieUnpack -v http://bxms-qe.rhev-ci-vms.eng.rdu2.redhat.com:8081/nexus/service/local/repositories/scratch-release-rhba-master/content-compressed
 cd ..
 
 exit \$ret
