@@ -1071,7 +1071,7 @@ fi
                 // Sends JMS message.
                 ciMessageBuilder {
                     overrides {
-                        topic('VirtualTopic.qe.ci.ba.${product_lowercase}.${product_version_major}${product_version_minor}.${release_type}.smoke.results')
+                        topic('VirtualTopic.qe.ci.ba.${product_lowercase}.master.${release_type}.smoke.results')
                     }
 
                     // JMS selector to choose messages that will fire the trigger.
@@ -1083,7 +1083,7 @@ fi
                     // KEY=value pairs, one per line (Java properties file format) to be used as message properties.
                     messageProperties('label=rhba-ci\n' +
                             'CI_TYPE=customer\n' +
-                            'EVENT_TYPE=${product_lowercase}-70-${release_type}-qe-smoke-results\n')
+                            'EVENT_TYPE=${product_lowercase}-master-${release_type}-qe-smoke-results\n')
 
                     // Content of CI message to be sent.
                     messageContent(report_string)
@@ -1681,7 +1681,7 @@ fi
                 // Sends JMS message.
                 ciMessageBuilder {
                     overrides {
-                        topic('VirtualTopic.qe.ci.ba.${product_lowercase}.${product_version_major}${product_version_minor}.${release_type}.trigger')
+                        topic('VirtualTopic.qe.ci.ba.${product_lowercase}.master.${release_type}.trigger')
                     }
 
                     // JMS selector to choose messages that will fire the trigger.
@@ -1693,7 +1693,7 @@ fi
                     // KEY=value pairs, one per line (Java properties file format) to be used as message properties.
                     messageProperties('label=rhba-ci\n' +
                             'CI_TYPE=custom\n' +
-                            'EVENT_TYPE=${product_lowercase}-${product_version_major}${product_version_minor}-${release_type}-qe-trigger\n')
+                            'EVENT_TYPE=${product_lowercase}-master-${release_type}-qe-trigger\n')
                     // Content of CI message to be sent.
                     messageContent('${product_staging_properties_url}')
                 }
