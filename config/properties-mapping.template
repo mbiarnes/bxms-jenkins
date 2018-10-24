@@ -46,8 +46,8 @@ product_cfg_sha=
 build_cfg=
 #Jenkins milestone maven repo folder
 jenkins_repo_url=http://bxms-qe.rhev-ci-vms.eng.rdu2.redhat.com:8081/nexus/content/repositories
-jenkins_repo_name={product_lowercase}-{product_version_major}.{product_version_minor}-nightly
-jenkins_deploy_name=scratch-release-{product_lowercase}-{product_version_major}.{product_version_minor}
+jenkins_repo_name=rhba-master-nightly
+jenkins_deploy_name=scratch-release-rhba-master
 #running/close, used as a token of activate some of the release pipeline
 release_status=running
 
