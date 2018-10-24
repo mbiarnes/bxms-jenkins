@@ -45,7 +45,8 @@ echo -e "Exec node IP:\${OPENSTACK_PUBLIC_IP}\\n"
 #Only debug purpose
 #cp /jboss-prod/config/rhpam-71-dev.cfg .
 
-cat <<EOT > /tmp/\${product_lowercase}-\${product_version_major}\${product_version_minor}-settings.xml
+JOB_SETTINGS_XML=/tmp/\${product_lowercase}-\${product_version_major}\${product_version_minor}-\${JOB_BASE_NAME}-settings.xml
+cat <<EOT > \$JOB_SETTINGS_XML
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  Copyright 2017 Red Hat, Inc, and individual contributors.
@@ -143,7 +144,7 @@ let retry=3
 while [ \$retry -ne 0 ]; do
     MVN_DEP_REPO=local::default::file://\$DEPLOY_DIR \
     MVN_LOCAL_REPO=/tmp/\${product_lowercase}\${product_version_major}\${product_version_minor}.${section_name} \
-    MVN_SETTINGS=/tmp/\${product_lowercase}-\${product_version_major}\${product_version_minor}-settings.xml \
+    MVN_SETTINGS=\$JOB_SETTINGS_XML \
     LOCAL=1 CFG=${cfg_filename} ${bomSource} make DEBUG=\$DEBUG ${section_name}
     ret=\$?
     #Retry if hit DA rest call timeout error, it will skip automatically retry if build not depends on DA services
