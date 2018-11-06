@@ -57,7 +57,7 @@ class CodeReviewJobBuilder {
             export PATH=\$M3_HOME/bin:\$PATH
             build_date=\$(date --date="1 days ago" -u +'%Y%m%d')
             cd rhpam
-            cfg=rhpam-71-dev.cfg
+            cfg=rhpam-master-nightly-dev.cfg
             wget http://git.app.eng.bos.redhat.com/git/integration-platform-config.git/plain/\$cfg
             wget http://git.app.eng.bos.redhat.com/git/integration-platform-config.git/plain/ip-bom.cfg
             wget http://git.app.eng.bos.redhat.com/git/integration-platform-config.git/plain/common.cfg
@@ -74,7 +74,7 @@ class CodeReviewJobBuilder {
             export PATH=\$M3_HOME/bin:\$PATH
             build_date=\$(date --date="1 days ago" -u +'%Y%m%d')
             cd rhdm
-            cfg=rhdm-71-dev.cfg
+            cfg=rhdm-master-nightly-dev.cfg
             wget http://git.app.eng.bos.redhat.com/git/integration-platform-config.git/plain/\$cfg
             wget http://git.app.eng.bos.redhat.com/git/integration-platform-config.git/plain/ip-bom.cfg
             wget http://git.app.eng.bos.redhat.com/git/integration-platform-config.git/plain/common.cfg

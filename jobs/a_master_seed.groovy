@@ -48,8 +48,8 @@ def ReleasePipelineBuilder(_release_code, _cfg_file, _properties_file, gerritBra
     ).build(this)
 }
 
-ReleasePipelineBuilder("rhdm-master-nightly", "rhdm-71-dev.cfg", "/jboss-prod/config/rhdm-71-nightly-ci.properties", gerritBranch , gerritRefspec,currentJobName)
-ReleasePipelineBuilder("rhpam-master-nightly", "rhpam-71-dev.cfg", "/jboss-prod/config/rhpam-71-nightly-ci.properties", gerritBranch , gerritRefspec,currentJobName)
+ReleasePipelineBuilder("rhdm-master-nightly", "rhdm-master-nightly-dev.cfg", "/jboss-prod/config/rhdm-71-nightly-ci.properties", gerritBranch , gerritRefspec,currentJobName)
+ReleasePipelineBuilder("rhpam-master-nightly", "rhpam-master-nightly-dev.cfg", "/jboss-prod/config/rhpam-71-nightly-ci.properties", gerritBranch , gerritRefspec,currentJobName)
 // original cron value for RHPAM job: "H 17 * * *"
 
 //Release code is identical to the folder name in streams/
@@ -76,8 +76,8 @@ def JenkinsStandaloneJobsBuilder(_release_code, _properties_file, _cfg_file, _jo
             gerrit_ref_spec: gerrit_ref_spec
     ).build(this)
 }
-JenkinsStandaloneJobsBuilder("rhdm-master", "/jboss-prod/config/rhdm-71-nightly-ci.properties", "rhdm-71-dev.cfg", "nightly" )
-JenkinsStandaloneJobsBuilder("rhpam-master", "/jboss-prod/config/rhpam-71-nightly-ci.properties", "rhpam-71-dev.cfg", "nightly" )
+JenkinsStandaloneJobsBuilder("rhdm-master", "/jboss-prod/config/rhdm-71-nightly-ci.properties", "rhdm-master-nightly-dev.cfg", "nightly" )
+JenkinsStandaloneJobsBuilder("rhpam-master", "/jboss-prod/config/rhpam-71-nightly-ci.properties", "rhpam-master-nightly-dev.cfg", "nightly" )
 
 //def dirNameRow=["codereview","utility", "rzhang_coderreview"]
 //if you want to create codereviewer(rzhang)'s directory and his master seed job,do like this:

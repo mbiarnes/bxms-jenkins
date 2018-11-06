@@ -43,7 +43,7 @@ mkdir -p \$DEPLOY_DIR
 unset WORKSPACE
 echo -e "Exec node IP:\${OPENSTACK_PUBLIC_IP}\\n"
 #Only debug purpose
-#cp /jboss-prod/config/rhpam-71-dev.cfg .
+#cp /jboss-prod/config/rhpam-master-nightly-dev.cfg .
 
 JOB_SETTINGS_XML=/tmp/\${product_lowercase}-\${product_version_major}\${product_version_minor}-\${JOB_BASE_NAME}-settings.xml
 cat <<EOT > \$JOB_SETTINGS_XML
