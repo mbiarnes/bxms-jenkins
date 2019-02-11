@@ -563,19 +563,20 @@ fi
                     ;;
                 rhpam )
                     appendProp "${product_lowercase}.business-central.standalone.latest.url"    "$product_url_prefix/${product_filename_common_prefix}-business-central-standalone.jar"
-                    appendProp "${product_lowercase}.business-central-eap7.latest.url"          "$product_url_prefix/${product_filename_common_prefix}-business-central-eap7-deployable.zip"                   
-                    
+                    appendProp "${product_lowercase}.business-central-eap7.latest.url"          "$product_url_prefix/${product_filename_common_prefix}-business-central-eap7-deployable.zip"
+
                     # RHPAM 7.1 needs certify kie-server-jws
                     if [ "${product_version_minor}" == "1" ];then
                       appendProp "${product_lowercase}.kie-server.jws.latest.url" "${product_url_prefix}/${product_filename_common_prefix}-kie-server-jws.zip"
                     fi
-                    
+
                     if [ "${release_type}" == "nightly" ]; then
                        appendProp "${product_lowercase}.monitoring.latest.url"          "$product_url_prefix/${product_filename_common_prefix}-monitoring-ee7.zip"
                     fi
             esac
 
             appendProp "${product_lowercase}.kie-server.ee7.latest.url" "${product_url_prefix}/${product_filename_common_prefix}-kie-server-ee7.zip"
+            appendProp "${product_lowercase}.kie-server.ee8.latest.url" "${product_url_prefix}/${product_filename_common_prefix}-kie-server-ee8.zip"
             appendProp "${product_lowercase}.addons.latest.url"         "${product_url_prefix}/${product_filename_common_prefix}-add-ons.zip"
             appendProp "${product_lowercase}.installer.latest.url"         "${product_installer_url}"
 
@@ -599,7 +600,7 @@ fi
 
                 sed -e "s=${rcm_staging_base}/${product_lowercase}=${rcm_candidate_base}/${product_lowercase}=g" \
                 ${product_staging_properties_name} > ${product_candidate_properties_name}
-                
+
             fi
 
             '''
@@ -1784,6 +1785,7 @@ def validateProperties(propfile, keyword, _product_name):
         if re.match('rhdm-.*', propfile) is not None:
             ret+=isvalidurl(dic['rhdm.addons.latest.url'],keyword)
             ret+=isvalidurl(dic['rhdm.kie-server.ee7.latest.url'],keyword)
+            ret+=isvalidurl(dic['rhdm.kie-server.ee8.latest.url'],keyword)
             ret+=isvalidurl(dic['rhdm.decision-central.standalone.latest.url'],keyword)
             ret+=isvalidurl(dic['rhdm.decision-central-eap7.latest.url'],keyword)
             ret+=isvalidurl(dic['rhdm.installer.latest.url'],keyword)
@@ -1797,6 +1799,7 @@ def validateProperties(propfile, keyword, _product_name):
             ret+=assertContain(dic['rhdm.decision-central.standalone.latest.url'], '$product_milestone_version')
             ret+=assertContain(dic['rhdm.addons.latest.url'], '$product_milestone_version')
             ret+=assertContain(dic['rhdm.kie-server.ee7.latest.url'], '$product_milestone_version')
+            ret+=assertContain(dic['rhdm.kie-server.ee8.latest.url'], '$product_milestone_version')
             ret+=assertContain(dic['rhdm.installer.latest.url'], '$product_milestone_version')
             ret+=assertContain(dic['INSTALLER_COMMONS_VERSION'], '$installercommons_version')
             ret+=assertContain(dic['IZPACK_VERSION'], '$izpack_version')
@@ -1805,6 +1808,7 @@ def validateProperties(propfile, keyword, _product_name):
         if re.match('rhpam..*', propfile) is not None:
             ret+=isvalidurl(dic['rhpam.addons.latest.url'],keyword)
             ret+=isvalidurl(dic['rhpam.kie-server.ee7.latest.url'],keyword)
+            ret+=isvalidurl(dic['rhpam.kie-server.ee8.latest.url'],keyword)
             ret+=isvalidurl(dic['rhpam.business-central.standalone.latest.url'],keyword)
             ret+=isvalidurl(dic['rhpam.business-central-eap7.latest.url'],keyword)
             ret+=isvalidurl(dic['rhpam.installer.latest.url'],keyword)
@@ -1819,6 +1823,7 @@ def validateProperties(propfile, keyword, _product_name):
             ret+=assertContain(dic['rhpam.business-central.standalone.latest.url'], '$product_milestone_version')
             ret+=assertContain(dic['rhpam.addons.latest.url'], '$product_milestone_version')
             ret+=assertContain(dic['rhpam.kie-server.ee7.latest.url'], '$product_milestone_version')
+            ret+=assertContain(dic['rhpam.kie-server.ee8.latest.url'], '$product_milestone_version')
             ret+=assertContain(dic['rhpam.installer.latest.url'], '$product_milestone_version')
             ret+=assertContain(dic['INSTALLER_COMMONS_VERSION'], '$installercommons_version')
             ret+=assertContain(dic['IZPACK_VERSION'], '$izpack_version')
