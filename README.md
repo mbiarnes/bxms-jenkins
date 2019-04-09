@@ -1,4 +1,17 @@
+
+jenkins-image-extra-bits
+------------------------
+This directory contains ansible roles and data for extending the jenkins image
+maintained in https://github.com/kiegroup/kie-jenkins-scripts. These extra pieces
+contain references to redhat internal systems, and so they are stored here in a
+non-public reposoitory. The kie-jenkins-scripts directory contains a script for
+pulling down this repository (a url argument) and installing the files appropriately
+for the image build. These files have nothing to do with the BxMS DSL script below
+
+Look in the subdirectories under jenkins-image-extra-bits for additional README files.
+
 BxMS DSL script:
+----------------
 
 BxMS DSL controlls Jenkins job and release pipelinefor BxMS product CI which
 is in https://brms-bpms-jenkins.rhev-ci-vms.eng.rdu2.redhat.com/

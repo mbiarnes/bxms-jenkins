@@ -1,0 +1,9 @@
+[common]
+ssl_verify = False
+redhat = true
+[repositories]
+
+jboss-os = http://git.app.eng.bos.redhat.com/git/jboss-container-tools.git/plain/repos/jboss-rhel-os.repo
+jboss-ocp = http://git.app.eng.bos.redhat.com/git/jboss-container-tools.git/plain/repos/jboss-rhel-ocp.repo
+jboss-rhscl = http://git.app.eng.bos.redhat.com/git/jboss-container-tools.git/plain/repos/jboss-rhel-rhscl.repo
+jboss-rhom = http://git.app.eng.bos.redhat.com/git/jboss-container-tools.git/plain/repos/jboss-rhom.repo

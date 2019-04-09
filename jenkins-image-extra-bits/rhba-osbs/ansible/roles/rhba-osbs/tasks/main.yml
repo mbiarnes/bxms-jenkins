@@ -1,0 +1,113 @@
+---
+### add cekit repos, binary and deps ###
+
+- name: Copy cekit repos config
+  copy:
+    src: data/rhba-osbs/cekit/cekit.repo
+    dest: /etc/yum.repos.d/
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Install packages
+  yum:
+    pkg: "{{item}}"
+    state: latest
+  with_items:
+   - rhpkg
+   - brewkoji
+   - ca-certificates
+   - authconfig
+   - krb5-workstation
+   - odcs-client
+   - python2-cekit
+
+- name: Update all packages
+  yum:
+    name: "*"
+    state: latest
+
+### add build.sh script ###
+
+- name: Create tools/config directory for rhpam builds
+  file:
+    path: /opt/rhpam/cekit
+    state: directory
+    recurse: yes
+    owner: jenkins
+    group: jenkins
+
+- name: Copy the build.sh script to /opt/rhpam, build-overrides.sh will be downloaded at runtime
+  copy:
+    src: data/rhba-osbs/scripts/build.sh
+    dest: /opt/rhpam/
+    owner: jenkins
+    group: jenkins
+    mode: 0744
+
+### cekit config ###
+
+- name: Copy cekit config to /opt/rhpam/cekit/config
+  copy:
+    src: data/rhba-osbs/cekit/config
+    dest: /opt/rhpam/cekit/
+    owner: jenkins
+    group: jenkins
+
+### krb5 config ###
+
+- name: Copy krb5 config to /etc/krb5.conf
+  copy:
+    src: data/rhba-osbs/krb5/krb5.conf
+    dest: /etc/
+
+### ldap config ###
+
+- name: Copy ldap config to /etc/openldap
+  copy:
+    src: data/rhba-osbs/ldap/ldap.conf
+    dest: /etc/openldap/
+
+### redhat root certs ###
+
+- name: Download root certs
+  get_url:
+    url: "{{ item }}"
+    dest: /etc/pki/ca-trust/source/anchors/
+    validate_certs: no
+  with_items:
+    ['https://password.corp.redhat.com/legacy.crt', 'https://password.corp.redhat.com/RH-IT-Root-CA.crt']
+
+- name: Create cacerts directory
+  file:
+    path: /etc/openldap/cacerts
+    state: directory
+    recurse: yes
+
+- name: Copy legacy root certs to cacerts
+  copy:
+    src: /etc/pki/ca-trust/source/anchors/{{ item }}
+    dest: /etc/openldap/cacerts/
+    remote_src: yes
+  with_items:
+    [legacy.crt, RH-IT-Root-CA.crt]
+
+- name: Rehash cacerts
+  command: cacertdir_rehash /etc/openldap/cacerts
+
+- name: Update ca trust
+  command: update-ca-trust
+
+### ssh config ###
+
+- name: Set no strict host checking
+  shell: echo "StrictHostKeyChecking no" >> /etc/ssh/ssh_config
+
+### Copy extra per-version overrides files ###
+
+- name: Copy extra overrides files
+  copy:
+    src: data/rhba-osbs/overrides
+    dest: /opt/rhpam
+    local_follow: False
+...
