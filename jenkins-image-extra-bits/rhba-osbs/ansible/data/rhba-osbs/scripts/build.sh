@@ -417,4 +417,4 @@ fi
 # Invoke cekit and respond with Y to any prompts
 echo cekit $debug --config /opt/rhpam/cekit/config --overrides-file branch-overrides.yaml $overrides $extraoverrides --build-engine=osbs --build-osbs-target=$OSBS_BUILD_TARGET $CEKIT_BUILD_OPTIONS build
 
-#yes Y | cekit $debug --config /opt/rhpam/cekit/config --overrides-file branch-overrides.yaml $overrides $extraoverrides --build-engine=osbs --build-osbs-target=$OSBS_BUILD_TARGET $CEKIT_BUILD_OPTIONS build
+yes Y | cekit $debug --config /opt/rhpam/cekit/config --overrides-file branch-overrides.yaml $overrides $extraoverrides --build-engine=osbs --build-osbs-target=$OSBS_BUILD_TARGET $CEKIT_BUILD_OPTIONS build
