@@ -23,10 +23,15 @@ function help()
     echo "                            rhpam-controller, rhpam-kieserver, rhpam-smartrouter, rhdm-decisioncentral,"
     echo "                            rhdm-decisioncentral-indexing, rhdm-controller, rhdm-kieserver, rhdm-optaweb-employee-rostering"
     echo "  -t OSBS_BUILD_TARGET      Build target for osbs, for example rhba-7.3-openshift-containers-candidate"
+    echo ""
+    echo "One of the following:"
     echo "  -s KERBEROS_PASSWORD      Password for KERBEROS_PRINCIPAL (a keytab file may be used instead via KERBEROS_KEYTAB)"
+    echo "  -k KERBEROS_KEYTAB        Path to a keytab file for KERBEROS_PRINCIPAL if no KERBEROS_PASSWORD is specified."
     echo ""
     echo "Optional:"
     echo "  -h                        Print this help message"
+    echo "  -p KERBEROS_PRINCIPAL     Kerberos principal to use with kinit to access build systems. Default is"
+    echo "                            rhpam-build/rhba-jenkins.rhev-ci-vms.eng.rdu2.redhat.com@REDHAT.COM"
     echo "  -b BUILD_DATE             The date of the nightly build to access. Passed to the build-overrides.sh -b option if set"
     echo "  -r IMAGE_REPO             Upstream repository containing the image descriptor files for images."
     echo "                            Default is https://github.com/jboss-container-images/[rhpam|rhdm]-7-openshift-image"
@@ -34,15 +39,13 @@ function help()
     echo "                            (eg 7.3.0 maps to branch 7.3.x) otherwise default is 'master'"
     echo "  -d IMAGE_SUBDIR           Subdirectory in the upstream repository to descend into for the build. Default is"
     echo "                            based on the value of PROD_COMPONENT, this option is provided in case an override is needed"
-    echo "  -p KERBEROS_PRINCIPAL     Kerberos principal to use with kinit to access build systems. Default is"
-    echo "                            rhpam-build/rhba-jenkins.rhev-ci-vms.eng.rdu2.redhat.com@REDHAT.COM"
-    echo "  -k KERBEROS_KEYTAB        Path to a keytab file for KERBEROS_PRINCIPAL if no KERBEROS_PASSWORD is specified."
     echo "  -u GIT_USER               User config for git commits to internal repositories. Default is 'Your Name'"
     echo "  -e GIT_EMAIL              Email config for git commits to internal repositories. Default is 'yourname@email.com'"
     echo "  -o CEKIT_BUILD_OPTIONS    Additional options to pass through to the cekit build command, should be quoted"
     echo "  -l CEKIT_CACHE_LOCAL      Comma-separated list of urls to download and add to the local cekit cache"
     echo "                            Note that this may override default values set for particular version/components"
     echo "                            set in /opt/rhpam/overrides (/opt/rhpam/overrides/7.3/rhpam-businesscentral-cache-local.sh for example)"
+    echo "  -g                        Debug setting, currently sets verbose flag on cekit commands"
 }
 
 function cache_url() {
@@ -239,6 +242,7 @@ function download_build_overrides()
         echo This probably means that "$IMAGE_BRANCH" is not an actual remote branch in "$IMAGE_REPO"
         exit -1
     fi
+    mkdir -p /opt/rhpam
     cp tools/build-overrides/build-overrides.sh /opt/rhpam
     popd
 
@@ -405,7 +409,12 @@ set_git_config
 handle_overrides
 handle_cache_urls
 
-# Invoke cekit and respond with Y to any prompts
-echo cekit --config /opt/rhpam/cekit/config --overrides-file branch-overrides.yaml $overrides $extraoverrides --build-engine=osbs --build-osbs-target=$OSBS_BUILD_TARGET $CEKIT_BUILD_OPTIONS build
+debug=
+if [ -n "$DEBUG" ]; then
+    debug="-v"
+fi
 
-yes Y | cekit --config /opt/rhpam/cekit/config --overrides-file branch-overrides.yaml $overrides $extraoverrides --build-engine=osbs --build-osbs-target=$OSBS_BUILD_TARGET $CEKIT_BUILD_OPTIONS build
+# Invoke cekit and respond with Y to any prompts
+echo cekit $debug --config /opt/rhpam/cekit/config --overrides-file branch-overrides.yaml $overrides $extraoverrides --build-engine=osbs --build-osbs-target=$OSBS_BUILD_TARGET $CEKIT_BUILD_OPTIONS build
+
+#yes Y | cekit $debug --config /opt/rhpam/cekit/config --overrides-file branch-overrides.yaml $overrides $extraoverrides --build-engine=osbs --build-osbs-target=$OSBS_BUILD_TARGET $CEKIT_BUILD_OPTIONS build
