@@ -6,6 +6,7 @@ DEBUG=
 GIT_USER=${GIT_USER:-"Your Name"}
 GIT_EMAIL=${GIT_EMAIL:-"yourname@email.com"}
 KERBEROS_PRINCIPAL=${KERBEROS_PRINCIPAL:-"rhpam-build/rhba-jenkins.rhev-ci-vms.eng.rdu2.redhat.com"}
+WORK_DIR=$(pwd)/build-temp
 
 function help()
 {
@@ -32,6 +33,8 @@ function help()
     echo "  -h                        Print this help message"
     echo "  -p KERBEROS_PRINCIPAL     Kerberos principal to use with kinit to access build systems. Default is"
     echo "                            rhpam-build/rhba-jenkins.rhev-ci-vms.eng.rdu2.redhat.com@REDHAT.COM"
+    echo "  -i OSBS_BUILD_USER        Maps to the build-osbs-user option for cekit (ie the user for rhpkg commands)"
+    echo "                            The default will be KERBEROS_PRINCIPAL if this is not set"
     echo "  -b BUILD_DATE             The date of the nightly build to access. Passed to the build-overrides.sh -b option if set"
     echo "  -r IMAGE_REPO             Upstream repository containing the image descriptor files for images."
     echo "                            Default is https://github.com/jboss-container-images/[rhpam|rhdm]-7-openshift-image"
@@ -39,6 +42,7 @@ function help()
     echo "                            (eg 7.3.0 maps to branch 7.3.x) otherwise default is 'master'"
     echo "  -d IMAGE_SUBDIR           Subdirectory in the upstream repository to descend into for the build. Default is"
     echo "                            based on the value of PROD_COMPONENT, this option is provided in case an override is needed"
+    echo "  -w WORK_DIR               The working directory used for generating overrides, cekit cache, etc. Default is ./build-temp."
     echo "  -u GIT_USER               User config for git commits to internal repositories. Default is 'Your Name'"
     echo "  -e GIT_EMAIL              Email config for git commits to internal repositories. Default is 'yourname@email.com'"
     echo "  -o CEKIT_BUILD_OPTIONS    Additional options to pass through to the cekit build command, should be quoted"
@@ -58,8 +62,8 @@ function cache_url() {
     sha256value=$(sha256sum $filename | awk '{print $1}')
     sha1value=$(sha1sum $filename | awk '{print $1}')
     md5value=$(md5sum $filename | awk '{print $1}')
-    echo cekit-cache add --sha256 $sha256value --sha1 $sha1value --md5 $md5value $filename
-    cekit-cache add --sha256 $sha256value --sha1 $sha1value --md5 $md5value $filename
+    echo cekit-cache $cekit_workdir add --sha256 $sha256value --sha1 $sha1value --md5 $md5value $filename
+    cekit-cache $cekit_workdir add --sha256 $sha256value --sha1 $sha1value --md5 $md5value $filename
     if [ "$?" -ne 0 ]; then
 	echo Failed to cache $1
     fi
@@ -242,8 +246,8 @@ function download_build_overrides()
         echo This probably means that "$IMAGE_BRANCH" is not an actual remote branch in "$IMAGE_REPO"
         exit -1
     fi
-    mkdir -p /opt/rhpam
-    cp tools/build-overrides/build-overrides.sh /opt/rhpam
+    mkdir -p $WORK_DIR/tools
+    cp tools/build-overrides/build-overrides.sh $WORK_DIR/tools/
     popd
 
 }
@@ -295,9 +299,11 @@ function handle_overrides()
     if [ "$PROD_COMPONENT" == "rhdm-decisioncentral-indexing" -o "$PROD_COMPONENT" == "rhpam-businesscentral-indexing" ]; then
 	return
     fi
-    
+
+    # Get the build-overrides.sh script itself, based on the branch we're using
     download_build_overrides
-    overrides="--overrides-file /tmp/build-overrides/$PROD_COMPONENT-overrides.yaml"
+
+    overrides="--overrides-file $WORK_DIR/build-overrides/$PROD_COMPONENT-overrides.yaml"
 
     # If we have an additional overrides file included for a particular branch and a particular
     # component that we're building, then add that extra file
@@ -313,13 +319,13 @@ function handle_overrides()
     fi
 
     # Generate the overrides files
-    echo /opt/rhpam/build-overrides.sh -v $PROD_VERSION -t nightly -p $PROD_COMPONENT $buildopt -d /tmp/build-overrides
+    echo $WORK_DIR/tools/build-overrides.sh -v $PROD_VERSION -t nightly -p $PROD_COMPONENT $buildopt -d $WORK_DIR/build-overrides $bo_workdir
 
-    /opt/rhpam/build-overrides.sh -v $PROD_VERSION -t nightly -p $PROD_COMPONENT $buildopt -d /tmp/build-overrides
+    $WORK_DIR/tools/build-overrides.sh -v $PROD_VERSION -t nightly -p $PROD_COMPONENT $buildopt -d $WORK_DIR/build-overrides $bo_workdir
 
 # If we think it's ever the case that skipping the overrides generation in case of error is okay, we can do this
 #    set +e
-#    /opt/rhpam/build-overrides.sh -v $PROD_VERSION -t nightly -p $PROD_COMPONENT $buildopt -d /tmp/build-overrides
+#    $WORK_DIR/tools/build-overrides.sh -v $PROD_VERSION -t nightly -p $PROD_COMPONENT $buildopt -d $WORK_DIR/build-overrides
 #    res=$?
 #    set -e
 #    if [ "$res" -ne 0 ]; then
@@ -344,7 +350,7 @@ function handle_cache_urls()
     fi
 }
 
-while getopts gu:e:v:c:t:o:r:n:d:p:k:s:b:l:h option; do
+while getopts gu:e:v:c:t:o:r:n:d:p:k:s:b:l:i:w:h option; do
     case $option in
         g)
             DEBUG=true
@@ -391,6 +397,12 @@ while getopts gu:e:v:c:t:o:r:n:d:p:k:s:b:l:h option; do
 	l)
 	    CEKIT_CACHE_LOCAL=$OPTARG
 	    ;;
+	i)
+	    OSBS_BUILD_USER=$OPTARG
+	    ;;
+	w)
+	    WORK_DIR=$OPTARG
+	    ;;
         h)
             help
             exit 0
@@ -400,6 +412,13 @@ while getopts gu:e:v:c:t:o:r:n:d:p:k:s:b:l:h option; do
     esac
 done
 shift $((OPTIND-1))
+
+mkdir -p $WORK_DIR
+cd $WORK_DIR
+
+# Set the working directory for cekit and cekit-cache commands and also an option to pass to build-overrides.sh
+cekit_workdir="--work-dir=$WORK_DIR/.cekit"
+bo_workdir="-w $WORK_DIR/.cekit"
 
 check_for_required_envs
 get_default_image_repo
@@ -414,7 +433,13 @@ if [ -n "$DEBUG" ]; then
     debug="-v"
 fi
 
-# Invoke cekit and respond with Y to any prompts
-echo cekit $debug --config /opt/rhpam/cekit/config --overrides-file branch-overrides.yaml $overrides $extraoverrides --build-engine=osbs --build-osbs-target=$OSBS_BUILD_TARGET $CEKIT_BUILD_OPTIONS build
+builduser=
+if [ -n "$OSBS_BUILD_USER" ]; then
+    builduser="--build-osbs-user=$OSBS_BUILD_USER"
+fi
 
-yes Y | cekit $debug --config /opt/rhpam/cekit/config --overrides-file branch-overrides.yaml $overrides $extraoverrides --build-engine=osbs --build-osbs-target=$OSBS_BUILD_TARGET $CEKIT_BUILD_OPTIONS build
+# Invoke cekit and respond with Y to any prompts
+echo cekit $debug --config /opt/rhpam/cekit/config --overrides-file branch-overrides.yaml $overrides $extraoverrides --build-engine=osbs --build-osbs-target=$OSBS_BUILD_TARGET $builduser $cekit_workdir $CEKIT_BUILD_OPTIONS build
+
+
+yes Y | cekit $debug --config /opt/rhpam/cekit/config --overrides-file branch-overrides.yaml $overrides $extraoverrides --build-engine=osbs --build-osbs-target=$OSBS_BUILD_TARGET $builduser $cekit_workdir $CEKIT_BUILD_OPTIONS build
