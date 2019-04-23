@@ -47,36 +47,9 @@ function help()
     echo "  -e GIT_EMAIL              Email config for git commits to internal repositories. Default is 'yourname@email.com'"
     echo "  -o CEKIT_BUILD_OPTIONS    Additional options to pass through to the cekit build command, should be quoted"
     echo "  -l CEKIT_CACHE_LOCAL      Comma-separated list of urls to download and add to the local cekit cache"
-    echo "                            Note that this may override default values set for particular version/components"
-    echo "                            set in /opt/rhpam/overrides (/opt/rhpam/overrides/7.3/rhpam-businesscentral-cache-local.sh for example)"
     echo "  -g                        Debug setting, currently sets verbose flag on cekit commands"
 }
 
-function cache_url() {
-    filename=$(basename $1)
-    wget -O $filename $1
-    if [ "$?" -ne 0 ]; then
-	echo Failed to download $1
-	return
-    fi
-    sha256value=$(sha256sum $filename | awk '{print $1}')
-    sha1value=$(sha1sum $filename | awk '{print $1}')
-    md5value=$(md5sum $filename | awk '{print $1}')
-    echo cekit-cache $cekit_workdir add --sha256 $sha256value --sha1 $sha1value --md5 $md5value $filename
-    cekit-cache $cekit_workdir add --sha256 $sha256value --sha1 $sha1value --md5 $md5value $filename
-    if [ "$?" -ne 0 ]; then
-	echo Failed to cache $1
-    fi
-}
-
-function cache_url_list() {
-  local IFS=,
-  local urllist=($1)
-  for url in "${urllist[@]}"; do
-      echo Attempting to cache $url
-      cache_url $url
-  done
-}
 
 function get_short_version() {
   local version_array
@@ -313,7 +286,7 @@ function handle_overrides()
     fi
 
     # Include a build date arg if it's set, otherwise leave it null
-    buildopt=
+    local buildopt=
     if [ -n "$BUILD_DATE" ]; then
 	buildopt="-b $BUILD_DATE"
     fi
@@ -325,7 +298,7 @@ function handle_overrides()
 
 # If we think it's ever the case that skipping the overrides generation in case of error is okay, we can do this
 #    set +e
-#    $WORK_DIR/tools/build-overrides.sh -v $PROD_VERSION -t nightly -p $PROD_COMPONENT $buildopt -d $WORK_DIR/build-overrides
+#    $WORK_DIR/tools/build-overrides.sh -v $PROD_VERSION -t nightly -p $PROD_COMPONENT $buildopt -d $WORK_DIR/build-overrides $bo_workdir
 #    res=$?
 #    set -e
 #    if [ "$res" -ne 0 ]; then
@@ -336,17 +309,27 @@ function handle_overrides()
 
 function handle_cache_urls()
 {
-    # If we've passed in extra urls to add to the local cekit cache in a comma-separated list,
-    # parse them and cache them. But first, if we haven't set it already in the environment or the
-    # commandline, see if there is a file for this version/component stored with the overrides that sets it
-    if [ -z "$CEKIT_CACHE_LOCAL" ]; then
-        local sv=$(get_short_version $PROD_VERSION)
-	if [ -f "/opt/rhpam/overrides/$sv/$PROD_COMPONENT-cache-local.sh" ]; then
-	    source /opt/rhpam/overrides/$sv/$PROD_COMPONENT-cache-local.sh
-	fi
+    # Include a build date arg if it's set, otherwise leave it null
+    local buildopt
+    if [ -n "$BUILD_DATE" ]; then
+	buildopt="-b $BUILD_DATE"
     fi
-    if [ -n "$CEKIT_CACHE_LOCAL" ]; then
-	cache_url_list "$CEKIT_CACHE_LOCAL"
+
+    # See if there is a file for this version/component stored with the overrides that specifies urls to cache
+    local sv=$(get_short_version $PROD_VERSION)
+    if [ -f "/opt/rhpam/overrides/$sv/$PROD_COMPONENT-cache-local.sh" ]; then
+        echo $WORK_DIR/tools/build-overrides.sh $buildopt -C /opt/rhpam/overrides/$sv/$PROD_COMPONENT-cache-local.sh $bo_workdir
+        $WORK_DIR/tools/build-overrides.sh $buildopt -C /opt/rhpam/overrides/$sv/$PROD_COMPONENT-cache-local.sh $bo_workdir
+    fi
+
+    # Parse and cache extra urls to add to the local cekit cache
+    if [ -n "$1" ]; then
+        local IFS=,
+        local urllist=($1)
+        for url in "${urllist[@]}"; do
+            echo $WORK_DIR/tools/build-overrides.sh $buildopt -c $url $bo_workdir
+            $WORK_DIR/tools/build-overrides.sh $buildopt -c $url $bo_workdir
+        done
     fi
 }
 
@@ -426,7 +409,7 @@ clone_repo_and_set_dir
 get_kerb_ticket
 set_git_config
 handle_overrides
-handle_cache_urls
+handle_cache_urls "$CEKIT_CACHE_LOCAL"
 
 debug=
 if [ -n "$DEBUG" ]; then
