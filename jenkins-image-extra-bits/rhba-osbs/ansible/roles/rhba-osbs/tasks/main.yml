@@ -21,6 +21,7 @@
    - krb5-workstation
    - odcs-client
    - python2-cekit
+   - python-krbV
 
 - name: Update all packages
   yum:
