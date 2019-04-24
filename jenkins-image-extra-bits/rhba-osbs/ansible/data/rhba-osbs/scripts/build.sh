@@ -196,15 +196,16 @@ function find_image_branch()
     echo Using image branch "$IMAGE_BRANCH"
 }
 
-function download_build_overrides()
+function get_build_overrides_script()
 {
+    pushd $WORK_DIR
     rm -rf jboss-kie-modules
     git clone https://github.com/jboss-container-images/jboss-kie-modules
     if [ "$?" -ne 0 ]; then
         echo Unable to clone repository https://github.com/jboss-container-images/jboss-kie-modules
         exit -1
     fi
-    pushd jboss-kie-modules
+    cd jboss-kie-modules
     set +e
     if [ "$IMAGE_BRANCH" == "master" ]; then
         git checkout master
@@ -222,7 +223,6 @@ function download_build_overrides()
     mkdir -p $WORK_DIR/tools
     cp tools/build-overrides/build-overrides.sh $WORK_DIR/tools/
     popd
-
 }
 
 function clone_repo_and_set_dir()
@@ -244,7 +244,7 @@ function clone_repo_and_set_dir()
     fi
     set -e
     cd rhpam-repo
-    
+
     find_image_branch
     set +e
     if [ "$IMAGE_BRANCH" == "master" ]; then
@@ -263,8 +263,9 @@ function clone_repo_and_set_dir()
     cd "$IMAGE_SUBDIR"
 }
 
-function handle_overrides()
+function get_extra_cekit_overrides_options()
 {
+    local gen_overrides_dir=$1
     overrides=
     extraoverrides=
 
@@ -273,10 +274,7 @@ function handle_overrides()
 	return
     fi
 
-    # Get the build-overrides.sh script itself, based on the branch we're using
-    download_build_overrides
-
-    overrides="--overrides-file $WORK_DIR/build-overrides/$PROD_COMPONENT-overrides.yaml"
+    overrides="--overrides-file $gen_overrides_dir/$PROD_COMPONENT-overrides.yaml"
 
     # If we have an additional overrides file included for a particular branch and a particular
     # component that we're building, then add that extra file
@@ -284,42 +282,15 @@ function handle_overrides()
     if [ -f "/opt/rhpam/overrides/$sv/$PROD_COMPONENT-overrides.yaml" ]; then
 	extraoverrides="--overrides-file /opt/rhpam/overrides/$sv/$PROD_COMPONENT-overrides.yaml"
     fi
-
-    # Include a build date arg if it's set, otherwise leave it null
-    local buildopt=
-    if [ -n "$BUILD_DATE" ]; then
-	buildopt="-b $BUILD_DATE"
-    fi
-
-    # Generate the overrides files
-    echo $WORK_DIR/tools/build-overrides.sh -v $PROD_VERSION -t nightly -p $PROD_COMPONENT $buildopt -d $WORK_DIR/build-overrides $bo_workdir
-
-    $WORK_DIR/tools/build-overrides.sh -v $PROD_VERSION -t nightly -p $PROD_COMPONENT $buildopt -d $WORK_DIR/build-overrides $bo_workdir
-
-# If we think it's ever the case that skipping the overrides generation in case of error is okay, we can do this
-#    set +e
-#    $WORK_DIR/tools/build-overrides.sh -v $PROD_VERSION -t nightly -p $PROD_COMPONENT $buildopt -d $WORK_DIR/build-overrides $bo_workdir
-#    res=$?
-#    set -e
-#    if [ "$res" -ne 0 ]; then
-#        overrides=
-#    fi
-    
 }
 
 function handle_cache_urls()
 {
-    # Include a build date arg if it's set, otherwise leave it null
-    local buildopt
-    if [ -n "$BUILD_DATE" ]; then
-	buildopt="-b $BUILD_DATE"
-    fi
-
     # See if there is a file for this version/component stored with the overrides that specifies urls to cache
     local sv=$(get_short_version $PROD_VERSION)
     if [ -f "/opt/rhpam/overrides/$sv/$PROD_COMPONENT-cache-local.sh" ]; then
-        echo $WORK_DIR/tools/build-overrides.sh $buildopt -C /opt/rhpam/overrides/$sv/$PROD_COMPONENT-cache-local.sh $bo_workdir
-        $WORK_DIR/tools/build-overrides.sh $buildopt -C /opt/rhpam/overrides/$sv/$PROD_COMPONENT-cache-local.sh $bo_workdir
+        echo $WORK_DIR/tools/build-overrides.sh -C /opt/rhpam/overrides/$sv/$PROD_COMPONENT-cache-local.sh $bo_options
+        $WORK_DIR/tools/build-overrides.sh -C /opt/rhpam/overrides/$sv/$PROD_COMPONENT-cache-local.sh $bo_options
     fi
 
     # Parse and cache extra urls to add to the local cekit cache
@@ -327,10 +298,16 @@ function handle_cache_urls()
         local IFS=,
         local urllist=($1)
         for url in "${urllist[@]}"; do
-            echo $WORK_DIR/tools/build-overrides.sh $buildopt -c $url $bo_workdir
-            $WORK_DIR/tools/build-overrides.sh $buildopt -c $url $bo_workdir
+            echo $WORK_DIR/tools/build-overrides.sh -c $url $bo_options
+            $WORK_DIR/tools/build-overrides.sh -c $url $bo_options
         done
     fi
+}
+
+function generate_overrides_files()
+{
+    echo $WORK_DIR/tools/build-overrides.sh -v $PROD_VERSION -t nightly -p $PROD_COMPONENT $bo_options
+    $WORK_DIR/tools/build-overrides.sh -v $PROD_VERSION -t nightly -p $PROD_COMPONENT $bo_options
 }
 
 while getopts gu:e:v:c:t:o:r:n:d:p:k:s:b:l:i:w:h option; do
@@ -399,17 +376,36 @@ shift $((OPTIND-1))
 mkdir -p $WORK_DIR
 cd $WORK_DIR
 
-# Set the working directory for cekit and cekit-cache commands and also an option to pass to build-overrides.sh
-cekit_workdir="--work-dir=$WORK_DIR/.cekit"
-bo_workdir="-w $WORK_DIR/.cekit"
+cekit_cache_dir="$WORK_DIR/.cekit"
+gen_overrides_dir="$WORK_DIR/build-overrides"
+
+# Set common options for build-overrides.sh calls
+bo_options="-w $cekit_cache_dir -d $gen_overrides_dir"
+if [ -n "$BUILD_DATE" ]; then
+    bo_options+=" -b $BUILD_DATE"
+fi
 
 check_for_required_envs
 get_default_image_repo
+
+# After this call, we'll be in the correct branch and subdirectory for the image being built
 clone_repo_and_set_dir
+
+# download the build-overrides.sh script based on the branch we're building
+# note get_build_overrides_script must follow clone_repo_and_set_dir
+# branches across the image repo and the jboss-kie-modules repo are parallel
+# this routine uses pushd/popd to preserve the directory
+get_build_overrides_script
+
 get_kerb_ticket
 set_git_config
-handle_overrides
+
+# load specific urls into the local cekit cache based on any files stored in
+# /opt/rhpam/overrides/<branch> and an optional list in CEKIT_CACHE_LOCAL
 handle_cache_urls "$CEKIT_CACHE_LOCAL"
+
+generate_overrides_files
+get_extra_cekit_overrides_options $gen_overrides_dir
 
 debug=
 if [ -n "$DEBUG" ]; then
@@ -422,7 +418,7 @@ if [ -n "$OSBS_BUILD_USER" ]; then
 fi
 
 # Invoke cekit and respond with Y to any prompts
-echo cekit $debug --config /opt/rhpam/cekit/config --overrides-file branch-overrides.yaml $overrides $extraoverrides --build-engine=osbs --build-osbs-target=$OSBS_BUILD_TARGET $builduser $cekit_workdir $CEKIT_BUILD_OPTIONS build
+echo cekit $debug --config /opt/rhpam/cekit/config --overrides-file branch-overrides.yaml $overrides $extraoverrides --build-engine=osbs --build-osbs-target=$OSBS_BUILD_TARGET $builduser --work-dir "$cekit_cache_dir" $CEKIT_BUILD_OPTIONS build
 
 
-yes Y | cekit $debug --config /opt/rhpam/cekit/config --overrides-file branch-overrides.yaml $overrides $extraoverrides --build-engine=osbs --build-osbs-target=$OSBS_BUILD_TARGET $builduser $cekit_workdir $CEKIT_BUILD_OPTIONS build
+yes Y | cekit $debug --config /opt/rhpam/cekit/config --overrides-file branch-overrides.yaml $overrides $extraoverrides --build-engine=osbs --build-osbs-target=$OSBS_BUILD_TARGET $builduser --work-dir "$cekit_cache_dir" $CEKIT_BUILD_OPTIONS build
