@@ -198,7 +198,7 @@ function find_image_branch()
 
 function get_build_overrides_script()
 {
-    pushd $WORK_DIR
+    pushd $WORK_DIR > /dev/null
     rm -rf jboss-kie-modules
     git clone https://github.com/jboss-container-images/jboss-kie-modules
     if [ "$?" -ne 0 ]; then
@@ -222,7 +222,7 @@ function get_build_overrides_script()
     fi
     mkdir -p $WORK_DIR/tools
     cp tools/build-overrides/build-overrides.sh $WORK_DIR/tools/
-    popd
+    popd > /dev/null
 }
 
 function clone_repo_and_set_dir()
@@ -230,7 +230,7 @@ function clone_repo_and_set_dir()
     set +e
     rm -rf rhpam-repo
     # Try to check the repo without git asking for credentials (which it does for missing repos with https urls)
-    wget "$IMAGE_REPO" --no-check-certificate -o /dev/null
+    wget "$IMAGE_REPO" --no-check-certificate -o /dev/null -O /dev/null
     if [ "$?" -ne 0 ]; then
         echo It does not look like "$IMAGE_REPO" specified with IMAGE_REPO is a valid url
         exit -1
@@ -269,12 +269,9 @@ function get_extra_cekit_overrides_options()
     overrides=
     extraoverrides=
 
-    # We don't have any overrides for indexing images, and build-overrides.sh doesn't support them as a product value
-    if [ "$PROD_COMPONENT" == "rhdm-decisioncentral-indexing" -o "$PROD_COMPONENT" == "rhpam-businesscentral-indexing" ]; then
-	return
+    if [ -f "$gen_overrides_dir/$PROD_COMPONENT-overrides.yaml" ]; then
+        overrides="--overrides-file $gen_overrides_dir/$PROD_COMPONENT-overrides.yaml"
     fi
-
-    overrides="--overrides-file $gen_overrides_dir/$PROD_COMPONENT-overrides.yaml"
 
     # If we have an additional overrides file included for a particular branch and a particular
     # component that we're building, then add that extra file
@@ -287,7 +284,8 @@ function get_extra_cekit_overrides_options()
 function handle_cache_urls()
 {
     # See if there is a file for this version/component stored with the overrides that specifies urls to cache
-    local sv=$(get_short_version $PROD_VERSION)
+    # the overrides directory is organized by short branch names
+    local sv=$(get_short_version $IMAGE_BRANCH)
     if [ -f "/opt/rhpam/overrides/$sv/$PROD_COMPONENT-cache-local.sh" ]; then
         echo $WORK_DIR/tools/build-overrides.sh -C /opt/rhpam/overrides/$sv/$PROD_COMPONENT-cache-local.sh $bo_options
         $WORK_DIR/tools/build-overrides.sh -C /opt/rhpam/overrides/$sv/$PROD_COMPONENT-cache-local.sh $bo_options
@@ -306,6 +304,11 @@ function handle_cache_urls()
 
 function generate_overrides_files()
 {
+    # build-overrides.sh doesn't support indexing images as a product value
+    if [ "$PROD_COMPONENT" == "rhdm-decisioncentral-indexing" -o "$PROD_COMPONENT" == "rhpam-businesscentral-indexing" ]; then
+        return
+    fi
+
     echo $WORK_DIR/tools/build-overrides.sh -v $PROD_VERSION -t nightly -p $PROD_COMPONENT $bo_options
     $WORK_DIR/tools/build-overrides.sh -v $PROD_VERSION -t nightly -p $PROD_COMPONENT $bo_options
 }
