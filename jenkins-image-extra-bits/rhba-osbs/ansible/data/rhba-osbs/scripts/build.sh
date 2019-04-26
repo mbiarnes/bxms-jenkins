@@ -260,7 +260,7 @@ function clone_repo_and_set_dir()
 	echo This probably means that "$IMAGE_BRANCH" is not an actual remote branch in "$IMAGE_REPO"
 	exit -1
     fi
-    cd "$IMAGE_SUBDIR"
+    cd ./"$IMAGE_SUBDIR"
 }
 
 function get_extra_cekit_overrides_options()
