@@ -164,14 +164,8 @@ function get_build_overrides_script()
     fi
     echo Copying build-overrides.sh to $WORK_DIR
     cp tools/build-overrides/build-overrides.sh $WORK_DIR
-    set +e
     echo Copying build-osbs.sh to $WORK_DIR
     cp tools/build-osbs/build-osbs.sh $WORK_DIR
-    if [ "$?" -ne 0 ]; then
-	echo "hack, copying build-osbs.sh from /opt/rhba"
-	cp /opt/rhba/build-osbs.sh $WORK_DIR
-    fi
-    set -e
     popd > /dev/null
 }
 
