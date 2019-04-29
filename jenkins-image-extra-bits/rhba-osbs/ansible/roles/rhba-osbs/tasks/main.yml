@@ -28,7 +28,7 @@
     name: "*"
     state: latest
 
-### add build.sh script ###
+### add build-osbs.sh script ###
 
 - name: Create tools/config directory for rhpam builds
   file:
@@ -38,9 +38,9 @@
     owner: jenkins
     group: jenkins
 
-- name: Copy the build.sh script to /opt/rhpam, build-overrides.sh will be downloaded at runtime
+- name: Copy the build-osbs.sh script to /opt/rhpam, build-overrides.sh will be downloaded at runtime
   copy:
-    src: data/rhba-osbs/scripts/build.sh
+    src: data/rhba-osbs/scripts/build-osbs.sh
     dest: /opt/rhpam/
     owner: jenkins
     group: jenkins
