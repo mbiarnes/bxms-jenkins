@@ -28,7 +28,7 @@
     name: "*"
     state: latest
 
-### add download.sh script ###
+### add download.sh script (this will download build-overrides.sh and build-osbs.sh from jboss-kie-modules) ###
 
 - name: Create tools directory for rhba builds
   file:
@@ -41,16 +41,6 @@
 - name: Copy the download.sh script to /opt/rhba
   copy:
     src: data/rhba-osbs/scripts/download.sh
-    dest: /opt/rhba/
-    owner: jenkins
-    group: jenkins
-    mode: 0744
-
-### add the build-osbs.sh script as a workaround, this will be removed later
-### build-osbs.sh will be downloaded
-- name: Copy the build-osbs.sh script to /opt/rhba
-  copy:
-    src: data/rhba-osbs/scripts/build-osbs.sh
     dest: /opt/rhba/
     owner: jenkins
     group: jenkins
