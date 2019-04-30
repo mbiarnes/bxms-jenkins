@@ -112,12 +112,4 @@
 
 - name: Set no strict host checking
   shell: echo "StrictHostKeyChecking no" >> /etc/ssh/ssh_config
-
-### Copy extra per-version overrides files ###
-
-- name: Copy extra overrides files
-  copy:
-    src: data/rhba-osbs/overrides
-    dest: /opt/rhba
-    local_follow: False
 ...

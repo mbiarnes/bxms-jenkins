@@ -1,1 +1,0 @@
-indexing-cache-local.sh
