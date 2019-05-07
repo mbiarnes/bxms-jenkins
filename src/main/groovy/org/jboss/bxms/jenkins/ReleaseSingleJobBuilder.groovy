@@ -588,7 +588,6 @@ fi
             appendProp "MVEL_VERSION"               ${mvel_version}
             appendProp "IZPACK_VERSION"             ${izpack_version}
             appendProp "INSTALLER_COMMONS_VERSION"  ${installercommons_version}
-            appendProp "JAVAPARSER_VERSION"         ${drlx_parser_version}
 
             #Additional properties for brew release
             if [ "${release_type}" == "brew" ]; then
@@ -1803,7 +1802,6 @@ def validateProperties(propfile, keyword, _product_name):
             ret+=assertContain(dic['rhdm.installer.latest.url'], '$product_milestone_version')
             ret+=assertContain(dic['INSTALLER_COMMONS_VERSION'], '$installercommons_version')
             ret+=assertContain(dic['IZPACK_VERSION'], '$izpack_version')
-            ret+=assertContain(dic['JAVAPARSER_VERSION'], '${drlx_parser_version}')
 
         if re.match('rhpam..*', propfile) is not None:
             ret+=isvalidurl(dic['rhpam.addons.latest.url'],keyword)
@@ -1827,7 +1825,6 @@ def validateProperties(propfile, keyword, _product_name):
             ret+=assertContain(dic['rhpam.installer.latest.url'], '$product_milestone_version')
             ret+=assertContain(dic['INSTALLER_COMMONS_VERSION'], '$installercommons_version')
             ret+=assertContain(dic['IZPACK_VERSION'], '$izpack_version')
-            ret+=assertContain(dic['JAVAPARSER_VERSION'], '${drlx_parser_version}')
 
         if ret != 0:
             print propfile + ' Validation No Pass'
