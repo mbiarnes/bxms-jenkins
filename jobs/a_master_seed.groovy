@@ -78,15 +78,3 @@ def JenkinsStandaloneJobsBuilder(_release_code, _properties_file, _cfg_file, _jo
 }
 JenkinsStandaloneJobsBuilder("rhdm-master", "/jboss-prod/config/rhdm-71-nightly-ci.properties", "rhdm-master-nightly-dev.cfg", "nightly" )
 JenkinsStandaloneJobsBuilder("rhpam-master", "/jboss-prod/config/rhpam-71-nightly-ci.properties", "rhpam-master-nightly-dev.cfg", "nightly" )
-
-//def dirNameRow=["codereview","utility", "rzhang_coderreview"]
-//if you want to create codereviewer(rzhang)'s directory and his master seed job,do like this:
-//def dirNameRow=["codereview","utility","rzhang_coder_review"]
-/*
-new CodeReviewJobBuilder(
-        dirNameRow: dirNameRow,
-        jobName:currentJobName
-).build(this)
-*/
-
-//new TestPerformanceJobBuilder().build(this)
