@@ -18,8 +18,8 @@ class DependencyGraphSorterTest {
     public void testRHDMMasterNightlyCfg() {
         Map<String,String[]> packagesMap = DependencyGraphUtils.loadPackageMapFromResource(DependencyGraphSorterTest.class,
                 "/org/jboss/bxms/jenkins/rhdm-master-nightly-dev.cfg")
-        List<String> expected = [ "rhdm", "rhdm-maven-repo-root", "rhdm-installer", "rhba-common",
-                                  "rhba-boms", "rhba-license-builder", "rhdm-build-bom"
+        List<String> expected = [ "rhdm-build-bom", "rhba-boms", "rhba-license-builder", "rhdm-maven-repo-root",
+                                  "rhba-common", "rhdm", "rhdm-installer"
                                 ]
 
         List<String> sorted = DependencyGraphSorter.kahnTopological(packagesMap)
@@ -38,7 +38,6 @@ class DependencyGraphSorterTest {
                                  "rhba-license-builder", "rhba-common", "rhpam", "rhpam-installer"]
 
         List<String> sorted = DependencyGraphSorter.kahnTopological(packagesMap)
-        System.out.println(sorted)
         GroovyAssert.assertArrayEquals("Unexpected sort result", expected.toArray(), sorted.toArray())
     }
 }
