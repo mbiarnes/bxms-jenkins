@@ -587,7 +587,7 @@ fi
             appendProp "ERRAI_VERSION"              ${errai_version}
             appendProp "MVEL_VERSION"               ${mvel_version}
             appendProp "IZPACK_VERSION"             ${izpack_version}
-            appendProp "INSTALLER_COMMONS_VERSION"  ${installercommons_version}
+            appendProp "INSTALLER_COMMONS_VERSION"  ${installer_commons_version}
 
             #Additional properties for brew release
             if [ "${release_type}" == "brew" ]; then
@@ -1800,7 +1800,7 @@ def validateProperties(propfile, keyword, _product_name):
             ret+=assertContain(dic['rhdm.kie-server.ee7.latest.url'], '$product_milestone_version')
             ret+=assertContain(dic['rhdm.kie-server.ee8.latest.url'], '$product_milestone_version')
             ret+=assertContain(dic['rhdm.installer.latest.url'], '$product_milestone_version')
-            ret+=assertContain(dic['INSTALLER_COMMONS_VERSION'], '$installercommons_version')
+            ret+=assertContain(dic['INSTALLER_COMMONS_VERSION'], '$installer_commons_version')
             ret+=assertContain(dic['IZPACK_VERSION'], '$izpack_version')
 
         if re.match('rhpam..*', propfile) is not None:
@@ -1823,7 +1823,7 @@ def validateProperties(propfile, keyword, _product_name):
             ret+=assertContain(dic['rhpam.kie-server.ee7.latest.url'], '$product_milestone_version')
             ret+=assertContain(dic['rhpam.kie-server.ee8.latest.url'], '$product_milestone_version')
             ret+=assertContain(dic['rhpam.installer.latest.url'], '$product_milestone_version')
-            ret+=assertContain(dic['INSTALLER_COMMONS_VERSION'], '$installercommons_version')
+            ret+=assertContain(dic['INSTALLER_COMMONS_VERSION'], '$installer_commons_version')
             ret+=assertContain(dic['IZPACK_VERSION'], '$izpack_version')
 
         if ret != 0:
