@@ -1,4 +1,4 @@
-package org.Jboss.bxms.jenkins
+package org.jboss.bxms.jenkins
 
 import hudson.model.Item
 import hudson.model.View

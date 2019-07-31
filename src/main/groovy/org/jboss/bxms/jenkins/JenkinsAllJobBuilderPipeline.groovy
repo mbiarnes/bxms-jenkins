@@ -2,7 +2,6 @@ package org.jboss.bxms.jenkins
 
 import javaposse.jobdsl.dsl.DslFactory
 import javaposse.jobdsl.dsl.Job
-import ca.szc.configparser.Ini
 
 /**
  *  Create BxMS release/build pipeline stream with Parameter
@@ -14,36 +13,18 @@ class JenkinsAllJobBuilderPipeline {
     String gerrit_ref_spec
 
     Job build(DslFactory dslFactory) {
-        String cfg_filename = cfg_file
-        if (cfg_file.contains("/")) {
-            String[] cfg_file_paths = cfg_file.tokenize("/")
-            cfg_filename = cfg_file_paths[cfg_file_paths.length - 1]
-        }
-        String urlString ="https://code.engineering.redhat.com/gerrit/gitweb?p=integration-platform-config.git;a=blob_plain;f=" + cfg_filename
-        if (gerrit_ref_spec != '')
-            urlString = urlString + ";hb=" + gerrit_ref_spec
-      BufferedReader configReader = new BufferedReader(new InputStreamReader(new URL(urlString).openStream()))
-      Ini _ini_cfg = new Ini().read(configReader)
-      Map<String,Map<String,String>> sections = _ini_cfg.getSections()
-      Map packagesMap = new HashMap()
-      for (String section_name : sections.keySet())
-      {
-          Map<String, String> section=sections.get(section_name)
-          if ((!section.containsKey("config_type")) || (section.containsKey("config_type") && section.get("config_type").equals("bom-builder")) )
-          {
-              if(section.containsKey("buildrequires")){
-                if(section.get("buildrequires").length()!=0){
-                  String[] requiresArr=section.get("buildrequires").split(" ")
-                  packagesMap.put(section_name,requiresArr)
-                }else{
-                  packagesMap.put(section_name,"")
-                }
-              }else{
-                packagesMap.put(section_name,"")
-              }
-          }
+      String cfg_filename = cfg_file
+      if (cfg_file.contains("/")) {
+          String[] cfg_file_paths = cfg_file.tokenize("/")
+          cfg_filename = cfg_file_paths[cfg_file_paths.length - 1]
       }
-      // get the squence of jobs
+      String urlString ="https://code.engineering.redhat.com/gerrit/gitweb?p=integration-platform-config.git;a=blob_plain;f=" + cfg_filename
+      if (gerrit_ref_spec != '') {
+          urlString = urlString + ";hb=" + gerrit_ref_spec
+      }
+
+      Map<String, String[]> packagesMap = DependencyGraphUtils.loadPackageMapFromURL(urlString)
+      // get the sequence of jobs
       ArrayList<String> jobsArr=kahnTopological(packagesMap)
       String pipelineScript=getPipelineCode(jobsArr,packagesMap)
       def choosOptScript=getChooseOpt(jobsArr)
@@ -114,54 +95,15 @@ class JenkinsAllJobBuilderPipeline {
         }
     }
 
-// func to turn cfg requirement relationship into oneline steps use kahn
-    ArrayList<String> kahnTopological(HashMap<String,String[]> packagesMap){
-        ArrayList<String> resultAL=new ArrayList<String>()
-        Map packagesMapIndegree=new HashMap()
-        ArrayList<String> zeroIndegreeArr=new ArrayList<String>()
-        int allEdges=0
-        for (String keyName : packagesMap.keySet()) {
-          if (packagesMap.get(keyName).size()==0) {
-            zeroIndegreeArr.add(keyName)
-
-          }
-          allEdges+=packagesMap.get(keyName).size()
-          packagesMapIndegree.put(keyName,packagesMap.get(keyName).size())
-        }
-
-        while(zeroIndegreeArr.size()>0){
-          String current=zeroIndegreeArr.get(0)
-          zeroIndegreeArr.remove(0)
-          resultAL.add(current)
-          ArrayList<String> currentPkgChild =new ArrayList<String>()
-          for (Map.Entry<String, String[]> entry : packagesMap.entrySet()) {
-            int flag=0
-            for (ele in entry.getValue()) {
-              if(ele.matches(current)){
-                flag=1
-                break
-              }
-            }
-            if (flag ==1) {
-              currentPkgChild.add(entry.getKey())
-            }
-          }
-        for (int i=0;i<currentPkgChild.size() ;i++ ) {
-          int indegree=packagesMapIndegree.get(currentPkgChild.get(i))-1
-          allEdges=allEdges-1
-          packagesMapIndegree.put(currentPkgChild.get(i),indegree)
-          if (indegree == 0) {
-            zeroIndegreeArr.add(currentPkgChild.get(i))
-          }
-        }
+    // func to turn cfg requirement relationship into oneline steps use kahn
+    List<String> kahnTopological(Map<String,String[]> packagesMap){
+      try {
+        return DependencyGraphSorter.kahnTopological(packagesMap);
+      } catch (IllegalArgumentException e) {
+        throw new IllegalArgumentException("There are circles in " +cfg_file + " buildrequires map", e)
       }
-
-      if (allEdges!=0) {
-
-        throw new IOException("There has circles in " +cfg_file + " buildrequires map, Debug information:\n" + packagesMapIndegree)
-      }
-      return resultAL
     }
+
     // func to get the choose options.
     def getChooseOpt(ArrayList<String> jobsArr){
       def result=[]
