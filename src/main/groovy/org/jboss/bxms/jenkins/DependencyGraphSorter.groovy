@@ -55,8 +55,8 @@ class DependencyGraphSorter {
         }
 
         if (allEdges!=0) {
-            throw new IllegalArgumentException("There are circles in buildrequires map, remaining edges: " + allEdges
-                    + ", the graph in-degree map:\n" + packagesMapIndegree)
+            throw new IllegalArgumentException("There are circles or edges to missing nodes in buildrequires map, remaining edges: "
+                    + allEdges + ", the graph in-degree map:\n" + packagesMapIndegree)
         }
         return resultAL;
     }
