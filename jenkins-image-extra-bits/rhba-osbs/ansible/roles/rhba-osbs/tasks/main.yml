@@ -108,6 +108,14 @@
 - name: Update ca trust
   command: update-ca-trust
 
+- name: Make node.js use the system root CA
+  copy:
+    dest: /etc/profile.d/nodejscerts.sh
+    mode: 0755
+    content: |
+      export NODE_EXTRA_CA_CERTS=/etc/pki/ca-trust/source/anchors/RH-IT-Root-CA.crt
+
+
 ### ssh config ###
 
 - name: Set no strict host checking
