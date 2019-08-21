@@ -12,8 +12,8 @@
 - name: Install packages
   yum:
     pkg: [ 'rhpkg', 'brewkoji', 'ca-certificates', 'authconfig', 'krb5-workstation',
-           'odcs-client', 'python-krbV', 'python3-docker', 'python3-behave',
-           'python3-lxml', 'python3-docker-squash' ]
+           'odcs-client', 'python-krbV', 'python3-behave', 'python3-lxml',
+           'python3-docker-squash' ]
     state: latest
 
 - name: Update all packages
