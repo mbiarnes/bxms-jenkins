@@ -11,20 +11,10 @@
 
 - name: Install packages
   yum:
-    pkg: "{{item}}"
+    pkg: [ 'rhpkg', 'brewkoji', 'ca-certificates', 'authconfig', 'krb5-workstation',
+           'odcs-client', 'python-krbV', 'python3-docker', 'python3-behave',
+           'python3-lxml', 'python3-docker-squash' ]
     state: latest
-  with_items:
-  - rhpkg
-  - brewkoji
-  - ca-certificates
-  - authconfig
-  - krb5-workstation
-  - odcs-client
-  - python-krbV
-  - python3-docker
-  - python3-behave
-  - python3-lxml
-  - python3-docker-squash
 
 - name: Update all packages
   yum:
