@@ -8,3 +8,13 @@ gpgkey=https://copr-be.cloud.fedoraproject.org/results/@cekit/cekit/pubkey.gpg
 repo_gpgcheck=0
 enabled=1
 enabled_metadata=1
+[rhel-7-server-rhscl-1-os-rpms]
+metadata_expire = 86400
+baseurl = https://pulp.dist.prod.ext.phx2.redhat.com/content/dist/rhel/server/7/$releasever/$basearch/rhscl/1/os
+ui_repoid_vars = releasever basearch
+sslverify = 0
+name = Red Hat Enterprise Linux 7 Server - rhscl-1-os (RPMs)
+gpgkey = file:///etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release
+enabled = 1
+sslcacert = /etc/rhsm/ca/redhat-uep.pem
+gpgcheck = 1
