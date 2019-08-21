@@ -14,14 +14,17 @@
     pkg: "{{item}}"
     state: latest
   with_items:
-   - rhpkg
-   - brewkoji
-   - ca-certificates
-   - authconfig
-   - krb5-workstation
-   - odcs-client
-   - python2-cekit
-   - python-krbV
+  - rhpkg
+  - brewkoji
+  - ca-certificates
+  - authconfig
+  - krb5-workstation
+  - odcs-client
+  - python-krbV
+  - python3-docker
+  - python3-behave
+  - python3-lxml
+  - python3-docker-squash
 
 - name: Update all packages
   yum:
@@ -63,6 +66,12 @@
     dest: /home/jenkins/.cekit/
     owner: jenkins
     group: jenkins
+
+
+- name: install cekit using virtualenv
+  pip:
+    name: cekit==3.2.0
+    virtualenv: /home/jenkins/virtenvs/cekit
 
 ### krb5 config ###
 
