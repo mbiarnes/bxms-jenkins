@@ -12,7 +12,7 @@
 - name: Install packages
   yum:
     pkg: [ 'rhpkg', 'brewkoji', 'ca-certificates', 'authconfig', 'krb5-workstation',
-           'odcs-client', 'python-krbV', 'source-to-image' ]
+           'python3-odcs-client', 'python-krbV', 'source-to-image' ]
     state: latest
 
 - name: Update all packages
@@ -62,9 +62,11 @@
     name: virtualenv
     executable: pip3
 
+# pip3
 - name: install cekit and its deps using virtualenv
   pip:
     name: cekit==3.2.0, behave, lxml, docker-squash
+    executable: pip3
     virtualenv: /home/jenkins/virtenvs/cekit
 
 ### krb5 config ###
