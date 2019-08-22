@@ -68,7 +68,6 @@
     name: cekit==3.2.0, behave, lxml, docker-squash, odcs
     virtualenv: /home/jenkins/virtenvs/cekit
     virtualenv_python: /usr/bin/python3
-	
 
 ### krb5 config ###
 
