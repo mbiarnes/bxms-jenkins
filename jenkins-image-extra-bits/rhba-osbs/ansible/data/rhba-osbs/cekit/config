@@ -1,6 +1,6 @@
 [common]
 ssl_verify = False
-redhat = true
+redhat = True
 [repositories]
 
 jboss-os = http://git.app.eng.bos.redhat.com/git/jboss-container-tools.git/plain/repos/jboss-rhel-os.repo
