@@ -12,7 +12,7 @@
 - name: Install packages
   yum:
     pkg: [ 'rhpkg', 'brewkoji', 'ca-certificates', 'authconfig', 'krb5-workstation',
-           'python-krbV', 'source-to-image' ]
+           'python-krbV', 'source-to-image', 'gcc' ]
     state: latest
 
 - name: Update all packages
