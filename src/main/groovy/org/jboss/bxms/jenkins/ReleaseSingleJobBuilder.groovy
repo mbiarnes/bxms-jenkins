@@ -165,11 +165,14 @@ fi
             }
             triggers{
                 ciBuildTrigger {
-                    overrides {
-                      topic("Consumer.rh-jenkins-ci-plugin.${randomString}.VirtualTopic.qe.ci.>")
+                    providerData {
+                        activeMQSubscriberProviderData {
+                            overrides {
+                                topic("Consumer.rh-jenkins-ci-plugin.${randomString}.VirtualTopic.qe.ci.>")
+                            }
+                            selector("label='rhba-ci' OR (CI_TYPE='brew-tag' AND ( CI_NAME='org.kie.rhba-rhdm' OR CI_NAME='org.kie.rhba-rhpam' OR CI_NAME='org.kie.rhba-license-builder' OR CI_NAME='org.jboss.installer-rhdm-installer' OR CI_NAME='org.jboss.installer-rhpam-installer' OR CI_NAME='org.jboss.brms-bpmsuite.patching-patching-tools-parent')) OR (new='FAILED' AND method='chainmaven' AND target='jb-bxms-7.0-maven-candidate')")
+                        }
                     }
-                    selector("label='rhba-ci' OR (CI_TYPE='brew-tag' AND ( CI_NAME='org.kie.rhba-rhdm' OR CI_NAME='org.kie.rhba-rhpam' OR CI_NAME='org.kie.rhba-license-builder' OR CI_NAME='org.jboss.installer-rhdm-installer' OR CI_NAME='org.jboss.installer-rhpam-installer' OR CI_NAME='org.jboss.brms-bpmsuite.patching-patching-tools-parent')) OR (new='FAILED' AND method='chainmaven' AND target='jb-bxms-7.0-maven-candidate')")
-                    //providerName('CI Publish')
                 }
             }
         }
@@ -1070,23 +1073,28 @@ fi
 
                 // Sends JMS message.
                 ciMessageBuilder {
-                    overrides {
-                        topic('VirtualTopic.qe.ci.ba.${product_lowercase}.master.${release_type}.smoke.results')
+                    providerData {
+                        activeMQPublisherProviderData {
+
+                            overrides {
+                                topic('VirtualTopic.qe.ci.ba.${product_lowercase}.master.${release_type}.smoke.results')
+                            }
+
+                            // JMS selector to choose messages that will fire the trigger.
+                            name("Red Hat UMB")
+
+                            // Type of CI message to be sent.
+                            messageType("Custom")
+
+                            // KEY=value pairs, one per line (Java properties file format) to be used as message properties.
+                            messageProperties('label=rhba-ci\n' +
+                                              'CI_TYPE=customer\n' +
+                                              'EVENT_TYPE=${product_lowercase}-master-${release_type}-qe-smoke-results\n')
+
+                            // Content of CI message to be sent.
+                            messageContent(report_string)
+                        }
                     }
-
-                    // JMS selector to choose messages that will fire the trigger.
-                    providerName("Red Hat UMB")
-
-                    // Type of CI message to be sent.
-                    messageType("Custom")
-
-                    // KEY=value pairs, one per line (Java properties file format) to be used as message properties.
-                    messageProperties('label=rhba-ci\n' +
-                            'CI_TYPE=customer\n' +
-                            'EVENT_TYPE=${product_lowercase}-master-${release_type}-qe-smoke-results\n')
-
-                    // Content of CI message to be sent.
-                    messageContent(report_string)
                 }
             }
         }
@@ -1680,22 +1688,27 @@ fi
 
                 // Sends JMS message.
                 ciMessageBuilder {
-                    overrides {
-                        topic('VirtualTopic.qe.ci.ba.${product_lowercase}.master.${release_type}.trigger')
+                    providerData {
+                        activeMQPublisherProviderData {
+
+                            overrides {
+                                topic('VirtualTopic.qe.ci.ba.${product_lowercase}.master.${release_type}.trigger')
+                            }
+
+                            // JMS selector to choose messages that will fire the trigger.
+                            name("Red Hat UMB")
+
+                            // Type of CI message to be sent.
+                            messageType("Custom")
+
+                            // KEY=value pairs, one per line (Java properties file format) to be used as message properties.
+                            messageProperties('label=rhba-ci\n' +
+                                              'CI_TYPE=custom\n' +
+                                              'EVENT_TYPE=${product_lowercase}-master-${release_type}-qe-trigger\n')
+                            // Content of CI message to be sent.
+                            messageContent('${product_staging_properties_url}')
+                        }
                     }
-
-                    // JMS selector to choose messages that will fire the trigger.
-                    providerName("Red Hat UMB")
-
-                    // Type of CI message to be sent.
-                    messageType("Custom")
-
-                    // KEY=value pairs, one per line (Java properties file format) to be used as message properties.
-                    messageProperties('label=rhba-ci\n' +
-                            'CI_TYPE=custom\n' +
-                            'EVENT_TYPE=${product_lowercase}-master-${release_type}-qe-trigger\n')
-                    // Content of CI message to be sent.
-                    messageContent('${product_staging_properties_url}')
                 }
             }
         }
